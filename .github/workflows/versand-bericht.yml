@@ -2,7 +2,7 @@
 #
 # Zeitplan: Die Portale starten um 04:00 UTC und brauchen ein bis zwei Minuten.
 # 04:45 UTC (06:45 deutscher Sommerzeit) laesst reichlich Luft und liegt gut zwei
-# Stunden vor dem Versand um 09:00 Ortszeit - so viel Veto-Fenster bleibt,
+# Stunden vor dem Versand um 10:00 Ortszeit - so viel Veto-Fenster bleibt,
 # selbst wenn die Meldung erst beim Fruehstueck gelesen wird.
 name: Versand-Bericht (täglich)
 
