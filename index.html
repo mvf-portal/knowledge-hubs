@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Die Knowledge-Hubs von Monitor Versorgungsforschung: Rechercheportale zu Versorgungsforschung, Klima, Digitalisierung und Pflege. Gebündelte Live-Suchen über 337 Datenbanken und täglich neue Studien mit deutscher Zusammenfassung.">
+<title>Die Knowledge-Hubs von Monitor Versorgungsforschung</title>
+<link rel="canonical" href="https://knowledge-hubs.m-vf.de/">
+<style>
+  /* Schrift, Farben und Gerüst wie in den Hubs - die Seite gehört sichtbar dazu. */
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:300;
+    src:url("fonts/lato-300.woff2") format("woff2"); font-display:swap; }
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:400;
+    src:url("fonts/lato-400.woff2") format("woff2"); font-display:swap; }
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:700;
+    src:url("fonts/lato-700.woff2") format("woff2"); font-display:swap; }
+
+  :root{
+    --paper:#EDF2FA; --card:#FFFFFF; --card-2:#F7FAFD;
+    --ink:#111111; --ink-soft:#444A50; --ink-faint:#545C63;
+    --line:#D0D8E4; --line-soft:#E3EAF3;
+    --brand:#0051A1; --brand-deep:#003B77; --brand-tint:#E1EAF6;
+    --action:#BE9E53; --on-action:#2A2207;
+    --shadow:0 1px 2px rgba(16,40,38,.05), 0 8px 24px -16px rgba(16,40,38,.28);
+    --shadow-hover:0 2px 4px rgba(16,40,38,.06), 0 18px 40px -20px rgba(16,40,38,.40);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+      --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+      --line:#22314A; --line-soft:#1A2639;
+      --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+      --action:#D4B878; --on-action:#221A08;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+      --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+    --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+    --line:#22314A; --line-soft:#1A2639;
+    --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+    --action:#D4B878; --on-action:#221A08;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+    --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Lato", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size:16px; line-height:1.6;
+  }
+  .wrap{ width:min(1280px, 94vw); margin:0 auto; }
+  a{ color:var(--brand); text-underline-offset:2px; }
+  a:focus-visible{ outline:2px solid var(--brand); outline-offset:3px; border-radius:3px; }
+
+  header.top{ background:var(--card); border-bottom:1px solid var(--line); padding:30px 0 34px; }
+  .kopf-oben{ display:flex; justify-content:space-between; align-items:flex-start; gap:24px; }
+  .eyebrow{
+    margin:0 0 8px; font-size:11.5px; font-weight:700; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-faint);
+  }
+  h1{ margin:0 0 12px; font-size:clamp(26px,4.2vw,40px); line-height:1.15; font-weight:700; }
+  .standfirst{ margin:0; max-width:64ch; font-size:clamp(16px,1.9vw,18.5px); color:var(--ink-soft); }
+  .marke img{ display:block; width:200px; height:auto; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .marke{ background:#fff; padding:9px 12px; border-radius:4px; } }
+  :root[data-theme="dark"] .marke{ background:#fff; padding:9px 12px; border-radius:4px; }
+  @media (max-width:760px){
+    .kopf-oben{ flex-direction:column-reverse; align-items:flex-start; gap:16px; }
+    .marke img{ width:150px; max-width:52vw; }
+  }
+
+  main{ padding:34px 0 60px; }
+  h2{
+    font-size:clamp(19px,2.6vw,24px); font-weight:700; line-height:1.25;
+    margin:0 0 6px; padding-bottom:9px; border-bottom:2px solid var(--brand);
+  }
+  .vor{ margin:0 0 20px; max-width:70ch; color:var(--ink-soft); font-size:15px; }
+
+  /* Nebeneinander ist der Regelfall. Untereinander nur auf Handy und Tablet:
+     Unter 1000px werden vier Spalten zu schmalen Saeulen, in denen jede
+     Ueberschrift dreizeilig umbricht. Beide Gitter tragen dieselbe Spaltenzahl,
+     damit die angekuendigten Kacheln so breit sind wie die der laufenden Hubs. */
+  .gitter{ display:grid; gap:16px; grid-template-columns:1fr; margin:0 0 42px; }
+  @media (min-width:1000px){ .gitter{ grid-template-columns:repeat(4, 1fr); } }
+
+  .hub{
+    display:flex; flex-direction:column; background:var(--card);
+    border:1px solid var(--line); border-radius:8px; padding:20px 20px 18px;
+    box-shadow:var(--shadow); transition:box-shadow .16s, border-color .16s;
+  }
+  .hub:hover{ box-shadow:var(--shadow-hover); border-color:var(--brand); }
+  .hub-thema{
+    margin:0 0 6px; font-size:11.5px; font-weight:700; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--brand-deep);
+  }
+  .hub h3{ margin:0 0 9px; font-size:clamp(17px,1.5vw,19px); line-height:1.28; font-weight:700; }
+  .hub h3 a{ color:inherit; text-decoration:none; }
+  .hub h3 a:hover{ color:var(--brand); text-decoration:underline; }
+  .hub-satz{ margin:0 0 16px; font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+
+  .zahlen{
+    display:grid; grid-template-columns:1fr auto; gap:2px 12px;
+    margin:0 0 18px; padding:12px 14px;
+    background:var(--card-2); border:1px solid var(--line-soft); border-radius:6px;
+    font-size:13.5px;
+  }
+  .zahlen > div{ display:contents; }
+  .zahlen dt{ color:var(--ink-faint); }
+  .zahlen dd{ margin:0; text-align:right; font-weight:700; font-variant-numeric:tabular-nums; }
+
+  .hub-wege{ display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin:auto 0 8px; }
+  .btn{
+    display:inline-flex; align-items:center; min-height:40px; padding:0 18px;
+    background:var(--action); color:var(--on-action);
+    font-weight:700; font-size:14.5px; text-decoration:none; border-radius:6px;
+    transition:filter .14s;
+  }
+  .btn:hover{ filter:brightness(1.08); }
+  .dazu{ font-size:13.5px; font-weight:700; }
+  .hub-adresse{ margin:0; font-size:12.5px; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+
+  .hub.kommt{ background:var(--card-2); border-style:dashed; box-shadow:none; }
+  .hub.kommt:hover{ border-color:var(--line); box-shadow:none; }
+  .hub.kommt h3{ color:var(--ink-soft); }
+  .bald{
+    margin:auto 0 0; display:inline-block; align-self:flex-start;
+    font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--brand-deep); background:var(--brand-tint);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .gemeinsam{
+    background:var(--card); border:1px solid var(--line); border-radius:8px;
+    padding:22px 24px; margin:0 0 34px;
+  }
+  .gemeinsam h2{ margin-bottom:14px; }
+  .punkte{ display:grid; gap:16px; grid-template-columns:1fr; margin:0; padding:0; list-style:none; }
+  @media (min-width:760px){ .punkte{ grid-template-columns:1fr 1fr; } }
+  .punkte li{ font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+  .punkte b{ display:block; color:var(--ink); font-size:15px; margin-bottom:2px; }
+
+  footer{
+    border-top:1px solid var(--line); background:var(--card);
+    padding:26px 0 40px; font-size:13.5px; color:var(--ink-faint);
+  }
+  footer p{ margin:0 0 8px; max-width:74ch; }
+  footer a{ color:var(--ink-soft); }
+  details{ margin:14px 0 0; }
+  summary{ cursor:pointer; font-weight:700; color:var(--ink-soft); }
+  .legal-body{ padding:10px 0 4px; max-width:74ch; }
+  .legal-body h4{ margin:14px 0 4px; font-size:13.5px; }
+  .legal-body p{ margin:0 0 8px; }
+  .stand{ margin-top:16px; font-size:12.5px; }
+</style>
+
+<header class="top">
+  <div class="wrap kopf-oben">
+    <div>
+      <p class="eyebrow">Monitor Versorgungsforschung</p>
+      <h1>Die Knowledge-Hubs</h1>
+      <p class="standfirst">Rechercheportale für das deutsche Gesundheitswesen: Ein Suchbegriff
+      öffnet die Live-Suche in allen einschlägigen Datenbanken — und jeden Morgen kommt eine
+      neue Studienauswahl mit deutscher Zusammenfassung dazu. Wählen Sie das Thema.</p>
+    </div>
+    <a class="marke" href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=logo" target="_blank" rel="noopener" title="Monitor Versorgungsforschung — Herausgeber dieser Portale">
+      <img src="logo/mvf-logo.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
+    </a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h2>4 Hubs sind online</h2>
+  <p class="vor">Zusammen 337 Datenbanken, davon 160 mit echter Live-Suche;
+  810 Suchbegriffe im deutsch-englischen Glossar. Jeder Hub ist eigenständig und
+  hat seinen eigenen täglichen Newsletter.</p>
+
+  <div class="gitter">
+      <article class="hub">
+        <p class="hub-thema">Versorgungsforschung</p>
+        <h3><a href="https://wissen.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Versorgungsforschung</a></h3>
+        <p class="hub-satz">Der erste Hub der Reihe: Versorgungsforschung und Health Services Research in ihrer ganzen Breite — Versorgungsformen, Qualität, Steuerung, Nutzenbewertung.</p>
+        <dl class="zahlen">
+          <div><dt>Datenbanken</dt><dd>56</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>29</dd></div>
+          <div><dt>Rubriken</dt><dd>8</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>167</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>38</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://wissen.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="https://wissen.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+        </p>
+        <p class="hub-adresse">wissen.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Hitze, Klima & Gesundheit</p>
+        <h3><a href="https://klima.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Hitze, Klima & Gesundheit</a></h3>
+        <p class="hub-satz">Hitze, Extremwetter und Klimawandel und was sie für Versorgung, Praxis und Bevölkerungsgesundheit bedeuten. Mit einer eigenen Rubrik für Klima- und Umweltmessdaten statt Publikationen.</p>
+        <dl class="zahlen">
+          <div><dt>Datenbanken</dt><dd>89</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>40</dd></div>
+          <div><dt>Rubriken</dt><dd>9</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>237</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>18</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://klima.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="https://klima.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+        </p>
+        <p class="hub-adresse">klima.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Digitalisierung, KI & Gesundheit</p>
+        <h3><a href="http://ki.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Digitalisierung, KI & Gesundheit</a></h3>
+        <p class="hub-satz">Digitale Anwendungen und Künstliche Intelligenz in der Versorgung. Sucht in zwei Wissenschaftskulturen zugleich: in medizinischen Zeitschriften und in der Konferenzliteratur der Informatik.</p>
+        <dl class="zahlen">
+          <div><dt>Datenbanken</dt><dd>105</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>49</dd></div>
+          <div><dt>Rubriken</dt><dd>10</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>250</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>10</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="http://ki.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="http://ki.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+        </p>
+        <p class="hub-adresse">ki.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Pflege & Langzeitversorgung</p>
+        <h3><a href="http://pflege.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Pflege & Langzeitversorgung</a></h3>
+        <p class="hub-satz">Pflegerische Versorgung, Langzeitpflege und die Lage der Pflegenden — Personal, Qualität, Angehörige, dazu Expertenstandards und Einrichtungsvergleiche.</p>
+        <dl class="zahlen">
+          <div><dt>Datenbanken</dt><dd>87</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>42</dd></div>
+          <div><dt>Rubriken</dt><dd>11</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>156</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>7</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="http://pflege.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="http://pflege.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+        </p>
+        <p class="hub-adresse">pflege.m-vf.de</p>
+      </article>
+  </div>
+
+  <h2>Was als Nächstes kommt</h2>
+  <p class="vor">Beide Themen sind geprüft: Ihre Literatur überschneidet sich nur wenig mit der
+  der bestehenden Hubs, und es erscheint genug Neues, um täglich eine Auswahl zu tragen.</p>
+
+  <div class="gitter">
+      <article class="hub kommt">
+        <p class="hub-thema">Gesundes Altern &amp; Longevity</p>
+        <h3>Knowledge-Hub Gesundes Altern &amp; Longevity</h3>
+        <p class="hub-satz">Lebensspanne und gesunde Lebensjahre: Biologie des Alterns, Kohorten- und Sterblichkeitsdaten, Prävention und Geriatrie.</p>
+        <p class="bald">In Vorbereitung</p>
+      </article>
+      <article class="hub kommt">
+        <p class="hub-thema">Gesundheitskompetenz · Health Literacy</p>
+        <h3>Knowledge-Hub Gesundheitskompetenz</h3>
+        <p class="hub-satz">Verständliche Gesundheitsinformation, Entscheidungshilfen und Patientenbeteiligung — von der Bevölkerungsbefragung bis zur Praxis der Aufklärung.</p>
+        <p class="bald">In Vorbereitung</p>
+      </article>
+  </div>
+
+  <section class="gemeinsam">
+    <h2>Was alle Hubs gemeinsam haben</h2>
+    <ul class="punkte">
+      <li><b>Eine Suche, alle Datenbanken</b>Ein Begriff genügt: Jede Kachel öffnet damit die
+      passende Live-Suche in einem neuen Tab. Wo eine Quelle das nicht zulässt, führt die Kachel
+      auf die Startseite — und sagt das auch.</li>
+      <li><b>Deutsch suchen, englisch finden</b>Ein kuratiertes Suchglossar übersetzt den
+      deutschen Fachbegriff für die internationalen Datenbanken; deutschsprachige Quellen
+      behalten ihn.</li>
+      <li><b>Jeden Morgen neue Studien</b>Eine KI wählt aus den Neuzugängen in PubMed aus, was
+      für das deutsche Gesundheitswesen zählt, und fasst es auf Deutsch zusammen — mit den
+      Ergebniszahlen und einer Einschätzung zur Übertragbarkeit.</li>
+      <li><b>Newsletter und Downloads</b>Die Tagesauswahl kommt auf Wunsch per E-Mail, dazu als
+      Word- und Excel-Datei. Auf jeder Newsletter-Seite lassen sich auch die Newsletter der
+      anderen Hubs mitbestellen.</li>
+      <li><b>Keine Cookies, keine Tracker</b>Statische Seiten ohne Analysedienste. Schriften und
+      Bilder liegen auf dem eigenen Server; es wird keine Verbindung zu Dritten aufgebaut.</li>
+      <li><b>Kostenfrei und offen</b>Kein Konto, keine Anmeldung, keine Bezahlschranke. Wo eine
+      Datenbank selbst eine Lizenz verlangt, ist die Kachel als lizenzpflichtig gekennzeichnet.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Ein Angebot von „Monitor Versorgungsforschung" · eRelation AG – Content in Health</p>
+
+    <details id="impressum">
+      <summary>Impressum</summary>
+      <div class="legal-body">
+        <h4>Angaben gemäß § 5 DDG und § 18 Abs. 2 MStV</h4>
+        <p>eRelation AG – Content in Health<br>Johannes-von-Hanstein-Str. 2<br>53115 Bonn, Deutschland</p>
+        <p>Vertreten durch den Vorstand: Peter Stegmaier (Vorsitzender)</p>
+        <p>Telefon: +49 228 76 36 80-30<br>Fax: +49 228 76 36 80-01<br>E-Mail: info@m-vf.de</p>
+        <p>Registergericht: Amtsgericht Bonn · Registernummer: HRB 9392</p>
+        <p>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: Peter Stegmaier (Anschrift wie oben, stegmaier@m-vf.de)</p>
+        <p>Herausgeber: Prof. Dr. Reinhold Roski · Chefredaktion: Peter Stegmaier</p>
+      </div>
+    </details>
+
+    <details id="datenschutz">
+      <summary>Datenschutzhinweise</summary>
+      <div class="legal-body">
+        <h4>1. Verantwortlicher</h4>
+        <p>eRelation AG – Content in Health, vertreten durch Peter Stegmaier, Johannes-von-Hanstein-Str. 2, 53115 Bonn. Kontakt siehe Impressum.</p>
+        <h4>2. Charakter dieser Seite</h4>
+        <p>Diese Übersicht ist eine statische Seite. Sie setzt keine Cookies, nutzt keine Analyse- oder Tracking-Dienste und erhebt selbst keine personenbezogenen Daten. Schriften und Bilder liegen auf demselben Server; es werden keine Inhalte von Dritten nachgeladen. Ein Formular gibt es hier nicht.</p>
+        <h4>3. Server-Protokolle</h4>
+        <p>Die Seite wird bei GitHub Pages (GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA) gehostet. Beim Abruf verarbeitet der Anbieter technisch notwendige Verbindungsdaten wie Ihre IP-Adresse. Rechtsgrundlage ist unser berechtigtes Interesse am sicheren Betrieb (Art. 6 Abs. 1 lit. f DSGVO).</p>
+        <h4>4. Verweise auf andere Seiten</h4>
+        <p>Die Kacheln führen auf die einzelnen Knowledge-Hubs und auf monitor-versorgungsforschung.de. Für deren Inhalte und Datenverarbeitung gelten die dortigen Datenschutzhinweise; die Newsletter-Bestellung findet ausschließlich dort statt.</p>
+        <h4>5. Ihre Rechte</h4>
+        <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch sowie das Recht, sich bei einer Aufsichtsbehörde zu beschweren. Zuständig ist die Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen.</p>
+      </div>
+    </details>
+
+    <p class="stand">Stand der Zahlen: 18.08.2026. Sie werden bei jedem Bau aus den Portalen selbst gezählt.</p>
+  </div>
+</footer>
+</html>
