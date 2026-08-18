@@ -38,6 +38,7 @@ PORTALE = [
     ("Digitalisierung, KI & Gesundheit", "mvf-portal/ki-gesundheit-portal"),
     ("Pflege & Langzeitversorgung", "mvf-portal/pflege-portal"),
     ("Gesundes Altern & Longevity", "mvf-portal/longevity-portal"),
+    ("Gesundheitskompetenz", "mvf-portal/healthliteracy-portal"),
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 BERICHT_REPO = "mvf-portal/knowledge-hubs"
