@@ -25,6 +25,7 @@ import subprocess
 import sys
 import urllib.error
 import urllib.request
+from zoneinfo import ZoneInfo
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -55,6 +56,17 @@ def hole(repo: str) -> dict | None:
         raise
 
 
+def ortszeit(utc_iso: str | None) -> str:
+    """Versandzeitpunkt in deutscher Ortszeit - danach richtet sich der Leser."""
+    if not utc_iso:
+        return "?"
+    try:
+        z = dt.datetime.fromisoformat(utc_iso).astimezone(ZoneInfo("Europe/Berlin"))
+        return z.strftime("%H:%M Uhr")
+    except ValueError:
+        return utc_iso
+
+
 def zeile(name: str, repo: str, s: dict | None, heute: str) -> str:
     if s is None:
         return (f"- **{name}** — keine Statusdatei. Der Lauf ist entweder noch nicht "
@@ -63,8 +75,8 @@ def zeile(name: str, repo: str, s: dict | None, heute: str) -> str:
         return (f"- **{name}** — Status ist vom {s.get('datum')}, nicht von heute. "
                 f"Der nächtliche Lauf hat vermutlich nichts Neues gefunden.")
     if s.get("stand") == "terminiert":
-        uhr = (s.get("termin_utc") or "")[11:16]
-        return (f"- ✅ **{name}** — {s['anzahl']} Studien, geht um {uhr} UTC raus. "
+        uhr = ortszeit(s.get("termin_utc"))
+        return (f"- ✅ **{name}** — {s['anzahl']} Studien, geht um {uhr} raus. "
                 f"[Ansehen oder absagen]({s['kampagne']})  \n"
                 f"  <sub>{s.get('betreff', '')}</sub>")
     gruende = "; ".join(s.get("beanstandungen", [])) or "unbekannt"
