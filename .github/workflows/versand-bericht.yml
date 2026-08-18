@@ -1,0 +1,28 @@
+# Eine Meldung ueber alle Hubs, nachdem deren naechtliche Laeufe durch sind.
+#
+# Zeitplan: Die Portale starten um 04:00 UTC und brauchen ein bis zwei Minuten.
+# 04:45 UTC (06:45 deutscher Sommerzeit) laesst reichlich Luft und liegt weit
+# vor dem Versand um 08:00 UTC - das Veto-Fenster betraegt also gut eine Stunde,
+# selbst wenn die Meldung erst beim Fruehstueck gelesen wird.
+name: Versand-Bericht (täglich)
+
+on:
+  schedule:
+    - cron: "45 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  bericht:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Statusdateien einsammeln und Meldung anlegen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/versand_bericht.py
