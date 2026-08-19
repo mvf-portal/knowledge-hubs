@@ -40,6 +40,7 @@ PORTALE = [
     ("Gesundes Altern & Longevity", "mvf-portal/longevity-portal"),
     ("Gesundheitskompetenz", "mvf-portal/healthliteracy-portal"),
     ("Impfen & Impfpraevention", "mvf-portal/impfen-portal"),
+    ("Nicht uebertragbare Krankheiten", "mvf-portal/ncd-portal"),
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 BERICHT_REPO = "mvf-portal/knowledge-hubs"
