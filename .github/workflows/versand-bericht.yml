@@ -13,6 +13,7 @@ on:
 
 permissions:
   issues: write
+  contents: write        # fuer den taeglichen Bau von studien.json
 
 jobs:
   bericht:
@@ -22,7 +23,27 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      # Zuerst sammeln: Der Bericht nimmt die Studien in die Tageszusammen-
+      # fassung auf, wenn die Datei da ist. continue-on-error, weil die
+      # Veto-Meldung die wichtigere ist - sie muss auch dann kommen, wenn das
+      # Einsammeln scheitert.
+      - name: Studien aller Hubs einsammeln
+        continue-on-error: true
+        run: python scripts/studien_sammeln.py
+
       - name: Statusdateien einsammeln und Meldung anlegen
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/versand_bericht.py
+
+      - name: studien.json committen (nur bei Aenderung)
+        run: |
+          if [ -z "$(git status --porcelain studien.json)" ]; then
+            echo "Keine Aenderung - nichts zu committen."
+            exit 0
+          fi
+          git config user.name  "Knowledge-Hubs Bot"
+          git config user.email "stegmaier@m-vf.de"
+          git add studien.json
+          git commit -m "Studien aller Hubs, Stand $(TZ=Europe/Berlin date +%d.%m.%Y)"
+          git push

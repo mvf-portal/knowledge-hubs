@@ -83,6 +83,44 @@
      Ueberschrift dreizeilig umbricht. Beide Gitter tragen dieselbe Spaltenzahl,
      damit die angekuendigten Kacheln so breit sind wie die der laufenden Hubs. */
   .gitter{ display:grid; gap:16px; grid-template-columns:1fr; margin:0 0 42px; }
+
+  /* ---------- Studien aller Hubs ---------- */
+  .studien{ margin:0 0 42px; }
+  .st-filter{ display:flex; flex-wrap:wrap; gap:7px; margin:0 0 20px; }
+  .st-chip{
+    font:inherit; font-size:13px; padding:5px 12px; border-radius:999px; cursor:pointer;
+    background:var(--card); color:var(--ink-soft);
+    border:1px solid var(--line); transition:border-color .12s, color .12s;
+  }
+  .st-chip:hover{ border-color:var(--brand); color:var(--brand); }
+  .st-chip[aria-pressed="true"]{
+    background:var(--brand); border-color:var(--brand); color:#fff; font-weight:700;
+  }
+  .st-chip:focus-visible{ outline:2px solid var(--action); outline-offset:2px; }
+  .st-laedt{ color:var(--ink-faint); font-size:14px; margin:0 0 16px; }
+  .st-tag{
+    font-size:12px; letter-spacing:.09em; text-transform:uppercase; font-weight:700;
+    color:var(--ink-faint); margin:26px 0 10px; padding-bottom:6px;
+    border-bottom:1px solid var(--line);
+  }
+  .st-tag:first-child{ margin-top:0; }
+  .st-karte{
+    background:var(--card); border:1px solid var(--line); border-radius:6px;
+    padding:15px 17px; margin:0 0 9px;
+  }
+  .st-kopf{ display:flex; flex-wrap:wrap; align-items:baseline; gap:9px; margin:0 0 6px; }
+  .st-hub{
+    font-size:11.5px; font-weight:700; letter-spacing:.04em;
+    background:var(--brand-tint); color:var(--brand);
+    border-radius:4px; padding:2px 8px; text-decoration:none; white-space:nowrap;
+  }
+  .st-hub:hover{ text-decoration:underline; }
+  .st-quelle{ font-size:12.5px; color:var(--ink-faint); }
+  .st-titel{ font-weight:700; line-height:1.35; margin:0 0 6px; }
+  .st-text{ font-size:14.5px; line-height:1.55; margin:0 0 5px; color:var(--ink-soft); }
+  .st-text b{ color:var(--ink); }
+  .st-fuss{ font-size:12.5px; margin:8px 0 0; }
+  .st-leer{ color:var(--ink-faint); font-size:14px; }
   @media (min-width:1000px){ .gitter{ grid-template-columns:repeat(4, 1fr); } }
 
   .hub{
@@ -320,6 +358,21 @@
   </div>
 
 
+  <!-- Die Studien aller Hubs. Die Datei wird taeglich von
+       scripts/studien_sammeln.py gebaut; geladen wird sie erst, wenn der
+       Abschnitt ins Bild kommt - sie ist bei vollem Fenster gut ein halbes
+       Megabyte gross und darf den Seitenaufbau nicht aufhalten. -->
+  <section class="studien" id="studien">
+    <h2>Alle Studien der letzten 14 Tage</h2>
+    <p class="vor">Was in der ganzen Reihe erschienen ist, an einer Stelle — sonst müsste man
+    acht Seiten öffnen. Jede Studie führt zu ihrem Hub und zu PubMed.</p>
+    <div class="st-filter" id="stFilter" hidden></div>
+    <p class="st-laedt" id="stLaedt">Wird geladen …</p>
+    <div id="stListe"></div>
+    <noscript><p class="st-laedt">Für diese Übersicht wird JavaScript benötigt. Die Studien
+    stehen auch in jedem Hub einzeln.</p></noscript>
+  </section>
+
   <section class="gemeinsam">
     <h2>Was alle Hubs gemeinsam haben</h2>
     <ul class="punkte">
@@ -343,6 +396,125 @@
   </section>
 
 </main>
+
+<script>
+// ---------------------------------------------------------------- Studien
+// Die Sammeldatei baut scripts/studien_sammeln.py jede Nacht. Geladen wird sie
+// erst, wenn der Abschnitt ins Bild kommt: Bei vollem Fenster sind es gut 600
+// Kilobyte, und die Uebersicht soll sofort dastehen.
+(function () {
+  var abschnitt = document.getElementById('studien');
+  var listeEl   = document.getElementById('stListe');
+  var filterEl  = document.getElementById('stFilter');
+  var laedtEl   = document.getElementById('stLaedt');
+  if (!abschnitt || !listeEl) return;
+
+  var daten = null, aktiv = null, geholt = false;
+
+  var MONAT = ['Januar','Februar','März','April','Mai','Juni',
+               'Juli','August','September','Oktober','November','Dezember'];
+  function langesDatum(iso) {
+    var t = iso.split('-');
+    return parseInt(t[2], 10) + '. ' + MONAT[parseInt(t[1], 10) - 1] + ' ' + t[0];
+  }
+  // Ohne Maskierung stuende ein spitzes Zeichen aus einem Studientitel als
+  // Markup in der Seite. Die Portale duerfen sich das leisten, weil ihre
+  // Inhalte von Hand gepflegt sind - hier kommen sie aus acht Archiven.
+  function sicher(t) {
+    return String(t == null ? '' : t)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function karte(e) {
+    var quelle = [e.journal, e.year].filter(Boolean).join(' · ');
+    if (e.author) quelle = sicher(e.author) + ' · ' + sicher(quelle);
+    else quelle = sicher(quelle);
+    var h = '<article class="st-karte">'
+      + '<div class="st-kopf">'
+      + '<a class="st-hub" href="https://' + sicher(e.domain) + '/" target="_blank"'
+      + ' rel="noopener">' + sicher(e.hub) + '</a>'
+      + '<span class="st-quelle">' + quelle + '</span></div>'
+      + '<p class="st-titel">' + sicher(e.title) + '</p>';
+    if (e.sum)    h += '<p class="st-text">' + sicher(e.sum) + '</p>';
+    if (e.result) h += '<p class="st-text"><b>Ergebnis:</b> ' + sicher(e.result) + '</p>';
+    if (e.transfer) h += '<p class="st-text"><b>Übertragbarkeit:</b> '
+                       + sicher(e.transfer) + '</p>';
+    h += '<p class="st-fuss"><a href="https://pubmed.ncbi.nlm.nih.gov/' + sicher(e.pmid)
+       + '/" target="_blank" rel="noopener">PubMed ' + sicher(e.pmid) + '</a></p>';
+    return h + '</article>';
+  }
+
+  function zeichne() {
+    var gewaehlt = aktiv
+      ? daten.studien.filter(function (e) { return e.hub === aktiv; })
+      : daten.studien;
+    if (!gewaehlt.length) {
+      listeEl.innerHTML = '<p class="st-leer">Für diesen Hub liegt im Fenster nichts vor.</p>';
+      return;
+    }
+    var teile = [], letzter = null;
+    gewaehlt.forEach(function (e) {
+      if (e.aufgenommen !== letzter) {
+        letzter = e.aufgenommen;
+        teile.push('<p class="st-tag">' + langesDatum(letzter) + '</p>');
+      }
+      teile.push(karte(e));
+    });
+    listeEl.innerHTML = teile.join('');
+  }
+
+  function baueFilter() {
+    var knoepfe = [['Alle Hubs', null]];
+    daten.hubs.forEach(function (h) {
+      if (h.anzahl) knoepfe.push([h.name + ' (' + h.anzahl + ')', h.name]);
+    });
+    filterEl.innerHTML = knoepfe.map(function (k) {
+      return '<button type="button" class="st-chip" data-hub="' + sicher(k[1] || '')
+        + '" aria-pressed="' + (k[1] === aktiv) + '">' + sicher(k[0]) + '</button>';
+    }).join('');
+    filterEl.hidden = false;
+    filterEl.addEventListener('click', function (ev) {
+      var b = ev.target.closest('.st-chip');
+      if (!b) return;
+      aktiv = b.dataset.hub || null;
+      Array.prototype.forEach.call(filterEl.children, function (c) {
+        c.setAttribute('aria-pressed', (c.dataset.hub || null) === aktiv);
+      });
+      zeichne();
+    });
+  }
+
+  function laden() {
+    if (geholt) return;
+    geholt = true;
+    fetch('studien.json', { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (d) {
+        daten = d;
+        laedtEl.hidden = true;
+        baueFilter();
+        zeichne();
+      })
+      .catch(function () {
+        laedtEl.textContent = 'Die Übersicht ließ sich nicht laden. '
+          + 'Die Studien stehen auch in jedem Hub einzeln.';
+      });
+  }
+
+  if ('IntersectionObserver' in window) {
+    var beobachter = new IntersectionObserver(function (eintraege) {
+      if (eintraege.some(function (x) { return x.isIntersecting; })) {
+        beobachter.disconnect();
+        laden();
+      }
+    }, { rootMargin: '400px' });
+    beobachter.observe(abschnitt);
+  } else {
+    laden();
+  }
+})();
+</script>
 
 <footer>
   <div class="wrap">

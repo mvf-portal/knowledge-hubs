@@ -21,6 +21,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import os
+import pathlib
 import subprocess
 import sys
 import urllib.error
@@ -88,6 +89,41 @@ def zeile(name: str, repo: str, s: dict | None, heute: str) -> str:
             f"  <sub>Grund: {gruende}</sub>")
 
 
+def tageszusammenfassung(heute: str) -> str:
+    """Was heute in der ganzen Reihe erschienen ist - kurz, mit Verweis.
+
+    Gedacht als Lesestueck fuer die Redaktion: Die Meldung geht als
+    GitHub-Issue heraus und landet damit ohnehin im Postfach. Ein eigener
+    Newsletter dafuer waere eine zweite Zustellung fuer dieselbe Sache.
+
+    Grundlage ist die Sammeldatei von studien_sammeln.py. Fehlt sie, entfaellt
+    der Abschnitt - der Bericht selbst haengt nicht daran.
+    """
+    pfad = pathlib.Path("studien.json")
+    if not pfad.exists():
+        return ""
+    try:
+        daten = json.loads(pfad.read_text(encoding="utf-8"))
+    except (ValueError, OSError):
+        return ""
+    heutige = [e for e in daten.get("studien", []) if e.get("aufgenommen") == heute]
+    if not heutige:
+        return ""
+
+    zeilen = [f"<details><summary><b>Die {len(heutige)} Studien von heute</b> "
+              f"— aus allen Hubs, zum Nachlesen</summary>", ""]
+    letzter = None
+    for e in heutige:
+        if e.get("hub") != letzter:
+            letzter = e.get("hub")
+            zeilen.append(f"**{letzter}**")
+        zeilen.append(f"- [{e.get('title','(ohne Titel)')}]"
+                      f"(https://pubmed.ncbi.nlm.nih.gov/{e.get('pmid','')}/) — "
+                      f"*{e.get('journal','')} {e.get('year','')}*")
+    zeilen += ["", "</details>"]
+    return chr(10).join(zeilen)
+
+
 def doppelungen(gesammelt: dict[str, list[str]]) -> str:
     """Welche Studie erscheint heute in mehr als einem Hub?
 
@@ -147,6 +183,8 @@ def main() -> int:
         *zeilen,
         "",
         doppelungen(gesammelt),
+        "",
+        tageszusammenfassung(heute),
         "",
         "---",
         "<sub>Erzeugt von `scripts/versand_bericht.py`. Geprüft wurde jede Ausgabe "
