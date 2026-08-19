@@ -337,6 +337,9 @@ def main() -> int:
             # nicht beurteilen, ob die Meldung taugt.
             lesbar = html.replace("</li>", "\n").replace("</p>", "\n")
             lesbar = re.sub(r"<[^>]+>", "", lesbar)
+            # Die Lesefassung soll lesbar sein - Entitaeten zurueckwandeln.
+            import html as _html
+            lesbar = _html.unescape(lesbar)
             print(re.sub(r"\n{3,}", "\n\n", lesbar).strip())
             print("-" * 72)
             print("HTML, wie es in WordPress landet:")
