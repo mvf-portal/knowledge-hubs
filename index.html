@@ -105,9 +105,9 @@
   .st-titel{ font-weight:700; line-height:1.35; margin:0 0 6px; }
   .st-text{ font-size:14.5px; line-height:1.55; margin:0 0 5px; color:var(--ink-soft); }
   .st-text b{ color:var(--ink); }
-  .st-fuss{ font-size:12.5px; margin:auto 0 0; padding-top:10px; }
   .st-mehr{
-    display:inline-block; margin-top:9px; font-size:13px; font-weight:700;
+    display:inline-block; margin:auto 0 0; padding-top:12px;
+    font-size:13px; font-weight:700;
     color:var(--brand); text-decoration:none;
   }
   .st-mehr:hover{ text-decoration:underline; }
@@ -355,8 +355,8 @@
        Megabyte gross und darf den Seitenaufbau nicht aufhalten. -->
   <section class="studien" id="studien">
     <h2 id="stTitel">Die neuesten Studien</h2>
-    <p class="vor" id="stVor">Aus jedem Hub die jüngste Arbeit. Alle weiteren stehen im
-    jeweiligen Hub — dort auch das vollständige Archiv.</p>
+    <p class="vor" id="stVor">Aus jedem Hub die jüngste Arbeit — Zusammenfassung, Ergebnis
+    und Einordnung stehen im Hub selbst.</p>
     <p class="st-laedt" id="stLaedt">Wird geladen …</p>
     <div id="stListe"></div>
     <noscript><p class="st-laedt">Für diese Übersicht wird JavaScript benötigt. Die Studien
@@ -417,15 +417,13 @@
       + ' rel="noopener">' + sicher(hub.name) + '</a>'
       + '<span class="st-quelle">' + sicher(quelle) + '</span></div>'
       + '<p class="st-titel">' + sicher(e.title) + '</p>';
-    if (e.result) h += '<p class="st-text"><b>Ergebnis:</b> ' + sicher(e.result) + '</p>';
-    h += '<p class="st-fuss">'
-      + '<a href="https://pubmed.ncbi.nlm.nih.gov/' + sicher(e.pmid)
-      + '/" target="_blank" rel="noopener">PubMed ' + sicher(e.pmid) + '</a></p>';
-    if (uebrig > 0) {
-      h += '<a class="st-mehr" href="https://' + sicher(hub.domain) + '/" target="_blank"'
-        + ' rel="noopener">Weitere ' + uebrig + ' Studien im Hub ' + sicher(hub.name)
-        + ' &rarr;</a>';
-    }
+    // Bewusst ohne Ergebnis und ohne PubMed-Link: Die Karte soll neugierig
+    // machen und in den Hub fuehren, nicht aus der Reihe heraus.
+    var text = uebrig > 0
+      ? 'Diese und ' + uebrig + ' weitere Studien im Hub'
+      : 'Zur Studie im Hub';
+    h += '<a class="st-mehr" href="https://' + sicher(hub.domain) + '/" target="_blank"'
+      + ' rel="noopener">' + text + ' ' + sicher(hub.name) + ' &rarr;</a>';
     return h + '</article>';
   }
 
@@ -441,7 +439,8 @@
     if (vorEl) {
       vorEl.textContent = 'Aus jedem Hub die jüngste Arbeit. In den letzten '
         + d.fenster_tage + ' Tagen sind in der Reihe ' + gesamt
-        + ' Studien erschienen; alle weiteren stehen im jeweiligen Hub.';
+        + ' Studien erschienen — Zusammenfassung, Ergebnis und Einordnung '
+        + 'stehen jeweils im Hub.';
     }
   }
 
