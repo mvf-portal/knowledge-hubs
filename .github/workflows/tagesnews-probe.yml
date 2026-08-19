@@ -1,0 +1,55 @@
+# Probelauf der Tagesnews - schreibt die Meldung, legt aber nichts an.
+#
+# `--trocken` heisst: Claude schreibt den Text und er steht im Protokoll,
+# aber es entsteht kein WordPress-Entwurf und keine Mailchimp-Ausgabe. So
+# laesst sich ansehen, was die Meldung taugt, bevor sie scharf laeuft.
+#
+# Nur von Hand startbar, kein Zeitplan - der nächtliche Lauf steckt in
+# versand-bericht.yml und wuerde sonst eine zweite Meldung erzeugen.
+name: Tagesnews-Probe (nur von Hand)
+
+on:
+  workflow_dispatch:
+    inputs:
+      scharf:
+        description: "Wirklich anlegen (WordPress-Entwurf und Mailchimp)?"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read          # bewusst nur lesen
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Repo auschecken
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Abhängigkeiten installieren
+        run: pip install --quiet "anthropic>=0.40"
+
+      # Frische Sammeldatei, damit die Probe den heutigen Stand nimmt und
+      # nicht den, der zuletzt committet wurde.
+      - name: Studien aller Hubs einsammeln
+        run: python scripts/studien_sammeln.py
+
+      - name: Tagesnews schreiben
+        env:
+          KNOWLEDGEHUBS: ${{ secrets.KNOWLEDGEHUBS }}
+          KNOWLEDGEHUBSMC: ${{ secrets.KNOWLEDGEHUBSMC }}
+          WPUSER: ${{ secrets.WPUSER }}
+          WPPASSWORT: ${{ secrets.WPPASSWORT }}
+        run: |
+          if [ "${{ inputs.scharf }}" = "true" ]; then
+            python scripts/tagesnews.py
+          else
+            python scripts/tagesnews.py --trocken
+          fi
