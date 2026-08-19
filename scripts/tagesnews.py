@@ -39,6 +39,7 @@ from __future__ import annotations
 import argparse
 import base64
 import datetime as dt
+import hashlib
 import json
 import os
 import pathlib
@@ -292,6 +293,45 @@ class Mailchimp:
         raise SystemExit(f"Gruppe '{name}' in Mailchimp nicht gefunden.")
 
 
+# Wer die Tagesliste bekommen soll. Nur zur Kontrolle - eingetragen wird
+# niemand vom Skript, das bleibt Sache der Redaktion.
+MC_ERWARTET = ["stegmaier@m-vf.de", "heiser@m-vf.de"]
+
+
+def mailchimp_pruefen() -> int:
+    """Sieht nach, wer in der Gruppe steht - schreibt nichts."""
+    schluessel = os.environ.get("KNOWLEDGEHUBSMC", "").strip()
+    if not schluessel:
+        print("KNOWLEDGEHUBSMC fehlt.")
+        return 1
+    mc = Mailchimp(schluessel)
+    kat, interesse = mc.gruppe(MC_GRUPPE_NAME)
+    print(f"Gruppe '{MC_GRUPPE_NAME}': Kategorie {kat}, Gruppe {interesse}")
+
+    d = mc.ruf(f"/lists/{MC_LISTE_KENNUNG}/members"
+               f"?interest_category_id={kat}&interest_ids={interesse}"
+               f"&interest_match=all&count=200&fields=total_items,"
+               f"members.email_address,members.status")
+    mitglieder = d.get("members", [])
+    print(f"In der Gruppe: {d.get('total_items', len(mitglieder))}")
+    for m in mitglieder[:20]:
+        print(f"  {m['email_address']:<40} {m['status']}")
+
+    print()
+    print("Die beiden vorgesehenen Adressen:")
+    for adresse in MC_ERWARTET:
+        kennung = hashlib.md5(adresse.lower().encode()).hexdigest()
+        try:
+            m = mc.ruf(f"/lists/{MC_LISTE_KENNUNG}/members/{kennung}")
+        except urllib.error.HTTPError:
+            print(f"  {adresse:<40} steht nicht in der Liste")
+            continue
+        drin = bool(m.get("interests", {}).get(interesse))
+        print(f"  {adresse:<40} {m.get('status')}, "
+              f"Gruppe {'ja' if drin else 'NEIN'}")
+    return 0
+
+
 def mailchimp_liste(studien: list[dict], heute: str, trocken: bool) -> None:
     schluessel = os.environ.get("KNOWLEDGEHUBSMC", "").strip()
     if not schluessel:
@@ -351,7 +391,12 @@ def main() -> int:
     p.add_argument("--nur-wordpress", action="store_true")
     p.add_argument("--nur-mail", action="store_true")
     p.add_argument("--trocken", action="store_true")
+    p.add_argument("--pruefen", action="store_true",
+                   help="nur nachsehen, wer die Tagesliste bekaeme")
     a = p.parse_args()
+
+    if a.pruefen:
+        return mailchimp_pruefen()
 
     studien, heute = studien_von_heute()
     if not studien:

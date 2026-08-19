@@ -19,7 +19,7 @@ on:
         description: "Welcher Teil?"
         type: choice
         default: alles
-        options: [alles, nur-wordpress, nur-mail]
+        options: [alles, nur-wordpress, nur-mail, pruefen]
 
 permissions:
   contents: read          # bewusst nur lesen
@@ -58,6 +58,7 @@ jobs:
           TEIL=""
           [ "${{ inputs.teil }}" = "nur-mail" ]      && TEIL="--nur-mail"
           [ "${{ inputs.teil }}" = "nur-wordpress" ] && TEIL="--nur-wordpress"
+          [ "${{ inputs.teil }}" = "pruefen" ]       && TEIL="--pruefen"
           if [ "${{ inputs.scharf }}" = "true" ]; then
             python scripts/tagesnews.py $TEIL
           else
