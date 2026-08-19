@@ -57,9 +57,15 @@ WP = "https://www.monitor-versorgungsforschung.de/wp-json/wp/v2"
 # Trefferliste der Suchmaschinen. Bewusst jeden Tag derselbe Satz: Er
 # beschreibt die Reihe, nicht den einzelnen Tag.
 WP_AUSZUG = ("Aus der Forschung frisch auf den Schreibtisch. "
-             "Jeden Tag durch die Knowledge-Hubs von MVF")
+             "Jeden Tag durch die Knowledge-Hubs von MVF: heute {n} {wort}")
 WP_KATEGORIE = 1000            # "News" - am 19.08.2026 nachgesehen
 UEBERSICHT = "https://knowledge-hubs.m-vf.de/"
+
+
+def auszug(anzahl: int) -> str:
+    """Der Satz mit der Zahl des Tages."""
+    return WP_AUSZUG.format(n=anzahl,
+                            wort="Studie" if anzahl == 1 else "Studien")
 UTM = "?utm_source=mvf-news&utm_medium=referral&utm_campaign=tagesnews"
 
 # Die Gruppe wird zur Laufzeit ueber ihren sichtbaren Namen gesucht. Die
@@ -221,7 +227,7 @@ def baue_html(news: dict, studien: list[dict]) -> str:
 
 
 # -------------------------------------------------------------- WordPress
-def wordpress_entwurf(titel: str, html: str, trocken: bool) -> None:
+def wordpress_entwurf(titel: str, html: str, anzahl: int, trocken: bool) -> None:
     nutzer = os.environ.get("WPUSER", "").strip()
     passwort = os.environ.get("WPPASSWORT", "").strip()
     if not (nutzer and passwort):
@@ -236,7 +242,7 @@ def wordpress_entwurf(titel: str, html: str, trocken: bool) -> None:
         "content": html,
         "status": "draft",              # NIE veroeffentlichen - das macht die Redaktion
         "categories": [WP_KATEGORIE],
-        "excerpt": WP_AUSZUG,
+        "excerpt": auszug(anzahl),
     }).encode("utf-8")
     kopf = base64.b64encode(f"{nutzer}:{passwort}".encode()).decode()
     req = urllib.request.Request(
@@ -259,10 +265,10 @@ def wordpress_entwurf(titel: str, html: str, trocken: bool) -> None:
     print(f"WordPress-Entwurf angelegt: {d.get('id')} — {d.get('link','')}")
     print(f"  Bearbeiten: https://www.monitor-versorgungsforschung.de/wp-admin/"
           f"post.php?post={d.get('id')}&action=edit")
-    yoast_beschreibung(d.get("id"), kopf)
+    yoast_beschreibung(d.get("id"), kopf, anzahl)
 
 
-def wordpress_nachtragen(kennung: str) -> int:
+def wordpress_nachtragen(kennung: str, anzahl: int) -> int:
     """Den Auszug an einem Beitrag nachziehen, der schon steht."""
     nutzer = os.environ.get("WPUSER", "").strip()
     passwort = os.environ.get("WPPASSWORT", "").strip()
@@ -272,7 +278,7 @@ def wordpress_nachtragen(kennung: str) -> int:
     kopf = base64.b64encode(f"{nutzer}:{passwort}".encode()).decode()
     req = urllib.request.Request(
         f"{WP}/posts/{kennung}", method="POST",
-        data=json.dumps({"excerpt": WP_AUSZUG}).encode("utf-8"),
+        data=json.dumps({"excerpt": auszug(anzahl)}).encode("utf-8"),
         headers={"Content-Type": "application/json",
                  "Authorization": f"Basic {kopf}",
                  "User-Agent": "MVF-Knowledge-Hubs/1.0 (+https://knowledge-hubs.m-vf.de)",
@@ -285,11 +291,11 @@ def wordpress_nachtragen(kennung: str) -> int:
         print("  Antwort: " + e.read().decode("utf-8", "replace")[:400])
         return 1
     print(f"Textauszug an Beitrag {kennung} gesetzt.")
-    yoast_beschreibung(kennung, kopf)
+    yoast_beschreibung(kennung, kopf, anzahl)
     return 0
 
 
-def yoast_beschreibung(kennung, kopf: str) -> None:
+def yoast_beschreibung(kennung, kopf: str, anzahl: int) -> None:
     """Meta-Beschreibung nachtragen - ohne den Entwurf zu gefaehrden.
 
     Yoast gibt sein Feld nicht in jeder Fassung ueber die Schnittstelle frei.
@@ -301,7 +307,7 @@ def yoast_beschreibung(kennung, kopf: str) -> None:
         return
     req = urllib.request.Request(
         f"{WP}/posts/{kennung}", method="POST",
-        data=json.dumps({"meta": {"_yoast_wpseo_metadesc": WP_AUSZUG}}).encode("utf-8"),
+        data=json.dumps({"meta": {"_yoast_wpseo_metadesc": auszug(anzahl)}}).encode("utf-8"),
         headers={"Content-Type": "application/json",
                  "Authorization": f"Basic {kopf}",
                  "User-Agent": "MVF-Knowledge-Hubs/1.0 (+https://knowledge-hubs.m-vf.de)",
@@ -463,10 +469,9 @@ def main() -> int:
 
     if a.pruefen:
         return mailchimp_pruefen()
-    if a.nachtragen:
-        return wordpress_nachtragen(a.nachtragen)
-
     studien, heute = studien_von_heute()
+    if a.nachtragen:
+        return wordpress_nachtragen(a.nachtragen, len(studien))
     if not studien:
         print(f"Keine neuen Studien am {heute} - nichts zu melden.")
         return 0
@@ -494,7 +499,7 @@ def main() -> int:
         else:
             print(news["vorspann"])
         print()
-        wordpress_entwurf(news["titel"], html, a.trocken)
+        wordpress_entwurf(news["titel"], html, len(studien), a.trocken)
 
     if not a.nur_wordpress:
         mailchimp_liste(studien, heute, a.trocken)
