@@ -42,6 +42,7 @@ import datetime as dt
 import json
 import os
 import pathlib
+import re
 import sys
 import urllib.parse
 import urllib.request
@@ -327,7 +328,22 @@ def main() -> int:
     if not a.nur_mail:
         news = schreibe_news(studien)
         html = baue_html(news, studien)
-        print(f"\nTitel: {news['titel']}\n{news['vorspann']}\n")
+        print()
+        print("=" * 72)
+        print("TITEL: " + news["titel"])
+        print("=" * 72)
+        if a.trocken:
+            # Im Trockenlauf den ganzen Entwurf zeigen - sonst laesst sich
+            # nicht beurteilen, ob die Meldung taugt.
+            lesbar = html.replace("</li>", "\n").replace("</p>", "\n")
+            lesbar = re.sub(r"<[^>]+>", "", lesbar)
+            print(re.sub(r"\n{3,}", "\n\n", lesbar).strip())
+            print("-" * 72)
+            print("HTML, wie es in WordPress landet:")
+            print(html)
+        else:
+            print(news["vorspann"])
+        print()
         wordpress_entwurf(news["titel"], html, a.trocken)
 
     if not a.nur_wordpress:
