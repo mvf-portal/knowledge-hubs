@@ -39,6 +39,7 @@ PORTALE = [
     ("Pflege & Langzeitversorgung", "mvf-portal/pflege-portal"),
     ("Gesundes Altern & Longevity", "mvf-portal/longevity-portal"),
     ("Gesundheitskompetenz", "mvf-portal/healthliteracy-portal"),
+    ("Impfen & Impfpraevention", "mvf-portal/impfen-portal"),
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 BERICHT_REPO = "mvf-portal/knowledge-hubs"
@@ -86,13 +87,41 @@ def zeile(name: str, repo: str, s: dict | None, heute: str) -> str:
             f"  <sub>Grund: {gruende}</sub>")
 
 
+def doppelungen(gesammelt: dict[str, list[str]]) -> str:
+    """Welche Studie erscheint heute in mehr als einem Hub?
+
+    Die Statusdatei jedes Portals nennt die PMIDs seiner Ausgabe - der Vergleich
+    kostet also keinen zusaetzlichen Abruf. Gemessen wurde am 19.08.2026: Von 113
+    ausgelieferten Studien erschien genau eine in zwei Hubs. Die Ueberschneidung
+    der Suchraeume liegt weit hoeher (5 bis 28 Prozent); dass davon so wenig
+    ankommt, liegt an den Auswahlregeln. Diese Zeile prueft nach, ob das so
+    bleibt - eine harte Sperre ueber die Schwesterarchive lohnt erst, wenn es
+    nicht mehr stimmt.
+    """
+    wo: dict[str, list[str]] = {}
+    for name, pmids in gesammelt.items():
+        for p in pmids:
+            wo.setdefault(p, []).append(name)
+    mehrfach = {p: n for p, n in wo.items() if len(n) > 1}
+    if not mehrfach:
+        return "Keine Studie erscheint heute in mehr als einem Hub."
+    zeilen = [f"**{len(mehrfach)} Studie(n) heute in mehreren Hubs:**"]
+    for p, n in sorted(mehrfach.items()):
+        zeilen.append(f"- PMID [{p}](https://pubmed.ncbi.nlm.nih.gov/{p}/) — "
+                      + ", ".join(n))
+    return chr(10).join(zeilen)
+
+
 def main() -> int:
     trocken = "--trocken" in sys.argv
     heute = dt.date.today().isoformat()
     zeilen, terminiert, gestoppt, offen = [], 0, 0, 0
+    gesammelt: dict[str, list[str]] = {}
     for name, repo in PORTALE:
         s = hole(repo)
         zeilen.append(zeile(name, repo, s, heute))
+        if s and s.get("datum") == heute and s.get("pmids"):
+            gesammelt[name] = s["pmids"]
         if s is None or s.get("datum") != heute:
             offen += 1
         elif s.get("stand") == "terminiert":
@@ -115,6 +144,8 @@ def main() -> int:
         "*Unschedule* drücken — das geht bis zur letzten Minute vor dem Versand.",
         "",
         *zeilen,
+        "",
+        doppelungen(gesammelt),
         "",
         "---",
         "<sub>Erzeugt von `scripts/versand_bericht.py`. Geprüft wurde jede Ausgabe "
