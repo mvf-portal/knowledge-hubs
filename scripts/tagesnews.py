@@ -56,7 +56,9 @@ WP_KATEGORIE = 1000            # "News" - am 19.08.2026 nachgesehen
 UEBERSICHT = "https://knowledge-hubs.m-vf.de/"
 UTM = "?utm_source=mvf-news&utm_medium=referral&utm_campaign=tagesnews"
 
-MC_GRUPPE = "group[16144][65536]"      # Redaktion Tagesliste
+# Die Gruppe wird zur Laufzeit ueber ihren sichtbaren Namen gesucht. Die
+# Nummern aus dem Anmeldeformular (group[16144][65536]) sind andere als die
+# Kennungen der Schnittstelle - wer sie einsetzt, bekommt HTTP 500.
 MC_GRUPPE_NAME = "Redaktion Tagesliste"
 MC_LISTE_KENNUNG = "1c8fc10ec7"
 MC_ABSENDER = "Monitor Versorgungsforschung"
@@ -267,9 +269,27 @@ class Mailchimp:
         req = urllib.request.Request(
             self.basis + pfad, headers=self.kopf, method=methode,
             data=json.dumps(daten).encode() if daten is not None else None)
-        with urllib.request.urlopen(req, timeout=60) as r:
-            roh = r.read()
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                roh = r.read()
+        except urllib.error.HTTPError as e:
+            # Mailchimp schreibt in den Rumpf, welches Feld nicht stimmt. Ohne
+            # ihn steht im Protokoll nur eine nackte Nummer.
+            print(f"Mailchimp {methode} {pfad}: HTTP {e.code}")
+            print("  Antwort: " + e.read().decode("utf-8", "replace")[:600])
+            raise
         return json.loads(roh) if roh else {}
+
+    def gruppe(self, name: str) -> tuple[str, str]:
+        """Kennung von Kategorie und Gruppe zum sichtbaren Namen."""
+        kats = self.ruf(f"/lists/{MC_LISTE_KENNUNG}/interest-categories?count=60")
+        for k in kats.get("categories", []):
+            ints = self.ruf(f"/lists/{MC_LISTE_KENNUNG}/interest-categories/"
+                            f"{k['id']}/interests?count=60")
+            for i in ints.get("interests", []):
+                if i.get("name", "").strip().lower() == name.strip().lower():
+                    return k["id"], i["id"]
+        raise SystemExit(f"Gruppe '{name}' in Mailchimp nicht gefunden.")
 
 
 def mailchimp_liste(studien: list[dict], heute: str, trocken: bool) -> None:
@@ -304,13 +324,15 @@ def mailchimp_liste(studien: list[dict], heute: str, trocken: bool) -> None:
         return
 
     mc = Mailchimp(schluessel)
+    kat, interesse = mc.gruppe(MC_GRUPPE_NAME)
+    print(f"Empfaenger: Gruppe '{MC_GRUPPE_NAME}' ({interesse}).")
     kampagne = mc.ruf("/campaigns", {
         "type": "regular",
         "recipients": {
             "list_id": MC_LISTE_KENNUNG,
             "segment_opts": {"match": "all", "conditions": [{
-                "condition_type": "Interests", "field": "interests-" + MC_GRUPPE,
-                "op": "interestcontains", "value": [MC_GRUPPE]}]},
+                "condition_type": "Interests", "field": f"interests-{kat}",
+                "op": "interestcontains", "value": [interesse]}]},
         },
         "settings": {
             "subject_line": f"Neuzugänge {datum} — {len(studien)} Studien aus {len(gruppen)} Hubs",

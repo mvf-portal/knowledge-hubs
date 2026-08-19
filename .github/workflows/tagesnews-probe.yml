@@ -15,6 +15,11 @@ on:
         description: "Wirklich anlegen (WordPress-Entwurf und Mailchimp)?"
         type: boolean
         default: false
+      teil:
+        description: "Welcher Teil?"
+        type: choice
+        default: alles
+        options: [alles, nur-wordpress, nur-mail]
 
 permissions:
   contents: read          # bewusst nur lesen
@@ -48,8 +53,13 @@ jobs:
           WPUSER: ${{ secrets.WPUSER }}
           WPPASSWORT: ${{ secrets.WPPASSWORT }}
         run: |
+          # "nur-mail" spart den Aufruf beim Sprachmodell und legt keinen
+          # zweiten Entwurf an - fuer eine Wiederholung am selben Tag.
+          TEIL=""
+          [ "${{ inputs.teil }}" = "nur-mail" ]      && TEIL="--nur-mail"
+          [ "${{ inputs.teil }}" = "nur-wordpress" ] && TEIL="--nur-wordpress"
           if [ "${{ inputs.scharf }}" = "true" ]; then
-            python scripts/tagesnews.py
+            python scripts/tagesnews.py $TEIL
           else
-            python scripts/tagesnews.py --trocken
+            python scripts/tagesnews.py $TEIL --trocken
           fi
