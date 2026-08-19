@@ -27,6 +27,11 @@ jobs:
       # fassung auf, wenn die Datei da ist. continue-on-error, weil die
       # Veto-Meldung die wichtigere ist - sie muss auch dann kommen, wenn das
       # Einsammeln scheitert.
+      # Nur die Tagesnews braucht ein Paket; alles andere kommt mit der
+      # Standardbibliothek aus.
+      - name: Abhängigkeiten installieren
+        run: pip install --quiet "anthropic>=0.40"
+
       - name: Studien aller Hubs einsammeln
         continue-on-error: true
         run: python scripts/studien_sammeln.py
@@ -35,6 +40,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/versand_bericht.py
+
+      # Die Tagesnews haengt an der Sammeldatei. continue-on-error, weil weder
+      # Veto-Meldung noch Sammeldatei daran scheitern duerfen: Ein Aussetzer der
+      # Meldung auf m-vf.de ist aergerlich, ein ausgefallener Bericht schlimmer.
+      - name: Tagesnews schreiben und verschicken
+        continue-on-error: true
+        env:
+          KNOWLEDGEHUBS: ${{ secrets.KNOWLEDGEHUBS }}
+          KNOWLEDGEHUBSMC: ${{ secrets.KNOWLEDGEHUBSMC }}
+          WPUSER: ${{ secrets.WPUSER }}
+          WPPASSWORT: ${{ secrets.WPPASSWORT }}
+        run: python scripts/tagesnews.py
 
       - name: studien.json committen (nur bei Aenderung)
         run: |
