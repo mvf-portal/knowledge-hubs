@@ -53,6 +53,11 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 WP = "https://www.monitor-versorgungsforschung.de/wp-json/wp/v2"
+# Steht als Textauszug unter dem Titel und als Meta-Beschreibung in der
+# Trefferliste der Suchmaschinen. Bewusst jeden Tag derselbe Satz: Er
+# beschreibt die Reihe, nicht den einzelnen Tag.
+WP_AUSZUG = ("Aus der Forschung frisch auf den Schreibtisch. "
+             "Jeden Tag durch die Knowledge-Hubs von MVF")
 WP_KATEGORIE = 1000            # "News" - am 19.08.2026 nachgesehen
 UEBERSICHT = "https://knowledge-hubs.m-vf.de/"
 UTM = "?utm_source=mvf-news&utm_medium=referral&utm_campaign=tagesnews"
@@ -231,6 +236,7 @@ def wordpress_entwurf(titel: str, html: str, trocken: bool) -> None:
         "content": html,
         "status": "draft",              # NIE veroeffentlichen - das macht die Redaktion
         "categories": [WP_KATEGORIE],
+        "excerpt": WP_AUSZUG,
     }).encode("utf-8")
     kopf = base64.b64encode(f"{nutzer}:{passwort}".encode()).decode()
     req = urllib.request.Request(
@@ -253,6 +259,63 @@ def wordpress_entwurf(titel: str, html: str, trocken: bool) -> None:
     print(f"WordPress-Entwurf angelegt: {d.get('id')} — {d.get('link','')}")
     print(f"  Bearbeiten: https://www.monitor-versorgungsforschung.de/wp-admin/"
           f"post.php?post={d.get('id')}&action=edit")
+    yoast_beschreibung(d.get("id"), kopf)
+
+
+def wordpress_nachtragen(kennung: str) -> int:
+    """Den Auszug an einem Beitrag nachziehen, der schon steht."""
+    nutzer = os.environ.get("WPUSER", "").strip()
+    passwort = os.environ.get("WPPASSWORT", "").strip()
+    if not (nutzer and passwort):
+        print("WPUSER oder WPPASSWORT fehlt.")
+        return 1
+    kopf = base64.b64encode(f"{nutzer}:{passwort}".encode()).decode()
+    req = urllib.request.Request(
+        f"{WP}/posts/{kennung}", method="POST",
+        data=json.dumps({"excerpt": WP_AUSZUG}).encode("utf-8"),
+        headers={"Content-Type": "application/json",
+                 "Authorization": f"Basic {kopf}",
+                 "User-Agent": "MVF-Knowledge-Hubs/1.0 (+https://knowledge-hubs.m-vf.de)",
+                 "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            json.load(r)
+    except urllib.error.HTTPError as e:
+        print(f"Textauszug nicht gesetzt: HTTP {e.code}")
+        print("  Antwort: " + e.read().decode("utf-8", "replace")[:400])
+        return 1
+    print(f"Textauszug an Beitrag {kennung} gesetzt.")
+    yoast_beschreibung(kennung, kopf)
+    return 0
+
+
+def yoast_beschreibung(kennung, kopf: str) -> None:
+    """Meta-Beschreibung nachtragen - ohne den Entwurf zu gefaehrden.
+
+    Yoast gibt sein Feld nicht in jeder Fassung ueber die Schnittstelle frei.
+    Deshalb steht das hier als eigener Schritt: Schlaegt er fehl, bleibt der
+    Entwurf trotzdem stehen. Yoast greift dann auf den Textauszug zurueck, und
+    der traegt denselben Satz.
+    """
+    if not kennung:
+        return
+    req = urllib.request.Request(
+        f"{WP}/posts/{kennung}", method="POST",
+        data=json.dumps({"meta": {"_yoast_wpseo_metadesc": WP_AUSZUG}}).encode("utf-8"),
+        headers={"Content-Type": "application/json",
+                 "Authorization": f"Basic {kopf}",
+                 "User-Agent": "MVF-Knowledge-Hubs/1.0 (+https://knowledge-hubs.m-vf.de)",
+                 "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            d = json.load(r)
+    except urllib.error.HTTPError as e:
+        print(f"  Meta-Beschreibung nicht gesetzt (HTTP {e.code}) - Yoast nimmt "
+              f"den Textauszug.")
+        return
+    steht = (d.get("meta") or {}).get("_yoast_wpseo_metadesc")
+    print("  Meta-Beschreibung gesetzt." if steht else
+          "  Meta-Beschreibung von Yoast nicht uebernommen - er nimmt den Textauszug.")
 
 
 # --------------------------------------------------------------- Mailchimp
@@ -393,10 +456,15 @@ def main() -> int:
     p.add_argument("--trocken", action="store_true")
     p.add_argument("--pruefen", action="store_true",
                    help="nur nachsehen, wer die Tagesliste bekaeme")
+    p.add_argument("--nachtragen", metavar="ID",
+                   help="Textauszug und Meta-Beschreibung an einem bestehenden "
+                        "Beitrag nachtragen")
     a = p.parse_args()
 
     if a.pruefen:
         return mailchimp_pruefen()
+    if a.nachtragen:
+        return wordpress_nachtragen(a.nachtragen)
 
     studien, heute = studien_von_heute()
     if not studien:

@@ -19,7 +19,11 @@ on:
         description: "Welcher Teil?"
         type: choice
         default: alles
-        options: [alles, nur-wordpress, nur-mail, pruefen]
+        options: [alles, nur-wordpress, nur-mail, pruefen, nachtragen]
+      beitrag:
+        description: "Beitragsnummer (nur fuer teil: nachtragen)"
+        type: string
+        default: ""
 
 permissions:
   contents: read          # bewusst nur lesen
@@ -59,6 +63,7 @@ jobs:
           [ "${{ inputs.teil }}" = "nur-mail" ]      && TEIL="--nur-mail"
           [ "${{ inputs.teil }}" = "nur-wordpress" ] && TEIL="--nur-wordpress"
           [ "${{ inputs.teil }}" = "pruefen" ]       && TEIL="--pruefen"
+          [ "${{ inputs.teil }}" = "nachtragen" ]    && TEIL="--nachtragen ${{ inputs.beitrag }}"
           if [ "${{ inputs.scharf }}" = "true" ]; then
             python scripts/tagesnews.py $TEIL
           else
