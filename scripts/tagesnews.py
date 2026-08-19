@@ -44,6 +44,7 @@ import os
 import pathlib
 import re
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -232,9 +233,20 @@ def wordpress_entwurf(titel: str, html: str, trocken: bool) -> None:
     req = urllib.request.Request(
         f"{WP}/posts", data=koerper, method="POST",
         headers={"Content-Type": "application/json",
-                 "Authorization": f"Basic {kopf}"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        d = json.load(r)
+                 "Authorization": f"Basic {kopf}",
+                 # Ohne eigene Kennung sieht die Anfrage aus wie ein Skript von
+                 # der Stange; Schutz-Plugins antworten darauf gern mit 403.
+                 "User-Agent": "MVF-Knowledge-Hubs/1.0 (+https://knowledge-hubs.m-vf.de)",
+                 "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            d = json.load(r)
+    except urllib.error.HTTPError as e:
+        # Der Wortlaut aus WordPress sagt, woran es lag - ohne ihn raet man nur.
+        text = e.read().decode("utf-8", "replace")[:600]
+        print(f"WordPress lehnt ab: HTTP {e.code} {e.reason}")
+        print(f"  Antwort: {text}")
+        raise
     print(f"WordPress-Entwurf angelegt: {d.get('id')} — {d.get('link','')}")
     print(f"  Bearbeiten: https://www.monitor-versorgungsforschung.de/wp-admin/"
           f"post.php?post={d.get('id')}&action=edit")
