@@ -58,6 +58,10 @@ WP = "https://www.monitor-versorgungsforschung.de/wp-json/wp/v2"
 # beschreibt die Reihe, nicht den einzelnen Tag.
 WP_AUSZUG = ("Aus der Forschung frisch auf den Schreibtisch. "
              "Jeden Tag durch die Knowledge-Hubs von MVF: heute {n} {wort}")
+# Das Beitragsbild aus der Mediathek ("TagesnewsLogo.png"). Wird es je neu
+# hochgeladen, aendert sich die Nummer; die neue steht unter
+# /wp-json/wp/v2/media?search=TagesnewsLogo
+WP_BILD = 82099
 WP_KATEGORIE = 1000            # "News" - am 19.08.2026 nachgesehen
 UEBERSICHT = "https://knowledge-hubs.m-vf.de/"
 
@@ -243,6 +247,7 @@ def wordpress_entwurf(titel: str, html: str, anzahl: int, trocken: bool) -> None
         "status": "draft",              # NIE veroeffentlichen - das macht die Redaktion
         "categories": [WP_KATEGORIE],
         "excerpt": auszug(anzahl),
+        "featured_media": WP_BILD,
     }).encode("utf-8")
     kopf = base64.b64encode(f"{nutzer}:{passwort}".encode()).decode()
     req = urllib.request.Request(
@@ -278,7 +283,8 @@ def wordpress_nachtragen(kennung: str, anzahl: int) -> int:
     kopf = base64.b64encode(f"{nutzer}:{passwort}".encode()).decode()
     req = urllib.request.Request(
         f"{WP}/posts/{kennung}", method="POST",
-        data=json.dumps({"excerpt": auszug(anzahl)}).encode("utf-8"),
+        data=json.dumps({"excerpt": auszug(anzahl),
+                         "featured_media": WP_BILD}).encode("utf-8"),
         headers={"Content-Type": "application/json",
                  "Authorization": f"Basic {kopf}",
                  "User-Agent": "MVF-Knowledge-Hubs/1.0 (+https://knowledge-hubs.m-vf.de)",
@@ -290,7 +296,7 @@ def wordpress_nachtragen(kennung: str, anzahl: int) -> int:
         print(f"Textauszug nicht gesetzt: HTTP {e.code}")
         print("  Antwort: " + e.read().decode("utf-8", "replace")[:400])
         return 1
-    print(f"Textauszug an Beitrag {kennung} gesetzt.")
+    print(f"Textauszug und Beitragsbild an Beitrag {kennung} gesetzt.")
     yoast_beschreibung(kennung, kopf, anzahl)
     return 0
 
