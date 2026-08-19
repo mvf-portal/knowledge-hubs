@@ -62,6 +62,11 @@ WP_AUSZUG = ("Aus der Forschung frisch auf den Schreibtisch. "
 # hochgeladen, aendert sich die Nummer; die neue steht unter
 # /wp-json/wp/v2/media?search=TagesnewsLogo
 WP_BILD = 82099
+# Dasselbe Bild im Kopf der Tagesliste. Aus der Mediathek geladen und nicht
+# angehaengt: Ein eingebettetes Bild macht die Nachricht schwer und faellt
+# bei manchen Programmen in den Anhang statt in den Text.
+BILD_URL = ("https://www.monitor-versorgungsforschung.de/wp-content/"
+            "uploads/2026/08/TagesnewsLogo.png")
 WP_KATEGORIE = 1000            # "News" - am 19.08.2026 nachgesehen
 UEBERSICHT = "https://knowledge-hubs.m-vf.de/"
 
@@ -430,6 +435,9 @@ def mailchimp_liste(studien: list[dict], heute: str, trocken: bool) -> None:
                 f'PMID {escape(e["pmid"])}</a></span></li>')
         zeilen.append("</ul>")
     html = ('<div style="max-width:640px;margin:0 auto;padding:20px;">'
+            f'<img src="{BILD_URL}" width="600" alt="Knowledge-Hubs von Monitor '
+            f'Versorgungsforschung" style="display:block;width:100%;max-width:600px;'
+            f'height:auto;margin:0 0 22px;">'
             f'<h2 style="font:700 20px/1.3 Arial,sans-serif;">Neuzugänge {datum}</h2>'
             + "".join(zeilen) + "</div>")
 
