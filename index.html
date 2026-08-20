@@ -2,7 +2,7 @@
 <html lang="de">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Die Knowledge-Hubs von Monitor Versorgungsforschung: 8 Rechercheportale zu Versorgungsforschung, Gesundheitskompetenz, Pflege, Impfen, Chronische Erkrankungen, KI, Klima und Longevity. Gebündelte Live-Suchen über 685 Datenbanken und täglich neue Studien mit deutscher Zusammenfassung.">
+<meta name="description" content="Die Knowledge-Hubs von Monitor Versorgungsforschung: 9 Rechercheportale zu Versorgungsforschung, Gesundheitskompetenz, Pflege, Impfen, Chronische Erkrankungen, Geschlechtersensible Medizin, KI, Klima und Longevity. Gebündelte Live-Suchen über 777 Datenbanken und täglich neue Studien mit deutscher Zusammenfassung.">
 <title>Die Knowledge-Hubs von Monitor Versorgungsforschung</title>
 <link rel="canonical" href="https://knowledge-hubs.m-vf.de/">
 <style>
@@ -201,12 +201,12 @@
 
 <main class="wrap">
 
-  <h2>8 Hubs sind online</h2>
-  <p class="vor">Zusammen 685 Datenbanken, davon 332 mit echter Live-Suche;
-  1499 Suchbegriffe im deutsch-englischen Glossar. Jeder Hub ist eigenständig und
+  <h2>9 Hubs sind online</h2>
+  <p class="vor">Zusammen 777 Datenbanken, davon 377 mit echter Live-Suche;
+  1668 Suchbegriffe im deutsch-englischen Glossar. Jeder Hub ist eigenständig und
   hat seinen eigenen täglichen Newsletter. Die Suchräume berühren sich dabei durchaus — je nach Hub
-  liegen 5 bis 28 Prozent der gefundenen Arbeiten auch im Feld eines anderen (geprüft 08/2026).
-  In der täglichen Auswahl schlägt das kaum durch: Von 143 bisher ausgelieferten
+  liegen 3 bis 28 Prozent der gefundenen Arbeiten auch im Feld eines anderen (geprüft 08/2026).
+  In der täglichen Auswahl schlägt das kaum durch: Von 149 bisher ausgelieferten
   Studien erschienen 4 in mehr als einem Hub.</p>
 
   <div class="gitter">
@@ -294,6 +294,23 @@
           <a class="dazu" href="https://ncd.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
         </p>
         <p class="hub-adresse">ncd.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Geschlecht & Gesundheit</p>
+        <h3><a href="http://gender.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Geschlechtersensible Medizin</a></h3>
+        <p class="hub-satz">Geschlecht als Einflussgröße in der Versorgung: Diagnostik, Dosierung und Zugang — und die Frage, ob ein Unterschied aus der Biologie stammt oder aus dem Weg dorthin.</p>
+        <dl class="zahlen">
+          <div><dt>Datenbanken</dt><dd>92</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>45</dd></div>
+          <div><dt>Rubriken</dt><dd>10</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>169</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>6</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="http://gender.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="http://gender.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+        </p>
+        <p class="hub-adresse">gender.m-vf.de</p>
       </article>
       <article class="hub">
         <p class="hub-thema">Digitalisierung, KI & Gesundheit</p>
@@ -390,7 +407,7 @@
 
 <script>
 // ---------------------------------------------------------------- Studien
-// Aus jedem Hub die juengste Arbeit - acht Karten, nicht acht Listen. Die
+// Aus jedem Hub die juengste Arbeit - eine Karte je Hub, nicht eine Liste. Die
 // Sammeldatei baut scripts/studien_sammeln.py jede Nacht; geladen wird sie
 // erst, wenn der Abschnitt ins Bild kommt.
 (function () {
@@ -403,7 +420,7 @@
 
   // Ohne Maskierung stuende ein spitzes Zeichen aus einem Studientitel als
   // Markup in der Seite. Die Portale duerfen ohne arbeiten, weil ihre Inhalte
-  // von Hand gepflegt sind - hier kommen sie aus acht Archiven.
+  // von Hand gepflegt sind - hier kommen sie aus den Archiven aller Hubs.
   function sicher(t) {
     return String(t == null ? '' : t)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')

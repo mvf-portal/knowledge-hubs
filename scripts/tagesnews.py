@@ -72,9 +72,23 @@ UEBERSICHT = "https://knowledge-hubs.m-vf.de/"
 
 
 def auszug(anzahl: int) -> str:
-    """Der Satz mit der Zahl des Tages."""
+    """Der feste Satz mit der Zahl des Tages - kurz genug fuer Yoast."""
     return WP_AUSZUG.format(n=anzahl,
                             wort="Studie" if anzahl == 1 else "Studien")
+
+
+def textauszug(anzahl: int, vorspann: str) -> str:
+    """Was ins WordPress-Feld 'Textauszug' gehoert: fester Satz + Vorspann.
+
+    Der Vorspann stand bis zum 20.08.2026 als erster Absatz im Haupttext.
+    Seither traegt ihn der Textauszug, und der Haupttext beginnt bei den
+    Beispielen - so steht die Einordnung dort, wo WordPress sie in Listen und
+    Teasern ausspielt, statt doppelt im Fliesstext.
+
+    Fuer die Meta-Beschreibung bleibt es beim kurzen auszug(): Yoast schneidet
+    bei rund 155 Zeichen ab, und beides zusammen ist deutlich laenger.
+    """
+    return f"{auszug(anzahl)}. {vorspann}".strip()
 UTM = "?utm_source=mvf-news&utm_medium=referral&utm_campaign=tagesnews"
 
 # Die Gruppe wird zur Laufzeit ueber ihren sichtbaren Namen gesucht. Die
@@ -87,14 +101,23 @@ MC_ANTWORT = "redaktion@m-vf.de"
 
 MODELL = os.environ.get("MODEL", "claude-opus-5")
 
+# Dieser Prompt steht bewusst MIT Umlauten - anders als die Kommentare im
+# uebrigen Skript. Solange er in ASCII-Ersatzschreibung verfasst war, hat das
+# Modell die Orthografie seiner Anweisung uebernommen: die Meldung vom
+# 20.08.2026 stand live mit "ueber", "Pflegekraeften", "Kosteneffektivitaet"
+# und dem gar nicht mehr gueltigen "Eintreaege" - mitten zwischen den korrekt
+# geschriebenen Studientiteln aus studien.json. Die Zeile ganz unten sagt es
+# noch einmal ausdruecklich, weil das Modell hier freien Text schreibt.
 SYSTEM = (
-    "Du schreibst kurze Meldungen fuer die Nachrichtenseite von Monitor "
-    "Versorgungsforschung, einem Fachmagazin fuer Versorgungsforschung. "
+    "Du schreibst kurze Meldungen für die Nachrichtenseite von Monitor "
+    "Versorgungsforschung, einem Fachmagazin für Versorgungsforschung. "
     "Deine Leserschaft arbeitet im deutschen Gesundheitswesen: Kliniken, "
-    "Praxen, Kostentraeger, Selbstverwaltung, Politik. Sie ist fachkundig und "
+    "Praxen, Kostenträger, Selbstverwaltung, Politik. Sie ist fachkundig und "
     "hat wenig Zeit. Schreibe knapp, konkret und ohne Werbesprache. Siezen. "
     "Keine Ausrufezeichen, keine Superlative, keine leeren Wendungen wie "
-    "'spannende Einblicke' oder 'wertvolle Erkenntnisse'."
+    "'spannende Einblicke' oder 'wertvolle Erkenntnisse'. "
+    "Schreibe durchgehend korrekte deutsche Rechtschreibung mit Umlauten "
+    "(ä, ö, ü, ß) - niemals die Ersatzschreibung ae, oe, ue, ss."
 )
 
 SCHEMA = {
@@ -150,6 +173,30 @@ def studien_fuer_meldung() -> list[dict]:
     return [e for e in daten.get("studien", []) if e.get("aufgenommen") in tage]
 
 
+def hub_zahl() -> int:
+    """Wie viele Hubs die Reihe hat - gezaehlt, nicht ausgeschrieben.
+
+    Stand bis zum 20.08.2026 als Wort "acht" an zwei Stellen im Text: im
+    Auftrag ans Modell und im Schlusslink der Meldung. Beim neunten Hub
+    (gender.m-vf.de) waren beide falsch, ohne dass etwas kaputtging - genau
+    die Sorte Fehler, die live steht, bis sie jemandem auffaellt. Gezaehlt
+    wird jetzt in studien.json, das studien_sammeln.py aus PORTALE schreibt.
+    """
+    daten = json.loads(pathlib.Path("studien.json").read_text(encoding="utf-8"))
+    return len(daten.get("hubs", []))
+
+
+def wortzahl(n: int) -> str:
+    """Kleine Zahlen ausgeschrieben - so liest sich die Meldung wie Text.
+
+    Die Werte stehen MIT Umlaut: Sie landen im Fliesstext der Meldung und im
+    Auftrag ans Modell, nicht im Kommentar. Fuer die Ersatzschreibung gilt
+    hier dasselbe wie fuer den Prompt weiter oben.
+    """
+    worte = {7: "sieben", 8: "acht", 9: "neun", 10: "zehn", 11: "elf", 12: "zwölf"}
+    return worte.get(n, str(n))
+
+
 def nach_hub(studien: list[dict]) -> dict[str, list[dict]]:
     raus: dict[str, list[dict]] = {}
     for e in studien:
@@ -187,16 +234,17 @@ def schreibe_news(studien: list[dict]) -> dict:
                 f"{e.get('title','')} | Ergebnis: {e.get('result','')}")
 
     auftrag = (
-        f"Heute sind in den acht Knowledge-Hubs {len(studien)} neue Studien "
+        f"Heute sind in den {wortzahl(hub_zahl())} Knowledge-Hubs "
+        f"{len(studien)} neue Studien "
         f"aufgenommen worden, verteilt auf {len(gruppen)} Hubs.\n"
         f"{chr(10).join(material)}\n\n"
         "Schreibe daraus eine kurze Meldung:\n"
         "- titel: eine Zeile, sachlich, nennt die Zahl. Kein Doppelpunkt-Zusatz.\n"
-        "- vorspann: zwei bis drei Saetze. Nennt die Zahl der Studien und der "
+        "- vorspann: zwei bis drei Sätze. Nennt die Zahl der Studien und der "
         "Hubs und sagt, was die Leserschaft davon hat.\n"
-        "- beispiele: DREI bis VIER Studien, die fuer die Leserschaft am "
+        "- beispiele: DREI bis VIER Studien, die für die Leserschaft am "
         "interessantesten sind. Je Beispiel die PMID und EIN Satz, der das "
-        "Ergebnis nennt - konkret, mit Zahl, wenn eine da ist. Waehle aus "
+        "Ergebnis nennt - konkret, mit Zahl, wenn eine da ist. Wähle aus "
         "verschiedenen Hubs.\n"
         "- schluss: ein Satz, der auf die Hubs verweist. Keine Aufforderung "
         "im Werbeton.\n"
@@ -219,9 +267,9 @@ def baue_html(news: dict, studien: list[dict]) -> str:
     nach_pmid = {e["pmid"]: e for e in studien}
     gruppen = nach_hub(studien)
 
-    teile = [f"<p><strong>{escape(news['vorspann'])}</strong></p>"]
-
-    teile.append("<ul>")
+    # Kein Vorspann hier: der steht im Textauszug (siehe textauszug()). Die
+    # Meldung faengt mit den Beispielen an.
+    teile = ["<ul>"]
     for b in news.get("beispiele", []):
         e = nach_pmid.get(b.get("pmid", ""))
         if not e:
@@ -247,13 +295,15 @@ def baue_html(news: dict, studien: list[dict]) -> str:
 
     teile.append(
         f'<p><a href="{escape(UEBERSICHT + UTM)}" target="_blank" rel="noopener">'
-        "Alle acht Knowledge-Hubs im Überblick</a> — kostenfrei, ohne Anmeldung, "
+        f"Alle {wortzahl(hub_zahl())} Knowledge-Hubs im Überblick</a> — "
+        "kostenfrei, ohne Anmeldung, "
         "mit täglichem Studien-Newsletter je Hub.</p>")
     return "\n".join(teile)
 
 
 # -------------------------------------------------------------- WordPress
-def wordpress_entwurf(titel: str, html: str, anzahl: int, trocken: bool) -> None:
+def wordpress_entwurf(titel: str, html: str, anzahl: int, vorspann: str,
+                      trocken: bool) -> None:
     nutzer = os.environ.get("WPUSER", "").strip()
     passwort = os.environ.get("WPPASSWORT", "").strip()
     if not (nutzer and passwort):
@@ -268,7 +318,7 @@ def wordpress_entwurf(titel: str, html: str, anzahl: int, trocken: bool) -> None
         "content": html,
         "status": "draft",              # NIE veroeffentlichen - das macht die Redaktion
         "categories": [WP_KATEGORIE],
-        "excerpt": auszug(anzahl),
+        "excerpt": textauszug(anzahl, vorspann),
         "featured_media": WP_BILD,
     }).encode("utf-8")
     kopf = base64.b64encode(f"{nutzer}:{passwort}".encode()).decode()
@@ -296,17 +346,30 @@ def wordpress_entwurf(titel: str, html: str, anzahl: int, trocken: bool) -> None
 
 
 def wordpress_nachtragen(kennung: str, anzahl: int) -> int:
-    """Den Auszug an einem Beitrag nachziehen, der schon steht."""
+    """Bild und Meta-Beschreibung an einem Beitrag nachziehen, der schon steht.
+
+    Den Textauszug ruehrt das nur an, wenn er leer ist. Seit dem 20.08.2026
+    traegt er den Vorspann der Meldung (siehe textauszug()), und den kann
+    dieser Aufruf nicht kennen - er bekommt nur die Zahl des Tages. Ihn mit
+    dem kurzen Satz zu ueberschreiben, wuerde die Einordnung loeschen.
+    """
     nutzer = os.environ.get("WPUSER", "").strip()
     passwort = os.environ.get("WPPASSWORT", "").strip()
     if not (nutzer and passwort):
         print("WPUSER oder WPPASSWORT fehlt.")
         return 1
     kopf = base64.b64encode(f"{nutzer}:{passwort}".encode()).decode()
+
+    felder = {"featured_media": WP_BILD}
+    if not vorhandener_auszug(kennung, kopf):
+        felder["excerpt"] = auszug(anzahl)
+        print("Textauszug war leer - der kurze Satz wird eingetragen.")
+    else:
+        print("Textauszug steht bereits - bleibt unveraendert.")
+
     req = urllib.request.Request(
         f"{WP}/posts/{kennung}", method="POST",
-        data=json.dumps({"excerpt": auszug(anzahl),
-                         "featured_media": WP_BILD}).encode("utf-8"),
+        data=json.dumps(felder).encode("utf-8"),
         headers={"Content-Type": "application/json",
                  "Authorization": f"Basic {kopf}",
                  "User-Agent": "MVF-Knowledge-Hubs/1.0 (+https://knowledge-hubs.m-vf.de)",
@@ -315,12 +378,33 @@ def wordpress_nachtragen(kennung: str, anzahl: int) -> int:
         with urllib.request.urlopen(req, timeout=60) as r:
             json.load(r)
     except urllib.error.HTTPError as e:
-        print(f"Textauszug nicht gesetzt: HTTP {e.code}")
+        print(f"Nichts nachgetragen: HTTP {e.code}")
         print("  Antwort: " + e.read().decode("utf-8", "replace")[:400])
         return 1
-    print(f"Textauszug und Beitragsbild an Beitrag {kennung} gesetzt.")
+    print(f"Beitragsbild an Beitrag {kennung} gesetzt.")
     yoast_beschreibung(kennung, kopf, anzahl)
     return 0
+
+
+def vorhandener_auszug(kennung: str, kopf: str) -> str:
+    """Der Textauszug, wie er gerade am Beitrag steht - leer heisst leer.
+
+    Faellt die Abfrage aus, gibt es absichtlich einen nicht-leeren Wert
+    zurueck: Im Zweifel lieber nichts ueberschreiben.
+    """
+    req = urllib.request.Request(
+        f"{WP}/posts/{kennung}?context=edit&_fields=excerpt", method="GET",
+        headers={"Authorization": f"Basic {kopf}",
+                 "User-Agent": "MVF-Knowledge-Hubs/1.0 (+https://knowledge-hubs.m-vf.de)",
+                 "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            d = json.load(r)
+    except urllib.error.HTTPError as e:
+        print(f"  Beitrag nicht gelesen (HTTP {e.code}) - Textauszug bleibt, wie er ist.")
+        return "unbekannt"
+    return ((d.get("excerpt") or {}).get("raw")
+            or (d.get("excerpt") or {}).get("rendered") or "").strip()
 
 
 def yoast_beschreibung(kennung, kopf: str, anzahl: int) -> None:
@@ -328,8 +412,10 @@ def yoast_beschreibung(kennung, kopf: str, anzahl: int) -> None:
 
     Yoast gibt sein Feld nicht in jeder Fassung ueber die Schnittstelle frei.
     Deshalb steht das hier als eigener Schritt: Schlaegt er fehl, bleibt der
-    Entwurf trotzdem stehen. Yoast greift dann auf den Textauszug zurueck, und
-    der traegt denselben Satz.
+    Entwurf trotzdem stehen. Yoast greift dann auf den Textauszug zurueck -
+    seit dem 20.08.2026 traegt der den Vorspann mit und ist laenger als die
+    155 Zeichen, die in der Trefferliste stehen. Yoast kuerzt selbst; der
+    Anfang ist derselbe feste Satz, also bleibt der Rueckfall brauchbar.
     """
     if not kennung:
         return
@@ -494,8 +580,9 @@ def main() -> int:
     p.add_argument("--pruefen", action="store_true",
                    help="nur nachsehen, wer die Tagesliste bekaeme")
     p.add_argument("--nachtragen", metavar="ID",
-                   help="Textauszug und Meta-Beschreibung an einem bestehenden "
-                        "Beitrag nachtragen")
+                   help="Beitragsbild und Meta-Beschreibung an einem "
+                        "bestehenden Beitrag nachtragen; den Textauszug nur, "
+                        "wenn er leer ist")
     a = p.parse_args()
 
     if a.pruefen:
@@ -528,7 +615,12 @@ def main() -> int:
         print("=" * 72)
         if a.trocken:
             # Im Trockenlauf den ganzen Entwurf zeigen - sonst laesst sich
-            # nicht beurteilen, ob die Meldung taugt.
+            # nicht beurteilen, ob die Meldung taugt. Die beiden WordPress-
+            # Felder getrennt, weil sie getrennt gepflegt werden.
+            print("TEXTAUSZUG:")
+            print(textauszug(len(fuer_meldung), news["vorspann"]))
+            print("-" * 72)
+            print("HAUPTTEXT:")
             lesbar = html.replace("</li>", "\n").replace("</p>", "\n")
             lesbar = re.sub(r"<[^>]+>", "", lesbar)
             # Die Lesefassung soll lesbar sein - Entitaeten zurueckwandeln.
@@ -541,7 +633,8 @@ def main() -> int:
         else:
             print(news["vorspann"])
         print()
-        wordpress_entwurf(news["titel"], html, len(studien_der_meldung), a.trocken)
+        wordpress_entwurf(news["titel"], html, len(studien_der_meldung),
+                          news["vorspann"], a.trocken)
 
     if not a.nur_wordpress:
         if studien:
