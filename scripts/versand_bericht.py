@@ -80,7 +80,14 @@ def zeile(name: str, repo: str, s: dict | None, heute: str) -> str:
                 f"Der nächtliche Lauf hat vermutlich nichts Neues gefunden.")
     if s.get("stand") == "terminiert":
         uhr = ortszeit(s.get("termin_utc"))
-        return (f"- ✅ **{name}** — {s['anzahl']} Studien, geht um {uhr} raus. "
+        # Die Empfaengerzahl steht bewusst im Bericht: Sie ist die einzige
+        # Zahl, an der ein verrutschtes Segment taeglich auffaellt.
+        wer = ""
+        if s.get("empfaenger"):
+            wer = f" an {s['empfaenger']} Empfänger"
+            if s.get("listengroesse"):
+                wer += f" von {s['listengroesse']}"
+        return (f"- ✅ **{name}** — {s['anzahl']} Studien, geht um {uhr}{wer} raus. "
                 f"[Ansehen oder absagen]({s['kampagne']})  \n"
                 f"  <sub>{s.get('betreff', '')}</sub>")
     gruende = "; ".join(s.get("beanstandungen", [])) or "unbekannt"
