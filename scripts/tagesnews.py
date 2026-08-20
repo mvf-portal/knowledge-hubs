@@ -125,12 +125,29 @@ SCHEMA = {
 
 # ------------------------------------------------------------------- Daten
 def studien_von_heute() -> tuple[list[dict], str]:
+    """Die Neuzugaenge des heutigen Tages - Grundlage der Tagesliste."""
     pfad = pathlib.Path("studien.json")
     if not pfad.exists():
         raise SystemExit("studien.json fehlt - erst scripts/studien_sammeln.py laufen lassen.")
     daten = json.loads(pfad.read_text(encoding="utf-8"))
     heute = dt.date.today().isoformat()
     return [e for e in daten.get("studien", []) if e.get("aufgenommen") == heute], heute
+
+
+def studien_fuer_meldung() -> list[dict]:
+    """Was in die Meldung gehoert - montags samt Wochenende.
+
+    Die Newsseite bekommt werktags Zuwachs, die Hubs werden aber taeglich
+    aktualisiert. Ohne diesen Rueckgriff fielen die Studien von Samstag und
+    Sonntag aus der Meldung heraus. Die Tagesliste an die Redaktion laeuft
+    davon unberuehrt jeden Tag und bleibt bei einem Tag.
+    """
+    daten = json.loads(pathlib.Path("studien.json").read_text(encoding="utf-8"))
+    tag = dt.date.today()
+    tage = {tag.isoformat()}
+    if tag.weekday() == 0:
+        tage |= {(tag - dt.timedelta(days=n)).isoformat() for n in (1, 2)}
+    return [e for e in daten.get("studien", []) if e.get("aufgenommen") in tage]
 
 
 def nach_hub(studien: list[dict]) -> dict[str, list[dict]]:
@@ -486,14 +503,25 @@ def main() -> int:
     studien, heute = studien_von_heute()
     if a.nachtragen:
         return wordpress_nachtragen(a.nachtragen, len(studien))
-    if not studien:
+    # Montags kann der Tag selbst leer sein und das Wochenende trotzdem etwas
+    # gebracht haben. Dann gibt es zwar keine Tagesliste, aber eine Meldung.
+    montag_nachzug = dt.date.today().weekday() == 0 and bool(studien_fuer_meldung())
+    if not studien and not montag_nachzug:
         print(f"Keine neuen Studien am {heute} - nichts zu melden.")
         return 0
     print(f"{len(studien)} Studien aus {len(nach_hub(studien))} Hubs.")
 
-    if not a.nur_mail:
-        news = schreibe_news(studien)
-        html = baue_html(news, studien)
+    # Am Wochenende entsteht keine Meldung; die Tagesliste geht trotzdem
+    # heraus, sie ist ein Arbeitsmittel der Redaktion und kein Newsletter.
+    wochenende = dt.date.today().weekday() >= 5
+    if wochenende and not a.nur_wordpress:
+        print("Wochenende - keine Meldung. Die Studien laufen am Montag mit.")
+
+    if not a.nur_mail and not wochenende:
+        fuer_meldung = studien_fuer_meldung()
+        news = schreibe_news(fuer_meldung)
+        html = baue_html(news, fuer_meldung)
+        studien_der_meldung = fuer_meldung
         print()
         print("=" * 72)
         print("TITEL: " + news["titel"])
@@ -513,10 +541,13 @@ def main() -> int:
         else:
             print(news["vorspann"])
         print()
-        wordpress_entwurf(news["titel"], html, len(studien), a.trocken)
+        wordpress_entwurf(news["titel"], html, len(studien_der_meldung), a.trocken)
 
     if not a.nur_wordpress:
-        mailchimp_liste(studien, heute, a.trocken)
+        if studien:
+            mailchimp_liste(studien, heute, a.trocken)
+        else:
+            print("Keine Neuzugaenge heute - keine Tagesliste an die Redaktion.")
     return 0
 
 
