@@ -503,8 +503,116 @@ def bilder_aus_pdf(pfad: pathlib.Path) -> list[tuple[str, bytes]]:
     return gefunden
 
 
+def bilder_aus_mailobjekt(mail) -> list[tuple[str, bytes]]:
+    """Das Bildmaterial einer Outlook-Nachricht.
+
+    Zweierlei kommt in Frage: Bilder, die als Datei anhaengen, und Bilder in
+    einem angehaengten PDF. Beides wird nach Breite gesiebt - was schmaler
+    als 300 Pixel ist, ist Signaturschmuck, kein Beitragsbild.
+    """
+    import tempfile
+
+    gefunden = []
+    ordner = pathlib.Path(tempfile.mkdtemp(prefix="pm-mailbild-"))
+    for anhang in mail.Attachments:
+        name = str(anhang.FileName)
+        endung = pathlib.Path(name).suffix.lower()
+        if endung not in (".pdf", ".jpg", ".jpeg", ".png", ".gif", ".webp"):
+            continue
+        ziel = ordner / name
+        try:
+            anhang.SaveAsFile(str(ziel))
+        except Exception:
+            continue
+        if endung == ".pdf":
+            gefunden.extend(bilder_aus_pdf(ziel))
+            continue
+        if breit_genug(ziel):
+            gefunden.append((name, ziel.read_bytes()))
+    return gefunden
+
+
+def breit_genug(pfad: pathlib.Path, mindestens: int = 300) -> bool:
+    try:
+        from PIL import Image
+    except ImportError:
+        return True                     # ohne Pillow lieber mitnehmen
+    try:
+        with Image.open(pfad) as bild:
+            return bild.width >= mindestens
+    except Exception:
+        return False
+
+
+def masse(rohdaten: bytes) -> tuple[int, int]:
+    """Breite und Hoehe eines Bildes im Arbeitsspeicher."""
+    try:
+        import io
+
+        from PIL import Image
+        with Image.open(io.BytesIO(rohdaten)) as bild:
+            return bild.width, bild.height
+    except Exception:
+        return 0, 0
+
+
+def bestes_bild(bilder: list[tuple[str, bytes]]) -> int:
+    """Welches Bild traegt die Meldung am ehesten?
+
+    Das flaechenmaessig groesste. Briefkoepfe und Signaturlogos sind breite
+    schmale Streifen; ein Diagramm oder ein Foto hat mehr Flaeche. Perfekt
+    ist die Regel nicht - deshalb setzt sie nur einen Vorschlag, den die
+    Redaktion im Beitrag mit zwei Klicks austauscht.
+    """
+    beste, bester_wert = 0, -1
+    for nummer, (_, rohdaten) in enumerate(bilder):
+        breite, hoehe = masse(rohdaten)
+        wert = breite * hoehe or len(rohdaten)
+        if wert > bester_wert:
+            beste, bester_wert = nummer, wert
+    return beste
+
+
+# Breite der Bilder in der Mediathek. Die Redaktion legt Newsbilder in dieser
+# Groesse ab (U10-Meldung 300x150, Tagesnews-Logo 300x158) - alles Groessere
+# waere Ballast, denn die Newsliste zeigt die Bilder ohnehin klein.
+BILDBREITE = 300
+
+
+def verkleinern(name: str, rohdaten: bytes) -> tuple[str, bytes]:
+    """Auf BILDBREITE bringen, Seitenverhaeltnis behalten.
+
+    Nur verkleinern, nie vergroessern: Ein 200 Pixel breites Logo wuerde beim
+    Hochrechnen nur unschaerfer. PNG bleibt PNG (Logos mit klaren Kanten),
+    alles andere wird JPEG.
+    """
+    try:
+        import io
+
+        from PIL import Image
+    except ImportError:
+        return name, rohdaten
+    try:
+        with Image.open(io.BytesIO(rohdaten)) as bild:
+            if bild.width <= BILDBREITE:
+                return name, rohdaten
+            hoehe = round(bild.height * BILDBREITE / bild.width)
+            klein = bild.convert("RGBA" if bild.mode == "RGBA" else "RGB")
+            klein = klein.resize((BILDBREITE, hoehe), Image.LANCZOS)
+            eimer = io.BytesIO()
+            if klein.mode == "RGBA":
+                klein.save(eimer, "PNG", optimize=True)
+                name = pathlib.Path(name).with_suffix(".png").name
+            else:
+                klein.save(eimer, "JPEG", quality=85, optimize=True)
+                name = pathlib.Path(name).with_suffix(".jpg").name
+            return name, eimer.getvalue()
+    except Exception:
+        return name, rohdaten
+
+
 def bilder_anhaengen(bilder: list[tuple[str, bytes]], beitrag: int,
-                     kopf: str, titel: str) -> None:
+                     kopf: str, titel: str) -> list[int]:
     """Die Bilder der Mitteilung an den Entwurf haengen.
 
     Angehaengt heisst: Im Dialog *Beitragsbild festlegen* stehen sie unter
@@ -513,6 +621,11 @@ def bilder_anhaengen(bilder: list[tuple[str, bytes]], beitrag: int,
     """
     neue = []
     for name, rohdaten in bilder:
+        vorher = len(rohdaten)
+        name, rohdaten = verkleinern(name, rohdaten)
+        if len(rohdaten) < vorher:
+            print(f"  {name}: {vorher // 1024} KB -> "
+                  f"{len(rohdaten) // 1024} KB ({BILDBREITE} Pixel breit)")
         art = mimetypes.guess_type(name)[0] or "image/png"
         kopfzeilen = {"Authorization": f"Basic {kopf}",
                       "User-Agent": KENNUNG,
@@ -532,6 +645,7 @@ def bilder_anhaengen(bilder: list[tuple[str, bytes]], beitrag: int,
         except urllib.error.HTTPError as e:
             print(f"  Bild {name} nicht hochgeladen: HTTP {e.code}")
     in_ordner(neue, kopf)
+    return neue
 
 
 def bild_hochladen(pfad: pathlib.Path, kopf: str, titel: str) -> int:
@@ -556,7 +670,8 @@ def bild_hochladen(pfad: pathlib.Path, kopf: str, titel: str) -> int:
 
 
 def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
-            trocken: bool, quelle: pathlib.Path | None = None) -> bool:
+            trocken: bool, quelle: pathlib.Path | None = None,
+            bilder: list[tuple[str, bytes]] | None = None) -> bool:
     """Legt den Entwurf an. Rueckgabe: ob wirklich einer entstanden ist -
     beim Postfachlauf soll die Zaehlung nicht Dubletten mitzaehlen."""
     kopf = zugang()
@@ -601,15 +716,30 @@ def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
 
     # Das Bildmaterial der Mitteilung gleich mit an den Entwurf haengen -
     # sonst muesste die Redaktion die Quelle erst wieder heraussuchen.
-    if quelle is not None and quelle.suffix.lower() == ".pdf":
+    if bilder is None and quelle is not None and quelle.suffix.lower() == ".pdf":
         bilder = bilder_aus_pdf(quelle)
-        if bilder:
-            print(f"  {len(bilder)} Bild(er) aus der Mitteilung:")
-            bilder_anhaengen(bilder, d["id"], kopf, meldung["titel"])
+    hochgeladen = []
+    if bilder:
+        print(f"  {len(bilder)} Bild(er) aus der Mitteilung:")
+        hochgeladen = bilder_anhaengen(bilder, d["id"], kopf, meldung["titel"])
+
+    # Immer eines eintragen: Ein Entwurf ohne Bild sieht in der Liste aus wie
+    # ein Fehler. Welches es am Ende wird, entscheidet die Redaktion - das
+    # Austauschen kostet zwei Klicks, das erste Suchen kostet Minuten.
+    if not nummer and hochgeladen:
+        vorschlag = hochgeladen[min(bestes_bild(bilder), len(hochgeladen) - 1)]
+        try:
+            wp_ruf(f"/posts/{d['id']}", kopf,
+                   json.dumps({"featured_media": vorschlag}).encode("utf-8"),
+                   methode="POST")
+            nummer = vorschlag
+            print(f"  Beitragsbild vorgeschlagen: Nr. {vorschlag}")
+        except urllib.error.HTTPError as e:
+            print(f"  Beitragsbild nicht gesetzt: HTTP {e.code}")
 
     if not nummer:
-        print("  Kein Beitragsbild gesetzt - das waehlt die Redaktion im "
-              "Beitrag unter 'Beitragsbild festlegen'.")
+        print("  Kein Bild in der Mitteilung - die Redaktion waehlt eines "
+              "unter 'Beitragsbild festlegen'.")
     return True
 
 
@@ -792,7 +922,8 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
             if trocken:
                 print("  [trocken] kein Entwurf, Mail bleibt liegen.\n")
                 continue
-            neu = entwurf(meldung, inhalt, None, False, None)
+            neu = entwurf(meldung, inhalt, None, False, None,
+                          bilder_aus_mailobjekt(mail))
             ablegen(meldung, inhalt, text, None)
             # Erst jetzt anfassen: Was schiefgeht, bleibt unmarkiert liegen
             # und kommt beim naechsten Lauf wieder dran.
