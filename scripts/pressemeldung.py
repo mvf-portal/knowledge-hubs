@@ -556,22 +556,24 @@ def bild_hochladen(pfad: pathlib.Path, kopf: str, titel: str) -> int:
 
 
 def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
-            trocken: bool, quelle: pathlib.Path | None = None) -> None:
+            trocken: bool, quelle: pathlib.Path | None = None) -> bool:
+    """Legt den Entwurf an. Rueckgabe: ob wirklich einer entstanden ist -
+    beim Postfachlauf soll die Zaehlung nicht Dubletten mitzaehlen."""
     kopf = zugang()
     if kopf is None:
         print("WPUSER oder WPPASSWORT fehlt - kein Entwurf angelegt.")
-        return
+        return False
 
     doppelt = schon_da(meldung["titel"], kopf)
     if doppelt:
         print(f"Gibt es schon ({doppelt['status']}, Nr. {doppelt['id']}): "
               f"{doppelt.get('link','')}")
         print("Kein zweiter Entwurf angelegt.")
-        return
+        return False
 
     if trocken:
         print(f"[trocken] Entwurf waere angelegt: {meldung['titel']}")
-        return
+        return False
 
     felder = {
         "title": meldung["titel"],
@@ -592,7 +594,7 @@ def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
         # Der Wortlaut aus WordPress sagt, woran es lag - ohne ihn raet man nur.
         print(f"WordPress lehnt ab: HTTP {e.code} {e.reason}")
         print(f"  Antwort: {e.read().decode('utf-8', 'replace')[:600]}")
-        return
+        return False
     print(f"Entwurf angelegt: Nr. {d['id']}")
     print(f"  Bearbeiten: https://www.monitor-versorgungsforschung.de/"
           f"wp-admin/post.php?post={d['id']}&action=edit")
@@ -608,6 +610,7 @@ def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
     if not nummer:
         print("  Kein Beitragsbild gesetzt - das waehlt die Redaktion im "
               "Beitrag unter 'Beitragsbild festlegen'.")
+    return True
 
 
 # -------------------------------------------------------------------- Ablage
@@ -651,6 +654,13 @@ def ablegen(meldung: dict, inhalt: str, quelltext: str,
 def dt_heute() -> str:
     import datetime
     return datetime.date.today().isoformat()
+
+
+def dt_jetzt_utc():
+    """Jetzt, mit Zeitzone - Outlook liefert Zeitstempel mit Zone, und ohne
+    laesst sich das nicht vergleichen."""
+    import datetime
+    return datetime.datetime.now(datetime.timezone.utc)
 
 
 # ------------------------------------------------------------------- Vorschau
@@ -704,6 +714,11 @@ class Zweifach:
 # ------------------------------------------------------------ Postfachlauf
 PM_ORDNER = "Pressemitteilungen"
 PM_ERLEDIGT = "erledigt"
+# Woran das Skript erkennt, dass es eine Mitteilung schon hatte. Bewusst
+# nicht am Gelesen-Merkmal: Wer eine Mail oeffnet, um zu sehen, was drinsteht,
+# wuerde sie damit aus der Automatik nehmen.
+PM_MARKE = "Pressemeldung erledigt"
+PM_TAGE = 3                            # aelteres bleibt liegen
 
 
 def unterordner(eltern, name: str):
@@ -728,6 +743,9 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
     ziel = unterordner(posteingang, PM_ORDNER)
     erledigt = unterordner(ziel, PM_ERLEDIGT)
 
+    import datetime
+    grenze = (dt_jetzt_utc() - datetime.timedelta(days=PM_TAGE))
+
     kandidaten = []
     for quelle in (ziel, posteingang):                      # Ordner zuerst
         posten = quelle.Items
@@ -736,8 +754,12 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
             if len(kandidaten) >= hoechstens * 4:
                 break
             try:
-                if mail.Class != 43 or not mail.UnRead:     # 43 = MailItem
+                if mail.Class != 43:                        # 43 = MailItem
                     continue
+                if PM_MARKE in str(getattr(mail, "Categories", "")):
+                    continue                                # schon gehabt
+                if mail.ReceivedTime < grenze:
+                    break                                   # ab hier nur Aelteres
                 absender = str(getattr(mail, "SenderEmailAddress", ""))
                 betreff = str(getattr(mail, "Subject", ""))
             except Exception:
@@ -770,13 +792,16 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
             if trocken:
                 print("  [trocken] kein Entwurf, Mail bleibt liegen.\n")
                 continue
-            entwurf(meldung, inhalt, None, False, None)
+            neu = entwurf(meldung, inhalt, None, False, None)
             ablegen(meldung, inhalt, text, None)
-            # Erst jetzt anfassen: Was schiefgeht, bleibt ungelesen liegen und
-            # kommt beim naechsten Lauf wieder dran.
+            # Erst jetzt anfassen: Was schiefgeht, bleibt unmarkiert liegen
+            # und kommt beim naechsten Lauf wieder dran.
+            vorhanden = str(getattr(mail, "Categories", "")).strip()
+            mail.Categories = f"{vorhanden}; {PM_MARKE}".strip("; ")
             mail.UnRead = False
+            mail.Save()
             mail.Move(erledigt)
-            fertig += 1
+            fertig += 1 if neu else 0
             print()
         except Exception as fehler:
             print(f"  Fehlgeschlagen: {fehler}\n")
