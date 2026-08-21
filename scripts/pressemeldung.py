@@ -8,6 +8,8 @@ suchen, Entwurf anlegen. Dieses Skript nimmt ihr alles ab bis auf die
 Freigabe - genau wie `tagesnews.py`, nur ist die Quelle hier keine
 Sammeldatei, sondern eine einzelne Pressemitteilung.
 
+    python scripts/pressemeldung.py postfach             # alle neuen Mails
+    python scripts/pressemeldung.py lernen               # Logos nachtragen
     python scripts/pressemeldung.py outlook              # die offene Mail
     python scripts/pressemeldung.py Pressemitteilung_DNVF.pdf
     python scripts/pressemeldung.py https://example.org/pm.html --bild abb.jpg
@@ -78,6 +80,16 @@ WP_STANDBILD = 0
 # ("News Abbildungen" mit Leerzeichen, Nr. 2052, ist eine Dublette und haengt
 # unter "Logos auf der Seite" - nicht verwechseln.)
 WP_MEDIENORDNER = 2117
+# Welches Logo zu welchem Absender gehoert. Die Liste waechst von selbst:
+# Was die Redaktion als Beitragsbild waehlt, traegt `pressemeldung.py lernen`
+# nach. Von Hand vorbelegt sind nur die Faelle, die eindeutig waren - eine
+# Volltextsuche in der Mediathek traf zu oft daneben (kvsachsen -> AOK
+# Niedersachsen, gehe.de -> "geheimpreise").
+LOGO_DATEI = pathlib.Path(__file__).with_name("logos.json")
+# Zwischenspeicher: welcher Entwurf zu welchem Absender gehoert, solange die
+# Redaktion das Bild noch nicht gesetzt hat.
+WARTE_DATEI = pathlib.Path(__file__).with_name("logos-offen.json")
+LERN_TAGE = 30
 WF = ("https://www.monitor-versorgungsforschung.de/wp-json/"
       "wicked-folders/v1")
 
@@ -417,6 +429,87 @@ def baue_html(meldung: dict, erlaubt: list[str]) -> str:
     return "\n".join(teile)
 
 
+# ------------------------------------------------------------ Absenderlogos
+def domain_von(adresse: str) -> str:
+    treffer = re.search(r"@([\w.-]+\.\w{2,})", adresse or "")
+    return treffer.group(1).lower() if treffer else ""
+
+
+def logos_laden() -> dict:
+    try:
+        return json.loads(LOGO_DATEI.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def logos_schreiben(logos: dict) -> None:
+    LOGO_DATEI.write_text(json.dumps(logos, ensure_ascii=False, indent=1,
+                                     sort_keys=True), encoding="utf-8")
+
+
+def warteliste() -> list:
+    try:
+        return json.loads(WARTE_DATEI.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+
+
+def merken(beitrag: int, domain: str, gesetzt: int) -> None:
+    """Notieren, zu welchem Absender ein Entwurf gehoert.
+
+    `gesetzt` ist das Bild, das dieses Skript vorgeschlagen hat. Nur wenn die
+    Redaktion spaeter ein *anderes* waehlt, ist das eine Aussage ueber den
+    Absender - das eigene Diagramm einer einzelnen Mitteilung taugt nicht als
+    Logo fuer alle kuenftigen.
+    """
+    if not domain:
+        return
+    liste = [e for e in warteliste() if e.get("beitrag") != beitrag]
+    liste.append({"beitrag": beitrag, "domain": domain, "gesetzt": gesetzt,
+                  "datum": dt_heute()})
+    WARTE_DATEI.write_text(json.dumps(liste, ensure_ascii=False, indent=1),
+                           encoding="utf-8")
+
+
+def lernen() -> int:
+    """Die Wahl der Redaktion nachtragen.
+
+    Fuer jeden vorgemerkten Entwurf wird nachgesehen, welches Beitragsbild
+    inzwischen daran haengt. Ist es ein anderes als das vorgeschlagene, gilt
+    es als das Logo dieses Absenders.
+    """
+    import datetime
+
+    kopf = zugang()
+    if kopf is None:
+        print("WPUSER oder WPPASSWORT fehlt - nichts zu lernen.")
+        return 1
+    logos, offen, bleibt, gelernt = logos_laden(), warteliste(), [], 0
+    for eintrag in offen:
+        try:
+            d = wp_ruf(f"/posts/{eintrag['beitrag']}"
+                       f"?context=edit&_fields=id,status,featured_media", kopf)
+        except urllib.error.HTTPError:
+            continue                    # geloescht - Eintrag faellt weg
+        bild = d.get("featured_media") or 0
+        if bild and bild != eintrag.get("gesetzt"):
+            logos[eintrag["domain"]] = bild
+            gelernt += 1
+            print(f"  {eintrag['domain']} -> Bild {bild} "
+                  f"(aus Beitrag {d['id']})")
+            continue
+        alt = (datetime.date.today()
+               - datetime.date.fromisoformat(eintrag["datum"])).days
+        if alt < LERN_TAGE and d.get("status") == "draft":
+            bleibt.append(eintrag)      # wartet noch auf die Redaktion
+    logos_schreiben(logos)
+    WARTE_DATEI.write_text(json.dumps(bleibt, ensure_ascii=False, indent=1),
+                           encoding="utf-8")
+    print(f"{gelernt} Zuordnung(en) gelernt, {len(bleibt)} offen, "
+          f"{len(logos)} insgesamt.")
+    return 0
+
+
 # -------------------------------------------------------------- WordPress
 def zugang() -> str | None:
     nutzer = os.environ.get("WPUSER", "").strip()
@@ -671,7 +764,8 @@ def bild_hochladen(pfad: pathlib.Path, kopf: str, titel: str) -> int:
 
 def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
             trocken: bool, quelle: pathlib.Path | None = None,
-            bilder: list[tuple[str, bytes]] | None = None) -> bool:
+            bilder: list[tuple[str, bytes]] | None = None,
+            domain: str = "") -> bool:
     """Legt den Entwurf an. Rueckgabe: ob wirklich einer entstanden ist -
     beim Postfachlauf soll die Zaehlung nicht Dubletten mitzaehlen."""
     kopf = zugang()
@@ -737,9 +831,27 @@ def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
         except urllib.error.HTTPError as e:
             print(f"  Beitragsbild nicht gesetzt: HTTP {e.code}")
 
+    # Enthaelt die Mitteilung kein Bild, kommt das Logo des Absenders zum
+    # Zug - sofern eines bekannt ist.
+    if not nummer and domain:
+        aus_liste = logos_laden().get(domain)
+        if aus_liste:
+            try:
+                wp_ruf(f"/posts/{d['id']}", kopf,
+                       json.dumps({"featured_media": aus_liste}).encode("utf-8"),
+                       methode="POST")
+                nummer = aus_liste
+                print(f"  Logo des Absenders eingetragen: Nr. {aus_liste}")
+            except urllib.error.HTTPError as e:
+                print(f"  Logo nicht gesetzt: HTTP {e.code}")
+
+    # Vormerken, damit `lernen` spaeter sieht, wofuer sich die Redaktion
+    # entschieden hat.
+    merken(d["id"], domain, nummer or 0)
+
     if not nummer:
-        print("  Kein Bild in der Mitteilung - die Redaktion waehlt eines "
-              "unter 'Beitragsbild festlegen'.")
+        print("  Kein Bild in der Mitteilung und kein Logo bekannt - die "
+              "Redaktion waehlt eines unter 'Beitragsbild festlegen'.")
     return True
 
 
@@ -868,6 +980,13 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
     """
     import win32com.client
 
+    # Zuerst nachsehen, wofuer sich die Redaktion inzwischen entschieden hat -
+    # so waechst die Logoliste ohne einen zweiten Zeitplan.
+    try:
+        lernen()
+    except Exception as fehler:
+        print(f"Logos lernen fehlgeschlagen: {str(fehler)[:120]}")
+
     raum = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
     posteingang = raum.GetDefaultFolder(6)                  # olFolderInbox
     ziel = unterordner(posteingang, PM_ORDNER)
@@ -923,7 +1042,9 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
                 print("  [trocken] kein Entwurf, Mail bleibt liegen.\n")
                 continue
             neu = entwurf(meldung, inhalt, None, False, None,
-                          bilder_aus_mailobjekt(mail))
+                          bilder_aus_mailobjekt(mail),
+                          domain_von(str(getattr(mail, "SenderEmailAddress",
+                                                 ""))))
             ablegen(meldung, inhalt, text, None)
             # Erst jetzt anfassen: Was schiefgeht, bleibt unmarkiert liegen
             # und kommt beim naechsten Lauf wieder dran.
@@ -944,8 +1065,9 @@ def main() -> int:
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("quelle",
-                   help="'outlook' fuer die offene Mail, sonst PDF, .eml, "
-                        ".msg, HTML-Datei, Textdatei oder URL")
+                   help="'postfach' fuer den Reihum-Lauf, 'outlook' fuer die "
+                        "offene Mail, 'lernen' fuer die Logo-Liste, sonst "
+                        "PDF, .eml, .msg, HTML-Datei, Textdatei oder URL")
     p.add_argument("--bild", help="Bilddatei fuer das Beitragsbild")
     p.add_argument("--hinweis", default="",
                    help="Zusatz fuer das Modell, etwa 'Fokus auf die Zahlen'")
@@ -956,6 +1078,9 @@ def main() -> int:
     p.add_argument("--hoechstens", type=int, default=5,
                    help="bei 'postfach': wie viele Mitteilungen je Lauf")
     a = p.parse_args()
+
+    if a.quelle.lower() == "lernen":
+        return lernen()
 
     if a.quelle.lower() == "postfach":
         # Der Zeitplan startet das Skript ohne Fenster - was dabei geschieht,
