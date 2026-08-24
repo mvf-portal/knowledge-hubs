@@ -252,31 +252,45 @@ def text_aus_mailobjekt(mail, laut: bool = True) -> str:
 
 
 # Woran eine Pressemitteilung im Posteingang zu erkennen ist. Abgelesen an
-# 120 Mails, die Peter Stegmaier an die Redaktion weitergeleitet hat: Die
-# Pressestellen sitzen fast alle auf presse@, pressestelle@ und aehnlichen
-# Postfaechern; wo das nicht zutrifft, sagt es der Betreff.
-PM_ABSENDER = ("presse@", "pressestelle@", "presseinfo", "pressekontakt",
-               "presse-", "infodienst@g-ba.de", "prnewswire", "medien@",
-               "kommunikation@", "newsroom@")
+# 120 Mails, die Peter Stegmaier an die Redaktion weitergeleitet hat, und am
+# laufenden Betrieb.
+#
+# Geprueft wird der *oertliche Teil* der Adresse, nicht die ganze Zeichenkette:
+# Eine Liste mit "presse@" liess `presseabteilung@news.ifo.de` durchfallen -
+# das Klammeraffe stand im Weg. Jetzt genuegt es, dass der Teil vor dem @ eines
+# dieser Woerter enthaelt.
+PM_POSTFACH = ("presse", "press", "medien", "media", "kommunikation",
+               "communication", "newsroom", "pressoffice", "infodienst")
 PM_BETREFF = ("pressemitteilung", "pressemeldung", "presseinformation",
               "presseinfo", "presseerklärung", "pressestatement",
               "presse-information", "pm:", "pm |", "pm //")
-
 
 # Was dieselben Verteiler sonst noch schicken und was keine Meldung ergibt.
 # Der G-BA-Infodienst etwa verschickt Beschluesse und Stellenangebote ueber
 # dieselbe Adresse wie seine Pressemitteilungen.
 PM_NICHT = ("stellenangebot", "einladung", "save the date", "terminhinweis",
             "inkrafttreten von beschlüssen", "newsletter", "abmeldung",
-            "pressegespräch", "pressekonferenz", "akkreditierung")
+            "pressegespräch", "pressekonferenz", "akkreditierung",
+            "veranstaltungshinweis", "reminder:", "ankündigung buch")
 
 
-def ist_pressemitteilung(absender: str, betreff: str) -> bool:
+def ist_pressemitteilung(absender: str, betreff: str,
+                         anfang: str = "") -> bool:
+    """Absender, Betreff - und zur Not der Anfang des Textes.
+
+    Die dritte Stufe faengt Mitteilungen, die weder ein Pressepostfach noch
+    ein Signalwort im Betreff tragen: Steht "Pressemitteilung" im Kopf des
+    Textes, ist es eine.
+    """
     absender, betreff = absender.lower(), betreff.lower()
     if any(m in betreff for m in PM_NICHT):
         return False
-    return (any(m in absender for m in PM_ABSENDER)
-            or any(m in betreff for m in PM_BETREFF))
+    oertlich = absender.split("@")[0]
+    if any(m in oertlich for m in PM_POSTFACH):
+        return True
+    if any(m in betreff for m in PM_BETREFF):
+        return True
+    return any(m in anfang[:400].lower() for m in PM_BETREFF)
 
 
 def entkleide(roh: str) -> str:
@@ -1015,11 +1029,13 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
                 continue
             # Im Ordner Pressemitteilungen zaehlt jede Mail - dort liegt sie
             # ja, weil jemand sie fuer eine haelt.
-            if quelle is ziel or ist_pressemitteilung(absender, betreff):
+            anfang = str(getattr(mail, "Body", ""))[:400]
+            if quelle is ziel or ist_pressemitteilung(absender, betreff,
+                                                      anfang):
                 kandidaten.append(mail)
 
     if not kandidaten:
-        print("Keine ungelesene Pressemitteilung gefunden.")
+        print("Keine neue Pressemitteilung gefunden.")
         return 0
 
     print(f"{len(kandidaten)} Mitteilung(en) gefunden, "
