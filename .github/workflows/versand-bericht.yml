@@ -1,14 +1,20 @@
 # Eine Meldung ueber alle Hubs, nachdem deren naechtliche Laeufe durch sind.
 #
-# Zeitplan: Die Portale starten um 04:00 UTC und brauchen ein bis zwei Minuten.
-# 04:45 UTC (06:45 deutscher Sommerzeit) laesst reichlich Luft und liegt gut zwei
+# Zeitplan: Die Portale starten um 03:00 UTC und brauchen ein bis zwei Minuten.
+# 03:45 UTC (05:45 deutscher Sommerzeit) laesst reichlich Luft und liegt gut vier
 # Stunden vor dem Versand um 10:00 Ortszeit - so viel Veto-Fenster bleibt,
 # selbst wenn die Meldung erst beim Fruehstueck gelesen wird.
+#
+# Am 24.08.2026 um eine Stunde vorgezogen: GitHub fuehrt geplante Laeufe unter
+# Last verspaetet aus - an jenem Tag starteten die Portale erst 05:57 UTC, also
+# knapp zwei Stunden zu spaet. Der Bericht waere dann VOR ihnen gelaufen und
+# haette den Stand des Vortags gemeldet. Diese Zeit muss immer nach den Portalen
+# und vor 10:00 Ortszeit liegen - beide zusammen verschieben.
 name: Versand-Bericht (täglich)
 
 on:
   schedule:
-    - cron: "45 4 * * *"
+    - cron: "45 3 * * *"
   workflow_dispatch:
 
 permissions:

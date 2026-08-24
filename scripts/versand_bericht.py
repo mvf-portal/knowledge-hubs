@@ -47,6 +47,12 @@ PORTALE = [
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 BERICHT_REPO = "mvf-portal/knowledge-hubs"
 
+# Samstag und Sonntag terminiert kein Portal - `WOCHENENDE_AUS` in deren
+# mailchimp_entwurf.py bricht vor dem Entwurf ab und schreibt deshalb auch keine
+# Statusdatei. Ohne diese Kenntnis meldete der Bericht dann neun Mal "keine
+# Statusdatei" und las sich wie ein Ausfall, obwohl es die Absicht ist.
+RUHETAGE = (5, 6)
+
 
 def hole(repo: str) -> dict | None:
     """Statusdatei eines Portals - None, wenn es heute keine gibt."""
@@ -72,7 +78,11 @@ def ortszeit(utc_iso: str | None) -> str:
         return utc_iso
 
 
-def zeile(name: str, repo: str, s: dict | None, heute: str) -> str:
+def zeile(name: str, repo: str, s: dict | None, heute: str, ruhetag: bool = False) -> str:
+    # Ein Portal, das am Wochenende doch etwas terminiert hat, wird normal
+    # gemeldet - die Ruhetag-Auskunft gilt nur fuer die fehlende Statusdatei.
+    if ruhetag and (s is None or s.get("datum") != heute):
+        return f"- 🗓 **{name}** — planmäßig kein Versand."
     if s is None:
         return (f"- **{name}** — keine Statusdatei. Der Lauf ist entweder noch nicht "
                 f"durch oder abgebrochen. [Actions ansehen](https://github.com/{repo}/actions)")
@@ -90,11 +100,24 @@ def zeile(name: str, repo: str, s: dict | None, heute: str) -> str:
                 wer += f" von {s['listengroesse']}"
         return (f"- ✅ **{name}** — {s['anzahl']} Studien, geht um {uhr}{wer} raus. "
                 f"[Ansehen oder absagen]({s['kampagne']})  \n"
-                f"  <sub>{s.get('betreff', '')}</sub>")
+                f"  <sub>{s.get('betreff', '')}</sub>{_aussortiert(s)}")
     gruende = "; ".join(s.get("beanstandungen", [])) or "unbekannt"
     return (f"- ⛔ **{name}** — **gestoppt**, nichts wird versendet. "
             f"[Entwurf ansehen]({s['kampagne']})  \n"
-            f"  <sub>Grund: {gruende}</sub>")
+            f"  <sub>Grund: {gruende}</sub>{_aussortiert(s)}")
+
+
+def _aussortiert(s: dict) -> str:
+    """Welche Studien die Vorpruefung des Torwaechters aus der Ausgabe nahm.
+
+    Steht bewusst auch unter einer terminierten Ausgabe: Aussortieren ist der
+    stille Fall - ohne diese Zeile faellt nicht auf, wenn es taeglich passiert.
+    """
+    weg = s.get("aussortiert") or []
+    if not weg:
+        return ""
+    zeilen = "".join(f"  \n  <sub>↳ {x}</sub>" for x in weg)
+    return f"  \n  <sub>**{len(weg)} Studie(n) aussortiert:**</sub>{zeilen}"
 
 
 def tageszusammenfassung(heute: str) -> str:
@@ -160,33 +183,57 @@ def doppelungen(gesammelt: dict[str, list[str]]) -> str:
 def main() -> int:
     trocken = "--trocken" in sys.argv
     heute = dt.date.today().isoformat()
-    zeilen, terminiert, gestoppt, offen = [], 0, 0, 0
+    ruhetag = dt.date.fromisoformat(heute).weekday() in RUHETAGE
+    zeilen, terminiert, gestoppt, offen, ruhend = [], 0, 0, 0, 0
     gesammelt: dict[str, list[str]] = {}
     for name, repo in PORTALE:
         s = hole(repo)
-        zeilen.append(zeile(name, repo, s, heute))
+        zeilen.append(zeile(name, repo, s, heute, ruhetag))
         if s and s.get("datum") == heute and s.get("pmids"):
             gesammelt[name] = s["pmids"]
         if s is None or s.get("datum") != heute:
-            offen += 1
+            if ruhetag:
+                ruhend += 1
+            else:
+                offen += 1
         elif s.get("stand") == "terminiert":
             terminiert += 1
         else:
             gestoppt += 1
 
-    teile = [f"{terminiert} terminiert"]
-    if gestoppt:
-        teile.append(f"{gestoppt} gestoppt")
-    if offen:
-        teile.append(f"{offen} ohne Meldung")
+    # Am Ruhetag ohne jede Terminierung fuehrt "0 terminiert" in die Irre - dann
+    # ist der Ruhetag die ganze Nachricht.
+    if ruhetag and ruhend == len(PORTALE):
+        teile = ["Wochenende, planmäßig kein Versand"]
+        # Neun gleichlautende Zeilen wären nur Lärm: Zu veto'en gibt es nichts.
+        zeilen = [f"Alle {len(PORTALE)} Hubs ruhen."]
+    else:
+        teile = [f"{terminiert} terminiert"]
+        if gestoppt:
+            teile.append(f"{gestoppt} gestoppt")
+        if ruhend:
+            teile.append(f"{ruhend} planmäßig ohne Versand")
+        if offen:
+            teile.append(f"{offen} ohne Meldung")
     titel = (f"Newsletter {dt.date.fromisoformat(heute).strftime('%d.%m.%Y')} — "
              + ", ".join(teile))
 
+    if terminiert:
+        kopf = [
+            "Die terminierten Ausgaben gehen **automatisch** raus. Sie müssen nichts tun.",
+            "",
+            "Wollen Sie eine verhindern: Kampagnenlink öffnen und in Mailchimp auf "
+            "*Unschedule* drücken — das geht bis zur letzten Minute vor dem Versand.",
+        ]
+    elif ruhetag:
+        kopf = ["Wochenende: Es wird heute **nichts versendet**. Die Portale sind "
+                "trotzdem aktualisiert; die Studien laufen am Montag im Newsletter mit."]
+    else:
+        kopf = ["Heute ist **keine** Ausgabe terminiert. Sie müssen nichts tun — "
+                "es geht aber auch nichts raus."]
+
     rumpf = "\n".join([
-        "Die terminierten Ausgaben gehen **automatisch** raus. Sie müssen nichts tun.",
-        "",
-        "Wollen Sie eine verhindern: Kampagnenlink öffnen und in Mailchimp auf "
-        "*Unschedule* drücken — das geht bis zur letzten Minute vor dem Versand.",
+        *kopf,
         "",
         *zeilen,
         "",
