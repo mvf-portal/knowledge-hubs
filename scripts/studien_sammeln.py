@@ -46,6 +46,7 @@ PORTALE = [
     ("Hitze, Klima & Gesundheit", "klima.m-vf.de", "mvf-portal/klima-gesundheit-portal"),
     ("Gesundes Altern & Longevity", "longevity.m-vf.de", "mvf-portal/longevity-portal"),
     ("Geschlechtersensible Medizin", "gender.m-vf.de", "mvf-portal/gender-portal"),
+    ("Adipositas", "adipositas.m-vf.de", "mvf-portal/adipositas-portal"),
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"
 TAGE = 14

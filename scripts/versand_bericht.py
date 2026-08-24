@@ -43,6 +43,7 @@ PORTALE = [
     ("Impfen & Impfpraevention", "mvf-portal/impfen-portal"),
     ("Nicht uebertragbare Krankheiten", "mvf-portal/ncd-portal"),
     ("Geschlechtersensible Medizin", "mvf-portal/gender-portal"),
+    ("Adipositas", "mvf-portal/adipositas-portal"),
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 BERICHT_REPO = "mvf-portal/knowledge-hubs"
