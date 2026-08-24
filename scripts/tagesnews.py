@@ -8,8 +8,11 @@ Aus der Sammeldatei von `studien_sammeln.py` entsteht taeglich zweierlei:
    paar Beispielen und Verweisen in die Hubs. Freigegeben wird er von Hand;
    das Skript veroeffentlicht nichts. Der WordPress-Benutzer hat deshalb die
    Rolle Autor und kann gar nicht veroeffentlichen, selbst wenn es wollte.
-2. Eine **Mailchimp-Ausgabe an die Redaktion** mit allen Neuzugaengen des Tages,
+2. Eine **Mailchimp-Ausgabe an die Redaktion** mit allen Neuzugaengen,
    nach Hub gruppiert.
+
+Beides entsteht **werktags** und aus derselben Menge: montags samt der Studien
+vom Wochenende. Die Hubs selbst werden weiter taeglich aktualisiert.
 
 Der Sinn ist der Zulauf: Wer die Meldung auf m-vf.de liest, findet den Weg in
 die Hubs - und wird dort vielleicht Abonnent. Deshalb fuehren die Verweise in
@@ -158,12 +161,17 @@ def studien_von_heute() -> tuple[list[dict], str]:
 
 
 def studien_fuer_meldung() -> list[dict]:
-    """Was in die Meldung gehoert - montags samt Wochenende.
+    """Was in Meldung und Tagesliste gehoert - montags samt Wochenende.
 
     Die Newsseite bekommt werktags Zuwachs, die Hubs werden aber taeglich
     aktualisiert. Ohne diesen Rueckgriff fielen die Studien von Samstag und
-    Sonntag aus der Meldung heraus. Die Tagesliste an die Redaktion laeuft
-    davon unberuehrt jeden Tag und bleibt bei einem Tag.
+    Sonntag heraus.
+
+    **Seit dem 24.08.2026 gilt das auch fuer die Tagesliste an die Redaktion.**
+    Vorher lief sie taeglich und blieb bei einem Tag - mit der Folge, dass am
+    24.08. eine Mail ueber 11 Studien neben einem Beitragsentwurf ueber 44
+    stand. Zwei Zahlen fuer denselben Lauf, die beide stimmten und sich
+    trotzdem widersprachen. Beide Wege zaehlen jetzt dasselbe.
     """
     daten = json.loads(pathlib.Path("studien.json").read_text(encoding="utf-8"))
     tag = dt.date.today()
@@ -523,7 +531,17 @@ def mailchimp_liste(studien: list[dict], heute: str, trocken: bool) -> None:
 
     gruppen = nach_hub(studien)
     datum = dt.date.fromisoformat(heute).strftime("%d.%m.%Y")
-    zeilen = [f"<p>{len(studien)} neue Studien in {len(gruppen)} Hubs.</p>"]
+    # Montags stecken Samstag und Sonntag mit drin. Dann nennt die Ausgabe den
+    # Zeitraum statt eines Tages - sonst steht "Neuzugaenge 24.08." ueber einer
+    # Liste, die zu zwei Dritteln vom Wochenende stammt.
+    tage = sorted({e.get("aufgenommen", "") for e in studien if e.get("aufgenommen")})
+    spanne = datum
+    hinweis = ""
+    if len(tage) > 1:
+        spanne = f"{dt.date.fromisoformat(tage[0]).strftime('%d.%m.')}–{datum}"
+        hinweis = ('<p style="margin:0 0 14px;font:13px/1.5 Arial,sans-serif;color:#777;">'
+                   'Ausgabe vom Montag: mit den Studien vom Wochenende.</p>')
+    zeilen = [f"<p>{len(studien)} neue Studien in {len(gruppen)} Hubs.</p>{hinweis}"]
     for hub, liste in gruppen.items():
         zeilen.append(f'<h3 style="margin:22px 0 6px;font:700 16px/1.3 Arial,sans-serif;">'
                       f'{escape(hub)} <span style="font-weight:400;color:#777;">'
@@ -541,7 +559,7 @@ def mailchimp_liste(studien: list[dict], heute: str, trocken: bool) -> None:
             f'<img src="{BILD_URL}" width="600" alt="Knowledge-Hubs von Monitor '
             f'Versorgungsforschung" style="display:block;width:100%;max-width:600px;'
             f'height:auto;margin:0 0 22px;">'
-            f'<h2 style="font:700 20px/1.3 Arial,sans-serif;">Neuzugänge {datum}</h2>'
+            f'<h2 style="font:700 20px/1.3 Arial,sans-serif;">Neuzugänge {spanne}</h2>'
             + "".join(zeilen) + "</div>")
 
     if trocken:
@@ -561,7 +579,7 @@ def mailchimp_liste(studien: list[dict], heute: str, trocken: bool) -> None:
                 "op": "interestcontains", "value": [interesse]}]},
         },
         "settings": {
-            "subject_line": f"Neuzugänge {datum} — {len(studien)} Studien aus {len(gruppen)} Hubs",
+            "subject_line": f"Neuzugänge {spanne} — {len(studien)} Studien aus {len(gruppen)} Hubs",
             "title": f"Redaktion Tagesliste {datum}",
             "from_name": MC_ABSENDER, "reply_to": MC_ANTWORT,
         },
@@ -598,11 +616,16 @@ def main() -> int:
         return 0
     print(f"{len(studien)} Studien aus {len(nach_hub(studien))} Hubs.")
 
-    # Am Wochenende entsteht keine Meldung; die Tagesliste geht trotzdem
-    # heraus, sie ist ein Arbeitsmittel der Redaktion und kein Newsletter.
+    # Am Wochenende entsteht weder Meldung noch Tagesliste. Bis zum 24.08.2026
+    # ging die Liste auch samstags und sonntags heraus - sie galt als
+    # Arbeitsmittel der Redaktion, nicht als Newsletter. Nur arbeitet an diesen
+    # Tagen niemand damit, und montags kam alles ohnehin ein zweites Mal in der
+    # Meldung. Jetzt laeuft die Reihe durchgehend werktags, wie die Newsletter
+    # der Portale auch.
     wochenende = dt.date.today().weekday() >= 5
-    if wochenende and not a.nur_wordpress:
-        print("Wochenende - keine Meldung. Die Studien laufen am Montag mit.")
+    if wochenende:
+        print("Wochenende - keine Meldung, keine Tagesliste. "
+              "Die Studien laufen am Montag mit.")
 
     if not a.nur_mail and not wochenende:
         fuer_meldung = studien_fuer_meldung()
@@ -636,11 +659,14 @@ def main() -> int:
         wordpress_entwurf(news["titel"], html, len(studien_der_meldung),
                           news["vorspann"], a.trocken)
 
-    if not a.nur_wordpress:
-        if studien:
-            mailchimp_liste(studien, heute, a.trocken)
+    if not a.nur_wordpress and not wochenende:
+        # Dieselbe Menge wie die Meldung: montags samt Wochenende. Sonst
+        # nennen Mail und Beitrag am selben Morgen zwei verschiedene Zahlen.
+        fuer_liste = studien_fuer_meldung()
+        if fuer_liste:
+            mailchimp_liste(fuer_liste, heute, a.trocken)
         else:
-            print("Keine Neuzugaenge heute - keine Tagesliste an die Redaktion.")
+            print("Keine Neuzugaenge - keine Tagesliste an die Redaktion.")
     return 0
 
 
