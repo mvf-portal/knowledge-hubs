@@ -36,17 +36,23 @@ if hasattr(sys.stdout, "reconfigure"):
 
 # Dieselbe Pflegestelle wie PORTALE in versand_bericht.py. Kommt ein Hub hinzu,
 # gehoert er in beide Listen - sonst faellt er hier still heraus.
+#
+# Die Reihenfolge ist die Reihenfolge der Karten auf der Uebersichtsseite und
+# deshalb alphabetisch nach dem sichtbaren Namen. Sie folgt bewusst NICHT der
+# Kachelreihenfolge weiter oben (REIHENFOLGE in vorschaltseite.py): Die Kacheln
+# sind gestaltet, diese Liste soll auffindbar sein. Wer einen Hub ergaenzt,
+# setzt ihn an die alphabetisch richtige Stelle.
 PORTALE = [
-    ("Versorgungsforschung", "wissen.m-vf.de", "mvf-portal/versorgungsforschung-portal"),
+    ("Adipositas", "adipositas.m-vf.de", "mvf-portal/adipositas-portal"),
+    ("Digitalisierung, KI & Gesundheit", "ki.m-vf.de", "mvf-portal/ki-gesundheit-portal"),
+    ("Geschlechtersensible Medizin", "gender.m-vf.de", "mvf-portal/gender-portal"),
+    ("Gesundes Altern & Longevity", "longevity.m-vf.de", "mvf-portal/longevity-portal"),
     ("Gesundheitskompetenz", "healthliteracy.m-vf.de", "mvf-portal/healthliteracy-portal"),
-    ("Pflege & Langzeitversorgung", "pflege.m-vf.de", "mvf-portal/pflege-portal"),
+    ("Hitze, Klima & Gesundheit", "klima.m-vf.de", "mvf-portal/klima-gesundheit-portal"),
     ("Impfen & Impfprävention", "impfen.m-vf.de", "mvf-portal/impfen-portal"),
     ("Nicht übertragbare Krankheiten", "ncd.m-vf.de", "mvf-portal/ncd-portal"),
-    ("Digitalisierung, KI & Gesundheit", "ki.m-vf.de", "mvf-portal/ki-gesundheit-portal"),
-    ("Hitze, Klima & Gesundheit", "klima.m-vf.de", "mvf-portal/klima-gesundheit-portal"),
-    ("Gesundes Altern & Longevity", "longevity.m-vf.de", "mvf-portal/longevity-portal"),
-    ("Geschlechtersensible Medizin", "gender.m-vf.de", "mvf-portal/gender-portal"),
-    ("Adipositas", "adipositas.m-vf.de", "mvf-portal/adipositas-portal"),
+    ("Pflege & Langzeitversorgung", "pflege.m-vf.de", "mvf-portal/pflege-portal"),
+    ("Versorgungsforschung", "wissen.m-vf.de", "mvf-portal/versorgungsforschung-portal"),
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"
 TAGE = 14
