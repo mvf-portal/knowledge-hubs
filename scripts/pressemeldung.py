@@ -89,6 +89,11 @@ LOGO_DATEI = pathlib.Path(__file__).with_name("logos.json")
 # Zwischenspeicher: welcher Entwurf zu welchem Absender gehoert, solange die
 # Redaktion das Bild noch nicht gesetzt hat.
 WARTE_DATEI = pathlib.Path(__file__).with_name("logos-offen.json")
+# Was die Redaktion einmal gewaehlt hat, ist noch kein Logo: Fuer eine
+# einzelne Meldung passt oft ein Diagramm oder ein Artikelbild. Ein Logo
+# wiederholt sich - deshalb zaehlt eine Wahl erst beim zweiten Mal, es sei
+# denn, der Dateiname sagt selbst "logo".
+KANDIDATEN_DATEI = pathlib.Path(__file__).with_name("logos-kandidaten.json")
 LERN_TAGE = 30
 WF = ("https://www.monitor-versorgungsforschung.de/wp-json/"
       "wicked-folders/v1")
@@ -486,11 +491,13 @@ def merken(beitrag: int, domain: str, gesetzt: int) -> None:
 
 
 def lernen() -> int:
-    """Die Wahl der Redaktion nachtragen.
+    """Die Wahl der Redaktion nachtragen - aber erst, wenn sie sich bestaetigt.
 
     Fuer jeden vorgemerkten Entwurf wird nachgesehen, welches Beitragsbild
-    inzwischen daran haengt. Ist es ein anderes als das vorgeschlagene, gilt
-    es als das Logo dieses Absenders.
+    inzwischen daran haengt. Ein anderes als das vorgeschlagene ist eine
+    Aussage der Redaktion; in die Logoliste kommt es aber erst, wenn dieselbe
+    Wahl zum zweiten Mal faellt. Ausnahme: Traegt die Datei "logo" im Namen,
+    ist die Sache schon beim ersten Mal klar.
     """
     import datetime
 
@@ -498,7 +505,13 @@ def lernen() -> int:
     if kopf is None:
         print("WPUSER oder WPPASSWORT fehlt - nichts zu lernen.")
         return 1
-    logos, offen, bleibt, gelernt = logos_laden(), warteliste(), [], 0
+    logos, offen = logos_laden(), warteliste()
+    try:
+        kandidaten = json.loads(KANDIDATEN_DATEI.read_text(encoding="utf-8"))
+    except Exception:
+        kandidaten = {}
+
+    bleibt, gelernt, vorgemerkt = [], 0, 0
     for eintrag in offen:
         try:
             d = wp_ruf(f"/posts/{eintrag['beitrag']}"
@@ -507,20 +520,36 @@ def lernen() -> int:
             continue                    # geloescht - Eintrag faellt weg
         bild = d.get("featured_media") or 0
         if bild and bild != eintrag.get("gesetzt"):
-            logos[eintrag["domain"]] = bild
-            gelernt += 1
-            print(f"  {eintrag['domain']} -> Bild {bild} "
-                  f"(aus Beitrag {d['id']})")
+            domain = eintrag["domain"]
+            zaehler = kandidaten.setdefault(domain, {})
+            zaehler[str(bild)] = zaehler.get(str(bild), 0) + 1
+            try:
+                m = wp_ruf(f"/media/{bild}?_fields=slug", kopf)
+                heisst_logo = "logo" in str(m.get("slug", "")).lower()
+            except Exception:
+                heisst_logo = False
+            if zaehler[str(bild)] >= 2 or heisst_logo:
+                logos[domain] = bild
+                gelernt += 1
+                grund = "Dateiname" if heisst_logo else "zweite Wahl"
+                print(f"  gelernt: {domain} -> Bild {bild} ({grund})")
+            else:
+                vorgemerkt += 1
+                print(f"  vorgemerkt: {domain} -> Bild {bild} "
+                      f"(einmal gewaehlt, wartet auf Bestaetigung)")
             continue
         alt = (datetime.date.today()
                - datetime.date.fromisoformat(eintrag["datum"])).days
         if alt < LERN_TAGE and d.get("status") == "draft":
             bleibt.append(eintrag)      # wartet noch auf die Redaktion
     logos_schreiben(logos)
+    KANDIDATEN_DATEI.write_text(
+        json.dumps(kandidaten, ensure_ascii=False, indent=1, sort_keys=True),
+        encoding="utf-8")
     WARTE_DATEI.write_text(json.dumps(bleibt, ensure_ascii=False, indent=1),
                            encoding="utf-8")
-    print(f"{gelernt} Zuordnung(en) gelernt, {len(bleibt)} offen, "
-          f"{len(logos)} insgesamt.")
+    print(f"{gelernt} gelernt, {vorgemerkt} vorgemerkt, {len(bleibt)} offen, "
+          f"{len(logos)} Logos insgesamt.")
     return 0
 
 
