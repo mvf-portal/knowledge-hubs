@@ -44,6 +44,8 @@ PORTALE = [
     ("Nicht uebertragbare Krankheiten", "mvf-portal/ncd-portal"),
     ("Geschlechtersensible Medizin", "mvf-portal/gender-portal"),
     ("Adipositas", "mvf-portal/adipositas-portal"),
+    ("Patientensicherheit", "mvf-portal/safety-portal"),
+    ("Psychische Gesundheit", "mvf-portal/mental-portal"),
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 BERICHT_REPO = "mvf-portal/knowledge-hubs"

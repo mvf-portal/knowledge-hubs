@@ -51,7 +51,9 @@ PORTALE = [
     ("Hitze, Klima & Gesundheit", "klima.m-vf.de", "mvf-portal/klima-gesundheit-portal"),
     ("Impfen & Impfprävention", "impfen.m-vf.de", "mvf-portal/impfen-portal"),
     ("Nicht übertragbare Krankheiten", "ncd.m-vf.de", "mvf-portal/ncd-portal"),
+    ("Patientensicherheit", "safety.m-vf.de", "mvf-portal/safety-portal"),
     ("Pflege & Langzeitversorgung", "pflege.m-vf.de", "mvf-portal/pflege-portal"),
+    ("Psychische Gesundheit", "mental.m-vf.de", "mvf-portal/mental-portal"),
     ("Versorgungsforschung", "wissen.m-vf.de", "mvf-portal/versorgungsforschung-portal"),
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"
