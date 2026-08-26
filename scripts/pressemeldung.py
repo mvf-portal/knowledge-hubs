@@ -148,7 +148,22 @@ SCHEMA = {
     "properties": {
         "titel": {"type": "string"},
         "textauszug": {"type": "string"},
-        "absaetze": {"type": "array", "items": {"type": "string"}},
+        # Je Absatz ein Objekt statt einer Zeichenkette, seit dem 26.08.2026.
+        # Der Zwischentitel gehoert zu dem Absatz, den er eroeffnet - so kann
+        # die Reihenfolge gar nicht verrutschen, anders als bei einer zweiten
+        # Liste, die man mit dieser hier in Deckung bringen muesste.
+        "absaetze": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["text"],
+                "properties": {
+                    "zwischentitel": {"type": "string"},
+                    "text": {"type": "string"},
+                },
+            },
+        },
         # Nur Adressen, die in der Quelle stehen - siehe adressen().
         "links": {
             "type": "array",
@@ -393,8 +408,24 @@ def schreibe_meldung(text: str, links: list[str], hinweis: str = "") -> dict:
         "NICHT noch einmal vor. Länger ist nicht besser: Suchmaschinen "
         "schneiden ab.\n"
         "- absaetze: vier bis sieben Absätze Fließtext, je zwei bis vier "
-        "Sätze. Das Wichtigste zuerst. Höchstens zwei wörtliche Zitate, im "
-        "Wortlaut. Keine Zwischenüberschriften, kein HTML, keine Adressen.\n"
+        "Sätze, jeder als Objekt mit dem Feld 'text'. Das Wichtigste zuerst. "
+        "Höchstens zwei wörtliche Zitate, im Wortlaut. Kein HTML, keine "
+        "Adressen.\n"
+        "  Ein Absatz kann zusätzlich 'zwischentitel' tragen - eine "
+        "Zwischenüberschrift, die über ihm steht. Regeln dafür:\n"
+        "  * Hat die Quelle Zwischenüberschriften, übernimm sie sinngemäß an "
+        "denselben Stellen. Kürze sie, wenn sie werblich oder länger als "
+        "sieben Wörter sind.\n"
+        "  * Hat die Quelle keine, setze ein bis zwei an den Stellen, wo die "
+        "Meldung inhaltlich umschwenkt - etwa von der Sache zur Einordnung "
+        "oder zu den Folgen für die Versorgung.\n"
+        "  * Der ERSTE Absatz bekommt nie einen: Er folgt unmittelbar auf die "
+        "Überschrift der Meldung.\n"
+        "  * Drei bis sieben Wörter, sachlich, benennen den Inhalt des "
+        "Abschnitts. Keine Fragen, keine Neugier-Formeln, kein 'Fazit' oder "
+        "'Hintergrund' als blosse Etikette. Suchmaschinen lesen an ihnen ab, "
+        "wovon die Seite handelt - eine leere Überschrift verschenkt das.\n"
+        "  * Bei einer Meldung unter vier Absätzen genügt gar keine.\n"
         "- links: nur Adressen aus der folgenden Liste, höchstens zwei, mit "
         "sprechendem Ankertext. Keine Adresse erfinden, keine abwandeln. "
         "Passt keine, lass die Liste leer.\n"
@@ -430,7 +461,20 @@ def escape(t: str) -> str:
 
 
 def baue_html(meldung: dict, erlaubt: list[str]) -> str:
-    teile = [f"<p>{escape(a)}</p>" for a in meldung.get("absaetze", []) if a.strip()]
+    teile = []
+    for a in meldung.get("absaetze", []):
+        # Bis zum 26.08.2026 waren die Absaetze schlichte Zeichenketten. Aeltere
+        # zwischengespeicherte Entwuerfe koennen noch so aussehen, deshalb
+        # beides annehmen statt am alten Stand zu scheitern.
+        if isinstance(a, str):
+            a = {"text": a}
+        text = (a.get("text") or "").strip()
+        if not text:
+            continue
+        titel = (a.get("zwischentitel") or "").strip()
+        if titel:
+            teile.append(f"<h4>{escape(titel)}</h4>")
+        teile.append(f"<p>{escape(text)}</p>")
 
     for link in meldung.get("links", []):
         url = link.get("url", "")

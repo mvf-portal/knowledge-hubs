@@ -126,10 +126,15 @@ SYSTEM = (
 SCHEMA = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["titel", "vorspann", "beispiele", "schluss"],
+    "required": ["titel", "vorspann", "zwischentitel", "beispiele", "schluss"],
     "properties": {
         "titel": {"type": "string"},
         "vorspann": {"type": "string"},
+        # Zwischenueberschrift ueber der Beispielliste. Der Beitrag hatte bis
+        # zum 26.08.2026 gar keine Ueberschrift im Text - nur Listen und
+        # Absaetze. Suchmaschinen lesen die Gliederung einer Seite an den
+        # Ueberschriften ab; ohne sie ist ein Beitrag eine flache Textwand.
+        "zwischentitel": {"type": "string"},
         # Je Beispiel die PMID der gemeinten Studie - daraus baut das Skript
         # den Verweis. Das Modell nennt nie selbst eine Adresse.
         "beispiele": {
@@ -250,6 +255,12 @@ def schreibe_news(studien: list[dict]) -> dict:
         "- titel: eine Zeile, sachlich, nennt die Zahl. Kein Doppelpunkt-Zusatz.\n"
         "- vorspann: zwei bis drei Sätze. Nennt die Zahl der Studien und der "
         "Hubs und sagt, was die Leserschaft davon hat.\n"
+        "- zwischentitel: eine Zeile über der Beispielliste, drei bis sieben "
+        "Wörter, die das inhaltliche Thema des Tages benennen - nicht "
+        "'Beispiele' oder 'Die Studien', sondern woraus die Auswahl besteht: "
+        "'Pflegepersonal, Klimafolgen und KI-Diagnostik'. Suchmaschinen lesen "
+        "an den Zwischenüberschriften ab, wovon eine Seite handelt; diese hier "
+        "ist die einzige, die du schreibst.\n"
         "- beispiele: DREI bis VIER Studien, die für die Leserschaft am "
         "interessantesten sind. Je Beispiel die PMID und EIN Satz, der das "
         "Ergebnis nennt - konkret, mit Zahl, wenn eine da ist. Wähle aus "
@@ -277,7 +288,23 @@ def baue_html(news: dict, studien: list[dict]) -> str:
 
     # Kein Vorspann hier: der steht im Textauszug (siehe textauszug()). Die
     # Meldung faengt mit den Beispielen an.
-    teile = ["<ul>"]
+    #
+    # Ueberschriften seit dem 26.08.2026. Bis dahin bestand der ganze Beitrag
+    # aus zwei Listen und drei Absaetzen - keine einzige Ueberschrift zwischen
+    # dem Titel und dem Seitenende. Suchmaschinen lesen die Gliederung einer
+    # Seite an den Ueberschriften ab; ohne sie ist der Beitrag eine flache
+    # Textwand, aus der sich kein Thema herauslesen laesst.
+    #
+    # **h4, nicht h2** - das ist die Hausform: Die Pressemeldungen auf m-vf.de
+    # setzen ihre Zwischentitel ebenfalls als h4, und ein Beitrag, der aus der
+    # Reihe faellt, sieht im Theme falsch aus. Semantisch waere h2 sauberer
+    # (h1 ist der Beitragstitel, h4 ueberspringt zwei Ebenen); praktisch
+    # wiegt die einheitliche Darstellung schwerer, und Suchmaschinen werten
+    # laengst den Text der Ueberschrift, nicht ihre Nummer.
+    teile = []
+    if news.get("zwischentitel"):
+        teile.append(f"<h4>{escape(news['zwischentitel'])}</h4>")
+    teile.append("<ul>")
     for b in news.get("beispiele", []):
         e = nach_pmid.get(b.get("pmid", ""))
         if not e:
@@ -291,7 +318,10 @@ def baue_html(news: dict, studien: list[dict]) -> str:
 
     teile.append(f"<p>{escape(news['schluss'])}</p>")
 
-    teile.append("<p><strong>Die Hubs im Einzelnen:</strong></p><ul>")
+    # War bis zum 26.08.2026 ein fett gesetzter Absatz. Fett sieht aus wie eine
+    # Ueberschrift, ist aber keine - fuer Suchmaschinen und Screenreader bleibt
+    # es ein Absatz. Dieselben Woerter als h4 kosten nichts und gliedern.
+    teile.append("<h4>Die Hubs im Einzelnen</h4><ul>")
     for hub, liste in gruppen.items():
         e = liste[0]
         anzahl = len(liste)
