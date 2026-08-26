@@ -126,10 +126,16 @@ SYSTEM = (
 SCHEMA = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["titel", "vorspann", "zwischentitel", "beispiele", "schluss"],
+    "required": ["titel", "vorspann", "meta_beschreibung", "zwischentitel",
+                 "beispiele", "schluss"],
     "properties": {
         "titel": {"type": "string"},
         "vorspann": {"type": "string"},
+        # Was in der Trefferliste von Google steht. Bis zum 26.08.2026 stand
+        # dort bei JEDER Tagesnews derselbe Satz aus WP_AUSZUG, nur die Zahl
+        # wechselte - fuer Suchmaschinen faktisch dieselbe Beschreibung auf
+        # vielen Seiten. Jetzt schreibt das Modell sie taeglich neu.
+        "meta_beschreibung": {"type": "string"},
         # Zwischenueberschrift ueber der Beispielliste. Der Beitrag hatte bis
         # zum 26.08.2026 gar keine Ueberschrift im Text - nur Listen und
         # Absaetze. Suchmaschinen lesen die Gliederung einer Seite an den
@@ -252,7 +258,20 @@ def schreibe_news(studien: list[dict]) -> dict:
         f"aufgenommen worden, verteilt auf {len(gruppen)} Hubs.\n"
         f"{chr(10).join(material)}\n\n"
         "Schreibe daraus eine kurze Meldung:\n"
-        "- titel: eine Zeile, sachlich, nennt die Zahl. Kein Doppelpunkt-Zusatz.\n"
+        "- titel: höchstens 65 Zeichen. **Die Themen stehen vorn, die Zahl "
+        "dahinter**, getrennt durch einen Doppelpunkt - also 'Pflegepersonal, "
+        "Klimafolgen und KI-Diagnostik: 23 neue Studien' und nicht '23 neue "
+        "Studien in den Knowledge-Hubs aufgenommen'. Zwei bis drei Themen "
+        "genügen, die restlichen stehen ohnehin im Text. Grund: Nach 'neue "
+        "Studien in den Knowledge-Hubs' sucht niemand; nach den Fachthemen "
+        "schon. Passt es nicht in 65 Zeichen, lass ein Thema weg, nicht die "
+        "Zahl.\n"
+        "- meta_beschreibung: EIN Satz, 120 bis 155 Zeichen, für die "
+        "Trefferliste von Google. Nennt die konkreten Themen des Tages und "
+        "eines der Ergebnisse - nicht die Gattung. Jeden Tag ein anderer Satz: "
+        "Eine Beschreibung, die auf hundert Seiten gleich lautet, ist für "
+        "Suchmaschinen wertlos. Höchstens 155 Zeichen, sonst wird "
+        "abgeschnitten.\n"
         "- vorspann: zwei bis drei Sätze. Nennt die Zahl der Studien und der "
         "Hubs und sagt, was die Leserschaft davon hat.\n"
         "- zwischentitel: eine Zeile über der Beispielliste, drei bis sieben "
@@ -278,7 +297,54 @@ def schreibe_news(studien: list[dict]) -> dict:
         messages=[{"role": "user", "content": auftrag}],
     )
     text = next(b.text for b in antwort.content if b.type == "text")
-    return json.loads(text)
+    news = json.loads(text)
+    news["titel"] = titel_kuerzen(news.get("titel", ""), schluessel)
+    return news
+
+
+# Was Google in der Trefferliste noch ganz anzeigt. Darueber wird abgeschnitten,
+# und zwar mitten im Wort. Der Prompt nennt die Grenze bereits - eingehalten
+# wurde sie trotzdem nicht: Am 26.08.2026 waren von 20 gepruefteten News zwei
+# 110 und 127 Zeichen lang. Eine Bitte im Prompt ist keine Pruefung.
+TITEL_MAX = 65
+
+
+def titel_kuerzen(titel: str, schluessel: str) -> str:
+    """Einen zu langen Titel EINMAL neu anfragen - sonst bleibt er, wie er ist.
+
+    Bewusst nur ein zweiter Versuch und kein Abbruch: Ein zu langer Titel ist
+    ein Schoenheitsfehler, kein Grund, die Meldung des Tages fallenzulassen.
+    Bleibt er auch danach zu lang, geht er mit und die Redaktion sieht den
+    Hinweis im Lauf-Protokoll.
+
+    Maschinelles Abschneiden waere die schlechtere Loesung - es trifft die
+    Wortmitte und wirft gerade die Themen weg, die hinten stehen.
+    """
+    titel = (titel or "").strip()
+    if len(titel) <= TITEL_MAX:
+        return titel
+    print(f"  Titel ist {len(titel)} Zeichen lang (erlaubt {TITEL_MAX}) - "
+          f"wird neu angefragt.")
+    import anthropic
+    try:
+        antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+            model=MODELL, max_tokens=300, system=SYSTEM,
+            messages=[{"role": "user", "content": (
+                f"Kürze diese Überschrift auf höchstens {TITEL_MAX} Zeichen, "
+                f"ohne ihren Sinn zu ändern. Die Themen stehen vorn, die Zahl "
+                f"dahinter. Lieber ein Thema weglassen als die Zahl. Antworte "
+                f"NUR mit der gekürzten Überschrift, ohne Anführungszeichen:\n\n"
+                f"{titel}")}])
+        neu = next(b.text for b in antwort.content if b.type == "text").strip()
+        neu = neu.strip('"').strip()
+    except Exception as fehler:
+        print(f"  Kürzen nicht möglich ({fehler}) - Titel bleibt lang.")
+        return titel
+    if neu and len(neu) <= TITEL_MAX:
+        print(f"  Gekürzt auf {len(neu)} Zeichen: {neu}")
+        return neu
+    print(f"  Auch der zweite Versuch war zu lang ({len(neu)}) - Titel bleibt.")
+    return titel
 
 
 def baue_html(news: dict, studien: list[dict]) -> str:
@@ -341,7 +407,7 @@ def baue_html(news: dict, studien: list[dict]) -> str:
 
 # -------------------------------------------------------------- WordPress
 def wordpress_entwurf(titel: str, html: str, anzahl: int, vorspann: str,
-                      trocken: bool) -> None:
+                      trocken: bool, meta: str = "") -> None:
     nutzer = os.environ.get("WPUSER", "").strip()
     passwort = os.environ.get("WPPASSWORT", "").strip()
     if not (nutzer and passwort):
@@ -380,7 +446,7 @@ def wordpress_entwurf(titel: str, html: str, anzahl: int, vorspann: str,
     print(f"WordPress-Entwurf angelegt: {d.get('id')} — {d.get('link','')}")
     print(f"  Bearbeiten: https://www.monitor-versorgungsforschung.de/wp-admin/"
           f"post.php?post={d.get('id')}&action=edit")
-    yoast_beschreibung(d.get("id"), kopf, anzahl)
+    yoast_beschreibung(d.get("id"), kopf, meta)
 
 
 def wordpress_nachtragen(kennung: str, anzahl: int) -> int:
@@ -420,7 +486,7 @@ def wordpress_nachtragen(kennung: str, anzahl: int) -> int:
         print("  Antwort: " + e.read().decode("utf-8", "replace")[:400])
         return 1
     print(f"Beitragsbild an Beitrag {kennung} gesetzt.")
-    yoast_beschreibung(kennung, kopf, anzahl)
+    yoast_beschreibung(kennung, kopf, auszug(anzahl))
     return 0
 
 
@@ -445,7 +511,7 @@ def vorhandener_auszug(kennung: str, kopf: str) -> str:
             or (d.get("excerpt") or {}).get("rendered") or "").strip()
 
 
-def yoast_beschreibung(kennung, kopf: str, anzahl: int) -> None:
+def yoast_beschreibung(kennung, kopf: str, text: str) -> None:
     """Meta-Beschreibung nachtragen - ohne den Entwurf zu gefaehrden.
 
     Yoast gibt sein Feld nicht in jeder Fassung ueber die Schnittstelle frei.
@@ -455,11 +521,11 @@ def yoast_beschreibung(kennung, kopf: str, anzahl: int) -> None:
     155 Zeichen, die in der Trefferliste stehen. Yoast kuerzt selbst; der
     Anfang ist derselbe feste Satz, also bleibt der Rueckfall brauchbar.
     """
-    if not kennung:
+    if not (kennung and text.strip()):
         return
     req = urllib.request.Request(
         f"{WP}/posts/{kennung}", method="POST",
-        data=json.dumps({"meta": {"_yoast_wpseo_metadesc": auszug(anzahl)}}).encode("utf-8"),
+        data=json.dumps({"meta": {"_yoast_wpseo_metadesc": text.strip()}}).encode("utf-8"),
         headers={"Content-Type": "application/json",
                  "Authorization": f"Basic {kopf}",
                  "User-Agent": "MVF-Knowledge-Hubs/1.0 (+https://knowledge-hubs.m-vf.de)",
@@ -687,7 +753,8 @@ def main() -> int:
             print(news["vorspann"])
         print()
         wordpress_entwurf(news["titel"], html, len(studien_der_meldung),
-                          news["vorspann"], a.trocken)
+                          news["vorspann"], a.trocken,
+                          news.get("meta_beschreibung", ""))
 
     if not a.nur_wordpress and not wochenende:
         # Dieselbe Menge wie die Meldung: montags samt Wochenende. Sonst

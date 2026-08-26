@@ -467,7 +467,51 @@ def schreibe_meldung(text: str, links: list[str], hinweis: str = "") -> dict:
         output_config={"format": {"type": "json_schema", "schema": SCHEMA}},
         messages=[{"role": "user", "content": auftrag}],
     )
-    return json.loads(next(b.text for b in antwort.content if b.type == "text"))
+    meldung = json.loads(next(b.text for b in antwort.content if b.type == "text"))
+    meldung["titel"] = titel_kuerzen(meldung.get("titel", ""), schluessel)
+    return meldung
+
+
+# Der Prompt nennt diese Grenze schon lange - eingehalten wurde sie trotzdem
+# nicht: Am 26.08.2026 waren von 20 gepruefteten News zwei 110 und 127 Zeichen
+# lang. Google schneidet dort mitten im Wort ab. Eine Bitte im Prompt ist keine
+# Pruefung.
+TITEL_MAX = 75
+
+
+def titel_kuerzen(titel: str, schluessel: str) -> str:
+    """Einen zu langen Titel EINMAL neu anfragen - sonst bleibt er, wie er ist.
+
+    Nur ein zweiter Versuch und kein Abbruch: Ein zu langer Titel ist ein
+    Schoenheitsfehler, kein Grund, die Meldung fallenzulassen. Maschinelles
+    Abschneiden waere schlechter - es trifft die Wortmitte und wirft beim
+    Hausformat 'Sache: Absender' gerade den Absender weg.
+    """
+    titel = (titel or "").strip()
+    if len(titel) <= TITEL_MAX:
+        return titel
+    print(f"  Titel ist {len(titel)} Zeichen lang (erlaubt {TITEL_MAX}) - "
+          f"wird neu angefragt.")
+    import anthropic
+    try:
+        antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+            model=MODELL, max_tokens=300, system=SYSTEM,
+            messages=[{"role": "user", "content": (
+                f"Kürze diese Überschrift auf höchstens {TITEL_MAX} Zeichen, "
+                f"ohne ihren Sinn zu ändern. Die Sache steht vorn, der "
+                f"Absender dahinter, getrennt durch einen Doppelpunkt. "
+                f"Antworte NUR mit der gekürzten Überschrift, ohne "
+                f"Anführungszeichen:\n\n{titel}")}])
+        neu = next(b.text for b in antwort.content if b.type == "text").strip()
+        neu = neu.strip('"').strip()
+    except Exception as fehler:
+        print(f"  Kürzen nicht möglich ({fehler}) - Titel bleibt lang.")
+        return titel
+    if neu and len(neu) <= TITEL_MAX:
+        print(f"  Gekürzt auf {len(neu)} Zeichen: {neu}")
+        return neu
+    print(f"  Auch der zweite Versuch war zu lang ({len(neu)}) - Titel bleibt.")
+    return titel
 
 
 def escape(t: str) -> str:
