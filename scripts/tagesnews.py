@@ -52,6 +52,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+import verwandtes
+
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -127,7 +129,7 @@ SCHEMA = {
     "type": "object",
     "additionalProperties": False,
     "required": ["titel", "vorspann", "meta_beschreibung", "zwischentitel",
-                 "beispiele", "schluss"],
+                 "beispiele", "verwandte_suche", "schluss"],
     "properties": {
         "titel": {"type": "string"},
         "vorspann": {"type": "string"},
@@ -155,6 +157,10 @@ SCHEMA = {
                 },
             },
         },
+        # Ein bis zwei Suchbegriffe fuer das MVF-Archiv; die Adressen holt
+        # verwandtes.py aus der WordPress-Suche. Dieselbe Regel wie bei den
+        # Studienverweisen: Das Modell nennt nie selbst eine Adresse.
+        "verwandte_suche": {"type": "array", "items": {"type": "string"}},
         "schluss": {"type": "string"},
     },
 }
@@ -284,6 +290,13 @@ def schreibe_news(studien: list[dict]) -> dict:
         "interessantesten sind. Je Beispiel die PMID und EIN Satz, der das "
         "Ergebnis nennt - konkret, mit Zahl, wenn eine da ist. Wähle aus "
         "verschiedenen Hubs.\n"
+        "- verwandte_suche: ein bis zwei Suchbegriffe, mit denen sich im "
+        "MVF-Archiv frühere Beiträge zu den heutigen Themen finden lassen. Je "
+        "ein bis zwei Wörter, so wie ein Fachredakteur suchen würde: "
+        "'Pflegepersonaluntergrenzen', 'Hitzewelle', 'Klinikreform'. Nimm die "
+        "beiden Themen, die heute am stärksten vertreten sind - nicht "
+        "'Versorgungsforschung' oder 'Studien', das ist zu breit und findet "
+        "alles.\n"
         "- schluss: ein Satz, der auf die Hubs verweist. Keine Aufforderung "
         "im Werbeton.\n"
         "Verwende keine Adressen und keine Links - die setzt die Redaktion."
@@ -402,6 +415,14 @@ def baue_html(news: dict, studien: list[dict]) -> str:
         f"Alle {wortzahl(hub_zahl())} Knowledge-Hubs im Überblick</a> — "
         "kostenfrei, ohne Anmeldung, "
         "mit täglichem Studien-Newsletter je Hub.</p>")
+
+    # Verweise ins eigene Archiv, ganz am Schluss. Bis zum 26.08.2026 fuehrte
+    # aus dieser Meldung kein einziger Link auf einen anderen MVF-Beitrag -
+    # nur hinaus in die Hubs. Fuer Suchmaschinen war sie damit eine Sackgasse.
+    block = verwandtes.html_block(
+        verwandtes.finde(news.get("verwandte_suche") or []))
+    if block:
+        teile.append(block)
     return "\n".join(teile)
 
 

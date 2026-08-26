@@ -47,6 +47,7 @@ import base64
 import html
 import json
 import mimetypes
+import verwandtes
 import os
 import pathlib
 import re
@@ -145,7 +146,7 @@ SCHEMA = {
     "type": "object",
     "additionalProperties": False,
     "required": ["titel", "textauszug", "meta_beschreibung", "absaetze",
-                 "schlagwort"],
+                 "verwandte_suche", "schlagwort"],
     "properties": {
         "titel": {"type": "string"},
         "textauszug": {"type": "string"},
@@ -187,6 +188,11 @@ SCHEMA = {
             },
         },
         "hintergrund": {"type": "string"},
+        # Ein bis zwei Suchbegriffe fuer das MVF-Archiv. Das Modell nennt nur
+        # die Begriffe - die Adressen holt verwandtes.py aus der
+        # WordPress-Suche. Ein Modell, das Beitragsadressen nennen darf,
+        # erfindet sie irgendwann.
+        "verwandte_suche": {"type": "array", "items": {"type": "string"}},
         "schlagwort": {"type": "string", "enum": sorted(SCHLAGWOERTER)},
     },
 }
@@ -447,6 +453,12 @@ def schreibe_meldung(text: str, links: list[str], hinweis: str = "") -> dict:
         "- hintergrund: ein kurzer Absatz, der die absendende Institution "
         "einordnet (Rechtsform, Auftrag, Größe) - nur aus der Quelle. Steht "
         "am Ende der Meldung. Fehlt in der Quelle alles dazu, lass ihn weg.\n"
+        "- verwandte_suche: ein bis zwei Suchbegriffe, mit denen sich im "
+        "MVF-Archiv frühere Beiträge zum selben Thema finden lassen. Je ein "
+        "bis zwei Wörter, so wie ein Fachredakteur suchen würde: "
+        "'Pflegepersonaluntergrenzen', 'Organspende', 'Klinikreform'. Nicht "
+        "der Absendername und keine ganzen Sätze. Zwei Begriffe sind besser "
+        "als einer, wenn die Meldung zwei Themenstränge hat.\n"
         "- schlagwort: genau eines aus der Hausliste, und zwar das inhaltlich "
         "nächstliegende. 'Vermischtes' ist die Notlösung für Meldungen, die "
         "wirklich in keine Rubrik passen - nicht die bequeme Wahl, wenn zwei "
@@ -547,6 +559,13 @@ def baue_html(meldung: dict, erlaubt: list[str]) -> str:
 
     if meldung.get("hintergrund"):
         teile.append(f"<p>{escape(meldung['hintergrund'])}</p>")
+
+    # "Mehr zum Thema" ganz am Schluss, nach dem Hintergrundabsatz: Der Block
+    # fuehrt aus der Meldung heraus und hat vor ihrem Ende nichts zu suchen.
+    block = verwandtes.html_block(
+        verwandtes.finde(meldung.get("verwandte_suche") or []))
+    if block:
+        teile.append(block)
     return "\n".join(teile)
 
 
