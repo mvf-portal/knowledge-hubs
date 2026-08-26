@@ -1,13 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img"
      aria-label="Knowledge-Hubs von Monitor Versorgungsforschung">
   <!-- Das Zeichen der Vorschaltseite: die goldene Leiste zitiert den
-       "monitor"-Balken des MVF-Logos, die vier weissen Kacheln stehen fuer die
+       "monitor"-Balken des MVF-Logos, die vier Kacheln stehen fuer die
        Hubs. Bewusst nur vier statt zwoelf - bei 16 Pixeln in der Tableiste
        zerfaellt jedes feinere Raster zu Grau. Die Kacheln sind in der Hoehe
-       der Leiste zentriert; sonst haengt das Zeichen sichtbar schief. -->
+       der Leiste zentriert; sonst haengt das Zeichen sichtbar schief.
+       Die Kacheln sind hier GOLD, in den zwoelf Portalen weiss: Die
+       Vorschaltseite ist die einzige Seite, auf der alle Hubs zusammen
+       stehen, und das ist der eine Unterschied, den ihr Zeichen tragen darf. -->
   <rect width="512" height="512" rx="113" fill="#0051A1"/>
   <rect x="66.6" y="81.9" width="76.8" height="348.2" rx="17.9" fill="#BE9E53"/>
-  <g fill="#FFFFFF">
+  <g fill="#BE9E53">
     <rect x="184.3" y="125.5" width="112.6" height="112.6" rx="24.8"/>
     <rect x="332.7" y="125.5" width="112.6" height="112.6" rx="24.8"/>
     <rect x="184.3" y="273.9" width="112.6" height="112.6" rx="24.8"/>
