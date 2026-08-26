@@ -1,0 +1,65 @@
+{
+ "_": "Trefferzahl jeder Hub-Abfrage ueber die letzten 365 Tage, woechentlich von abfrage_wache.py fortgeschrieben.",
+ "hubs": {
+  "mvf-portal/versorgungsforschung-portal": {
+   "datum": "2026-08-26",
+   "treffer": 7657,
+   "pro_tag": 21.0
+  },
+  "mvf-portal/klima-gesundheit-portal": {
+   "datum": "2026-08-26",
+   "treffer": 5065,
+   "pro_tag": 13.9
+  },
+  "mvf-portal/ki-gesundheit-portal": {
+   "datum": "2026-08-26",
+   "treffer": 32255,
+   "pro_tag": 88.4
+  },
+  "mvf-portal/pflege-portal": {
+   "datum": "2026-08-26",
+   "treffer": 15526,
+   "pro_tag": 42.5
+  },
+  "mvf-portal/longevity-portal": {
+   "datum": "2026-08-26",
+   "treffer": 7279,
+   "pro_tag": 19.9
+  },
+  "mvf-portal/healthliteracy-portal": {
+   "datum": "2026-08-26",
+   "treffer": 4498,
+   "pro_tag": 12.3
+  },
+  "mvf-portal/impfen-portal": {
+   "datum": "2026-08-26",
+   "treffer": 7581,
+   "pro_tag": 20.8
+  },
+  "mvf-portal/ncd-portal": {
+   "datum": "2026-08-26",
+   "treffer": 10879,
+   "pro_tag": 29.8
+  },
+  "mvf-portal/gender-portal": {
+   "datum": "2026-08-26",
+   "treffer": 5916,
+   "pro_tag": 16.2
+  },
+  "mvf-portal/adipositas-portal": {
+   "datum": "2026-08-26",
+   "treffer": 11991,
+   "pro_tag": 32.9
+  },
+  "mvf-portal/safety-portal": {
+   "datum": "2026-08-26",
+   "treffer": 11892,
+   "pro_tag": 32.6
+  },
+  "mvf-portal/mental-portal": {
+   "datum": "2026-08-26",
+   "treffer": 10892,
+   "pro_tag": 29.8
+  }
+ }
+}

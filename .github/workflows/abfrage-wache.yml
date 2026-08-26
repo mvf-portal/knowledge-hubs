@@ -1,0 +1,52 @@
+# Woechentlicher Blick auf die zwoelf PubMed-Abfragen.
+#
+# Zweck: Eine duenne Ausgabe kann ein ruhiger Tag sein - oder eine Abfrage, die
+# dauerhaft weniger liefert, weil ein MeSH-Begriff umbenannt oder abgeschafft
+# wurde. Der Unterschied zeigt sich erst im Vergleich ueber Wochen, und genau
+# den haelt abfrage-stand.json fest.
+#
+# Montags 04:15 UTC: nach dem taeglichen Lauf der Portale (03:00) und nach dem
+# Sammelbericht (03:45), damit sich die drei nicht in die Quere kommen.
+# Der Lauf braucht kein Geheimnis ausser dem GITHUB_TOKEN fuer die Meldung -
+# PubMed wird ohne Schluessel abgefragt, zwoelf Anfragen in der Woche.
+name: Abfrage-Wache (wöchentlich)
+
+on:
+  schedule:
+    - cron: "15 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      schwelle:
+        description: "Verlust in Prozent, ab dem gewarnt wird"
+        type: string
+        default: "25"
+
+permissions:
+  issues: write
+  contents: write        # fuer abfrage-stand.json
+
+jobs:
+  wache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Abfragen zählen und mit dem letzten Stand vergleichen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/abfrage_wache.py --schwelle ${{ inputs.schwelle || '25' }}
+
+      - name: abfrage-stand.json committen (nur bei Änderung)
+        run: |
+          if [ -z "$(git status --porcelain abfrage-stand.json)" ]; then
+            echo "Keine Änderung - nichts zu committen."
+            exit 0
+          fi
+          git config user.name  "Knowledge-Hubs Bot"
+          git config user.email "stegmaier@m-vf.de"
+          git add abfrage-stand.json
+          git commit -m "Abfrage-Wache: Stand vom $(TZ=Europe/Berlin date +%d.%m.%Y)"
+          git push

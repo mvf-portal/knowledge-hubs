@@ -105,6 +105,21 @@ def letzter_zugang(repo: str) -> str | None:
     return max(tage) if tage else None
 
 
+def poolzeile(s: dict) -> str:
+    """Was zwischen PubMed und Ausgabe verlorenging - als Zahl statt als Ahnung.
+
+    Der Ausfall vom 26.08.2026 (zwei Tage lang null neue Studien im
+    Gesundheitskompetenz-Hub) waere hier sofort sichtbar gewesen: Pool 51,
+    gewaehlt 6, neu 0.
+    """
+    z = s.get("pool") or {}
+    if not z:
+        return ""
+    return (f"  \n  <sub>Pool {z.get('pool', '?')} aus {z.get('geholt', '?')} Treffern "
+            f"({z.get('bekannt', 0)} schon im Archiv) &middot; gewählt {z.get('gewaehlt', '?')} "
+            f"&middot; neu {z.get('neu', '?')}</sub>")
+
+
 def frische(repo: str, heute: str) -> str:
     """Warnt, wenn seit Tagen nichts Neues mehr ankommt."""
     letzter = letzter_zugang(repo)
@@ -145,12 +160,12 @@ def zeile(name: str, repo: str, s: dict | None, heute: str, ruhetag: bool = Fals
         return (f"- ✅ **{name}** — {s['anzahl']} Studien, geht um {uhr}{wer} raus. "
                 f"[Ansehen oder absagen]({s['kampagne']})  \n"
                 f"  <sub>{s.get('betreff', '')}</sub>{_aussortiert(s)}"
-                + frische(repo, heute))
+                + poolzeile(s) + frische(repo, heute))
     gruende = "; ".join(s.get("beanstandungen", [])) or "unbekannt"
     return (f"- ⛔ **{name}** — **gestoppt**, nichts wird versendet. "
             f"[Entwurf ansehen]({s['kampagne']})  \n"
             f"  <sub>Grund: {gruende}</sub>{_aussortiert(s)}"
-            + frische(repo, heute))
+            + poolzeile(s) + frische(repo, heute))
 
 
 def _aussortiert(s: dict) -> str:
