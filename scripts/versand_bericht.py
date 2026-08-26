@@ -48,6 +48,7 @@ PORTALE = [
     ("Psychische Gesundheit", "mvf-portal/mental-portal"),
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
+ROH_ARCHIV = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"
 BERICHT_REPO = "mvf-portal/knowledge-hubs"
 
 # Samstag und Sonntag terminiert kein Portal - `WOCHENENDE_AUS` in deren
@@ -81,6 +82,46 @@ def ortszeit(utc_iso: str | None) -> str:
         return utc_iso
 
 
+def letzter_zugang(repo: str) -> str | None:
+    """Der juengste Aufnahmetag im Archiv des Hubs - oder None.
+
+    Zweite Quelle neben versand-status.json, und zwar mit Absicht: Der
+    Versandstatus sagt, was hinausging, nicht ob ueberhaupt noch etwas
+    nachkommt. Am 26.08.2026 meldete der Gesundheitskompetenz-Hub zwei Tage
+    lang erfolgreiche Laeufe - und lieferte dabei null neue Studien, weil das
+    Modell aus einem unveraenderten Pool jedes Mal dieselben Arbeiten waehlte
+    und das Archiv sie als Doppel verwarf. Im Bericht stand nur "Status ist
+    vom 24.08., nicht von heute", was nach einem ruhigen Tag aussieht. Diese
+    Zeile macht daraus eine Zahl.
+    """
+    try:
+        req = urllib.request.Request(ROH_ARCHIV.format(repo=repo),
+                                     headers={"User-Agent": "mvf-versandbericht"})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            eintraege = json.load(r)
+    except Exception:  # noqa: BLE001 - eine fehlende Datei ist kein Grund abzubrechen
+        return None
+    tage = [e.get("aufgenommen") for e in eintraege if e.get("aufgenommen")]
+    return max(tage) if tage else None
+
+
+def frische(repo: str, heute: str) -> str:
+    """Warnt, wenn seit Tagen nichts Neues mehr ankommt."""
+    letzter = letzter_zugang(repo)
+    if not letzter:
+        return ""
+    try:
+        alter = (dt.date.fromisoformat(heute) - dt.date.fromisoformat(letzter)).days
+    except ValueError:
+        return ""
+    if alter <= 1:
+        return ""
+    zeichen = "⚠️" if alter >= 3 else "•"
+    return (f"  \n  <sub>{zeichen} Letzter neuer Studienzugang: {letzter} "
+            f"(vor {alter} Tagen). Bleibt das so, die Abfrage nachmessen: "
+            f"`py machbarkeit.py themen/&lt;slug&gt;.json`</sub>")
+
+
 def zeile(name: str, repo: str, s: dict | None, heute: str, ruhetag: bool = False) -> str:
     # Ein Portal, das am Wochenende doch etwas terminiert hat, wird normal
     # gemeldet - die Ruhetag-Auskunft gilt nur fuer die fehlende Statusdatei.
@@ -91,7 +132,7 @@ def zeile(name: str, repo: str, s: dict | None, heute: str, ruhetag: bool = Fals
                 f"durch oder abgebrochen. [Actions ansehen](https://github.com/{repo}/actions)")
     if s.get("datum") != heute:
         return (f"- **{name}** — Status ist vom {s.get('datum')}, nicht von heute. "
-                f"Der nächtliche Lauf hat vermutlich nichts Neues gefunden.")
+                f"Der nächtliche Lauf hat nichts Neues gefunden." + frische(repo, heute))
     if s.get("stand") == "terminiert":
         uhr = ortszeit(s.get("termin_utc"))
         # Die Empfaengerzahl steht bewusst im Bericht: Sie ist die einzige
@@ -103,11 +144,13 @@ def zeile(name: str, repo: str, s: dict | None, heute: str, ruhetag: bool = Fals
                 wer += f" von {s['listengroesse']}"
         return (f"- ✅ **{name}** — {s['anzahl']} Studien, geht um {uhr}{wer} raus. "
                 f"[Ansehen oder absagen]({s['kampagne']})  \n"
-                f"  <sub>{s.get('betreff', '')}</sub>{_aussortiert(s)}")
+                f"  <sub>{s.get('betreff', '')}</sub>{_aussortiert(s)}"
+                + frische(repo, heute))
     gruende = "; ".join(s.get("beanstandungen", [])) or "unbekannt"
     return (f"- ⛔ **{name}** — **gestoppt**, nichts wird versendet. "
             f"[Entwurf ansehen]({s['kampagne']})  \n"
-            f"  <sub>Grund: {gruende}</sub>{_aussortiert(s)}")
+            f"  <sub>Grund: {gruende}</sub>{_aussortiert(s)}"
+            + frische(repo, heute))
 
 
 def _aussortiert(s: dict) -> str:
