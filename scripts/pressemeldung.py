@@ -144,10 +144,18 @@ SYSTEM = (
 SCHEMA = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["titel", "textauszug", "absaetze", "schlagwort"],
+    "required": ["titel", "textauszug", "meta_beschreibung", "absaetze",
+                 "schlagwort"],
     "properties": {
         "titel": {"type": "string"},
         "textauszug": {"type": "string"},
+        # Was in der Trefferliste von Google steht. Eigenes Feld und nicht der
+        # gekuerzte Textauszug: Der ist auf 300 Zeichen ausgelegt, Google zeigt
+        # rund 155 - maschinell gekuerzt endet er mitten im Satz. Bis zum
+        # 26.08.2026 setzte dieses Skript ueberhaupt keine Meta-Beschreibung;
+        # 17 von 20 gepruefte Meldungen hatten deshalb gar keine, und Google
+        # baute sich selbst ein Schnipsel aus dem Fliesstext zusammen.
+        "meta_beschreibung": {"type": "string"},
         # Je Absatz ein Objekt statt einer Zeichenkette, seit dem 26.08.2026.
         # Der Zwischentitel gehoert zu dem Absatz, den er eroeffnet - so kann
         # die Reihenfolge gar nicht verrutschen, anders als bei einer zweiten
@@ -404,9 +412,15 @@ def schreibe_meldung(text: str, links: list[str], hinweis: str = "") -> dict:
         "und nicht 'DAK-Gesundheit: Mehr Prävention für Kinder'. Wer die "
         "Meldung überfliegt, soll am Anfang der Zeile lesen, worum es geht.\n"
         "- textauszug: zwei Sätze, zusammen höchstens 300 Zeichen. Sie stehen "
-        "als Vorspann in Listen und bei Suchmaschinen und kommen im Fließtext "
-        "NICHT noch einmal vor. Länger ist nicht besser: Suchmaschinen "
-        "schneiden ab.\n"
+        "als Vorspann in Listen und kommen im Fließtext NICHT noch einmal "
+        "vor.\n"
+        "- meta_beschreibung: EIN Satz, 120 bis 155 Zeichen, für die "
+        "Trefferliste von Google. Nennt das Ergebnis oder die Entscheidung, "
+        "nicht die Gattung: 'Die Sterblichkeit nach Herzinfarkt sank nach "
+        "Klinikübernahmen um 3,7 Prozent - eine HCHE-Studie an 1.100 Häusern.' "
+        "Muss die wichtigsten Suchwörter der Meldung enthalten und für sich "
+        "allein verständlich sein - sie steht ohne Überschrift daneben. "
+        "Höchstens 155 Zeichen, sonst schneidet Google mitten im Wort ab.\n"
         "- absaetze: vier bis sieben Absätze Fließtext, je zwei bis vier "
         "Sätze, jeder als Objekt mit dem Feld 'text'. Das Wichtigste zuerst. "
         "Höchstens zwei wörtliche Zitate, im Wortlaut. Kein HTML, keine "
@@ -828,6 +842,34 @@ def bilder_anhaengen(bilder: list[tuple[str, bytes]], beitrag: int,
     return neue
 
 
+def yoast_beschreibung(kennung, kopf: str, text: str) -> None:
+    """Meta-Beschreibung nachtragen - ohne den Entwurf zu gefaehrden.
+
+    Eigener Schritt nach dem Anlegen, wie in tagesnews.py: Yoast gibt sein
+    Feld nicht in jeder Fassung ueber die Schnittstelle frei. Schlaegt es
+    fehl, steht der Entwurf trotzdem, und die Redaktion kann die Zeile von
+    Hand eintragen.
+
+    Ohne diesen Schritt blieb das Feld leer - und Yoast setzt den Textauszug
+    NICHT automatisch ein. Am 26.08.2026 hatten deshalb 17 von 20 gepruefte
+    Meldungen gar keine Meta-Beschreibung; Google baut sich dann selbst ein
+    Schnipsel aus dem Fliesstext, meist die ersten Zeilen des ersten Absatzes.
+    """
+    if not (kennung and text.strip()):
+        return
+    try:
+        d = wp_ruf(f"/posts/{kennung}", kopf,
+                   json.dumps({"meta": {"_yoast_wpseo_metadesc": text.strip()}})
+                   .encode("utf-8"), methode="POST")
+    except urllib.error.HTTPError as e:
+        print(f"  Meta-Beschreibung nicht gesetzt (HTTP {e.code}) - "
+              f"bitte von Hand eintragen.")
+        return
+    steht = (d.get("meta") or {}).get("_yoast_wpseo_metadesc")
+    print(f"  Meta-Beschreibung gesetzt ({len(text.strip())} Zeichen)." if steht
+          else "  Meta-Beschreibung von Yoast nicht uebernommen.")
+
+
 def bild_hochladen(pfad: pathlib.Path, kopf: str, titel: str) -> int:
     art = mimetypes.guess_type(pfad.name)[0] or "application/octet-stream"
     kopfzeilen = {"Authorization": f"Basic {kopf}",
@@ -894,6 +936,7 @@ def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
     print(f"Entwurf angelegt: Nr. {d['id']}")
     print(f"  Bearbeiten: https://www.monitor-versorgungsforschung.de/"
           f"wp-admin/post.php?post={d['id']}&action=edit")
+    yoast_beschreibung(d["id"], kopf, meldung.get("meta_beschreibung", ""))
 
     # Das Bildmaterial der Mitteilung gleich mit an den Entwurf haengen -
     # sonst muesste die Redaktion die Quelle erst wieder heraussuchen.
