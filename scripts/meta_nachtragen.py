@@ -2,6 +2,27 @@
 # -*- coding: utf-8 -*-
 """Meta-Beschreibungen fuer den Altbestand der News nachtragen.
 
+**STILLGELEGT - am 26.08.2026 bewusst nicht ausgefuehrt.**
+
+Der Einwand kam vom MVF-Administrator und trifft zu: Google ersetzt die
+hinterlegte Meta-Beschreibung in der Mehrzahl der Faelle durch ein selbst
+gebautes Snippet, das zur jeweiligen Suchanfrage passt. Eine gepflegte
+Beschreibung ist ein Vorschlag, keine Vorgabe - fuer 8.400 Altbeitraege
+rechtfertigt das den Aufwand nicht.
+
+Das Skript bleibt trotzdem liegen: Es ist erprobt (zwei Trockenlaeufe, siehe
+die Lehren in anfrage() und kuerzen()), und die Rechnung koennte sich aendern -
+etwa wenn Vorschaukarten in sozialen Netzen wichtiger werden. Yoast speist
+`og:description` aus demselben Feld, und dort wird nichts umgeschrieben.
+
+Es laeuft nirgends automatisch: kein Cron, kein Workflow, kein Aufruf aus
+einem anderen Skript. Ohne --scharf schreibt es ohnehin nichts.
+**Nicht ausfuehren ohne ausdrueckliche Anweisung des Herausgebers.**
+
+NEUE Beitraege bekommen ihre Meta-Beschreibung weiterhin beim Schreiben -
+tagesnews.py und pressemeldung.py, dort entsteht der Satz ohnehin mit.
+
+
 Am 26.08.2026 wurde der News-Bestand von m-vf.de gepruoft: In einer Stichprobe
 von 120 Beitraegen quer durch die Jahrgaenge 2020 bis 2026 hatten **117 keine
 Meta-Beschreibung**. Die drei Ausnahmen waren die Tagesnews, die den Schritt
@@ -53,8 +74,11 @@ KATEGORIE_NEWS = 1000
 
 # Opus 5 ist der Hausstandard. Fuer diesen Lauf ist die Aufgabe einfach - ein
 # Satz aus einem Text, den das Modell vor sich hat -, und die Menge macht den
-# Unterschied spuerbar: Bei 8.400 Beitraegen kostet Opus 5 ueber die Batch-API
-# rund 13 Dollar, Haiku 4.5 rund 2,50. Die Wahl trifft der Herausgeber, nicht
+# Unterschied spuerbar. Am Trockenlauf vom 26.08.2026 gemessen (1.140 Tokens
+# hinein, 131 heraus je Beitrag - der Artikeltext wiegt schwerer als eine
+# Schaetzung vermuten laesst), hochgerechnet auf 8.400 Beitraege ueber die
+# Batch-API: Opus 5 rund 38 Dollar, Sonnet 5 rund 23, Haiku 4.5 rund 8.
+# Mit effort "low" liegt es darunter. Die Wahl trifft der Herausgeber, nicht
 # dieses Skript; MODEL setzt sie um.
 MODELL = os.environ.get("MODEL", "claude-opus-5")
 
@@ -153,17 +177,35 @@ def anfragen_bauen(posts: list[dict]) -> list[dict]:
         text = text_aus_html(roh)[:TEXT_ZEICHEN]
         if len(text) < 80:          # zu duenn, um etwas Sinnvolles zu schreiben
             continue
-        anfragen.append({
-            "custom_id": str(p["id"]),
-            "params": {
-                "model": MODELL,
-                "max_tokens": 300,
-                "system": SYSTEM,
-                "messages": [{"role": "user",
-                              "content": AUFTRAG.format(titel=titel, text=text)}],
-            },
-        })
+        anfragen.append(anfrage(str(p["id"]),
+                                AUFTRAG.format(titel=titel, text=text)))
     return anfragen
+
+
+def anfrage(kennung: str, inhalt: str) -> dict:
+    """Eine Batch-Anfrage mit den Einstellungen, die dieser Lauf braucht.
+
+    **max_tokens grosszuegig, effort niedrig** - beides Lehren aus dem ersten
+    Trockenlauf am 26.08.2026. Mit max_tokens=300 lieferten 3 von 13 Anfragen
+    einen leeren Text: Opus 5 denkt standardmaessig adaptiv, und diese drei
+    hatten ihr ganzes Budget im Thinking verbraucht (stop_reason max_tokens,
+    nur thinking-Bloecke, kein Satz). Der Fehler faellt nicht als Fehler auf -
+    die Anfrage gilt als geglueckt und liefert nichts.
+
+    effort "low" ist hier richtig: Einen Satz aus einem Text zu ziehen, den
+    man vor sich hat, braucht keine tiefe Ueberlegung - und bei 8.400
+    Beitraegen ist jedes gesparte Thinking-Token bares Geld.
+    """
+    return {
+        "custom_id": kennung,
+        "params": {
+            "model": MODELL,
+            "max_tokens": 1000,
+            "system": SYSTEM,
+            "output_config": {"effort": "low"},
+            "messages": [{"role": "user", "content": inhalt}],
+        },
+    }
 
 
 def batch_laufen_lassen(anfragen: list[dict]) -> dict[str, str]:
@@ -191,7 +233,7 @@ def batch_laufen_lassen(anfragen: list[dict]) -> dict[str, str]:
         time.sleep(20)
 
     ergebnisse: dict[str, str] = {}
-    fehler = 0
+    fehler = leer = 0
     for zeile in client.messages.batches.results(stapel.id):
         if zeile.result.type != "succeeded":
             fehler += 1
@@ -200,8 +242,56 @@ def batch_laufen_lassen(anfragen: list[dict]) -> dict[str, str]:
                      if b.type == "text"), "").strip().strip('"').strip()
         if satz:
             ergebnisse[zeile.custom_id] = satz
-    print(f"{len(ergebnisse)} Beschreibungen erzeugt, {fehler} fehlgeschlagen.")
+        else:
+            # Kein Text trotz geglueckter Anfrage - fast immer das
+            # Token-Budget im Thinking verbraucht. Zaehlen, nicht verschweigen.
+            leer += 1
+    print(f"{len(ergebnisse)} Beschreibungen erzeugt, {fehler} fehlgeschlagen, "
+          f"{leer} ohne Text.")
+
+    zu_lang = {k: v for k, v in ergebnisse.items() if len(v) > META_MAX}
+    ergebnisse.update(kuerzen(zu_lang, client))
     return ergebnisse
+
+
+# Google zeigt rund 155 Zeichen. Im ersten Trockenlauf lagen 2 von 10 Saetzen
+# darueber (164 und 173) - eine Laengenangabe im Prompt allein genuegt nicht,
+# Sprachmodelle zaehlen Zeichen schlecht.
+META_MAX = 155
+
+
+def kuerzen(zu_lang: dict[str, str], client) -> dict[str, str]:
+    """Zweiter Durchgang nur fuer die zu langen Saetze.
+
+    Ein eigener Batch statt einer Schleife: Bei 8.400 Beitraegen sind das
+    einige Hundert Nachbesserungen, und die Batch-API kostet dafuer wieder
+    nur die Haelfte. Was auch danach zu lang ist, bleibt - besser ein Satz,
+    den Google kuerzt, als gar keiner.
+    """
+    if not zu_lang:
+        return {}
+    print(f"\n{len(zu_lang)} Sätze über {META_MAX} Zeichen - zweiter Durchgang.")
+    anfragen = [anfrage(k, (
+        f"Kürze diesen Satz auf höchstens {META_MAX} Zeichen, ohne die "
+        f"Kernaussage und die Zahlen zu verlieren. Antworte NUR mit dem "
+        f"gekürzten Satz, ohne Anführungszeichen:\n\n{v}"))
+        for k, v in zu_lang.items()]
+    stapel = client.messages.batches.create(requests=anfragen)
+    while True:
+        stapel = client.messages.batches.retrieve(stapel.id)
+        if stapel.processing_status == "ended":
+            break
+        time.sleep(20)
+    besser: dict[str, str] = {}
+    for zeile in client.messages.batches.results(stapel.id):
+        if zeile.result.type != "succeeded":
+            continue
+        satz = next((b.text for b in zeile.result.message.content
+                     if b.type == "text"), "").strip().strip('"').strip()
+        if satz and len(satz) <= META_MAX:
+            besser[zeile.custom_id] = satz
+    print(f"{len(besser)} davon gekürzt.")
+    return besser
 
 
 def setzen(kennung: str, satz: str, auth: str) -> bool:
