@@ -1,0 +1,41 @@
+# Verschickt die terminierten Ausgaben eines Tages SOFORT.
+#
+# Nur von Hand, mit ausdruecklicher Bestaetigung. Gedacht fuer den Fall, dass
+# Mailchimp eine terminierte Kampagne nicht abarbeitet - am 27.08.2026 standen
+# alle zwoelf Ausgaben eine Viertelstunde nach der Sendezeit noch auf
+# "schedule".
+#
+# Ohne den Schalter "wirklich_senden" laeuft nur die Probe: Sie zeigt, was
+# verschickt wuerde, und ruehrt nichts an.
+name: Versand auslösen (von Hand)
+
+on:
+  workflow_dispatch:
+    inputs:
+      wirklich_senden:
+        description: "WIRKLICH an die Leserschaft verschicken"
+        type: boolean
+        default: false
+      tag:
+        description: "Anderer Tag (JJJJ-MM-TT), leer = heute"
+        type: string
+        default: ""
+
+permissions: {}
+
+jobs:
+  senden:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Terminierte Ausgaben sofort verschicken
+        env:
+          KNOWLEDGEHUBSMC: ${{ secrets.KNOWLEDGEHUBSMC }}
+        run: |
+          python scripts/versand_ausloesen.py \
+            ${{ inputs.tag && format('--tag {0}', inputs.tag) || '' }} \
+            ${{ inputs.wirklich_senden && '--ja-wirklich' || '' }}
