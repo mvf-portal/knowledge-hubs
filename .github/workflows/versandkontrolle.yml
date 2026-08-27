@@ -1,0 +1,39 @@
+# Fragt Mailchimp, ob die Ausgabe von heute wirklich hinausgegangen ist.
+#
+# versand-status.json der Portale sagt, was TERMINIERT wurde - nicht, was
+# ankam. Diese Kontrolle laeuft nach dem Versand um 10:00 Ortszeit und meldet
+# NUR, wenn etwas nicht versendet wurde. Eine taegliche Bestaetigung, dass
+# alles gut ging, waere nach einer Woche eine Meldung, die niemand mehr liest.
+#
+# 09:20 UTC = 11:20 deutscher Sommerzeit, gut eine Stunde nach dem Versand -
+# Mailchimp braucht bei grossen Listen einige Minuten, und ein Lauf direkt um
+# 10:01 sieht deshalb regelmaessig "sending" statt "sent".
+name: Versandkontrolle (täglich)
+
+on:
+  schedule:
+    - cron: "20 9 * * *"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Anderer Tag (JJJJ-MM-TT), leer = heute"
+        type: string
+        default: ""
+
+permissions:
+  issues: write
+
+jobs:
+  kontrolle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Kampagnen von heute prüfen
+        env:
+          KNOWLEDGEHUBSMC: ${{ secrets.KNOWLEDGEHUBSMC }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/versandkontrolle.py ${{ inputs.tag && format('--tag {0}', inputs.tag) || '' }}
