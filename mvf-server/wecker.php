@@ -36,6 +36,10 @@
 // .php, nicht als .json oder .txt: MVF laeuft auf nginx, .htaccess wird dort
 // nicht gelesen, und eine .json waere unter ihrer Adresse einfach abrufbar.
 // Dieselbe Lehre wie beim Zaehler (daten/*.json.php).
+// Der Protokollpfad steht VOR der ersten moeglichen Fehlermeldung: Sonst
+// schriebe fehler() beim fehlenden Zugang ins Leere.
+$PROTOKOLL = __DIR__ . '/wecker.log';
+
 $einstellungen = __DIR__ . '/wecker-zugang.php';
 if (!is_file($einstellungen)) {
     fehler('wecker-zugang.php fehlt - siehe LIESMICH.md', 500);
@@ -46,7 +50,6 @@ $REPO      = $zugang['repo']      ?? 'mvf-portal/knowledge-hubs';
 $EREIGNIS  = $zugang['ereignis']  ?? 'morgenlauf';
 $TOKEN     = $zugang['token']     ?? '';
 $SCHLUESSEL = $zugang['schluessel'] ?? '';
-$PROTOKOLL = __DIR__ . '/wecker.log';
 
 $vonHand = PHP_SAPI !== 'cli';
 
@@ -121,8 +124,9 @@ function protokoll(string $zeile): void
     // Kurz halten: Der Hoster raeumt nichts weg, und eine Zeile am Tag ergibt
     // in zehn Jahren 3.650 Zeilen - das traegt eine Datei.
     global $PROTOKOLL;
+    $datei = $PROTOKOLL ?: (__DIR__ . '/wecker.log');
     @file_put_contents(
-        $PROTOKOLL,
+        $datei,
         date('Y-m-d H:i:s') . '  ' . $zeile . PHP_EOL,
         FILE_APPEND | LOCK_EX
     );
