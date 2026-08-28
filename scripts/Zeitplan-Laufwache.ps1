@@ -1,4 +1,4 @@
-# Richtet die Aufgabe "MVF Laufwache" ein: Taeglich um 09:00 sieht sie nach, ob
+# Richtet die Aufgabe "MVF Laufwache" ein: Taeglich um 06:00 und 09:00 sieht sie nach, ob
 # die naechtlichen Laeufe der zwoelf Hubs und der Sammelbericht wirklich
 # gelaufen sind, stoesst fehlende an und meldet sich per Outlook.
 #
@@ -25,9 +25,18 @@ $aktion = New-ScheduledTaskAction -Execute $pyw `
     -Argument "-3 `"$skript`"" `
     -WorkingDirectory "$env:USERPROFILE\Documents\knowledge-hubs"
 
-# 09:00 Ortszeit: eine Stunde vor dem Versand um 10:00. Ein nachgeholter Lauf
-# braucht ein bis zwei Minuten, es bleibt also Luft fuer einen Blick von Hand.
-$takt = New-ScheduledTaskTrigger -Daily -At 9:00
+# ZWEIMAL taeglich, und das ist seit dem 28.08.2026 die eigentliche Absicherung:
+# GitHubs Cron hat die Laeufe an zwei Tagen hintereinander gar nicht gestartet.
+#
+#   06:00 - vier Stunden vor dem Versand. GitHub haette bis dahin zwei eigene
+#           Zeitplaene gehabt (03:xx und 05:xx UTC); was fehlt, wird hier
+#           nachgeholt, und der Tag sieht aus wie jeder andere.
+#   09:00 - die Kontrolle danach: Ist inzwischen alles gelaufen?
+#
+# Doppelt kostet nichts: update_studies.py bricht ab, wenn das Archiv fuer
+# heute schon Studien hat, und die Laufwache stoesst nur an, was fehlt.
+$frueh = New-ScheduledTaskTrigger -Daily -At 6:00
+$spaet = New-ScheduledTaskTrigger -Daily -At 9:00
 
 # StartWhenAvailable holt die Aufgabe nach, wenn der Rechner um 09:00 aus war.
 $optionen = New-ScheduledTaskSettingsSet -StartWhenAvailable `
@@ -40,7 +49,7 @@ $wer = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" `
     -LogonType Interactive -RunLevel Limited
 
 Register-ScheduledTask -TaskName "MVF Laufwache" -Action $aktion `
-    -Trigger $takt -Settings $optionen -Principal $wer -Force `
+    -Trigger $frueh, $spaet -Settings $optionen -Principal $wer -Force `
     -Description "Prueft taeglich um 09:00, ob die naechtlichen Studienlaeufe der zwoelf Knowledge-Hubs und der Sammelbericht gelaufen sind; stoesst fehlende an und meldet sich per Outlook." |
     Select-Object TaskName, State
 
