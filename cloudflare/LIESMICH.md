@@ -52,18 +52,22 @@ Kette nichts.
 
 ## Einrichten
 
-### 1. Beide Token anlegen (nur Sie, nicht Claude)
+### 1. Das Token anlegen (nur Sie, nicht Claude)
 
 GitHub → Settings → Developer settings → **Fine-grained personal access tokens**
+→ *Generate new token*
 
-* **Wecker-Token**: Repository access nur `mvf-portal/knowledge-hubs`,
-  Permission **Contents: Read and write**. Ablaufdatum setzen (ein Jahr).
-* **Dirigent-Token**: Repository access die zwölf Portal-Repos,
-  Permission **Actions: Read and write**.
+* **Repository access:** *Only select repositories* → alle **dreizehn**
+  (die zwölf Portale und `knowledge-hubs`)
+* **Permissions → Contents:** *Read and write*
+* **Permissions → Actions:** *Read and write*
+* **Expiration:** ein Jahr — und das Datum in den Kalender
 
-Das Dirigent-Token in knowledge-hubs hinterlegen:
-Settings → Secrets and variables → Actions → New repository secret,
-Name **`DIRIGENT_TOKEN`**.
+Denselben Wert an zwei Stellen hinterlegen:
+
+* als GitHub-Secret **`DIRIGENT_TOKEN`** in `mvf-portal/knowledge-hubs`
+  (Settings → Secrets and variables → Actions → New repository secret)
+* als Worker-Secret **`GITHUB_TOKEN`** (Schritt 2)
 
 ### 2. Worker veröffentlichen
 
