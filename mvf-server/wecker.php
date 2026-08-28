@@ -38,7 +38,14 @@
 // Dieselbe Lehre wie beim Zaehler (daten/*.json.php).
 // Der Protokollpfad steht VOR der ersten moeglichen Fehlermeldung: Sonst
 // schriebe fehler() beim fehlenden Zugang ins Leere.
-$PROTOKOLL = __DIR__ . '/wecker.log';
+//
+// **Die Endung .php ist Absicht, keine Verwechslung.** Am 28.08.2026 lag das
+// Protokoll als wecker.log auf dem Server und war unter seiner Adresse
+// abrufbar - MVF laeuft auf nginx, .htaccess wird dort nicht gelesen. Es stand
+// zwar nichts Geheimes darin, aber es verriet Zeitpunkte und Fehlerbilder.
+// Dieselbe Lehre wie beim Zaehler, dessen Datendateien deshalb *.json.php
+// heissen. Die erste Zeile der Datei bricht die Ausfuehrung ab.
+$PROTOKOLL = __DIR__ . '/wecker.log.php';
 
 $einstellungen = __DIR__ . '/wecker-zugang.php';
 if (!is_file($einstellungen)) {
@@ -124,10 +131,14 @@ function protokoll(string $zeile): void
     // Kurz halten: Der Hoster raeumt nichts weg, und eine Zeile am Tag ergibt
     // in zehn Jahren 3.650 Zeilen - das traegt eine Datei.
     global $PROTOKOLL;
-    $datei = $PROTOKOLL ?: (__DIR__ . '/wecker.log');
+    $datei = $PROTOKOLL ?: (__DIR__ . '/wecker.log.php');
+    // Neu angelegt bekommt die Datei zuerst den Riegel - danach ist sie ueber
+    // das Netz nicht mehr lesbar, egal wie sie heisst.
+    $riegel = is_file($datei) ? '' : "<?php exit; ?>
+";
     @file_put_contents(
         $datei,
-        date('Y-m-d H:i:s') . '  ' . $zeile . PHP_EOL,
+        $riegel . date('Y-m-d H:i:s') . '  ' . $zeile . PHP_EOL,
         FILE_APPEND | LOCK_EX
     );
 }

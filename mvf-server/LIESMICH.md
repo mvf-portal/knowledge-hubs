@@ -48,6 +48,10 @@ Per FTP nach `/wecker/` im Web-Verzeichnis (dieselbe Ebene wie `/zaehler/`):
 wird dort nicht gelesen; eine `.json` oder `.txt` wäre unter ihrer Adresse
 abrufbar — mitsamt Token. Dieselbe Lehre wie beim Zähler.
 
+Aus demselben Grund heißt das Protokoll **`wecker.log.php`** und beginnt mit
+`<?php exit; ?>`. Eine frühere Fassung schrieb nach `wecker.log` — die Datei
+war unter ihrer Adresse lesbar. Liegt sie noch auf dem Server: löschen.
+
 ### 2. Token eintragen
 
 In `wecker-zugang.php` das fein granulierte GitHub-Token einsetzen
@@ -90,7 +94,7 @@ php /pfad/.../wecker/wecker.php
 ```
 
 Erwartet: `Weckruf abgesetzt.` — und danach läuft in knowledge-hubs der
-Dirigent. Protokoll: `wecker.log` neben dem Skript, eine Zeile je Lauf.
+Dirigent. Protokoll: `wecker.log.php` neben dem Skript, eine Zeile je Lauf.
 
 Den Dirigenten allein prüfen, ganz ohne Server:
 
