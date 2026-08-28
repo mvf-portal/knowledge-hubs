@@ -49,6 +49,11 @@ PORTALE = [
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 ROH_ARCHIV = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"
+# Der Ausschreibungsradar laeuft nicht in jedem Hub, sondern einmal zentral im
+# Versorgungsforschungs-Portal und teilt sein Ergebnis nach Themengebieten auf.
+# Deshalb genuegt hier eine Datei statt zwoelf.
+ROH_RADAR = ("https://raw.githubusercontent.com/"
+             "mvf-portal/versorgungsforschung-portal/main/ausschreibungen.json")
 BERICHT_REPO = "mvf-portal/knowledge-hubs"
 
 # Samstag und Sonntag terminiert kein Portal - `WOCHENENDE_AUS` in deren
@@ -103,6 +108,65 @@ def letzter_zugang(repo: str) -> str | None:
         return None
     tage = [e.get("aufgenommen") for e in eintraege if e.get("aufgenommen")]
     return max(tage) if tage else None
+
+
+def radarbericht() -> str:
+    """Was der Ausschreibungsradar heute gefunden hat - und was ihm fehlt.
+
+    Der Radar schweigt von sich aus, wenn er nichts findet; bei eng gefassten
+    Themengebieten ist das der Normalfall und steht so auf der Seite ("Derzeit
+    gibt es keine von uns recherchierbaren Fördermaßnahmen in diesem
+    Themenbereich."). Faellt aber eine
+    Quelle aus - geaenderte Feed-Adresse, neues Seitenlayout bei der DFG,
+    abgeschaltete Schnittstelle -, sieht ihr Schweigen von aussen genauso aus.
+    `ausschreibungen.py` vergleicht deshalb jeden Lauf mit dem vorigen und legt
+    seine Zweifel in `warnungen` ab. Hier stehen sie, und nur hier: Auf der
+    Seite haetten sie nichts zu suchen.
+    """
+    try:
+        req = urllib.request.Request(
+            ROH_RADAR, headers={"User-Agent": "mvf-versandbericht",
+                                "Cache-Control": "no-cache"})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            daten = json.load(r)
+    except Exception:  # noqa: BLE001 - fehlt die Datei, entfaellt der Abschnitt
+        return ""
+    quellen = daten.get("quellen") or {}
+    gebiete = daten.get("themen") or []
+    zahl = sum(len(g.get("ausschreibungen") or []) for g in gebiete)
+    # Wie viele Gebiete heute leer ausgehen, ist die Zahl, an der ein zu eng
+    # geratener Zuschnitt auffaellt - eine einzelne Null ist Normalfall, acht
+    # Nullen sind es nicht.
+    leer = [g.get("name", "?") for g in gebiete
+            if not (g.get("ausschreibungen") or [])]
+    kopf = (f"**Ausschreibungsradar** — Stand {daten.get('stand', '?')}, "
+            f"{zahl} Zuordnung(en) über {len(gebiete)} Themengebiete")
+    if quellen:
+        kopf += " (" + ", ".join(f"{n}: {z}" for n, z in quellen.items()) + ")"
+    zeilen = [kopf + "."]
+    # Der Radar sucht montags und donnerstags. Ist sein Stand aelter als fuenf
+    # Tage, ist mindestens ein Lauf ausgefallen - und das faellt sonst
+    # niemandem auf, weil eine veraltete Liste genauso aussieht wie eine
+    # aktuelle: Die Fristen rechnet die Seite im Browser nach, es verschwinden
+    # also nur Eintraege, statt dass falsche erscheinen.
+    try:
+        stand = dt.datetime.strptime(daten.get("stand", ""), "%d.%m.%Y").date()
+        alter = (dt.date.today() - stand).days
+    except ValueError:
+        alter = None
+    if alter is not None and alter > 5:
+        zeilen.append(f"- ⚠️ Der Radar-Stand ist {alter} Tage alt. Er sucht "
+                      f"montags und donnerstags; mindestens ein Lauf ist "
+                      f"ausgefallen. [Actions ansehen]"
+                      f"(https://github.com/mvf-portal/"
+                      f"versorgungsforschung-portal/actions)")
+    if leer:
+        zeilen.append(f"- Ohne Treffer: {', '.join(leer)}.")
+    # Die Warnungen stehen bewusst als eigene Zeilen und nicht in Klammern
+    # hinter der Zahl: Sie sind der Grund, warum es diesen Abschnitt gibt.
+    for w in daten.get("warnungen") or []:
+        zeilen.append(f"- ⚠️ {w}")
+    return chr(10).join(zeilen)
 
 
 def poolzeile(s: dict) -> str:
@@ -299,6 +363,8 @@ def main() -> int:
         *zeilen,
         "",
         doppelungen(gesammelt),
+        "",
+        radarbericht(),
         "",
         tageszusammenfassung(heute),
         "",
