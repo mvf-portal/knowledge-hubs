@@ -25,15 +25,30 @@ Cloudflare-Cron  --repository_dispatch-->  knowledge-hubs
                                                                         └-> Sammelbericht
 ```
 
-Der Zuschnitt der Schlüssel ist der Grund für den Umweg über den Dirigenten:
+## Ein Token für beide Stellen
 
-| Schlüssel | Rechte | liegt |
-|---|---|---|
-| `GITHUB_TOKEN` (Worker) | **Contents: write**, nur `mvf-portal/knowledge-hubs` | bei Cloudflare |
-| `DIRIGENT_TOKEN` (GitHub-Secret) | **Actions: write**, die zwölf Portal-Repos | in den Secrets von knowledge-hubs, verlässt GitHub nie |
+Entschieden am 28.08.2026: **ein** fein granuliertes Token, das an beiden
+Stellen liegt.
 
-Ein Schlüssel, der bei einem Dritten liegt, kann damit nichts weiter, als in
-**einem** Repo ein Ereignis auszulösen.
+| | |
+|---|---|
+| **Repository access** | alle **dreizehn**: die zwölf Portale **und** `knowledge-hubs` |
+| **Contents** | Read and write — für `repository_dispatch` in knowledge-hubs |
+| **Actions** | Read and write — zum Starten der Workflows in den zwölf Portalen |
+| **Liegt** | als Worker-Secret `GITHUB_TOKEN` **und** als GitHub-Secret `DIRIGENT_TOKEN` |
+
+Beide Berechtigungen sind nötig, weil es zwei verschiedene Aufrufe sind:
+`repository_dispatch` verlangt **Contents**, `workflow_dispatch` verlangt
+**Actions**. Fehlt eine, bricht die Kette an genau der Stelle ab — und GitHub
+antwortet auf fehlende Rechte mit **403** oder **404**, nicht mit einer
+sprechenden Meldung.
+
+Der Preis gegenüber zwei getrennten Token: Das Token auf dem Webserver kann
+mehr, als es dort bräuchte — es könnte in allen zwölf Portalen Läufe starten.
+Wer das später enger ziehen will, legt ein zweites Token an (Contents: Read and
+write, nur `knowledge-hubs`), trägt es in `wecker-zugang.php` ein und nimmt dem
+ersten die Contents-Berechtigung. Das ist eine Minute Arbeit und ändert an der
+Kette nichts.
 
 ## Einrichten
 

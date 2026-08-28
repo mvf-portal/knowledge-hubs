@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: Die zwölf Hubs anstoßen
         env:
-          # Fein granuliertes Token, nur "Actions: write" auf den zwölf
+          # Fein granuliertes Token mit "Actions: write" auf den zwölf
           # Portal-Repos. Ohne dieses Secret bricht der Lauf sofort ab - der
           # GITHUB_TOKEN dieses Repos darf in fremden Repos nichts starten.
           GH_TOKEN: ${{ secrets.DIRIGENT_TOKEN }}

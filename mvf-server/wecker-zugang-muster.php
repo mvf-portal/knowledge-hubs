@@ -11,8 +11,10 @@
  * preis. Dieselbe Lehre wie beim Zaehler (daten/*.json.php).
  */
 return [
-    // Fein granuliertes GitHub-Token: Contents "Read and write",
-    // NUR fuer mvf-portal/knowledge-hubs. Mehr braucht repository_dispatch nicht.
+    // Fein granuliertes GitHub-Token, dasselbe wie das Secret DIRIGENT_TOKEN
+    // bei GitHub: Repository access alle dreizehn Repos, Contents "Read and
+    // write" (fuer repository_dispatch) UND Actions "Read and write" (zum
+    // Starten der Workflows in den zwoelf Portalen).
     'token' => 'github_pat_HIER_EINSETZEN',
 
     // Nur noetig, wenn das Skript ueber das Netz aufgerufen wird (kein Cron).

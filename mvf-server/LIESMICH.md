@@ -28,12 +28,30 @@ MVF-Server (Cron)  --repository_dispatch-->  knowledge-hubs
                                                                           └-> Sammelbericht
 ```
 
-Zwei Schlüssel, klein geschnitten:
+## Ein Token für beide Stellen
 
-| Token | Rechte | gilt für | liegt |
-|---|---|---|---|
-| **Wecker** | Contents: Read and write | nur `mvf-portal/knowledge-hubs` | auf dem MVF-Server, in `wecker-zugang.php` |
-| **Dirigent** | Actions: Read and write | die zwölf Portal-Repos | GitHub-Secret `DIRIGENT_TOKEN`, verlässt GitHub nie |
+Entschieden am 28.08.2026: **ein** fein granuliertes Token, das an beiden
+Stellen liegt.
+
+| | |
+|---|---|
+| **Repository access** | alle **dreizehn**: die zwölf Portale **und** `knowledge-hubs` |
+| **Contents** | Read and write — für `repository_dispatch` in knowledge-hubs |
+| **Actions** | Read and write — zum Starten der Workflows in den zwölf Portalen |
+| **Liegt** | auf dem MVF-Server in `wecker-zugang.php` **und** als GitHub-Secret `DIRIGENT_TOKEN` |
+
+Beide Berechtigungen sind nötig, weil es zwei verschiedene Aufrufe sind:
+`repository_dispatch` verlangt **Contents**, `workflow_dispatch` verlangt
+**Actions**. Fehlt eine, bricht die Kette an genau der Stelle ab — und GitHub
+antwortet auf fehlende Rechte mit **403** oder **404**, nicht mit einer
+sprechenden Meldung.
+
+Der Preis gegenüber zwei getrennten Token: Das Token auf dem Webserver kann
+mehr, als es dort bräuchte — es könnte in allen zwölf Portalen Läufe starten.
+Wer das später enger ziehen will, legt ein zweites Token an (Contents: Read and
+write, nur `knowledge-hubs`), trägt es in `wecker-zugang.php` ein und nimmt dem
+ersten die Contents-Berechtigung. Das ist eine Minute Arbeit und ändert an der
+Kette nichts.
 
 ## Einrichten
 
@@ -54,8 +72,9 @@ war unter ihrer Adresse lesbar. Liegt sie noch auf dem Server: löschen.
 
 ### 2. Token eintragen
 
-In `wecker-zugang.php` das fein granulierte GitHub-Token einsetzen
-(Contents: *Read and write*, nur `knowledge-hubs`).
+In `wecker-zugang.php` das fein granulierte GitHub-Token einsetzen — dasselbe,
+das auch als Secret `DIRIGENT_TOKEN` bei GitHub liegt (Contents *und* Actions
+je Read and write, alle dreizehn Repos).
 
 `schluessel` bleibt leer, wenn der Hoster Cron kann — dann ist der Aufruf über
 das Netz gesperrt und das Skript nur von der Kommandozeile erreichbar.
@@ -110,7 +129,7 @@ gh workflow run dirigent.yml -R mvf-portal/knowledge-hubs -f nur_studien=true
 | `GitHub antwortete 404` | Das Token sieht das Repo nicht. Repository-Auswahl prüfen: `knowledge-hubs` ausgewählt, Contents auf *Read and write*. GitHub antwortet auf fehlende Rechte bewusst mit 404. |
 | `GitHub antwortete 422` | `ereignis` passt nicht zu `types: [morgenlauf]` in `dirigent.yml`. |
 | `Netzfehler: …` | Der Server darf nicht nach außen. Beim Hoster ausgehende HTTPS-Verbindungen freischalten lassen. |
-| Dirigent läuft, Portale nicht | `DIRIGENT_TOKEN` fehlt oder hat kein *Actions: write*. Das Protokoll des Workflows nennt jedes Repo einzeln. |
+| Dirigent läuft, Portale nicht | Dem Token fehlt *Actions: write* oder ein Portal fehlt in der Repository-Auswahl. Das Protokoll des Workflows nennt jedes Repo einzeln. |
 
 ## Im Betrieb
 
@@ -120,5 +139,5 @@ also gleichgültig, ob an einem Morgen GitHubs Cron, der Server und die
 Laufwache alle drei anspringen.
 
 Das Token hat ein Ablaufdatum. Der Ausfall wäre nicht still — er steht in
-`wecker.log` und fällt spätestens in der 09-Uhr-Meldung der Laufwache auf —,
+`wecker.log.php` und fällt spätestens in der 09-Uhr-Meldung der Laufwache auf —,
 aber das Datum gehört trotzdem in den Kalender.
