@@ -5,15 +5,19 @@
 # jeder Start von Hand sofort lief. Die Ausfuehrung bei GitHub ist also
 # verlaesslich, nur die AUSLOESUNG nicht.
 #
-# Deshalb kommt der Weckruf von aussen (Cloudflare-Worker, siehe
-# cloudflare/LIESMICH.md) und trifft NUR dieses Repo:
+# Deshalb kommt der Weckruf von aussen - vom Cron des MVF-Servers, siehe
+# mvf-server/LIESMICH.md - und trifft NUR dieses Repo:
 #
-#   Worker  --repository_dispatch-->  Dirigent  --workflow_dispatch-->  12 Hubs
+#   MVF-Server  --repository_dispatch-->  Dirigent  --workflow_dispatch--> 12 Hubs
 #
-# Der Vorteil dieser Kette ist der Zuschnitt der Schluessel: Der Worker braucht
-# nur Schreibrecht auf knowledge-hubs, nicht auf die zwoelf Portale. Der
-# Schluessel, der die Portale anstossen darf, liegt in den Secrets dieses Repos
-# und verlaesst GitHub nie.
+# Der Vorteil dieser Kette: Der Server macht einen einzigen Aufruf, und die
+# Verteilung auf zwoelf Repos geschieht innerhalb von GitHub. Am 30.08.2026
+# gegen eine Fassung mit Cloudflare-Worker entschieden - der Server laeuft
+# ohnehin durch, und der Schluessel bleibt im Haus.
+#
+# Es ist EIN Token an zwei Stellen: hier als Secret DIRIGENT_TOKEN (Actions:
+# write, zum Starten der zwoelf Portale) und auf dem Server in
+# wecker-zugang.php (Contents: write, fuer repository_dispatch).
 #
 # Doppelte Weckrufe kosten nichts: update_studies.py bricht ab, wenn das Archiv
 # fuer heute schon Studien hat.
@@ -45,7 +49,7 @@ jobs:
         run: |
           set -u
           if [ -z "${GH_TOKEN:-}" ]; then
-            echo "::error::DIRIGENT_TOKEN fehlt - siehe cloudflare/LIESMICH.md"
+            echo "::error::DIRIGENT_TOKEN fehlt - siehe mvf-server/LIESMICH.md"
             exit 1
           fi
           FEHLER=0
