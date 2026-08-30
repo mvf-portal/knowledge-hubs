@@ -55,6 +55,19 @@ ROH_ARCHIV = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"
 ROH_RADAR = ("https://raw.githubusercontent.com/"
              "mvf-portal/versorgungsforschung-portal/main/ausschreibungen.json")
 BERICHT_REPO = "mvf-portal/knowledge-hubs"
+# Wem die Meldung zugewiesen wird - ohne das kommt sie nicht im Postfach an.
+#
+# Bis zum 30.08.2026 kam kein einziger Sammelbericht als E-Mail an, obwohl
+# alles richtig eingestellt war: Das Repo wurde mit "All Activity" beobachtet,
+# der E-Mail-Kanal fuer "Watching" war an, die Adresse bestaetigt, und
+# Actions-Mails aus demselben Repo kamen an. Die Issues #10 bis #17 legt aber
+# `github-actions[bot]` mit dem GITHUB_TOKEN des Workflows an, und fuer solche
+# Bot-Aktivitaet verschickt GitHub keine Watching-Benachrichtigung.
+#
+# Zugewiesene benachrichtigt GitHub ueber den Kanal "Participating" - und der
+# greift auch dann, wenn ein Bot zuweist. Das ist der Weg, der hier
+# funktioniert; das Beobachten des Repos allein genuegt nicht.
+BERICHT_ZUSTAENDIG = "mvf-portal"
 
 # Samstag und Sonntag terminiert kein Portal - `WOCHENENDE_AUS` in deren
 # mailchimp_entwurf.py bricht vor dem Entwurf ab und schreibt deshalb auch keine
@@ -383,8 +396,17 @@ def main() -> int:
     if not os.environ.get("GH_TOKEN") and not os.environ.get("GITHUB_TOKEN"):
         print("\nKein Token - keine Issue angelegt.")
         return 0
-    subprocess.run(["gh", "issue", "create", "-R", BERICHT_REPO,
-                    "--title", titel, "--body", rumpf], check=True)
+    befehl = ["gh", "issue", "create", "-R", BERICHT_REPO,
+              "--title", titel, "--body", rumpf]
+    if BERICHT_ZUSTAENDIG:
+        befehl += ["--assignee", BERICHT_ZUSTAENDIG]
+    ergebnis = subprocess.run(befehl)
+    if ergebnis.returncode and BERICHT_ZUSTAENDIG:
+        # Lieber eine Meldung ohne Zuweisung als gar keine: Ein unbekannter
+        # oder nicht berechtigter Name darf den Bericht nicht verschlucken.
+        print("Zuweisung an %s fehlgeschlagen - Issue ohne Assignee." % BERICHT_ZUSTAENDIG)
+        subprocess.run(["gh", "issue", "create", "-R", BERICHT_REPO,
+                        "--title", titel, "--body", rumpf], check=True)
     return 0
 
 
