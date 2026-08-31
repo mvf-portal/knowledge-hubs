@@ -190,76 +190,40 @@ summary{ cursor:pointer; font-weight:700; }
 
   <!-- Der Kurztext steht bewusst ueber dem Formular und nicht darunter: Wer am
        Stand einen QR-Code scannt, liest die ersten zwei Saetze und sonst nichts. -->
-  <h2>Mitmachen</h2>
-  <p>Tragen Sie Ihre E-Mail-Adresse ein und setzen Sie das Häkchen bei „Ich nehme am
-  Gewinnspiel teil“. Ob Sie dazu einen Newsletter bestellen, entscheiden Sie selbst —
-  <strong>Ihre Gewinnchance ist davon unabhängig</strong>.</p>
+  <!-- ABGESCHALTET am 31.08.2026 --------------------------------------------
+       Hier stand ein Formular, das unmittelbar an Mailchimps Formularadresse
+       /subscribe/post sendete. Das funktioniert nicht mehr: Mailchimp schuetzt
+       diese Adresse inzwischen mit reCAPTCHA und Akamais Bot Manager. Eine
+       Einsendung von fremder Domain bringt weder das eine noch das andere mit,
+       wird mit HTTP 200 angenommen und verworfen - keine Anmeldung, keine
+       Bestaetigungsmail. Belegt am 31.08.2026: Der Tag zaehlte danach null
+       Kontakte.
 
-  <form id="anmeldung" method="post" novalidate>
+       Schlimmer als der Ausfall war die Anzeige: Das Formular sendete in einen
+       unsichtbaren Rahmen, dessen Inhalt es nicht lesen darf, und meldete
+       deshalb nach vier Sekunden in JEDEM Fall Erfolg. Eine Seite, die
+       Teilnahmen quittiert, die es nicht gibt, ist schlimmer als eine Seite
+       ohne Formular - daher dieser Kasten.
 
-    <fieldset>
-      <legend>Newsletter der Knowledge-Hubs</legend>
-      <p class="fein">Jeder Hub hat seinen eigenen täglichen Studien-Newsletter: fünf bis
-      sechs neue Arbeiten, jede mit deutscher Zusammenfassung. Kostenfrei und jederzeit
-      einzeln abbestellbar. Freiwillig — Sie können auch nur am Gewinnspiel teilnehmen.</p>
-      <div class="wahl" id="wahlHubs"></div>
-    </fieldset>
+       Dieselbe Bauweise steht in der newsletter.html aller zwoelf Portale.
+       Das Formular kommt zurueck, sobald es ueber einen eigenen Endpunkt auf
+       dem MVF-Server laeuft, der die Mailchimp-API anspricht. Der alte Stand
+       liegt im Commit davor. -->
+  <h2>Die Teilnahme öffnet zum Kongress</h2>
+  <section class="gewinn" style="border-left-color:var(--brand)">
+    <p style="margin:0">Das Gewinnspiel läuft vom <strong>23. September 2026, 9:00 Uhr</strong>
+    bis zum <strong>25. September 2026, 18:00 Uhr</strong> — solange der 25. DKVF in Köln
+    stattfindet. Das Anmeldeformular wird zum Start hier freigeschaltet.</p>
+    <p style="margin:12px 0 0">Bis dahin gilt: <strong>Eine Teilnahme ist noch nicht
+    möglich.</strong> Wenn Sie am Stand von „Monitor Versorgungsforschung" vorbeikommen,
+    sprechen Sie uns gerne an.</p>
+    <p style="margin:12px 0 0">Die <a href="teilnahmebedingungen.html">Teilnahmebedingungen</a>
+    können Sie schon jetzt nachlesen.</p>
+  </section>
 
-    <fieldset>
-      <legend>Ihre Daten</legend>
-      <div class="zeile">
-        <div>
-          <label class="feld" for="vorname">Vorname <span class="fein">(freiwillig)</span></label>
-          <input type="text" id="vorname" name="FNAME" autocomplete="given-name">
-        </div>
-        <div>
-          <label class="feld" for="nachname">Nachname <span class="fein">(freiwillig)</span></label>
-          <input type="text" id="nachname" name="LNAME" autocomplete="family-name">
-        </div>
-      </div>
-      <div style="margin-top:12px">
-        <label class="feld" for="email">E-Mail-Adresse</label>
-        <input type="email" id="email" name="EMAIL" autocomplete="email" required
-               placeholder="name@einrichtung.de" spellcheck="false">
-      </div>
-      <!-- Honigtopf: Menschen sehen dieses Feld nicht, automatische Formularausfueller
-           schon. Ist es gefuellt, verwirft Mailchimp die Anmeldung. -->
-      <div class="falle" aria-hidden="true"><input type="text" id="falle" tabindex="-1" autocomplete="off"></div>
-    </fieldset>
-
-    <!-- Zwei Haekchen, voneinander unabhaengig. Das ist keine Formsache: Nur so
-         ist die Newsletter-Einwilligung nachweislich freiwillig (Art. 7 Abs. 4
-         DSGVO), und nur so stimmt der Satz "Ihre Gewinnchance ist davon
-         unabhaengig" oben im Text. Wer hier koppelt, muss beides aendern. -->
-    <label class="einwilligung">
-      <input type="checkbox" id="einwilligungNl">
-      <span>Ich möchte die oben ausgewählten Newsletter per E-Mail erhalten. Meine Adresse wird
-      dafür an unseren Versanddienstleister übermittelt und dort gespeichert. Die Einwilligung
-      kann ich jederzeit über den Abmeldelink am Ende jeder E-Mail widerrufen — die
-      Rechtmäßigkeit der bis dahin erfolgten Verarbeitung bleibt davon unberührt.</span>
-    </label>
-
-    <label class="einwilligung pflicht">
-      <input type="checkbox" id="einwilligungGs">
-      <span><strong>Ich nehme am Gewinnspiel teil.</strong> Ich bin mindestens 18 Jahre alt und
-      stimme den <a href="teilnahmebedingungen.html">Teilnahmebedingungen</a> und den
-      <a href="#datenschutz">Datenschutzhinweisen</a> zu. Meine E-Mail-Adresse darf zur
-      Gewinnbenachrichtigung genutzt werden. Der Rechtsweg ist ausgeschlossen.</span>
-    </label>
-
-    <button type="submit" class="btn-gold" id="absenden">Jetzt teilnehmen</button>
-
-    <p class="meldung" id="meldung" role="status" aria-live="polite"></p>
-  </form>
-
-  <p class="fein" style="margin-top:14px">Ihre Eingabe wird an unseren Versanddienstleister
-  Mailchimp übermittelt. Anschließend erhalten Sie eine E-Mail mit einem Bestätigungslink.
-  <strong>Erst mit dem Klick darauf ist Ihre Teilnahme gültig</strong> — und beginnt,
-  falls bestellt, der Newsletter-Versand (Double-Opt-in). So kann niemand fremde Adressen
-  eintragen. Sehen Sie notfalls im Spam-Ordner nach.</p>
-
-  <h2>Die zwölf Hubs</h2>
-  <p>Alle Portale sind frei zugänglich, ohne Anmeldung und ohne Kosten:
+  <h2>Die Knowledge-Hubs kennenlernen</h2>
+  <p>Alle zwölf Portale sind frei zugänglich, ohne Anmeldung und ohne Kosten. Jedes hat
+  seinen eigenen täglichen Studien-Newsletter, den Sie dort bestellen können:
   <a href="/">knowledge-hubs.m-vf.de</a></p>
 
 </main>
@@ -272,12 +236,12 @@ summary{ cursor:pointer; font-weight:700; }
        <a href="/#impressum">Impressum</a></p>
 
     <details id="datenschutz">
-      <summary>Datenschutzhinweise zu diesem Formular</summary>
+      <summary>Datenschutzhinweise zur Anmeldung</summary>
       <div class="legal-body">
         <h4>1. Verantwortlicher</h4>
         <p>eRelation AG – Content in Health, vertreten durch Peter Stegmaier, Johannes-von-Hanstein-Str. 2, 53115 Bonn. Kontakt siehe <a href="/#impressum">Impressum</a>.</p>
         <h4>2. Welche Daten und wofür</h4>
-        <p>Über dieses Formular erheben wir Ihre E-Mail-Adresse und – sofern Sie ihn angeben – Ihren Namen. Die Angabe des Namens ist freiwillig; ohne ihn sprechen wir Sie im Gewinnfall neutral an.</p>
+        <p>Sobald das Anmeldeformular geöffnet ist, erheben wir darüber Ihre E-Mail-Adresse und – sofern Sie ihn angeben – Ihren Namen. Die Angabe des Namens ist freiwillig; ohne ihn sprechen wir Sie im Gewinnfall neutral an.</p>
         <p><strong>Gewinnspiel:</strong> Wir verarbeiten die Daten, um das Gewinnspiel durchzuführen, die Gewinner zu ermitteln und zu benachrichtigen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Durchführung des Teilnahmeverhältnisses). Die Teilnahmedaten werden spätestens drei Monate nach Ende des Gewinnspiels gelöscht, soweit keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</p>
         <p><strong>Newsletter:</strong> Haben Sie einen Newsletter bestellt, verarbeiten wir Ihre Adresse zusätzlich für dessen Versand. Rechtsgrundlage ist Ihre Einwilligung, Art. 6 Abs. 1 lit. a DSGVO. Sie können sie jederzeit mit Wirkung für die Zukunft widerrufen, am einfachsten über den Abmeldelink am Ende jeder E-Mail. Der Widerruf hat keinen Einfluss auf Ihre Gewinnchance.</p>
         <h4>3. Versanddienstleister</h4>
@@ -293,169 +257,6 @@ summary{ cursor:pointer; font-weight:700; }
   </div>
 </footer>
 
-<script>
-// ---------------------------------------------------------------------------
-// Mailchimp. Aufbau und Begruendung stehen ausfuehrlich in der newsletter.html
-// der Portale; hier nur das Noetige. Kurz: /subscribe/post-json ist bei diesem
-// Konto abgeschaltet (404), also wird das Formular ganz gewoehnlich abgesendet -
-// nur nicht in dieses Fenster, sondern in einen unsichtbaren Rahmen.
-// ---------------------------------------------------------------------------
-const MC = {
-  ziel: "https://monitor-versorgungsforschung.us6.list-manage.com/subscribe/post"
-        + "?u=f4c91757bc7d8c740641acb50&id=1c8fc10ec7&f_id=192195",
-  u:    "f4c91757bc7d8c740641acb50",
-  id:   "1c8fc10ec7",
-  gruppeDatenschutz: "group[5629][64]",   // MVF haelt die gelesene Datenschutzerklaerung so fest
-
-  // ------------------------------------------------------------------------
-  // HIER EINTRAGEN, BEVOR DIE SEITE ONLINE GEHT.
-  // Die Teilnahme wird ueber einen Mailchimp-TAG festgehalten - anders waeren
-  // Gewinnspielteilnehmer nicht von gewoehnlichen Newsletter-Bestellern zu
-  // unterscheiden, und die Auslosung haette keine Grundlage. Gebraucht wird die
-  // NUMMER des Tags, nicht sein Name: In Mailchimp den Tag anklicken, die
-  // Nummer steht dann als "static_segment" in der Adresszeile.
-  // Bleibt das Feld leer, verweigert die Seite die Gewinnspielteilnahme mit
-  // einer klaren Meldung - lieber gar nicht teilnehmen lassen als eine
-  // Teilnahme entgegennehmen, die spaeter nicht auffindbar ist.
-  // ------------------------------------------------------------------------
-  tagGewinnspiel: "78989"      // Tag "Gewinnspiel DKVF 2026", angelegt am 31.08.2026
-};
-
-// Die Hubs mit ihren Mailchimp-Gruppen. Dieselbe Liste wie REIHE in der
-// newsletter.html der Portale; `bereit:false` heisst, dass der Newsletter noch
-// nicht versendet wird - solche Hubs werden hier nicht angeboten.
-const HUBS = [
-  { gruppe:"group[16135][512]",    titel:"Versorgungsforschung",            bereit:true,
-    was:"Versorgungsformen, Qualität, Steuerung, Nutzenbewertung." },
-  { gruppe:"group[16139][8192]",   titel:"Gesundheitskompetenz",            bereit:true,
-    was:"Verständliche Information, Entscheidungshilfen, Beteiligung." },
-  { gruppe:"group[16138][4096]",   titel:"Pflege &amp; Langzeitversorgung", bereit:true,
-    was:"Langzeitpflege, Personal, Qualität, Angehörige." },
-  { gruppe:"group[16141][32768]",  titel:"Impfen &amp; Impfprävention",     bereit:true,
-    was:"Impfquoten, Impfbereitschaft, Impfstoffsicherheit." },
-  { gruppe:"group[16143][131072]", titel:"Nicht übertragbare Krankheiten",  bereit:true,
-    was:"Diabetes, Herz-Kreislauf, Krebs, Mehrfacherkrankung." },
-  { gruppe:"group[16146][524288]", titel:"Adipositas",                      bereit:true,
-    was:"Gewichtsmanagement, Arzneimittel, Chirurgie, Erstattung." },
-  { gruppe:"group[16137][2048]",   titel:"Digitalisierung, KI &amp; Gesundheit", bereit:true,
-    was:"Digitale Anwendungen und KI in der Versorgung." },
-  { gruppe:"group[16136][1024]",   titel:"Hitze, Klima &amp; Gesundheit",   bereit:true,
-    was:"Hitze, Extremwetter und was sie für die Versorgung bedeuten." },
-  { gruppe:"group[16140][16384]",  titel:"Gesundes Altern &amp; Longevity", bereit:true,
-    was:"Prävention, Geriatrie, gesunde Lebensjahre." },
-  { gruppe:"group[16145][262144]", titel:"Geschlechtersensible Medizin",    bereit:false,
-    was:"Geschlecht als Einflussgröße in der Versorgung." },
-  { gruppe:"group[16148][2097152]",titel:"Patientensicherheit",             bereit:false,
-    was:"Behandlungs- und Medikationsfehler, Infektionen, Sepsis." },
-  { gruppe:"group[16147][1048576]",titel:"Psychische Gesundheit",           bereit:false,
-    was:"Zugang, Wartezeiten, gemeindenahe Angebote, Krisenversorgung." }
-];
-// Der redaktionelle MVF-Newsletter bleibt bewusst bei der Gruppe - seine
-// Abonnenten tragen sie seit jeher.
-const MVF_GRUPPE = "group[5629][4]";
-
-const form    = document.getElementById('anmeldung');
-const wahlBox = document.getElementById('wahlHubs');
-const feldMail= document.getElementById('email');
-const einwNl  = document.getElementById('einwilligungNl');
-const einwGs  = document.getElementById('einwilligungGs');
-const knopf   = document.getElementById('absenden');
-const meldung = document.getElementById('meldung');
-
-// Die Karten entstehen erst hier - so steht die Liste nur einmal im Dokument.
-wahlBox.innerHTML = HUBS.filter(h => h.bereit).map(h => (
-  '<label class="karte">'
-  + '<input type="checkbox" class="wahlHub" data-gruppe="' + h.gruppe + '">'
-  + '<span class="takt">täglich</span>'
-  + '<b>' + h.titel + '</b>'
-  + '<span class="was">' + h.was + '</span>'
-  + '</label>'
-)).join('')
-+ '<label class="karte">'
-+ '<input type="checkbox" class="wahlHub" data-gruppe="' + MVF_GRUPPE + '">'
-+ '<span class="takt">regelmäßig</span>'
-+ '<b>MVF-Newsletter</b>'
-+ '<span class="was">Der redaktionelle Newsletter: Beiträge, Nachrichten, Termine.</span>'
-+ '</label>';
-
-function sage(text, art){ meldung.className = 'meldung ' + (art || ''); meldung.innerHTML = text; }
-
-// Absenden in einen unsichtbaren Rahmen - sonst verliesse der Nutzer die Seite.
-const rahmen = document.createElement('iframe');
-rahmen.name = 'mcZiel'; rahmen.style.display = 'none';
-document.body.appendChild(rahmen);
-form.action = MC.ziel;
-form.target = 'mcZiel';
-
-function verborgen(name, wert){
-  const el = document.createElement('input');
-  el.type = 'hidden'; el.name = name; el.value = wert;
-  form.appendChild(el);
-  return el;
-}
-
-// Der Knopf sperrt sich beim Absenden, die Eingabetaste umgeht ihn aber -
-// ohne diesen Riegel liesse sich zweimal senden.
-let laeuft = false;
-
-form.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  if(laeuft) return;
-
-  const gewaehlt = [...document.querySelectorAll('.wahlHub:checked')];
-
-  if(!feldMail.value.trim() || !feldMail.checkValidity()){
-    sage('Bitte geben Sie eine gültige E-Mail-Adresse ein.', 'fehler');
-    feldMail.focus(); return;
-  }
-  if(!einwGs.checked && !gewaehlt.length){
-    sage('Bitte nehmen Sie am Gewinnspiel teil oder wählen Sie mindestens einen Newsletter aus.', 'fehler');
-    einwGs.focus(); return;
-  }
-  if(gewaehlt.length && !einwNl.checked){
-    sage('Sie haben einen Newsletter ausgewählt. Ohne Ihre Einwilligung dürfen wir ihn nicht schicken — '
-       + 'bitte setzen Sie das Häkchen, oder nehmen Sie die Auswahl zurück.', 'fehler');
-    einwNl.focus(); return;
-  }
-  if(einwGs.checked && !MC.tagGewinnspiel){
-    sage('Die Gewinnspielteilnahme ist über diese Seite noch nicht freigeschaltet. '
-       + 'Bitte sprechen Sie uns am Stand an.', 'fehler');
-    return;
-  }
-
-  // Aus einem frueheren Anlauf koennen noch Felder stehen - erst raeumen.
-  form.querySelectorAll('input[type="hidden"]').forEach(el=>el.remove());
-  verborgen('u', MC.u);
-  verborgen('id', MC.id);
-  // Mailchimps eigenes Fallenfeld heisst b_<u>_<id> und muss leer bleiben.
-  document.getElementById('falle').name = 'b_' + MC.u + '_' + MC.id;
-
-  if(einwGs.checked) verborgen('tags', MC.tagGewinnspiel);
-  gewaehlt.forEach(el => verborgen(el.dataset.gruppe, '1'));
-  verborgen(MC.gruppeDatenschutz, '1');
-
-  laeuft = true;
-  knopf.disabled = true;
-  sage('Wird gesendet …', '');
-  form.submit();          // absichtlich .submit(): loest dieses Ereignis nicht erneut aus
-
-  // Der Rahmen meldet, dass Mailchimp geantwortet hat - was er antwortet,
-  // bleibt verborgen. Bleibt die Meldung aus, zeigen wir nach vier Sekunden
-  // dasselbe: Ausbleiben heisst nicht Misserfolg.
-  const fertig = ()=>{
-    rahmen.removeEventListener('load', fertig);
-    clearTimeout(reissleine);
-    form.querySelectorAll('input').forEach(i=>{ i.disabled = true; });
-    sage('<b>Bitte prüfen Sie Ihr Postfach.</b> Sie finden dort gleich eine E-Mail mit einem '
-       + 'Bestätigungslink — erst mit dem Klick darauf ist Ihre Teilnahme gültig. Sehen Sie '
-       + 'notfalls im Spam-Ordner nach. War Ihre Adresse bereits eingetragen, ändert sich an '
-       + 'Ihren Newslettern nichts; Ihre Auswahl können Sie über den Link „Einstellungen '
-       + 'ändern“ am Ende jeder unserer E-Mails anpassen.', 'ok');
-  };
-  const reissleine = setTimeout(fertig, 4000);
-  rahmen.addEventListener('load', fertig);
-});
-</script>
 <!-- ZAEHLER-START --------------------------------------------------------
      Zaehlt den Aufruf auf dem eigenen Server von Monitor Versorgungsforschung.
      Kein Cookie, keine Kennung auf dem Geraet, keine fremde Firma. Wer Do Not
