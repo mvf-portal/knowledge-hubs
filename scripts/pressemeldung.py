@@ -851,6 +851,74 @@ def bilder_aus_mailobjekt(mail) -> list[tuple[str, bytes]]:
             continue
         if breit_genug(ziel):
             gefunden.append((name, ziel.read_bytes()))
+
+    # Was nicht anhaengt, steht vielleicht als Adresse im Text.
+    if len(gefunden) < 3:
+        vorhanden = {n.lower() for n, _ in gefunden}
+        for name, rohdaten in bilder_aus_adressen(
+                str(getattr(mail, "HTMLBody", "")) or str(getattr(mail, "Body", ""))):
+            if name.lower() not in vorhanden:
+                gefunden.append((name, rohdaten))
+    return gefunden
+
+
+# Zaehlpixel und Platzhalter, die in keiner Mediathek etwas verloren haben.
+KEIN_BILD = ("pixel.", "spacer", "1x1", "/track", "/open", "beacon", "logo-mail")
+
+
+def bilder_aus_adressen(text: str, hoechstens: int = 6
+                        ) -> list[tuple[str, bytes]]:
+    """Bilder, die als Adresse in der Mail stehen statt als Anhang.
+
+    Presseverteiler wie pressmailing.net oder presseportal binden Logo und
+    Pressefoto so ein - fuer das Skript sah die Mail deshalb bilderlos aus.
+
+    Das Abrufen laedt Inhalte vom Server des Verteilers; der erfaehrt damit,
+    dass die Mail gelesen wurde. Bei Pressemitteilungen ist das ohne Belang -
+    sie sind ja zur Veroeffentlichung bestimmt. Zaehlpixel bleiben trotzdem
+    aussen vor.
+    """
+    gefunden, gesehen = [], set()
+    roh = re.findall(r"https?://[^\s\"'<>)\]]+", text or "")
+    for adresse in roh:
+        if len(gefunden) >= hoechstens:
+            break
+        sauber = adresse.rstrip(".,;:")
+        klein = sauber.lower()
+        if any(m in klein for m in KEIN_BILD):
+            continue
+        if not re.search(r"(?i)\.(png|jpe?g|gif|webp)(\?|$)|/thumbnail/|"
+                         r"/content/", klein):
+            continue
+        name = pathlib.Path(urllib.parse.urlparse(sauber).path).name
+        name = urllib.parse.unquote(name) or "bild.jpg"
+        if name.lower() in gesehen:
+            continue
+        gesehen.add(name.lower())
+        # Verteiler halten unter /thumbnail/ eine kleine und unter /content/
+        # die volle Fassung bereit. Erst die grosse versuchen.
+        adressen_folge = [sauber]
+        if "/thumbnail/" in sauber:
+            adressen_folge.insert(0, sauber.replace("/thumbnail/", "/content/"))
+        rohdaten = b""
+        for versuch in adressen_folge:
+            try:
+                req = urllib.request.Request(versuch,
+                                             headers={"User-Agent": KENNUNG})
+                with urllib.request.urlopen(req, timeout=45) as r:
+                    if str(r.headers.get_content_type()).startswith("image/"):
+                        rohdaten = r.read(8_000_000)
+                        break
+            except Exception:
+                continue
+        if not rohdaten:
+            continue
+        breite, _ = masse(rohdaten)
+        # Logos duerfen kleiner sein: Das Logo von Pharma Deutschland, das die
+        # Redaktion selbst verwendet, ist 191 Pixel breit.
+        grenze = 100 if "logo" in name.lower() else 300
+        if breite >= grenze:
+            gefunden.append((name, rohdaten))
     return gefunden
 
 
@@ -859,6 +927,8 @@ def breit_genug(pfad: pathlib.Path, mindestens: int = 300) -> bool:
         from PIL import Image
     except ImportError:
         return True                     # ohne Pillow lieber mitnehmen
+    if "logo" in pfad.name.lower():
+        mindestens = 100                # Logos sind oft klein und trotzdem gut
     try:
         with Image.open(pfad) as bild:
             return bild.width >= mindestens
