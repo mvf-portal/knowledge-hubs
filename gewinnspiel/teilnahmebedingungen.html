@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Teilnahmebedingungen für das Gewinnspiel der Knowledge-Hubs von Monitor Versorgungsforschung zum 25. DKVF in Köln.">
+<title>Teilnahmebedingungen — Gewinnspiel zum 25. DKVF</title>
+<link rel="canonical" href="https://knowledge-hubs.m-vf.de/gewinnspiel/teilnahmebedingungen.html">
+<link rel="icon" href="/logo/hub-icon.svg" type="image/svg+xml">
+<link rel="icon" href="/logo/hub-icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/logo/hub-icon-180.png">
+<meta name="theme-color" content="#0051A1">
+<style>
+/* Schrift, Farben und Geruest wie in den Hubs und auf der Vorschaltseite -
+   die Gewinnspielseite gehoert sichtbar dazu. Die Tokens stehen wortgleich
+   in index.html; wer sie dort aendert, aendert sie hier mit. */
+@font-face{ font-family:"Lato"; font-style:normal; font-weight:300;
+  src:url("/fonts/lato-300.woff2") format("woff2"); font-display:swap; }
+@font-face{ font-family:"Lato"; font-style:normal; font-weight:400;
+  src:url("/fonts/lato-400.woff2") format("woff2"); font-display:swap; }
+@font-face{ font-family:"Lato"; font-style:normal; font-weight:700;
+  src:url("/fonts/lato-700.woff2") format("woff2"); font-display:swap; }
+
+:root{
+  --paper:#EDF2FA; --card:#FFFFFF; --card-2:#F7FAFD;
+  --ink:#111111; --ink-soft:#444A50; --ink-faint:#545C63;
+  --line:#D0D8E4; --line-soft:#E3EAF3;
+  --brand:#0051A1; --brand-deep:#003B77; --brand-tint:#E1EAF6;
+  --action:#BE9E53; --on-action:#2A2207;
+  --warn:#8A1F1F; --ok:#1F5C34;
+  --shadow:0 1px 2px rgba(16,40,38,.05), 0 8px 24px -16px rgba(16,40,38,.28);
+  --shadow-hover:0 2px 4px rgba(16,40,38,.06), 0 18px 40px -20px rgba(16,40,38,.40);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+    --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+    --line:#22314A; --line-soft:#1A2639;
+    --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+    --action:#D4B878; --on-action:#221A08;
+    --warn:#F2A0A0; --ok:#8FD6AA;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+    --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+  --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+  --line:#22314A; --line-soft:#1A2639;
+  --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+  --action:#D4B878; --on-action:#221A08;
+  --warn:#F2A0A0; --ok:#8FD6AA;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+  --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Lato", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-size:16px; line-height:1.6;
+}
+.wrap{ width:min(880px, 94vw); margin:0 auto; }
+a{ color:var(--brand); text-underline-offset:2px; }
+a:focus-visible{ outline:2px solid var(--brand); outline-offset:3px; border-radius:3px; }
+
+header.top{ background:var(--card); border-bottom:1px solid var(--line); padding:30px 0 34px; }
+.kopf-oben{ display:flex; justify-content:space-between; align-items:flex-start; gap:24px; }
+.eyebrow{
+  margin:0 0 8px; font-size:11.5px; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-faint);
+}
+h1{ margin:0 0 12px; font-size:clamp(26px,4.2vw,40px); line-height:1.15; font-weight:700; }
+.standfirst{ margin:0; max-width:64ch; font-size:clamp(16px,1.9vw,18.5px); color:var(--ink-soft); }
+.marke img{ display:block; width:200px; height:auto; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .marke{ background:#fff; padding:9px 12px; border-radius:4px; } }
+:root[data-theme="dark"] .marke{ background:#fff; padding:9px 12px; border-radius:4px; }
+@media (max-width:760px){
+  .kopf-oben{ flex-direction:column-reverse; align-items:flex-start; gap:16px; }
+  .marke img{ width:150px; max-width:52vw; }
+}
+
+main{ padding:34px 0 48px; }
+h2{ margin:34px 0 10px; font-size:clamp(20px,2.8vw,26px); line-height:1.25; }
+h3{ margin:22px 0 6px; font-size:17px; }
+p{ margin:0 0 12px; max-width:70ch; }
+.fein{ font-size:13.5px; color:var(--ink-faint); }
+
+/* Der Gewinn steht als eigene Karte - er ist der Grund, warum jemand stehen
+   bleibt, und muss vor dem Formular erfasst sein. */
+.gewinn{
+  background:var(--card); border:1px solid var(--line); border-left:4px solid var(--action);
+  border-radius:8px; padding:20px 22px; box-shadow:var(--shadow); margin:0 0 26px;
+}
+.gewinn h2{ margin:0 0 8px; }
+.gewinn dl{ margin:14px 0 0; display:grid; grid-template-columns:auto 1fr; gap:4px 16px; font-size:15px; }
+.gewinn dt{ color:var(--ink-faint); }
+.gewinn dd{ margin:0; }
+
+form{ background:var(--card); border:1px solid var(--line); border-radius:8px;
+      padding:22px; box-shadow:var(--shadow); }
+fieldset{ border:0; margin:0 0 22px; padding:0; }
+legend{ font-weight:700; font-size:17px; padding:0; margin:0 0 4px; }
+.wahl{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; margin-top:12px; }
+.karte{
+  display:block; position:relative; background:var(--card-2); border:1px solid var(--line);
+  border-radius:6px; padding:12px 12px 12px 38px; cursor:pointer; font-size:14px;
+}
+.karte:hover{ border-color:var(--brand); }
+.karte input{ position:absolute; left:13px; top:14px; }
+.karte b{ display:block; }
+.karte .was{ display:block; color:var(--ink-faint); font-size:13px; margin-top:2px; }
+.karte .takt{
+  display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-faint); margin-bottom:2px;
+}
+.feld{ display:block; font-weight:700; font-size:14px; margin:0 0 4px; }
+input[type=email], input[type=text]{
+  width:100%; padding:11px 12px; font:inherit; color:var(--ink);
+  background:var(--card-2); border:1px solid var(--line); border-radius:6px;
+}
+input[type=email]:focus, input[type=text]:focus{ outline:2px solid var(--brand); outline-offset:1px; }
+.zeile{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:560px){ .zeile{ grid-template-columns:1fr; } }
+.einwilligung{
+  display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:start;
+  font-size:14px; margin:0 0 14px; padding:12px; border:1px solid var(--line-soft);
+  border-radius:6px; background:var(--card-2);
+}
+.einwilligung input{ margin-top:4px; }
+.pflicht{ border-color:var(--action); }
+.falle{ position:absolute; left:-9999px; }
+.btn-gold{
+  display:inline-block; background:var(--action); color:var(--on-action);
+  border:0; border-radius:6px; padding:13px 22px; font:inherit; font-weight:700;
+  cursor:pointer;
+}
+.btn-gold:hover{ filter:brightness(1.06); }
+.btn-gold:disabled{ opacity:.55; cursor:default; }
+.meldung{ margin:14px 0 0; font-size:14px; }
+.meldung.fehler{ color:var(--warn); font-weight:700; }
+.meldung.ok{ color:var(--ok); }
+
+footer{ background:var(--card); border-top:1px solid var(--line); padding:26px 0 34px;
+        color:var(--ink-soft); font-size:14px; }
+footer p{ margin:0 0 8px; }
+details{ margin:10px 0 0; }
+summary{ cursor:pointer; font-weight:700; }
+.legal-body{ font-size:13px; color:var(--ink-faint); margin-top:8px; }
+.legal-body h4{ margin:14px 0 4px; font-size:13.5px; }
+.legal-body p{ margin:0 0 8px; max-width:none; }
+
+/* Die Teilnahmebedingungen sind ein Rechtstext und werden gelesen, nicht
+   ueberflogen - schmalere Spalte, nummerierte Abschnitte. */
+.bedingungen h2{ margin:26px 0 6px; font-size:19px; }
+.bedingungen ol{ padding-left:1.2em; }
+.bedingungen li{ margin:0 0 8px; }
+</style>
+
+<header class="top">
+  <div class="wrap kopf-oben">
+    <div>
+      <p class="eyebrow">Gewinnspiel zum 25. DKVF · Köln</p>
+      <h1>Teilnahmebedingungen</h1>
+      <p class="standfirst">Für das Gewinnspiel der Knowledge-Hubs von „Monitor
+      Versorgungsforschung“ vom 23. bis 25. September 2026.</p>
+    </div>
+    <a class="marke" href="https://www.monitor-versorgungsforschung.de/?utm_source=gewinnspiel&amp;utm_medium=referral&amp;utm_campaign=dkvf2026" target="_blank" rel="noopener" title="Monitor Versorgungsforschung — Herausgeber dieser Portale">
+      <img src="/logo/mvf-logo.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
+    </a>
+  </div>
+</header>
+
+<main class="wrap bedingungen">
+
+  <h2>1. Veranstalter</h2>
+  <p>Veranstalter des Gewinnspiels ist die eRelation AG – Content in Health,
+  Johannes-von-Hanstein-Str. 2, 53115 Bonn, Verlag von „Monitor Versorgungsforschung“
+  (nachfolgend „Veranstalter“). Die vollständigen Angaben stehen im
+  <a href="/#impressum">Impressum</a>.</p>
+
+  <h2>2. Teilnahmeberechtigung</h2>
+  <p>Teilnahmeberechtigt sind natürliche Personen, die das 18. Lebensjahr vollendet haben und
+  den 25. Deutschen Kongress für Versorgungsforschung (DKVF) vom 23. bis 25. September 2026 in
+  Köln besuchen. Von der Teilnahme ausgeschlossen sind Mitarbeitende des Veranstalters sowie
+  deren Angehörige. Je Person ist eine Teilnahme möglich; Mehrfachteilnahmen mit
+  verschiedenen E-Mail-Adressen führen zum Ausschluss.</p>
+  <p>Die Teilnahme ist kostenlos und unabhängig vom Erwerb von Waren oder Dienstleistungen.</p>
+
+  <h2>3. Teilnahmezeitraum</h2>
+  <p>Das Gewinnspiel beginnt am 23. September 2026 um 9:00 Uhr und endet am
+  25. September 2026 um 18:00 Uhr. Maßgeblich ist der Eingang der Teilnahme beim
+  Veranstalter.</p>
+
+  <h2>4. Teilnahme</h2>
+  <p>Die Teilnahme erfolgt über das Formular unter
+  <a href="./">knowledge-hubs.m-vf.de/gewinnspiel</a>: E-Mail-Adresse eintragen und das
+  Häkchen „Ich nehme am Gewinnspiel teil“ setzen. Die Angabe des Namens ist freiwillig.</p>
+  <p>Anschließend erhalten Sie eine E-Mail mit einem Bestätigungslink. <strong>Erst mit dem
+  Klick darauf ist die Teilnahme gültig</strong> (Double-Opt-in-Verfahren); nicht bestätigte
+  Anmeldungen nehmen an der Verlosung nicht teil.</p>
+  <p><strong>Die Bestellung eines Newsletters ist keine Voraussetzung für die Teilnahme.</strong>
+  Ob Sie einen Newsletter bestellen, entscheiden Sie unabhängig davon; die Gewinnchance ist
+  in beiden Fällen dieselbe. Ein späterer Widerruf der Newsletter-Einwilligung — etwa über den
+  Abmeldelink am Ende jeder E-Mail — beeinträchtigt die Gewinnchance während des Gewinnspiels
+  nicht.</p>
+
+  <h2>5. Gewinne</h2>
+  <p>Zu gewinnen gibt es <strong>bis zu 10 Tickets</strong> für den 15. MVF-Fachkongress
+  „Primärversorgung 2030 — Implementierung und Verbindlichkeit“ am Freitag, dem 27. November
+  2026, von 9:00 bis 16:00 Uhr im Scharounsaal, 1. OG, AOK Nordost, Wilhelmstraße 1,
+  10963 Berlin.</p>
+  <p>Jede Teilnehmerin und jeder Teilnehmer kann höchstens ein Ticket gewinnen. Der Wert eines
+  Tickets beträgt 125 Euro. Eine Barauszahlung, ein Tausch oder eine Übertragung des Gewinns
+  auf Dritte ist ausgeschlossen. Nicht im Gewinn enthalten sind An- und Abreise, Übernachtung
+  und Verpflegung außerhalb des Kongressprogramms; diese Kosten trägt die Gewinnerin oder der
+  Gewinner selbst.</p>
+  <p>Werden weniger als 10 gültige Teilnahmen abgegeben, verringert sich die Zahl der
+  vergebenen Tickets entsprechend. Nicht angenommene oder verfallene Gewinne können unter den
+  übrigen Teilnehmenden nachverlost werden.</p>
+
+  <h2>6. Gewinnermittlung</h2>
+  <p>Die Gewinner werden nach Ablauf des Teilnahmezeitraums per Losentscheid unter allen
+  gültigen Teilnahmen ermittelt. Die Verlosung findet unter Ausschluss der Öffentlichkeit
+  statt.</p>
+
+  <h2>7. Benachrichtigung und Annahme des Gewinns</h2>
+  <p>Die Gewinner werden per E-Mail an die bei der Teilnahme angegebene Adresse
+  benachrichtigt. Der Gewinn ist innerhalb von <strong>48 Stunden</strong> nach Zugang der
+  Benachrichtigung anzunehmen — es genügt eine Antwort per E-Mail. Erfolgt innerhalb dieser
+  Frist keine Rückmeldung, verfällt der Anspruch auf den Gewinn, und der Veranstalter darf
+  nachverlosen.</p>
+  <p>Für die Richtigkeit der angegebenen E-Mail-Adresse ist die teilnehmende Person
+  verantwortlich.</p>
+
+  <h2>8. Datenschutz</h2>
+  <p>Die im Rahmen des Gewinnspiels erhobenen Daten (E-Mail-Adresse sowie, falls angegeben,
+  Name) werden zur Durchführung und Abwicklung des Gewinnspiels verarbeitet; Rechtsgrundlage
+  ist Art. 6 Abs. 1 lit. b DSGVO. Haben Sie zusätzlich einen Newsletter bestellt, verarbeiten
+  wir Ihre Adresse dafür auf Grundlage Ihrer Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO;
+  diese Einwilligung ist jederzeit mit Wirkung für die Zukunft widerruflich.</p>
+  <p>Eine Weitergabe an Dritte findet über den Versanddienstleister Mailchimp hinaus nicht
+  statt. Die Teilnahmedaten werden spätestens drei Monate nach Ende des Gewinnspiels gelöscht,
+  soweit keine gesetzlichen Aufbewahrungspflichten entgegenstehen. Einzelheiten und Ihre Rechte
+  stehen in den <a href="./#datenschutz">Datenschutzhinweisen</a>.</p>
+
+  <h2>9. Ausschluss von der Teilnahme</h2>
+  <p>Der Veranstalter behält sich vor, Teilnehmende auszuschließen, die gegen diese
+  Teilnahmebedingungen verstoßen, unwahre Angaben machen oder sich unerlaubter Hilfsmittel
+  bedienen. Bereits gewährte Gewinne können in diesen Fällen zurückgefordert werden.</p>
+
+  <h2>10. Vorzeitige Beendigung</h2>
+  <p>Der Veranstalter behält sich vor, das Gewinnspiel jederzeit ohne Vorankündigung
+  abzubrechen oder zu beenden, wenn eine ordnungsgemäße Durchführung aus technischen oder
+  rechtlichen Gründen nicht gewährleistet werden kann. Den Teilnehmenden entstehen daraus
+  keine Ansprüche.</p>
+
+  <h2>11. Sonstiges</h2>
+  <p>Der Rechtsweg ist ausgeschlossen. Es gilt das Recht der Bundesrepublik Deutschland.
+  Sollte eine Bestimmung dieser Teilnahmebedingungen unwirksam sein, bleibt die Wirksamkeit
+  der übrigen Bestimmungen unberührt.</p>
+  <p>Dieses Gewinnspiel steht in keiner Verbindung zu einem sozialen Netzwerk und wird von
+  diesen weder gesponsert noch unterstützt oder organisiert.</p>
+
+  <p class="fein" style="margin-top:28px">Stand: 31. August 2026 ·
+  <a href="./">Zurück zum Gewinnspiel</a></p>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Ein Angebot von „Monitor Versorgungsforschung“ · eRelation AG – Content in Health</p>
+    <p><a href="/">Übersicht der Hubs</a> ·
+       <a href="./">Gewinnspiel</a> ·
+       <a href="./#datenschutz">Datenschutzhinweise</a> ·
+       <a href="/#impressum">Impressum</a></p>
+  </div>
+</footer>
+<!-- ZAEHLER-START --------------------------------------------------------
+     Zaehlt den Aufruf auf dem eigenen Server von Monitor Versorgungsforschung.
+     Kein Cookie, keine Kennung auf dem Geraet, keine fremde Firma. Wer Do Not
+     Track gesetzt hat, wird gar nicht erst gezaehlt. Schlaegt der Abruf fehl,
+     merkt die Seite es nicht - ein Bild, das nicht laedt, ist folgenlos.
+     Gegenstueck: /zaehler/z.php auf monitor-versorgungsforschung.de -->
+<script>
+(function () {
+  try {
+    if (navigator.doNotTrack === '1' || window.doNotTrack === '1'
+        || navigator.globalPrivacyControl === true) return;
+    // Automatische Umgebungen melden sich selbst: navigator.webdriver setzen
+    // Headless Chrome und Selenium von sich aus. Zuverlaessiger als jede
+    // Liste von Browserkennungen, weil es nicht geraten, sondern gemeldet wird.
+    if (navigator.webdriver) return;
+    if (!screen.width || !screen.height) return;   // kein echter Bildschirm
+    if (!/\.m-vf\.de$/.test(location.hostname)) return;   // lokal nicht zaehlen
+    var r = '';
+    try { r = document.referrer ? new URL(document.referrer).hostname : ''; }
+    catch (e) { r = ''; }
+    if (r === location.hostname) r = '';
+    // Bildschirmbreite nur in Stufen. Die genaue Aufloesung waere eines der
+    // staerksten Merkmale zum Wiedererkennen eines Browsers; fuer die Frage,
+    // fuer welche Breite zu gestalten ist, genuegt die Schublade.
+    var w = screen.width;
+    var stufe = w < 480 ? 'bis480' : w < 768 ? 'bis768' : w < 1024 ? 'bis1024'
+              : w < 1440 ? 'bis1440' : w < 1920 ? 'bis1920' : 'ueber1920';
+    var q = 'h=' + encodeURIComponent(location.hostname)
+          + '&p=' + encodeURIComponent(location.pathname)
+          + '&r=' + encodeURIComponent(r ? 'https://' + r + '/' : '')
+          + '&g=' + (Math.min(screen.width, screen.height) < 768 ? 'm' : 'd')
+          + '&b=' + stufe
+          + '&c=' + Date.now();
+    new Image(1, 1).src =
+      'https://www.monitor-versorgungsforschung.de/zaehler/z.php?' + q;
+  } catch (e) { /* Zaehlung ist nie wichtiger als die Seite */ }
+})();
+</script>
+<!-- ZAEHLER-ENDE -->
+</html>
