@@ -2,63 +2,63 @@
  "_": "Trefferzahl jeder Hub-Abfrage ueber die letzten 365 Tage, woechentlich von abfrage_wache.py fortgeschrieben.",
  "hubs": {
   "mvf-portal/versorgungsforschung-portal": {
-   "datum": "2026-08-27",
-   "treffer": 7672,
+   "datum": "2026-08-31",
+   "treffer": 7659,
    "pro_tag": 21.0
   },
   "mvf-portal/klima-gesundheit-portal": {
-   "datum": "2026-08-27",
-   "treffer": 5075,
-   "pro_tag": 13.9
+   "datum": "2026-08-31",
+   "treffer": 5093,
+   "pro_tag": 14.0
   },
   "mvf-portal/ki-gesundheit-portal": {
-   "datum": "2026-08-27",
-   "treffer": 32299,
-   "pro_tag": 88.5
+   "datum": "2026-08-31",
+   "treffer": 32438,
+   "pro_tag": 88.9
   },
   "mvf-portal/pflege-portal": {
-   "datum": "2026-08-27",
-   "treffer": 15549,
-   "pro_tag": 42.6
+   "datum": "2026-08-31",
+   "treffer": 15636,
+   "pro_tag": 42.8
   },
   "mvf-portal/longevity-portal": {
-   "datum": "2026-08-27",
-   "treffer": 7296,
+   "datum": "2026-08-31",
+   "treffer": 7289,
    "pro_tag": 20.0
   },
   "mvf-portal/healthliteracy-portal": {
-   "datum": "2026-08-27",
-   "treffer": 4518,
+   "datum": "2026-08-31",
+   "treffer": 4544,
    "pro_tag": 12.4
   },
   "mvf-portal/impfen-portal": {
-   "datum": "2026-08-27",
-   "treffer": 7609,
-   "pro_tag": 20.8
+   "datum": "2026-08-31",
+   "treffer": 7524,
+   "pro_tag": 20.6
   },
   "mvf-portal/ncd-portal": {
-   "datum": "2026-08-27",
-   "treffer": 10907,
-   "pro_tag": 29.9
+   "datum": "2026-08-31",
+   "treffer": 10967,
+   "pro_tag": 30.0
   },
   "mvf-portal/gender-portal": {
-   "datum": "2026-08-27",
-   "treffer": 5932,
+   "datum": "2026-08-31",
+   "treffer": 5967,
    "pro_tag": 16.3
   },
   "mvf-portal/adipositas-portal": {
-   "datum": "2026-08-27",
-   "treffer": 12032,
-   "pro_tag": 33.0
+   "datum": "2026-08-31",
+   "treffer": 12094,
+   "pro_tag": 33.1
   },
   "mvf-portal/safety-portal": {
-   "datum": "2026-08-27",
-   "treffer": 11915,
-   "pro_tag": 32.6
+   "datum": "2026-08-31",
+   "treffer": 11979,
+   "pro_tag": 32.8
   },
   "mvf-portal/mental-portal": {
-   "datum": "2026-08-27",
-   "treffer": 10896,
+   "datum": "2026-08-31",
+   "treffer": 10926,
    "pro_tag": 29.9
   }
  }
