@@ -295,6 +295,12 @@ def text_aus_mailobjekt(mail, laut: bool = True) -> str:
 # dieser Woerter enthaelt.
 PM_POSTFACH = ("presse", "press", "medien", "media", "kommunikation",
                "communication", "newsroom", "pressoffice", "infodienst")
+# Spuren der Presseverteiler-Dienste und der Pressestelle im Fusstext. Wer
+# darueber verschickt, verschickt eine Mitteilung - fast ohne Ausnahme.
+PM_SPUREN = ("pressmailing.net", "presseportal.de", "newsaktuell",
+             "mynewsdesk", "idw-online.de", "prnewswire", "cision",
+             "pr-gateway", "presseverteiler", "pressekontakt",
+             "pressesprecher", "pressestelle", "presseabteilung")
 PM_BETREFF = ("pressemitteilung", "pressemeldung", "presseinformation",
               "presseinfo", "presseerklärung", "pressestatement",
               "presse-information", "pm:", "pm |", "pm //")
@@ -324,7 +330,66 @@ def ist_pressemitteilung(absender: str, betreff: str,
         return True
     if any(m in betreff for m in PM_BETREFF):
         return True
-    return any(m in anfang[:400].lower() for m in PM_BETREFF)
+    text = anfang.lower()
+    if any(m in text[:400] for m in PM_BETREFF):
+        return True
+    # Der Briefkopf sagt es oft selbst: "Deutsches Herzzentrum der Charite -
+    # Kommunikation". Nur im Kopf gesucht, denn weiter unten steht das Wort
+    # in jeder zweiten Mail.
+    if any(m in text[:300] for m in ("kommunikation", "öffentlichkeitsarbeit",
+                                     "presse und öffentlichkeit")):
+        return True
+    return any(m in text for m in PM_SPUREN)
+
+
+# Das Sprachmodell entscheidet, was die Wortlisten offenlassen. Haiku genuegt
+# dafuer und kostet Bruchteile eines Cents; die Meldung selbst schreibt
+# weiterhin das grosse Modell.
+PRUEF_MODELL = os.environ.get("PRUEFMODELL", "claude-haiku-4-5-20251001")
+PRUEF_SYSTEM = (
+    "Du sortierst den Posteingang eines Fachredakteurs. Er gibt "
+    "Pressemitteilungen aus dem deutschen Gesundheitswesen auf der "
+    "Nachrichtenseite von Monitor Versorgungsforschung wieder: Kliniken, "
+    "Verbände, Kassen, Behörden, Fachgesellschaften, Unternehmen, "
+    "Forschungseinrichtungen.\n"
+    "Eine Pressemitteilung ist ein zur Veröffentlichung bestimmter Text über "
+    "ein Ereignis, ein Ergebnis, eine Forderung oder eine Entscheidung - auch "
+    "wenn das Wort 'Pressemitteilung' nirgends steht und die Adresse ein "
+    "Personenpostfach ist.\n"
+    "Keine Pressemitteilung sind: persönliche Korrespondenz, Newsletter mit "
+    "vielen Themen, Einladungen und Terminhinweise, Rechnungen, Angebote, "
+    "Werbung, Stellenanzeigen, Abo-Verwaltung, Terminabsprachen."
+)
+PRUEF_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["pressemitteilung", "begruendung"],
+    "properties": {
+        "pressemitteilung": {"type": "boolean"},
+        "begruendung": {"type": "string"},
+    },
+}
+
+
+def modell_urteil(absender: str, betreff: str, anfang: str) -> tuple[bool, str]:
+    """Ist diese Mail eine Pressemitteilung? Ein Satz Begruendung dazu."""
+    import anthropic
+
+    schluessel = os.environ.get("KNOWLEDGEHUBS", "").strip()
+    if not schluessel:
+        return False, "kein Schluessel"
+    auftrag = (f"Absender: {absender}\nBetreff: {betreff}\n\n"
+               f"Anfang der Mail:\n{anfang[:2500]}")
+    try:
+        antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+            model=PRUEF_MODELL, max_tokens=300, system=PRUEF_SYSTEM,
+            output_config={"format": {"type": "json_schema",
+                                      "schema": PRUEF_SCHEMA}},
+            messages=[{"role": "user", "content": auftrag}])
+        d = json.loads(next(b.text for b in antwort.content if b.type == "text"))
+        return bool(d["pressemitteilung"]), str(d.get("begruendung", ""))[:120]
+    except Exception as fehler:
+        return False, f"Pruefung fehlgeschlagen: {str(fehler)[:80]}"
 
 
 def entkleide(roh: str) -> str:
@@ -1154,6 +1219,13 @@ PM_ERLEDIGT = "erledigt"
 # wuerde sie damit aus der Automatik nehmen.
 PM_MARKE = "Pressemeldung erledigt"
 PM_TAGE = 3                            # aelteres bleibt liegen
+# Welche Mails das Sprachmodell schon beurteilt hat. Steht in einer Datei und
+# nicht als Kategorie in Outlook: Das Postfach gehoert der Redaktion, nicht
+# dem Skript. Je Lauf werden hoechstens PRUEF_HOECHSTENS Mails vorgelegt -
+# ein Posteingang mit hundert Newslettern soll keine hundert Anfragen kosten.
+GEPRUEFT_DATEI = pathlib.Path(__file__).with_name("geprueft.json")
+PRUEF_HOECHSTENS = 12
+EIGENE = ("erelation.org", "m-vf.de", "monitor-versorgungsforschung.de")
 
 
 def unterordner(eltern, name: str):
@@ -1161,6 +1233,35 @@ def unterordner(eltern, name: str):
         if str(f.Name).lower() == name.lower():
             return f
     return eltern.Folders.Add(name)
+
+
+def vom_modell_geprueft(unklar: list) -> list:
+    """Die Zweifelsfaelle dem Modell vorlegen - jede Mail nur einmal."""
+    try:
+        geprueft = json.loads(GEPRUEFT_DATEI.read_text(encoding="utf-8"))
+    except Exception:
+        geprueft = {}
+    gefunden, gefragt = [], 0
+    for mail, absender, betreff, koerper in unklar:
+        kennung = str(getattr(mail, "EntryID", ""))[-32:]
+        if kennung in geprueft:
+            if geprueft[kennung] is True:
+                gefunden.append(mail)
+            continue
+        if gefragt >= PRUEF_HOECHSTENS:
+            break
+        gefragt += 1
+        urteil, grund = modell_urteil(absender, betreff, koerper)
+        geprueft[kennung] = urteil
+        print(f"  geprueft: {betreff[:52]} -> "
+              f"{'Mitteilung' if urteil else 'keine'} ({grund})")
+        if urteil:
+            gefunden.append(mail)
+    GEPRUEFT_DATEI.write_text(json.dumps(geprueft), encoding="utf-8")
+    if gefragt:
+        print(f"  {gefragt} Zweifelsfall/-faelle vorgelegt, "
+              f"{len(gefunden)} davon Mitteilungen\n")
+    return gefunden
 
 
 def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
@@ -1188,7 +1289,7 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
     import datetime
     grenze = (dt_jetzt_utc() - datetime.timedelta(days=PM_TAGE))
 
-    kandidaten = []
+    kandidaten, unklar = [], []
     for quelle in (ziel, posteingang):                      # Ordner zuerst
         posten = quelle.Items
         posten.Sort("[ReceivedTime]", True)
@@ -1208,10 +1309,22 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
                 continue
             # Im Ordner Pressemitteilungen zaehlt jede Mail - dort liegt sie
             # ja, weil jemand sie fuer eine haelt.
-            anfang = str(getattr(mail, "Body", ""))[:400]
+            koerper = str(getattr(mail, "Body", ""))
             if quelle is ziel or ist_pressemitteilung(absender, betreff,
-                                                      anfang):
+                                                      koerper[:3000]):
                 kandidaten.append(mail)
+            elif (len(koerper) > 800
+                  and "@" in absender
+                  and not any(e in absender.lower() for e in EIGENE)
+                  and not any(m in betreff.lower() for m in PM_NICHT)):
+                unklar.append((mail, absender, betreff, koerper))
+
+    # Was die Wortlisten offenlassen, liest das Sprachmodell. So kommen auch
+    # Mitteilungen durch, die das Wort "Pressemitteilung" nirgends fuehren -
+    # etwa die des Deutschen Herzzentrums, verschickt aus einem
+    # Personenpostfach ueber einen Presseverteiler.
+    if unklar:
+        kandidaten.extend(vom_modell_geprueft(unklar))
 
     if not kandidaten:
         print("Keine neue Pressemitteilung gefunden.")
