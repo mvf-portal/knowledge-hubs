@@ -20,13 +20,12 @@ declare(strict_types=1);
 const SCHLUESSEL = 'HIER-DEN-API-SCHLUESSEL-EINTRAGEN-us6';
 
 // ---------------------------------------------------------------------------
-// 2. Die Zielgruppe ("Audience"). Leer lassen genuegt, solange es genau EINE
-//    gibt - dann sucht anmeldung.php sie sich selbst und merkt sie in
-//    daten/liste.json.php. Gibt es einmal zwei, bricht der Endpunkt mit einer
-//    klaren Meldung ab und die Kennung gehoert hierher.
-//    Zu finden in Mailchimp unter Zielgruppe -> Einstellungen -> "Audience ID".
+// 2. Die Zielgruppe ("Audience"). Sie MUSS hier stehen: Das Konto fuehrt 37
+//    Zielgruppen - Altlasten aus Kongressen und Preisausschreiben seit 2015 -
+//    und der Hausverteiler ist eine davon. Die Selbstsuche in anmeldung.php
+//    greift nur bei genau einer Zielgruppe und bricht sonst ab.
 // ---------------------------------------------------------------------------
-const LISTE = '';
+const LISTE = '1c8fc10ec7';   // eRelation GESAMT
 
 // ---------------------------------------------------------------------------
 // 3. Ein selbst gewaehltes langes Kennwort fuer den Bericht. Damit laesst sich
@@ -43,31 +42,34 @@ const BERICHT_SCHLUESSEL = '';
 // 4. Die Newsletter. Links steht der kurze Name, den die Hub-Seiten senden,
 //    rechts die Kennung des Interesses in Mailchimp.
 //
-//    DIE KENNUNGEN MUESSEN EINGETRAGEN WERDEN, sonst weist der Endpunkt jede
-//    Bestellung mit "unbekannter-hub" ab. Das ist Absicht: Ein Endpunkt im
-//    offenen Netz darf nur in Gruppen eintragen, die hier ausdruecklich
-//    stehen.
+//    Die Kennungen sind am 31.08.2026 aus der API ausgelesen und eingetragen.
+//    Eine leere Zeile heisst: Dieser Newsletter kann nicht bestellt werden -
+//    der Endpunkt weist ihn mit "unbekannter-hub" ab. Das ist Absicht: Ein
+//    Endpunkt im offenen Netz darf nur in Gruppen eintragen, die hier
+//    ausdruecklich stehen.
 //
-//    Woher die Kennungen kommen: den Bericht aus Punkt 3 aufrufen. Er listet
-//    jede Gruppe mit Namen und Kennung, fertig zum Abschreiben. Die Kennung
-//    ist eine Folge aus Ziffern und Buchstaben wie "a1b2c3d4e5" - NICHT die
-//    Zahlen aus "group[16135][512]", die zum alten Formular gehoerten.
+//    Kommt ein Hub dazu, liefert  py scripts/anmeldung_gruppen.py  im Repo
+//    knowledge-hubs den Block neu.
+//
+//    Die Kennung ist eine Folge aus Ziffern und Buchstaben wie "8cb31ce0ef" -
+//    NICHT die Zahlen aus "group[16135][512]", die zum alten Formular
+//    gehoerten. Sie steht nirgends in der Mailchimp-Oberflaeche.
 // ---------------------------------------------------------------------------
 const INTERESSEN = [
-    'wissen'         => '',   // Studien-Newsletter Versorgungsforschung
-    'klima'          => '',   // Hitze, Klima & Gesundheit
-    'ki'             => '',   // Digitalisierung, KI & Gesundheit
-    'pflege'         => '',   // Pflege & Langzeitversorgung
-    'longevity'      => '',   // Gesundes Altern & Longevity
-    'healthliteracy' => '',   // Gesundheitskompetenz
-    'impfen'         => '',   // Impfen & Impfpraevention
-    'ncd'            => '',   // Nicht uebertragbare Krankheiten
-    'gender'         => '',   // Geschlechtersensible Medizin
-    'adipositas'     => '',   // Adipositas
-    'safety'         => '',   // Patientensicherheit
-    'mental'         => '',   // Psychische Gesundheit
-    'mvf'            => '',   // MVF-Newsletter (redaktionell)
-    'datenschutz'    => '',   // "Datenschutzerklaerung gelesen" - wird immer mitgesetzt
+    'wissen'         => '8cb31ce0ef',   // Studien Newsletter VF
+    'klima'          => '401f8a686e',   // Studien Newsletter Klima
+    'ki'             => 'b1f1b80f23',   // Studien Newsletter KI
+    'pflege'         => 'e5860dc351',   // Studien Newsletter Pflege
+    'longevity'      => 'b68ccf358b',   // Studien Newsletter Longevity
+    'healthliteracy' => '44eda2dbac',   // Studien Newsletter HealthLiteracy
+    'impfen'         => '771a8ede2a',   // Studien Newsletter Impfen
+    'ncd'            => '7465643def',   // Studien Newsletter NCD
+    'gender'         => '4c2d1464e8',   // Studien Newsletter Gender
+    'adipositas'     => '469cb7b600',   // Studien Newsletter Adipositas
+    'safety'         => '5d3b807f19',   // Studien Newsletter Safety
+    'mental'         => '7791f837a9',   // Studien Newsletter MentalHealth
+    'mvf'            => 'e77b605c5e',   // Monitor Versorgungsforschung Newsletter
+    'datenschutz'    => 'c19f3e28e4',   // Datenschutzerklaerung gelesen - wird immer mitgesetzt
 ];
 
 // ---------------------------------------------------------------------------

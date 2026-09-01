@@ -49,13 +49,13 @@ HINWEISE: dict[str, tuple[str, ...]] = {
     "ki":             ("studien", "ki"),
     "pflege":         ("studien", "pflege"),
     "longevity":      ("studien", "longevity"),
-    "healthliteracy": ("studien", "gesundheitskompetenz"),
+    "healthliteracy": ("studien", "healthliteracy"),
     "impfen":         ("studien", "impfen"),
     "ncd":            ("studien", "ncd"),
     "gender":         ("studien", "gender"),
     "adipositas":     ("studien", "adipositas"),
-    "safety":         ("studien", "sicherheit"),
-    "mental":         ("studien", "psych"),
+    "safety":         ("studien", "safety"),
+    "mental":         ("studien", "mentalhealth"),
     # Der redaktionelle MVF-Newsletter. "newsletter" allein genuegt nicht:
     # In der Gruppenmenge 5629 stehen die Newsletter alter Titel daneben
     # (Pharma Relations, MarketAccess, Monitor Pflege) - Relikte, die es nicht
@@ -121,15 +121,35 @@ def main() -> int:
             "  In der Eingabeaufforderung:  set MAILCHIMP_API_KEY=xxxx-us6\n"
             "  In PowerShell:               $env:MAILCHIMP_API_KEY = 'xxxx-us6'")
 
-    listen = hole(schluessel, "/lists?count=20&fields=lists.id,lists.name")["lists"]
-    if len(listen) != 1:
-        print("Mehrere Zielgruppen gefunden - die Kennung gehoert dann in LISTE:")
-        for l in listen:
+    listen = hole(schluessel, "/lists?count=200&fields=lists.id,lists.name")["lists"]
+    if not listen:
+        raise SystemExit("Das Konto hat keine Zielgruppe.")
+
+    # Das Konto fuehrt rund zwanzig Zielgruppen - Altlasten aus Kongressen und
+    # Preisausschreiben von 2015 an. Der Hausverteiler ist EINE davon, und
+    # einfach die erste zu nehmen waere der sichere Weg in die falsche Liste.
+    # Die Kennung ist bekannt: Sie stand schon als `id` in der Adresse des
+    # alten Anmeldeformulars.
+    HAUSLISTE = "1c8fc10ec7"      # eRelation GESAMT
+    gewaehlt = (sys.argv[sys.argv.index("--liste") + 1]
+                if "--liste" in sys.argv[:-1] else "")
+    treffer = [l for l in listen if l["id"] == (gewaehlt or HAUSLISTE)]
+
+    if not treffer:
+        print(f"{len(listen)} Zielgruppen im Konto, keine mit der Kennung "
+              f"'{gewaehlt or HAUSLISTE}':")
+        for l in sorted(listen, key=lambda x: x["name"].lower()):
             print(f"  {l['id']}  {l['name']}")
-        if not listen:
-            return 1
-    liste = listen[0]
-    print(f"Zielgruppe: {liste['name']}  (LISTE = '{liste['id']}')\n")
+        print()
+        print("Mit  --liste <KENNUNG>  die richtige waehlen.")
+        return 1
+
+    liste = treffer[0]
+    print(f"Zielgruppe: {liste['name']}  (LISTE = '{liste['id']}')")
+    if len(listen) > 1:
+        print(f"({len(listen)} Zielgruppen im Konto - die uebrigen sind Altlasten "
+              f"aus Kongressen und Preisausschreiben.)")
+    print()
 
     gefunden: list[tuple[str, str, str]] = []   # Kategorie, Name, Kennung
     kats = hole(schluessel, f"/lists/{liste['id']}/interest-categories?count=60")
