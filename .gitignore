@@ -2,3 +2,9 @@ __pycache__/
 scripts/logos-offen.json
 scripts/logos-kandidaten.json
 scripts/geprueft.json
+
+# Der Zugang des Anmelde-Endpunkts: enthaelt den Mailchimp-Schluessel und das
+# Kennwort fuer den Bericht. Gehoert per FTP auf den Server, nie ins Repo.
+# Das Muster daneben (anmeldung-zugang-muster.php) bleibt versioniert.
+mvf-server/anmeldung/anmeldung-zugang.php
+mvf-server/anmeldung/daten/

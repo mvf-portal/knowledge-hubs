@@ -195,7 +195,45 @@ if ($code < 200 || $code >= 300) {
     antwort(502, ['ok' => false, 'grund' => 'mailchimp']);
 }
 
-$zustand = ($antwort['status'] ?? '') === 'pending' ? 'bestaetigung-noetig' : 'eingetragen';
+// ---------------------------------------------------------------------------
+// Was Mailchimp zurueckgibt, ist NICHT immer das, was die Seite melden darf.
+// `status_if_new` gilt nur fuer neue Kontakte; ein vorhandener behaelt seinen
+// Zustand. Steht er auf "cleaned" oder "unsubscribed", ist die Anmeldung
+// technisch durchgelaufen und der Mensch bekommt trotzdem nie etwas. Genau
+// diese stille Luege hat die alte Formularadresse gemacht - sie hier zu
+// wiederholen waere absurd. Deshalb wird der zurueckgegebene Status gelesen
+// und nicht angenommen.
+// ---------------------------------------------------------------------------
+$status = (string)($antwort['status'] ?? '');
+
+if ($status === 'cleaned') {
+    // "Cleaned" heisst: An diese Adresse ist einmal nichts zustellbar gewesen.
+    // Das kann Jahre her sein und der Kasten laengst wieder erreichbar - meldet
+    // sich jemand heute aktiv an, ist die Bestaetigungsmail der beste Beweis
+    // dafuer. Also einmal ausdruecklich auf "pending" setzen und sehen, ob
+    // Mailchimp mitgeht.
+    [$code2, $antwort2] = mailchimp('PUT', 'lists/' . liste() . '/members/' . $hash,
+                                    ['email_address' => $email, 'status' => 'pending']);
+    if ($code2 >= 200 && $code2 < 300 && ($antwort2['status'] ?? '') === 'pending') {
+        $status = 'pending';
+    } else {
+        fehler_merken($code2, (string)($antwort2['title'] ?? ''), 'cleaned->pending');
+        antwort(409, ['ok' => false, 'grund' => 'unzustellbar']);
+    }
+}
+
+if ($status === 'unsubscribed') {
+    // Eine Abmeldung nehmen wir nicht von uns aus zurueck - das darf nur die
+    // Person selbst, ueber Mailchimps eigene Anmeldeseite.
+    antwort(409, ['ok' => false, 'grund' => 'abgemeldet']);
+}
+
+if ($status !== 'pending' && $status !== 'subscribed') {
+    fehler_merken(200, 'unerwarteter Status: ' . $status, 'nach PUT');
+    antwort(502, ['ok' => false, 'grund' => 'mailchimp']);
+}
+
+$zustand = $status === 'pending' ? 'bestaetigung-noetig' : 'eingetragen';
 
 // Tags gehen ueber eine eigene Adresse und ueber ihren NAMEN - eine Nummer
 // braucht es nicht, und ein noch nicht vorhandener Tag wird angelegt.

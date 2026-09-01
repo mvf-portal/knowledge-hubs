@@ -28,6 +28,34 @@ Nichts, was auf eine Person zeigt. Keine E-Mail-Adresse, kein Name, keine IP-Adr
 
 Die Endung `.php` ist kein Versehen: **MVF läuft auf nginx, und nginx liest keine `.htaccess`.** Eine `.json` wäre im Web abrufbar. Jede dieser Dateien beginnt mit `<?php exit; ?>` und wird deshalb nicht ausgeliefert, sondern ausgeführt — und bricht sofort ab. Dahinter steht reines JSON. Wer die erste Zeile entfernt, öffnet das Verzeichnis.
 
+## Stand 01.09.2026, abends
+
+**Der Endpunkt läuft.** Die Zugangsdatei liegt auf dem Server, der Bericht
+antwortet, und die vierzehn Kennungen in `INTERESSEN` stimmen mit dem überein,
+was die API meldet — am 01.09.2026 Zeile für Zeile verglichen, keine
+Abweichung.
+
+Geprüft ist damit:
+
+| Schritt | Ergebnis |
+|---|---|
+| 2 hochgeladen | `POST` ohne Rumpf antwortet `{"ok":false,"grund":"methode"}` auf `GET`, also 405 — die Datei ist da und läuft |
+| 5 Bericht | Zielgruppe `1c8fc10ec7` und alle Gruppen mit Namen und Kennung |
+| 6 Kennungen | vollständig, gegen die API gegengelesen |
+| 7 Abrufsperre | `daten/salz.json.php` antwortet mit **null Byte** — PHP wird ausgeführt, das Verzeichnis ist zu |
+| Herkunft | von `https://wissen.m-vf.de` kommt `access-control-allow-origin` zurueck, von einer fremden Domain nicht |
+| Honigtopf | gefülltes `falle` gibt freundlich `{"ok":true,"zustand":"neu"}` und trägt nichts ein |
+| ungültige Adresse | `{"ok":false,"grund":"email"}` |
+
+**Offen bleibt Schritt 8**, die Probeanmeldung mit einer echten Adresse, die
+noch nie in der Liste stand. Sie legt einen Kontakt an und löst eine
+Bestätigungsmail aus — deshalb wird sie nicht nebenbei gemacht, sondern mit
+einer Adresse, die jemand bereitstellt und danach nachsieht.
+
+> `php -l` ist weiterhin nicht gelaufen — auf dem Redaktionsrechner ist kein
+> PHP. Dass die Datei fehlerfrei ist, zeigt inzwischen aber der Betrieb: Ein
+> Syntaxfehler hätte den Bericht gar nicht erst antworten lassen.
+
 ## Einbau
 
 **1. Zugangsdatei anlegen.** `anmeldung-zugang-muster.php` umbenennen in `anmeldung-zugang.php` und ausfüllen — der API-Schlüssel und ein selbst gewähltes Kennwort für den Bericht. Die Kommentare in der Datei führen Schritt für Schritt.
@@ -118,6 +146,22 @@ Antwort:
 | `{"ok":false,"grund":"zu-oft"}` | Taktbremse |
 | `{"ok":false,"grund":"mailchimp"}` | Mailchimp hat abgelehnt — Grund steht im Bericht |
 
-## Was danach noch fehlt
+## Wer hierher sendet
 
-Die Hub-Seiten senden noch nicht hierher. Solange steht auf allen zwölf `newsletter.html` und auf der Gewinnspielseite ein Störungshinweis, der auf Mailchimps eigene Anmeldeseite führt — die trägt den Botschutz selbst und funktioniert. Die Umstellung der Seiten erfolgt, sobald dieser Endpunkt Schritt 8 besteht.
+Seit dem 01.09.2026 alle dreizehn Seiten mit Formular:
+
+- die `newsletter.html` der zwölf Portale — sie schickt `hubs` mit dem
+  Schlüssel des eigenen Hubs, dazu die angekreuzten Schwesterportale und
+  `mvf` für den redaktionellen Newsletter. Der eigene Schlüssel steht dort
+  als `const HUB` und kommt aus dem Platzhalter `{{HUB}}` der Vorlage.
+- die Gewinnspielseite `gewinnspiel/index.html` — sie schickt zusaetzlich
+  `tags` mit `Gewinnspiel DKVF 2026`, aber nur innerhalb des
+  Teilnahmezeitraums aus Nummer 3 der Teilnahmebedingungen; außerhalb sperrt
+  sie das Häkchen selbst, die Newsletter-Bestellung bleibt offen.
+
+Der Störungshinweis, der vom 31.08. bis 01.09.2026 an ihrer Stelle stand, ist
+damit überall verschwunden.
+
+Fällt der Endpunkt aus, melden die Seiten das und verweisen auf Mailchimps
+eigene Anmeldeseite. Sie erfinden keinen Erfolg mehr — genau das war der
+Grund, das alte Formular abzuschalten.
