@@ -60,6 +60,16 @@ Erwartet: die Kennung der Zielgruppe und darunter alle Gruppen mit Namen und Ken
 
 **6. Die Kennungen eintragen.** Aus der Liste aus Schritt 5 die Kennungen in `INTERESSEN` in der Zugangsdatei übernehmen. Solange sie leer sind, weist der Endpunkt jede Bestellung mit `unbekannter-hub` ab — das ist Absicht: Ein Endpunkt im offenen Netz darf nur in Gruppen eintragen, die ausdrücklich benannt sind.
 
+Bequemer geht es **vor** dem Hochladen, ohne dass der Endpunkt schon stehen muss: `scripts/anmeldung_gruppen.py` im Repo `knowledge-hubs` liest dieselben Angaben unmittelbar aus der API und gibt den fertigen Block aus.
+
+```bash
+py scripts/anmeldung_gruppen.py
+```
+
+Der API-Schlüssel muss dafür in der Umgebungsvariablen `MAILCHIMP_API_KEY` stehen — dieselbe, die auch `mailchimp_entwurf.py` benutzt. Das Skript liest nur und ändert in Mailchimp nichts.
+
+**Wichtig zu wissen:** Diese Kennungen stehen **nirgends in der Mailchimp-Oberfläche**. Sie sind ausschließlich über die API zu bekommen, und sie haben mit den Zahlen aus `group[16135][512]` nichts zu tun — die gehörten zum alten Formular. Wer in Mailchimp danach sucht, sucht vergebens.
+
 **7. Gegenprobe, dass die Daten nicht öffentlich sind:**
 
 ```bash
