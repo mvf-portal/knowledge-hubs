@@ -47,10 +47,22 @@ Geprüft ist damit:
 | Honigtopf | gefülltes `falle` gibt freundlich `{"ok":true,"zustand":"neu"}` und trägt nichts ein |
 | ungültige Adresse | `{"ok":false,"grund":"email"}` |
 
-**Offen bleibt Schritt 8**, die Probeanmeldung mit einer echten Adresse, die
-noch nie in der Liste stand. Sie legt einen Kontakt an und löst eine
-Bestätigungsmail aus — deshalb wird sie nicht nebenbei gemacht, sondern mit
-einer Adresse, die jemand bereitstellt und danach nachsieht.
+**Schritt 8 ist bestanden.** Am 01.09.2026 um 22:05 Uhr mit einer Adresse
+geprüft, die noch nie in der Liste stand: Der Endpunkt antwortete
+`{"ok":true,"zustand":"bestaetigung-noetig"}`, und die Bestätigungsmail kam an.
+Sie landete im **Posteingang**, nicht im Spam, mit deutschem Betreff „Bitte
+Anmeldung bestätigen" — der englische Betreff, an dem die Zustellung im August
+noch hängen blieb, ist damit erledigt.
+
+Der Zustand `bestaetigung-noetig` sagt mehr als ein HTTP 200: Er entsteht nur,
+weil Mailchimp den Kontakt als „pending" zurückgemeldet hat und der Endpunkt
+diesen Status **liest** statt ihn anzunehmen. Genau das kam über die alte
+Formularadresse nie an.
+
+Ein Schönheitsfehler in der Bestätigungsmail: Unter „Bei Fragen zu dieser Liste
+wenden Sie sich bitte an:" steht ein leerer Doppelpunkt über der Adresse
+`heiser@erelation.org`. Das ist der fehlende Ansprechpartner-Name in den
+Zielgruppen-Einstellungen von Mailchimp — dort zu pflegen, nicht hier.
 
 > `php -l` ist weiterhin nicht gelaufen — auf dem Redaktionsrechner ist kein
 > PHP. Dass die Datei fehlerfrei ist, zeigt inzwischen aber der Betrieb: Ein
