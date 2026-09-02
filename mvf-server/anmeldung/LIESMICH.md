@@ -178,6 +178,40 @@ Antwort:
 | `{"ok":false,"grund":"zu-oft"}` | Taktbremse |
 | `{"ok":false,"grund":"mailchimp"}` | Mailchimp hat abgelehnt — Grund steht im Bericht |
 
+## Dankesmail an bereits bekannte Abonnenten
+
+Wer schon Abonnent ist und einen weiteren Newsletter dazunimmt, bekommt von
+Mailchimp **nichts** — es gibt kein Double-Opt-in, weil nichts zu bestätigen
+ist. Auf dem Bildschirm steht „Ihre Auswahl ist eingetragen", im Postfach
+kommt nichts an.
+
+Der Endpunkt setzt in diesem Fall einen Tag, an dem in Mailchimp eine Customer
+Journey hängt:
+
+| Schritt | Einstellung |
+|---|---|
+| Auslöser | Tag hinzugefügt → der Name aus `TAG_NACHBESTELLUNG` |
+| Aktion 1 | E-Mail senden |
+| Aktion 2 | **Tag entfernen** → derselbe Name |
+| Journey | Wiedereintritt erlauben |
+
+**Aktion 2 ist keine Kür.** „Tag hinzugefügt" feuert nur beim Übergang. Bliebe
+der Tag am Kontakt kleben, liefe die Journey bei dessen nächster
+Nachbestellung nicht mehr an.
+
+Aus demselben Grund steht `TAG_NACHBESTELLUNG` in der Zugangsdatei
+**standardmäßig leer**: Solange die Journey nicht existiert, darf der Tag nicht
+gesetzt werden — wer ihn schon trägt, löst sie nie aus. Einschalten heißt: den
+Namen eintragen, genau so wie er in Mailchimp heißt, und die Datei hochladen.
+
+Warum der Endpunkt das entscheidet und nicht Mailchimp: Nur hier ist bekannt,
+ob es eine Erst- oder eine Nachbestellung war. Ein Auslöser auf
+Gruppenänderung würde auch bei Neuanmeldungen feuern — die bekämen dann zwei
+Mails.
+
+**Nicht abgedeckt:** Nachbestellungen über die Landingpage. Die läuft nicht
+über diesen Endpunkt, setzt also keinen Tag.
+
 ## Wer hierher sendet
 
 Seit dem 01.09.2026 alle dreizehn Seiten mit Formular:

@@ -69,6 +69,10 @@ const INTERESSEN = [
     'safety'         => '5d3b807f19',   // Studien Newsletter Safety
     'mental'         => '7791f837a9',   // Studien Newsletter MentalHealth
     'mvf'            => 'e77b605c5e',   // Monitor Versorgungsforschung Newsletter
+    // Die Sonderaussendungen der Verlagspartner - Nachfolger des eBlast.
+    // Eigener Schluessel, weil es eine eigene Einwilligung ist: Werbung
+    // ist nicht vom Haekchen fuer einen Newsletter gedeckt.
+    'sonderaussendungen' => ''          ,   // Sonderaussendungen unserer Verlagspartner
     'datenschutz'    => 'c19f3e28e4',   // Datenschutzerklaerung gelesen - wird immer mitgesetzt
 ];
 
@@ -85,5 +89,25 @@ const TAGS_ERLAUBT = [
 // 6. Wie viele Anmeldungen ein einzelner Anschluss am Tag schicken darf.
 //    Am Messestand teilen sich viele Menschen ein WLAN und damit eine
 //    IP-Adresse - deshalb nicht zu knapp.
+// ---------------------------------------------------------------------------
+// Der Tag fuer die Dankesmail an bereits bekannte Abonnenten.
+//
+// Der Endpunkt setzt ihn, wenn eine Bestellung von einer Adresse kommt, die
+// schon Abonnent ist - dann schickt Mailchimp von sich aus nichts. In
+// Mailchimp haengt daran eine Customer Journey:
+//
+//     Ausloeser : Tag hinzugefuegt -> Nachbestellung
+//     Aktion 1  : E-Mail senden
+//     Aktion 2  : Tag entfernen -> Nachbestellung
+//     Journey   : Wiedereintritt erlauben
+//
+// LEER LASSEN, solange diese Journey nicht steht. "Tag hinzugefuegt" feuert
+// nur beim Uebergang; wer den Tag schon traegt, loest sie nie aus.
+//
+// Zum Einschalten hier den Namen eintragen - auf das Zeichen genau so, wie er
+// in Mailchimp heisst - und die Datei neu hochladen.
+// ---------------------------------------------------------------------------
+const TAG_NACHBESTELLUNG = '';
+
 // ---------------------------------------------------------------------------
 const TAKT_JE_TAG = 200;

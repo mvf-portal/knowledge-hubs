@@ -235,6 +235,32 @@ if ($status !== 'pending' && $status !== 'subscribed') {
 
 $zustand = $status === 'pending' ? 'bestaetigung-noetig' : 'eingetragen';
 
+// ---------------------------------------------------------------------------
+// Der stille Fall: Die Adresse war schon Abonnent. Mailchimp schickt dann
+// nichts - kein Double-Opt-in, weil nichts zu bestaetigen ist. Auf dem
+// Bildschirm steht zwar "Ihre Auswahl ist eingetragen", aber im Postfach kommt
+// nichts an, und wer die Seite geschlossen hat, hat keinen Beleg mehr.
+//
+// Deshalb setzt der Endpunkt hier einen Tag. In Mailchimp haengt daran eine
+// Automation: Tag hinzugefuegt -> Dankesmail senden -> Tag wieder entfernen.
+// Das Entfernen ist kein Beiwerk, sondern Bedingung: "Tag hinzugefuegt" feuert
+// nur beim Uebergang. Bliebe der Tag kleben, liefe die Automation bei der
+// naechsten Nachbestellung derselben Adresse nicht mehr an.
+//
+// Warum der Endpunkt das entscheidet und nicht Mailchimp: Nur hier ist
+// bekannt, ob es eine Erst- oder eine Nachbestellung war. Ein Ausloeser auf
+// Gruppenaenderung wuerde auch bei Neuanmeldungen feuern - und die bekaemen
+// dann zwei Mails, die Bestaetigung und diese hier.
+//
+// Solange TAG_NACHBESTELLUNG leer ist, passiert nichts. Das ist Absicht: Der
+// Tag darf erst gesetzt werden, wenn die Automation steht. Traegt ein Kontakt
+// ihn vorher, bekommt er spaeter nie eine Mail - der Uebergang hat dann schon
+// stattgefunden.
+// ---------------------------------------------------------------------------
+if ($zustand === 'eingetragen' && defined('TAG_NACHBESTELLUNG') && TAG_NACHBESTELLUNG !== '') {
+    $tagNamen[] = ['name' => TAG_NACHBESTELLUNG, 'status' => 'active'];
+}
+
 // Tags gehen ueber eine eigene Adresse und ueber ihren NAMEN - eine Nummer
 // braucht es nicht, und ein noch nicht vorhandener Tag wird angelegt.
 if ($tagNamen) {
