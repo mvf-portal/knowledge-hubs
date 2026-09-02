@@ -59,6 +59,26 @@ weil Mailchimp den Kontakt als „pending" zurückgemeldet hat und der Endpunkt
 diesen Status **liest** statt ihn anzunehmen. Genau das kam über die alte
 Formularadresse nie an.
 
+**Alle drei Zustände sind belegt.** Am 01.09.2026 nacheinander an einer echten
+Adresse durchgespielt:
+
+| Ausgangslage | Antwort |
+|---|---|
+| Adresse unbekannt | `{"ok":true,"zustand":"bestaetigung-noetig"}` + Bestätigungsmail |
+| Adresse bekannt und bestätigt | `{"ok":true,"zustand":"eingetragen"}`, Auswahl ergänzt, keine zweite Mail |
+| Adresse abgemeldet | `{"ok":false,"grund":"abgemeldet"}` |
+
+Der dritte Fall ist zugleich die einzige Probe, die die **Fassung** der Datei auf
+dem Server verrät: Alt und neu unterscheiden sich ausschließlich in den Pfaden
+`cleaned` und `unsubscribed`, alle anderen Antworten sind identisch. Wer nach
+einem Austausch wissen will, welche Fassung oben liegt, meldet eine Testadresse
+ab und sendet einmal dagegen. Kommt `eingetragen` statt `abgemeldet`, liegt die
+alte dort.
+
+Nach dem Austausch durch den Admin am 01.09.2026 abends geprüft: richtige
+Fassung, dazu Bericht, Herkunftsprüfung, Honigtopf, alle Ablehnungsgründe,
+`daten/` und `anmeldung-zugang.php` mit null Byte, keine Verzeichnisauflistung.
+
 Ein Schönheitsfehler in der Bestätigungsmail: Unter „Bei Fragen zu dieser Liste
 wenden Sie sich bitte an:" steht ein leerer Doppelpunkt über der Adresse
 `heiser@erelation.org`. Das ist der fehlende Ansprechpartner-Name in den
