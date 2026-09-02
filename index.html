@@ -2,7 +2,7 @@
 <html lang="de">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Die Knowledge-Hubs von Monitor Versorgungsforschung: 12 Rechercheportale zu Versorgungsforschung, Gesundheitskompetenz, Pflege, Impfen, Chronische Erkrankungen, Geschlechtersensible Medizin, Adipositas, Patientensicherheit, Psychische Gesundheit, KI, Klima und Longevity. Gebündelte Live-Suchen über 1009 Datenbanken und täglich neue Studien mit deutscher Zusammenfassung.">
+<meta name="description" content="Die Knowledge-Hubs von Monitor Versorgungsforschung: 12 Rechercheportale zu Versorgungsforschung, Gesundheitskompetenz, Pflege, Impfen, Chronische Erkrankungen, Geschlechtersensible Medizin, Adipositas, Patientensicherheit, Psychische Gesundheit, KI, Klima und Longevity. Gebündelte Live-Suchen über 1021 Datenbanken und täglich neue Studien mit deutscher Zusammenfassung.">
 <title>Die Knowledge-Hubs von Monitor Versorgungsforschung</title>
 <link rel="canonical" href="https://knowledge-hubs.m-vf.de/">
 <!-- Ohne Icon zeigen Tableiste und Schnellwahl nur den Anfangsbuchstaben des
@@ -14,6 +14,7 @@
 <link rel="apple-touch-icon" href="/logo/hub-icon-180.png">
 <meta name="theme-color" content="#0051A1">
 <style>
+
   /* Schrift, Farben und Gerüst wie in den Hubs - die Seite gehört sichtbar dazu. */
   @font-face{ font-family:"Lato"; font-style:normal; font-weight:300;
     src:url("fonts/lato-300.woff2") format("woff2"); font-display:swap; }
@@ -168,6 +169,29 @@
     border-radius:4px; padding:3px 9px;
   }
 
+  /* Das Band zu CuratioHub. Waagerecht, damit es nicht als dreizehnte
+     Hub-Kachel gelesen wird - es fuehrt auf etwas anderes als die zwoelf. */
+  .karriere-band{
+    display:flex; align-items:center; gap:16px;
+    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--action);
+    border-radius:8px; padding:18px 22px; margin:0 0 34px;
+    text-decoration:none; color:inherit; box-shadow:var(--shadow);
+    transition:box-shadow .16s, border-color .16s;
+  }
+  .karriere-band:hover{ box-shadow:var(--shadow-hover); border-color:var(--brand); }
+  .kb-marke{
+    flex:0 0 auto; font-size:11.5px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--on-action); background:var(--action);
+    border-radius:4px; padding:3px 9px;
+  }
+  .kb-text{ flex:1 1 auto; font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+  .kb-text b{ display:block; color:var(--ink); font-size:16px; margin-bottom:2px; }
+  .kb-pfeil{ flex:0 0 auto; font-size:22px; color:var(--brand); }
+  @media (max-width:620px){
+    .karriere-band{ flex-wrap:wrap; gap:10px; }
+    .kb-pfeil{ display:none; }
+  }
+
   .gemeinsam{
     background:var(--card); border:1px solid var(--line); border-radius:8px;
     padding:22px 24px; margin:0 0 34px;
@@ -210,14 +234,14 @@
 <main class="wrap">
 
   <h2>12 Hubs sind online</h2>
-  <p class="vor">Zusammen 1009 Datenbanken, davon 482 mit echter Live-Suche;
+  <p class="vor">Zusammen 1021 Datenbanken, davon 482 mit echter Live-Suche;
   2021 Suchbegriffe im deutsch-englischen Glossar. Jeder Hub ist eigenständig und
   hat seinen eigenen täglichen Newsletter. Die Suchräume berühren sich dabei durchaus — je nach Hub
   liegen 3 bis 28 Prozent der gefundenen Arbeiten auch im Feld eines anderen (geprüft 08/2026);
   der obere Wert betrifft allein Gesundheitskompetenz und KI, ohne den KI-Hub reicht die Spanne
   nur bis 13 Prozent.
-  In der täglichen Auswahl schlägt das kaum durch: Von 283 bisher ausgelieferten
-  Studien erschienen 14 in mehr als einem Hub.</p>
+  In der täglichen Auswahl schlägt das kaum durch: Von 651 bisher ausgelieferten
+  Studien erschienen 27 in mehr als einem Hub.</p>
 
   <div class="gitter">
       <article class="hub">
@@ -225,11 +249,11 @@
         <h3><a href="https://wissen.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Versorgungsforschung</a></h3>
         <p class="hub-satz">Der erste Hub der Reihe: Versorgungsforschung und Health Services Research in ihrer ganzen Breite — Versorgungsformen, Qualität, Steuerung, Nutzenbewertung.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>56</dd></div>
+          <div><dt>Datenbanken</dt><dd>57</dd></div>
           <div><dt>davon Live-Suche</dt><dd>29</dd></div>
           <div><dt>Rubriken</dt><dd>8</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>167</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>67</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>97</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="https://wissen.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -242,11 +266,11 @@
         <h3><a href="https://healthliteracy.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Gesundheitskompetenz</a></h3>
         <p class="hub-satz">Verständliche Gesundheitsinformation, Entscheidungshilfen und Patientenbeteiligung — und die Frage, wer von alldem nicht erreicht wird.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>75</dd></div>
+          <div><dt>Datenbanken</dt><dd>76</dd></div>
           <div><dt>davon Live-Suche</dt><dd>36</dd></div>
           <div><dt>Rubriken</dt><dd>10</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>161</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>26</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>57</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="https://healthliteracy.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -259,11 +283,11 @@
         <h3><a href="https://pflege.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Pflege & Langzeitversorgung</a></h3>
         <p class="hub-satz">Pflegerische Versorgung, Langzeitpflege und die Lage der Pflegenden — Personal, Qualität, Angehörige, dazu Expertenstandards und Einrichtungsvergleiche.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>87</dd></div>
+          <div><dt>Datenbanken</dt><dd>88</dd></div>
           <div><dt>davon Live-Suche</dt><dd>42</dd></div>
           <div><dt>Rubriken</dt><dd>11</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>156</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>25</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>51</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="https://pflege.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -276,11 +300,11 @@
         <h3><a href="https://impfen.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Impfen</a></h3>
         <p class="hub-satz">Impfen als Versorgungsfrage: Impfquoten, Impfbereitschaft und was die Durchimpfung hebt — mit eigenen Rubriken für Meldedaten und für die Sicherheitsregister von PEI, EMA und CDC.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>96</dd></div>
+          <div><dt>Datenbanken</dt><dd>97</dd></div>
           <div><dt>davon Live-Suche</dt><dd>50</dd></div>
           <div><dt>Rubriken</dt><dd>10</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>163</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>17</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>49</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="https://impfen.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -293,11 +317,11 @@
         <h3><a href="https://ncd.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Chronische Erkrankungen</a></h3>
         <p class="hub-satz">Die Versorgung chronisch Kranker: Diabetes, Herz-Kreislauf, Krebs und Mehrfacherkrankung — Programme, Leitlinien und die Frage, was davon in der Fläche ankommt.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>101</dd></div>
+          <div><dt>Datenbanken</dt><dd>102</dd></div>
           <div><dt>davon Live-Suche</dt><dd>41</dd></div>
           <div><dt>Rubriken</dt><dd>11</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>154</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>19</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>49</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="https://ncd.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -310,11 +334,11 @@
         <h3><a href="http://gender.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Geschlechtersensible Medizin</a></h3>
         <p class="hub-satz">Geschlecht als Einflussgröße in der Versorgung: Diagnostik, Dosierung und Zugang — und die Frage, ob ein Unterschied aus der Biologie stammt oder aus dem Weg dorthin.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>92</dd></div>
+          <div><dt>Datenbanken</dt><dd>93</dd></div>
           <div><dt>davon Live-Suche</dt><dd>45</dd></div>
           <div><dt>Rubriken</dt><dd>10</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>169</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>14</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>44</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="http://gender.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -327,11 +351,11 @@
         <h3><a href="https://adipositas.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Adipositas</a></h3>
         <p class="hub-satz">Adipositas als Versorgungsfrage: Gewichtsmanagement, Arzneimitteltherapie und Chirurgie — und die Frage, wer die Behandlung bezahlt, wenn Paragraf 34 SGB V sie ausschliesst.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>64</dd></div>
+          <div><dt>Datenbanken</dt><dd>65</dd></div>
           <div><dt>davon Live-Suche</dt><dd>31</dd></div>
           <div><dt>Rubriken</dt><dd>10</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>162</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>15</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>47</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="https://adipositas.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -344,11 +368,11 @@
         <h3><a href="https://safety.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Patientensicherheit</a></h3>
         <p class="hub-satz">Vermeidbarer Schaden in der Versorgung: Behandlungs- und Medikationsfehler, Krankenhausinfektionen und Sepsis — und die Frage, wer meldet, wenn Melden zur Haftungsfrage wird.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>74</dd></div>
+          <div><dt>Datenbanken</dt><dd>75</dd></div>
           <div><dt>davon Live-Suche</dt><dd>34</dd></div>
           <div><dt>Rubriken</dt><dd>11</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>91</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>9</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>41</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="https://safety.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -361,11 +385,11 @@
         <h3><a href="https://mental.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Psychische Gesundheit</a></h3>
         <p class="hub-satz">Die Versorgung psychisch erkrankter Menschen: Zugang, Wartezeiten, gemeindenahe Angebote und Krisenversorgung — nicht, ob Behandlung wirkt, sondern wer sie rechtzeitig erreicht.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>71</dd></div>
+          <div><dt>Datenbanken</dt><dd>72</dd></div>
           <div><dt>davon Live-Suche</dt><dd>34</dd></div>
           <div><dt>Rubriken</dt><dd>9</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>92</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>9</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>40</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="https://mental.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -378,11 +402,11 @@
         <h3><a href="https://ki.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Digitalisierung, KI & Gesundheit</a></h3>
         <p class="hub-satz">Digitale Anwendungen und Künstliche Intelligenz in der Versorgung. Sucht in zwei Wissenschaftskulturen zugleich: in medizinischen Zeitschriften und in der Konferenzliteratur der Informatik.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>105</dd></div>
+          <div><dt>Datenbanken</dt><dd>106</dd></div>
           <div><dt>davon Live-Suche</dt><dd>49</dd></div>
           <div><dt>Rubriken</dt><dd>10</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>250</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>35</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>67</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="https://ki.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -395,11 +419,11 @@
         <h3><a href="https://klima.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Hitze, Klima & Gesundheit</a></h3>
         <p class="hub-satz">Hitze, Extremwetter und Klimawandel und was sie für Versorgung, Praxis und Bevölkerungsgesundheit bedeuten. Mit einer eigenen Rubrik für Klima- und Umweltmessdaten statt Publikationen.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>89</dd></div>
+          <div><dt>Datenbanken</dt><dd>90</dd></div>
           <div><dt>davon Live-Suche</dt><dd>40</dd></div>
           <div><dt>Rubriken</dt><dd>9</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>237</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>27</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>57</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="https://klima.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -412,11 +436,11 @@
         <h3><a href="https://longevity.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Gesundes Altern & Longevity</a></h3>
         <p class="hub-satz">Lebensspanne und gesunde Lebensjahre: Prävention, Geriatrie und Alternskohorten — und die Biologie des Alterns, die hier eine eigene Rubrik bekommt.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>99</dd></div>
+          <div><dt>Datenbanken</dt><dd>100</dd></div>
           <div><dt>davon Live-Suche</dt><dd>51</dd></div>
           <div><dt>Rubriken</dt><dd>11</dd></div>
           <div><dt>Glossarbegriffe</dt><dd>219</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>20</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>52</dd></div>
         </dl>
         <p class="hub-wege">
           <a class="btn" href="https://longevity.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
@@ -425,6 +449,16 @@
         <p class="hub-adresse">longevity.m-vf.de</p>
       </article>
   </div>
+
+  <!-- Verweis auf CuratioHub. Steht bewusst unter den Hub-Kacheln und nicht im
+       Kopf: Wer hier ankommt, sucht zuerst ein Thema, nicht eine Stelle. -->
+  <a class="karriere-band" href="curatiohub.html">
+    <span class="kb-marke">Neu</span>
+    <span class="kb-text"><b>CuratioHub — das Karriere- und Jobportal</b>
+    Stellen in Versorgungsforschung, Public Health und Medizin: ein Begriff, und die
+    Suche läuft in den einschlägigen Stellenmärkten, deutschsprachig wie international.</span>
+    <span class="kb-pfeil" aria-hidden="true">→</span>
+  </a>
 
 
   <!-- Die Studien aller Hubs. Die Datei wird taeglich von
@@ -582,7 +616,7 @@
       </div>
     </details>
 
-    <p class="stand">Stand der Zahlen: 26.08.2026. Sie werden bei jedem Bau aus den Portalen selbst gezählt.</p>
+    <p class="stand">Stand der Zahlen: 01.09.2026. Sie werden bei jedem Bau aus den Portalen selbst gezählt.</p>
   </div>
 </footer>
 
@@ -594,6 +628,11 @@
      Gegenstueck: /zaehler/z.php auf monitor-versorgungsforschung.de -->
 <script>
 (function () {
+  // Die Seite meldet Suchen ueber window.mvfZ. Die Funktion steht ab sofort
+  // immer bereit und tut im Zweifel nichts - sonst muesste jede Aufrufstelle
+  // pruefen, ob es sie ueberhaupt gibt, und eine vergessene Pruefung waere
+  // ein Skriptfehler mitten in der Suche.
+  window.mvfZ = function () {};
   try {
     if (navigator.doNotTrack === '1' || window.doNotTrack === '1'
         || navigator.globalPrivacyControl === true) return;
@@ -619,8 +658,39 @@
           + '&g=' + (Math.min(screen.width, screen.height) < 768 ? 'm' : 'd')
           + '&b=' + stufe
           + '&c=' + Date.now();
-    new Image(1, 1).src =
-      'https://www.monitor-versorgungsforschung.de/zaehler/z.php?' + q;
+    var ziel = 'https://www.monitor-versorgungsforschung.de/zaehler/z.php?';
+    new Image(1, 1).src = ziel + q;
+
+    // Ein Begriff wird nur mitgeschickt, wenn er wie ein Fachbegriff aussieht.
+    // Ziffern, Klammern, Anfuehrungszeichen, @ und mehr als drei Woerter
+    // deuten auf Freitext oder eine Kennung - so etwas verlaesst den Browser
+    // gar nicht erst. Was uebrig bleibt, prueft der Server noch einmal und
+    // wirft dort zusaetzlich alle Krankheitsbegriffe weg.
+    function sauber(v) {
+      if (typeof v !== 'string') return '';
+      var t = v.toLowerCase().replace(/\s+/g, ' ').trim();
+      if (t.length < 3 || t.length > 40) return '';
+      if (t.split(' ').length > 3) return '';
+      if (/[^a-zßà-öø-ÿ \-]/.test(t)) return '';
+      if (t.charAt(0) === '-') return '';
+      if (/(^| )(and|or|not)( |$)/.test(t)) return '';   // Formel, kein Begriff
+      return t;
+    }
+
+    // Eine abgesendete Suche zaehlen. Kein Seitenaufruf: z.php fuehrt beides
+    // getrennt. sendBeacon ueberlebt einen Seitenwechsel, ein Bild nicht -
+    // wer sucht und sofort auf eine Kachel klickt, wird sonst nicht gezaehlt.
+    window.mvfZ = function (art, begriff) {
+      try {
+        var f = 'h=' + encodeURIComponent(location.hostname)
+              + '&e=' + encodeURIComponent(art)
+              + '&c=' + Date.now();
+        var t = sauber(begriff);
+        if (t) f += '&t=' + encodeURIComponent(t);
+        if (navigator.sendBeacon) navigator.sendBeacon(ziel + f);
+        else new Image(1, 1).src = ziel + f;
+      } catch (e) { /* eine ungezaehlte Suche ist kein Grund, etwas kaputtzumachen */ }
+    };
   } catch (e) { /* Zaehlung ist nie wichtiger als die Seite */ }
 })();
 </script>

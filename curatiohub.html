@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="CuratioHub, das Karriere- und Jobportal der Knowledge-Hubs von Monitor Versorgungsforschung: Ein Suchbegriff öffnet die Stellensuche in 9 Stellenmärkten für Versorgungsforschung, Public Health und Medizin — deutschsprachig und international.">
+<title>CuratioHub — Karriere- und Jobportal der Knowledge-Hubs</title>
+<link rel="canonical" href="https://knowledge-hubs.m-vf.de/curatiohub.html">
+<link rel="icon" href="/logo/hub-icon.svg" type="image/svg+xml">
+<link rel="icon" href="/logo/hub-icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/logo/hub-icon-180.png">
+<meta name="theme-color" content="#0051A1">
+<style>
+
+  /* Schrift, Farben und Gerüst wie in den Hubs - die Seite gehört sichtbar dazu. */
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:300;
+    src:url("fonts/lato-300.woff2") format("woff2"); font-display:swap; }
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:400;
+    src:url("fonts/lato-400.woff2") format("woff2"); font-display:swap; }
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:700;
+    src:url("fonts/lato-700.woff2") format("woff2"); font-display:swap; }
+
+  :root{
+    --paper:#EDF2FA; --card:#FFFFFF; --card-2:#F7FAFD;
+    --ink:#111111; --ink-soft:#444A50; --ink-faint:#545C63;
+    --line:#D0D8E4; --line-soft:#E3EAF3;
+    --brand:#0051A1; --brand-deep:#003B77; --brand-tint:#E1EAF6;
+    --action:#BE9E53; --on-action:#2A2207;
+    --shadow:0 1px 2px rgba(16,40,38,.05), 0 8px 24px -16px rgba(16,40,38,.28);
+    --shadow-hover:0 2px 4px rgba(16,40,38,.06), 0 18px 40px -20px rgba(16,40,38,.40);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+      --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+      --line:#22314A; --line-soft:#1A2639;
+      --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+      --action:#D4B878; --on-action:#221A08;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+      --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+    --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+    --line:#22314A; --line-soft:#1A2639;
+    --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+    --action:#D4B878; --on-action:#221A08;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+    --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Lato", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size:16px; line-height:1.6;
+  }
+  .wrap{ width:min(1280px, 94vw); margin:0 auto; }
+  a{ color:var(--brand); text-underline-offset:2px; }
+  a:focus-visible{ outline:2px solid var(--brand); outline-offset:3px; border-radius:3px; }
+
+  header.top{ background:var(--card); border-bottom:1px solid var(--line); padding:30px 0 34px; }
+  .kopf-oben{ display:flex; justify-content:space-between; align-items:flex-start; gap:24px; }
+  .eyebrow{
+    margin:0 0 8px; font-size:11.5px; font-weight:700; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-faint);
+  }
+  h1{ margin:0 0 12px; font-size:clamp(26px,4.2vw,40px); line-height:1.15; font-weight:700; }
+  .standfirst{ margin:0; max-width:64ch; font-size:clamp(16px,1.9vw,18.5px); color:var(--ink-soft); }
+  .marke img{ display:block; width:200px; height:auto; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .marke{ background:#fff; padding:9px 12px; border-radius:4px; } }
+  :root[data-theme="dark"] .marke{ background:#fff; padding:9px 12px; border-radius:4px; }
+  @media (max-width:760px){
+    .kopf-oben{ flex-direction:column-reverse; align-items:flex-start; gap:16px; }
+    .marke img{ width:150px; max-width:52vw; }
+  }
+
+  main{ padding:34px 0 60px; }
+  h2{
+    font-size:clamp(19px,2.6vw,24px); font-weight:700; line-height:1.25;
+    margin:0 0 6px; padding-bottom:9px; border-bottom:2px solid var(--brand);
+  }
+  .vor{ margin:0 0 20px; max-width:70ch; color:var(--ink-soft); font-size:15px; }
+
+  /* Nebeneinander ist der Regelfall. Untereinander nur auf Handy und Tablet:
+     Unter 1000px werden vier Spalten zu schmalen Saeulen, in denen jede
+     Ueberschrift dreizeilig umbricht. Beide Gitter tragen dieselbe Spaltenzahl,
+     damit die angekuendigten Kacheln so breit sind wie die der laufenden Hubs. */
+  .gitter{ display:grid; gap:16px; grid-template-columns:1fr; margin:0 0 42px; }
+
+  /* ---------- Studien aller Hubs ---------- */
+  .studien{ margin:0 0 42px; }
+  .st-laedt{ color:var(--ink-faint); font-size:14px; margin:0 0 16px; }
+  /* Eine Karte je Hub - mehr wuerde die Uebersicht zur Liste machen. */
+  .st-gitter{ display:grid; gap:12px; grid-template-columns:1fr; }
+  @media (min-width:900px){ .st-gitter{ grid-template-columns:1fr 1fr; } }
+  .st-karte{
+    background:var(--card); border:1px solid var(--line); border-radius:6px;
+    padding:15px 17px; display:flex; flex-direction:column;
+  }
+  .st-kopf{ display:flex; flex-wrap:wrap; align-items:baseline; gap:9px; margin:0 0 6px; }
+  .st-hub{
+    font-size:11.5px; font-weight:700; letter-spacing:.04em;
+    background:var(--brand-tint); color:var(--brand);
+    border-radius:4px; padding:2px 8px; text-decoration:none; white-space:nowrap;
+  }
+  .st-hub:hover{ text-decoration:underline; }
+  .st-quelle{ font-size:12.5px; color:var(--ink-faint); }
+  .st-titel{ font-weight:700; line-height:1.35; margin:0 0 6px; }
+  .st-text{ font-size:14.5px; line-height:1.55; margin:0 0 5px; color:var(--ink-soft); }
+  .st-text b{ color:var(--ink); }
+  .st-mehr{
+    display:inline-block; margin:auto 0 0; padding-top:12px;
+    font-size:13px; font-weight:700;
+    color:var(--brand); text-decoration:none;
+  }
+  .st-mehr:hover{ text-decoration:underline; }
+  .st-leer{ color:var(--ink-faint); font-size:14px; }
+  @media (min-width:1000px){ .gitter{ grid-template-columns:repeat(4, 1fr); } }
+
+  .hub{
+    display:flex; flex-direction:column; background:var(--card);
+    border:1px solid var(--line); border-radius:8px; padding:20px 20px 18px;
+    box-shadow:var(--shadow); transition:box-shadow .16s, border-color .16s;
+  }
+  .hub:hover{ box-shadow:var(--shadow-hover); border-color:var(--brand); }
+  .hub-thema{
+    margin:0 0 6px; font-size:11.5px; font-weight:700; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--brand-deep);
+  }
+  .hub h3{ margin:0 0 9px; font-size:clamp(17px,1.5vw,19px); line-height:1.28; font-weight:700; }
+  .hub h3 a{ color:inherit; text-decoration:none; }
+  .hub h3 a:hover{ color:var(--brand); text-decoration:underline; }
+  .hub-satz{ margin:0 0 16px; font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+
+  .zahlen{
+    display:grid; grid-template-columns:1fr auto; gap:2px 12px;
+    margin:0 0 18px; padding:12px 14px;
+    background:var(--card-2); border:1px solid var(--line-soft); border-radius:6px;
+    font-size:13.5px;
+  }
+  .zahlen > div{ display:contents; }
+  .zahlen dt{ color:var(--ink-faint); }
+  .zahlen dd{ margin:0; text-align:right; font-weight:700; font-variant-numeric:tabular-nums; }
+
+  .hub-wege{ display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin:auto 0 8px; }
+  .btn{
+    display:inline-flex; align-items:center; min-height:40px; padding:0 18px;
+    background:var(--action); color:var(--on-action);
+    font-weight:700; font-size:14.5px; text-decoration:none; border-radius:6px;
+    transition:filter .14s;
+  }
+  .btn:hover{ filter:brightness(1.08); }
+  .dazu{ font-size:13.5px; font-weight:700; }
+  .hub-adresse{ margin:0; font-size:12.5px; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+
+  .hub.kommt{ background:var(--card-2); border-style:dashed; box-shadow:none; }
+  .hub.kommt:hover{ border-color:var(--line); box-shadow:none; }
+  .hub.kommt h3{ color:var(--ink-soft); }
+  .bald{
+    margin:auto 0 0; display:inline-block; align-self:flex-start;
+    font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--brand-deep); background:var(--brand-tint);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  /* Das Band zu CuratioHub. Waagerecht, damit es nicht als dreizehnte
+     Hub-Kachel gelesen wird - es fuehrt auf etwas anderes als die zwoelf. */
+  .karriere-band{
+    display:flex; align-items:center; gap:16px;
+    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--action);
+    border-radius:8px; padding:18px 22px; margin:0 0 34px;
+    text-decoration:none; color:inherit; box-shadow:var(--shadow);
+    transition:box-shadow .16s, border-color .16s;
+  }
+  .karriere-band:hover{ box-shadow:var(--shadow-hover); border-color:var(--brand); }
+  .kb-marke{
+    flex:0 0 auto; font-size:11.5px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--on-action); background:var(--action);
+    border-radius:4px; padding:3px 9px;
+  }
+  .kb-text{ flex:1 1 auto; font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+  .kb-text b{ display:block; color:var(--ink); font-size:16px; margin-bottom:2px; }
+  .kb-pfeil{ flex:0 0 auto; font-size:22px; color:var(--brand); }
+  @media (max-width:620px){
+    .karriere-band{ flex-wrap:wrap; gap:10px; }
+    .kb-pfeil{ display:none; }
+  }
+
+  .gemeinsam{
+    background:var(--card); border:1px solid var(--line); border-radius:8px;
+    padding:22px 24px; margin:0 0 34px;
+  }
+  .gemeinsam h2{ margin-bottom:14px; }
+  .punkte{ display:grid; gap:16px; grid-template-columns:1fr; margin:0; padding:0; list-style:none; }
+  @media (min-width:760px){ .punkte{ grid-template-columns:1fr 1fr; } }
+  .punkte li{ font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+  .punkte b{ display:block; color:var(--ink); font-size:15px; margin-bottom:2px; }
+
+  footer{
+    border-top:1px solid var(--line); background:var(--card);
+    padding:26px 0 40px; font-size:13.5px; color:var(--ink-faint);
+  }
+  footer p{ margin:0 0 8px; max-width:74ch; }
+  footer a{ color:var(--ink-soft); }
+  details{ margin:14px 0 0; }
+  summary{ cursor:pointer; font-weight:700; color:var(--ink-soft); }
+  .legal-body{ padding:10px 0 4px; max-width:74ch; }
+  .legal-body h4{ margin:14px 0 4px; font-size:13.5px; }
+  .legal-body p{ margin:0 0 8px; }
+  .stand{ margin-top:16px; font-size:12.5px; }
+
+  /* ---------- nur auf der Karriereseite ---------- */
+  .zurueck { display:inline-block; margin:0 0 14px; font-size:13.5px; font-weight:700; text-decoration:none; }
+  .zurueck:hover { text-decoration:underline; }
+  .untertitel {
+    margin:-6px 0 12px; font-size:clamp(15px,2vw,17px); font-weight:700;
+    color:var(--brand-deep); letter-spacing:.005em;
+  }
+
+  .suchkasten {
+    background:var(--card); border:1px solid var(--line); border-radius:8px;
+    padding:20px 22px 18px; margin:0 0 30px; box-shadow:var(--shadow);
+  }
+  .suchkasten h2 { border:0; padding:0; margin:0 0 4px; }
+  .suchzeile { display:flex; flex-wrap:wrap; gap:10px; margin:12px 0 4px; }
+  .suchzeile .feld { position:relative; display:flex; flex:1 1 300px; }
+  .suchzeile input {
+    flex:1 1 auto; width:100%; min-height:46px; padding:0 40px 0 14px;
+    border:1px solid var(--line); border-radius:6px;
+    background:var(--card-2); color:var(--ink);
+    font-family:inherit; font-size:16px;
+  }
+  .suchzeile input:focus { outline:2px solid var(--brand); outline-offset:1px; }
+  /* Chrome und Safari setzen in ein type="search" ihr eigenes Kreuz. Neben
+     unseres gestellt standen dort zwei - und das eingebaute laesst sich weder
+     einfaerben noch beschriften. */
+  .suchzeile input::-webkit-search-cancel-button { -webkit-appearance:none; appearance:none; }
+  .suchen {
+    min-height:46px; border:0; font-family:inherit; cursor:pointer;
+  }
+  /* Das Kreuz sitzt IM Feld: Als eigener Knopf schob es auf schmalen Anzeigen
+     den goldenen Suchknopf in die zweite Zeile. Es erscheint erst, wenn etwas
+     dasteht - ein Loeschknopf ueber einem leeren Feld ist nur Aufwand fuers Auge. */
+  .leeren {
+    position:absolute; right:6px; top:50%; transform:translateY(-50%);
+    width:30px; height:30px; padding:0; border:0; border-radius:50%;
+    background:transparent; color:var(--ink-faint);
+    font-family:inherit; font-size:15px; line-height:1; cursor:pointer;
+  }
+  .leeren:hover { background:var(--brand-tint); color:var(--brand); }
+  .leeren[hidden] { display:none; }
+
+  .themen { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 0; }
+  .thema-chip {
+    border:1px solid var(--line); border-radius:999px;
+    background:var(--card-2); color:var(--ink-soft);
+    padding:5px 13px; font-family:inherit; font-size:13.5px; cursor:pointer;
+  }
+  .thema-chip:hover { border-color:var(--brand); color:var(--brand); }
+  .thema-chip[aria-pressed="true"] { background:var(--brand-tint); border-color:var(--brand); color:var(--brand); font-weight:700; }
+  .themen-vor { margin:16px 0 0; font-size:13.5px; color:var(--ink-faint); }
+  /* Steht direkt unter dem Feld, nicht unter den Knoepfen: Wer tippt, schaut
+     dorthin. Weiter unten war die Rueckmeldung da und wurde trotzdem uebersehen. */
+  .stand-suche { margin:10px 0 0; font-size:14px; color:var(--brand-deep); min-height:1.3em; }
+  .stand-suche b { color:var(--ink); }
+
+  .gruppe { margin:0 0 38px; }
+  .stellen { display:grid; gap:14px; grid-template-columns:1fr; margin-top:16px; }
+  @media (min-width:720px)  { .stellen { grid-template-columns:1fr 1fr; } }
+  @media (min-width:1080px) { .stellen { grid-template-columns:repeat(3, 1fr); } }
+
+  .stelle {
+    display:flex; flex-direction:column; background:var(--card);
+    border:1px solid var(--line); border-radius:8px; padding:17px 18px 15px;
+    box-shadow:var(--shadow); text-decoration:none; color:inherit;
+    transition:box-shadow .16s, border-color .16s;
+  }
+  .stelle:hover { box-shadow:var(--shadow-hover); border-color:var(--brand); }
+  .stelle-kopf { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin:0 0 8px; }
+  .stelle-name { font-weight:700; font-size:16px; line-height:1.3; flex:1 1 auto; }
+  .marke-live, .marke-portal {
+    font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    border-radius:4px; padding:2px 7px; white-space:nowrap;
+  }
+  .marke-live { background:var(--brand-tint); color:var(--brand); }
+  .marke-portal { background:var(--card-2); color:var(--ink-faint); border:1px solid var(--line-soft); }
+  .stelle-text { font-size:14px; line-height:1.5; color:var(--ink-soft); margin:0 0 14px; }
+  .stelle-fuss { margin:auto 0 0; font-size:13px; font-weight:700; color:var(--brand); }
+  .stelle-fuss .wirt { font-weight:400; color:var(--ink-faint); }
+  .stelle-fuss .bereit { display:none; }
+  .stelle[data-bereit="1"] .stelle-fuss .bereit { display:inline; }
+  .stelle[data-bereit="1"] { border-color:var(--brand); }
+  .stelle[data-bereit="1"] .marke-live { background:var(--brand); color:#fff; }
+
+  .personal-band {
+    display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px;
+    margin:0 0 22px; padding:11px 18px;
+    background:var(--card); border:1px solid var(--line);
+    border-left:4px solid var(--action); border-radius:6px;
+    text-decoration:none; color:var(--ink-soft); font-size:14px; line-height:1.5;
+    transition:border-color .16s;
+  }
+  .personal-band:hover { border-color:var(--action); }
+  .personal-band .pb-text { flex:1 1 320px; }
+  .personal-band b { color:var(--ink); }
+  .personal-band .pb-weg { flex:0 0 auto; font-weight:700; color:var(--brand); white-space:nowrap; }
+
+  .anbieten {
+    scroll-margin-top:20px;
+    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--action);
+    border-radius:8px; padding:22px 24px; margin:0 0 34px;
+  }
+  .anbieten h2 { border:0; padding:0; margin:0 0 8px; }
+  .anbieten p { margin:0 0 14px; max-width:70ch; font-size:15px; color:var(--ink-soft); }
+  .anbieten .wege { display:flex; flex-wrap:wrap; align-items:center; gap:10px 20px; }
+  .anbieten .dazu { word-break:break-word; }
+
+  .grenzen { background:var(--card-2); border:1px solid var(--line-soft); border-radius:8px;
+    padding:20px 22px; margin:0 0 34px; }
+  .grenzen h2 { border:0; padding:0; margin:0 0 10px; }
+  .grenzen .anleitung {
+    margin:0 0 16px; padding:0 0 16px; border-bottom:1px solid var(--line);
+    font-size:14.5px; line-height:1.55; color:var(--ink-soft); max-width:78ch;
+  }
+  .grenzen .anleitung b { color:var(--ink); }
+  .grenzen ul { margin:0; padding-left:1.15em; display:grid; gap:9px; }
+  .grenzen li { font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+  .grenzen b { color:var(--ink); }
+</style>
+
+<header class="top">
+  <div class="wrap kopf-oben">
+    <div>
+      <a class="zurueck" href="/">← Alle 12 Knowledge-Hubs</a>
+      <p class="eyebrow">Monitor Versorgungsforschung · Knowledge-Hubs</p>
+      <h1>CuratioHub</h1>
+      <p class="untertitel">Das Karriere- und Jobportal der Knowledge-Hubs</p>
+      <p class="standfirst">Stellen in Versorgungsforschung, Public Health und Medizin —
+      an einer Stelle gesucht statt in jedem Portal einzeln. Ein Begriff genügt: 9 der
+      14 Kacheln öffnen damit unmittelbar ihre Trefferliste, deutschsprachig wie
+      international.</p>
+    </div>
+    <a class="marke" href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=karriere" target="_blank" rel="noopener" title="Monitor Versorgungsforschung — Herausgeber dieser Portale">
+      <img src="logo/mvf-logo.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
+    </a>
+  </div>
+</header>
+
+<main class="wrap">
+
+
+  <!-- Die schmale Zeile fuer Arbeitgeber. Sie spricht eine andere Person an als
+       der Rest der Seite; deshalb oben nur ein Hinweis, der ausfuehrliche Kasten
+       steht unten. Wer sucht, kommt so als erstes ans Suchfeld. -->
+  <a class="personal-band" href="#personal">
+    <span class="pb-text"><b>Sie suchen Personal?</b> Eine Stellenanzeige erreicht die
+    Leserschaft von <i>Monitor Versorgungsforschung</i> und der zwölf Hubs.</span>
+    <span class="pb-weg">Mediadaten &amp; Kontakt →</span>
+  </a>
+
+  <div class="suchkasten">
+    <h2>Ein Begriff, 9 Stellenmärkte</h2>
+    <p class="vor" style="margin:0">Schreiben Sie das Fachgebiet, die Rolle oder die
+    Einrichtung hinein — oder wählen Sie eines der Themen der Hubs.</p>
+    <div class="suchzeile">
+      <label for="q" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Suchbegriff</label>
+      <span class="feld">
+        <input id="q" type="search" placeholder="z. B. Versorgungsforschung, Epidemiologie, Studienkoordination" autocomplete="off">
+        <button type="button" class="leeren" id="leeren" title="Eingabe löschen" aria-label="Eingabe löschen" hidden>✕</button>
+      </span>
+      <button type="button" class="btn suchen" id="suchen">In allen Stellenmärkten suchen</button>
+    </div>
+    <p class="stand-suche" id="standSuche" role="status"></p>
+    <div class="themen" id="themen">
+      <button type="button" class="thema-chip" data-de="Versorgungsforschung" data-en="health services research">Versorgungsforschung</button>
+      <button type="button" class="thema-chip" data-de="Gesundheitskompetenz" data-en="health literacy">Gesundheitskompetenz</button>
+      <button type="button" class="thema-chip" data-de="Pflegewissenschaft" data-en="long-term care">Pflege</button>
+      <button type="button" class="thema-chip" data-de="Infektionsepidemiologie" data-en="vaccination">Impfen</button>
+      <button type="button" class="thema-chip" data-de="Epidemiologie" data-en="chronic disease management">Chronische Erkrankungen</button>
+      <button type="button" class="thema-chip" data-de="Frauengesundheit" data-en="sex and gender differences health">Geschlechtersensible Medizin</button>
+      <button type="button" class="thema-chip" data-de="Adipositas" data-en="obesity treatment">Adipositas</button>
+      <button type="button" class="thema-chip" data-de="Klinisches Risikomanagement" data-en="patient safety">Patientensicherheit</button>
+      <button type="button" class="thema-chip" data-de="Psychische Gesundheit" data-en="mental health services">Psychische Gesundheit</button>
+      <button type="button" class="thema-chip" data-de="Medizininformatik" data-en="artificial intelligence health care">KI</button>
+      <button type="button" class="thema-chip" data-de="Klimaanpassung" data-en="climate change health">Klima</button>
+      <button type="button" class="thema-chip" data-de="Geriatrie" data-en="healthy ageing">Longevity</button>
+    </div>
+    <p class="themen-vor">Die Themen-Knöpfe setzen zwei Begriffe zugleich: den deutschen
+    für die deutschsprachigen Märkte, den englischen für die internationalen. Beide sind
+    dieselben, mit denen die Hubs und der Ausschreibungsradar arbeiten.</p>
+  </div>
+
+  <section class="gruppe" id="de">
+    <h2>Deutschsprachige Stellenmärkte</h2>
+    <p class="vor">Der Begriff geht so hinüber, wie er im Feld steht — deutsch suchen ist hier richtig.</p>
+    <div class="stellen">
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://www.arbeitsagentur.de/jobsuche/suche?was=%s" data-t="live" data-s="de" href="https://www.arbeitsagentur.de/jobsuche/suche?was=">
+        <div class="stelle-kopf"><span class="stelle-name">Jobsuche der Bundesagentur für Arbeit</span><span class="marke-live">Live-Suche</span></div>
+        <div class="stelle-text">Der größte deutsche Stellenpool und der einzige, in dem Behörden, Institute, Kassen und Universitätskliniken nebeneinander stehen. Am 01.09.2026 lagen dort 32 Stellen zu „Versorgungsforschung“.</div>
+        <div class="stelle-fuss"><span class="bereit">Trefferliste · </span><span class="pfeil">↗</span> Suche öffnen <span class="wirt">· arbeitsagentur.de</span></div>
+      </a>
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://www.academics.de/stellenanzeigen?query=%s" data-t="live" data-s="de" href="https://www.academics.de/stellenanzeigen?query=">
+        <div class="stelle-kopf"><span class="stelle-name">academics.de</span><span class="marke-live">Live-Suche</span></div>
+        <div class="stelle-text">Der Stellenmarkt für Wissenschaft und Forschung im deutschsprachigen Raum: Professuren, Promotions- und Postdoc-Stellen, Leitungsämter an Instituten.</div>
+        <div class="stelle-fuss"><span class="bereit">Trefferliste · </span><span class="pfeil">↗</span> Suche öffnen <span class="wirt">· academics.de</span></div>
+      </a>
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://aerztestellen.aerzteblatt.de/de/stellen?search=%s" data-t="live" data-s="de" href="https://aerztestellen.aerzteblatt.de/de/stellen?search=">
+        <div class="stelle-kopf"><span class="stelle-name">ÄRZTESTELLEN — Deutsches Ärzteblatt</span><span class="marke-live">Live-Suche</span></div>
+        <div class="stelle-text">Ärztliche Stellen in Kliniken, Praxen und Instituten. Für versorgungsnahe Forschung die Adresse mit dem klinischen Zugang.</div>
+        <div class="stelle-fuss"><span class="bereit">Trefferliste · </span><span class="pfeil">↗</span> Suche öffnen <span class="wirt">· aerztestellen.aerzteblatt.de</span></div>
+      </a>
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://www.linkedin.com/jobs/search?keywords=%s&location=Deutschland" data-t="live" data-s="de" href="https://www.linkedin.com/jobs/search?keywords=&location=Deutschland">
+        <div class="stelle-kopf"><span class="stelle-name">LinkedIn Jobs</span><span class="marke-live">Live-Suche</span></div>
+        <div class="stelle-text">Breit und stark von Arbeitgeberseite gepflegt, mit vielen Stellen bei Kassen, Beratungen und Industrie. Der Ort wird von LinkedIn selbst gesetzt — die Voreinstellung „Deutschland“ ist gegebenenfalls dort zu korrigieren.</div>
+        <div class="stelle-fuss"><span class="bereit">Trefferliste · </span><span class="pfeil">↗</span> Suche öffnen <span class="wirt">· linkedin.com</span></div>
+      </a>
+    </div>
+  </section>
+
+  <section class="gruppe" id="int">
+    <h2>Internationale Wissenschaftsportale</h2>
+    <p class="vor">Diese Portale erwarten den englischen Fachbegriff. Ein Themen-Knopf oben setzt ihn mit; bei eigenen Wörtern übersetzen Sie besser selbst.</p>
+    <div class="stellen">
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://euraxess.ec.europa.eu/jobs/search?f%5B0%5D=keywords%3A%s" data-t="live" data-s="en" href="https://euraxess.ec.europa.eu/jobs/search?f%5B0%5D=keywords%3A">
+        <div class="stelle-kopf"><span class="stelle-name">EURAXESS</span><span class="marke-live">Live-Suche</span></div>
+        <div class="stelle-text">Das Stellenportal der Europäischen Kommission für Forschende: Stellen, Förderungen und Gastaufenthalte aus ganz Europa, mit Karrierestufen von R1 bis R4.</div>
+        <div class="stelle-fuss"><span class="bereit">Trefferliste · </span><span class="pfeil">↗</span> Suche öffnen <span class="wirt">· euraxess.ec.europa.eu</span></div>
+      </a>
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://www.researchgate.net/jobs?query=%s" data-t="live" data-s="en" href="https://www.researchgate.net/jobs?query=">
+        <div class="stelle-kopf"><span class="stelle-name">ResearchGate Jobs</span><span class="marke-live">Live-Suche</span></div>
+        <div class="stelle-text">Stellen aus dem Netzwerk, in dem ein großer Teil der Forschenden ohnehin sein Profil führt — mit Zuschnitt auf das eigene Fachgebiet.</div>
+        <div class="stelle-fuss"><span class="bereit">Trefferliste · </span><span class="pfeil">↗</span> Suche öffnen <span class="wirt">· researchgate.net</span></div>
+      </a>
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://www.nature.com/naturecareers/jobs/?keywords=%s" data-t="live" data-s="en" href="https://www.nature.com/naturecareers/jobs/?keywords=">
+        <div class="stelle-kopf"><span class="stelle-name">Nature Careers</span><span class="marke-live">Live-Suche</span></div>
+        <div class="stelle-text">Der Stellenmarkt von Nature: Professuren, Gruppenleitungen und Postdoc-Stellen weltweit, mit Schwerpunkt auf forschungsstarken Einrichtungen.</div>
+        <div class="stelle-fuss"><span class="bereit">Trefferliste · </span><span class="pfeil">↗</span> Suche öffnen <span class="wirt">· nature.com</span></div>
+      </a>
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://jobs.sciencecareers.org/jobs/?keywords=%s" data-t="live" data-s="en" href="https://jobs.sciencecareers.org/jobs/?keywords=">
+        <div class="stelle-kopf"><span class="stelle-name">Science Careers</span><span class="marke-live">Live-Suche</span></div>
+        <div class="stelle-text">Das Gegenstück bei Science, mit starkem Anteil an US-amerikanischen Einrichtungen und Industrieforschung.</div>
+        <div class="stelle-fuss"><span class="bereit">Trefferliste · </span><span class="pfeil">↗</span> Suche öffnen <span class="wirt">· jobs.sciencecareers.org</span></div>
+      </a>
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://www.jobs.ac.uk/search/?keywords=%s" data-t="live" data-s="en" href="https://www.jobs.ac.uk/search/?keywords=">
+        <div class="stelle-kopf"><span class="stelle-name">jobs.ac.uk</span><span class="marke-live">Live-Suche</span></div>
+        <div class="stelle-text">Der akademische Stellenmarkt des Vereinigten Königreichs — für Public Health und Health Services Research eine der ergiebigsten Adressen überhaupt.</div>
+        <div class="stelle-fuss"><span class="bereit">Trefferliste · </span><span class="pfeil">↗</span> Suche öffnen <span class="wirt">· jobs.ac.uk</span></div>
+      </a>
+    </div>
+  </section>
+
+  <section class="gruppe" id="ohne">
+    <h2>Ohne übergebbare Suche</h2>
+    <p class="vor">Diese Portale nehmen keinen Begriff aus einer Adresse an. Die Kachel führt auf die Startseite — gesucht wird dort.</p>
+    <div class="stellen">
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://www.interamt.de/koop/app/trefferliste" data-t="portal" data-s="de" href="https://www.interamt.de/koop/app/trefferliste">
+        <div class="stelle-kopf"><span class="stelle-name">Interamt</span><span class="marke-portal">Portal</span></div>
+        <div class="stelle-text">Das Stellenportal des öffentlichen Dienstes — Ministerien, Bundesoberbehörden, Landesämter. Die Trefferliste hängt an einer Sitzungskennung; ein Suchbegriff lässt sich nicht übergeben.</div>
+        <div class="stelle-fuss"><span class="pfeil">↗</span> Portal öffnen <span class="wirt">· interamt.de</span></div>
+      </a>
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://www.jobvector.de/" data-t="portal" data-s="de" href="https://www.jobvector.de/">
+        <div class="stelle-kopf"><span class="stelle-name">jobvector</span><span class="marke-portal">Portal</span></div>
+        <div class="stelle-text">Naturwissenschaft, Medizin und Technik. Vor der Suche steht ein Bot-Schutz, der einen mitgegebenen Begriff verwirft.</div>
+        <div class="stelle-fuss"><span class="pfeil">↗</span> Portal öffnen <span class="wirt">· jobvector.de</span></div>
+      </a>
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://www.helmholtz.de/karriere/jobs/" data-t="portal" data-s="de" href="https://www.helmholtz.de/karriere/jobs/">
+        <div class="stelle-kopf"><span class="stelle-name">Helmholtz-Jobs</span><span class="marke-portal">Portal</span></div>
+        <div class="stelle-text">Die Stellen der achtzehn Helmholtz-Zentren, darunter DKFZ, DZNE und Helmholtz Munich. Das Suchfeld der Seite gehört der Gesamtsuche, nicht der Stellenliste.</div>
+        <div class="stelle-fuss"><span class="pfeil">↗</span> Portal öffnen <span class="wirt">· helmholtz.de</span></div>
+      </a>
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://www.leibniz-gemeinschaft.de/karriere/stellenportal" data-t="portal" data-s="de" href="https://www.leibniz-gemeinschaft.de/karriere/stellenportal">
+        <div class="stelle-kopf"><span class="stelle-name">Leibniz-Stellenportal</span><span class="marke-portal">Portal</span></div>
+        <div class="stelle-text">Die Stellen der Leibniz-Institute, darunter BIPS, DDZ und das Leibniz-Institut für Präventionsforschung. Die Suche wird als Formular verschickt und lässt sich nicht verlinken.</div>
+        <div class="stelle-fuss"><span class="pfeil">↗</span> Portal öffnen <span class="wirt">· leibniz-gemeinschaft.de</span></div>
+      </a>
+      <a class="stelle" target="_blank" rel="noopener" data-u="https://www.mpg.de/jobboard" data-t="portal" data-s="de" href="https://www.mpg.de/jobboard">
+        <div class="stelle-kopf"><span class="stelle-name">Max-Planck-Jobboard</span><span class="marke-portal">Portal</span></div>
+        <div class="stelle-text">Die Stellen der Max-Planck-Institute. Gefiltert wird nach Art der Stelle, nicht nach Stichwort.</div>
+        <div class="stelle-fuss"><span class="pfeil">↗</span> Portal öffnen <span class="wirt">· mpg.de</span></div>
+      </a>
+    </div>
+  </section>
+
+
+
+  <section class="anbieten" id="personal">
+    <h2>Ihr Unternehmen braucht Verstärkung?</h2>
+    <p>Die Leserschaft von <i>Monitor Versorgungsforschung</i> und der Knowledge-Hubs ist
+    genau die, die hier gesucht wird: Forschende, Ärztinnen und Ärzte, Fachleute aus
+    Kassen, Kliniken und Selbstverwaltung. Eine Stellenanzeige erreicht sie über die
+    Zeitschrift, die Portale und die täglichen Newsletter der 12 Hubs.</p>
+    <p>Sie wollen Ihre Mitarbeitersuche mit einer <b>Printanzeige in der kommenden
+    Ausgabe</b> unterstützen? Formate, Termine und Preise stehen in den Mediadaten —
+    schauen Sie dort zuerst hinein und schreiben Sie dann an Anke Heiser,
+    Anzeigenleitung.</p>
+    <div class="wege">
+      <a class="btn" href="https://www.monitor-versorgungsforschung.de/internals/mediadaten/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=mediadaten" target="_blank" rel="noopener">Mediadaten ansehen</a>
+      <a class="dazu" href="mailto:heiser@m-vf.de?subject=Stellenanzeige%20in%20Monitor%20Versorgungsforschung">heiser@m-vf.de</a>
+      <a class="dazu" href="https://wissen.m-vf.de/ausschreibungen.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=radar" target="_blank" rel="noopener">Zum Ausschreibungsradar →</a>
+    </div>
+  </section>
+
+  <section class="grenzen">
+    <h2>Was diese Seite tut — und was nicht</h2>
+    <p class="anleitung"><b>So funktioniert die Suche.</b> Begriff eingeben, Eingabetaste
+    drücken oder auf „In allen Stellenmärkten suchen“ klicken — damit werden alle Kacheln
+    auf Ihren Begriff eingestellt. Ein Klick auf eine Kachel öffnet dann direkt die
+    Trefferliste dieses Stellenmarkts in einem neuen Tab; ein zweites Mal suchen müssen Sie
+    dort nicht. Die Kacheln bleiben eingestellt, Sie können also nacheinander mehrere
+    Stellenmärkte öffnen, ohne den Begriff erneut einzugeben. Ausnahme sind die als
+    „Portal“ gekennzeichneten Anbieter — die erlauben technisch keine verlinkbare
+    Trefferadresse.</p>
+    <ul>
+      <li><b>Sie sammelt keine Stellenanzeigen.</b> Die Anzeigen bleiben dort, wo sie
+      veröffentlicht wurden; die Seite öffnet nur die Suche. Damit steht hier nie eine
+      Stelle, die längst besetzt ist — und keine fremde Anzeige, deren Verwendung uns
+      nicht zusteht.</li>
+      <li><b>Sie ist kein Ranking.</b> Die Reihenfolge folgt der Reichweite im deutschen
+      Gesundheitswesen, nicht einer Bewertung der Anbieter. Geld fließt in keine
+      Richtung.</li>
+      <li><b>Fünf Portale nehmen keinen Begriff an.</b> Sie stehen unten mit eigener
+      Gruppe und führen ehrlich nur auf ihre Startseite, statt eine Suche zu versprechen,
+      die dort nicht ankommt.</li>
+      <li><b>Deutsch suchen, englisch finden</b> gilt hier wie in den Hubs: Der
+      internationale Markt kennt „Versorgungsforschung“ nicht, sondern <i>health services
+      research</i>. Die Themen-Knöpfe erledigen das; bei eigenen Wörtern tun Sie es selbst.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>CuratioHub</b> — das Karriere- und Jobportal der Knowledge-Hubs, ein Angebot von
+    <i>Monitor Versorgungsforschung</i>, eRelation AG – Content in Health, Bonn.
+    <a href="/">Zur Übersicht aller Hubs</a> ·
+    <a href="https://www.monitor-versorgungsforschung.de/impressum/" target="_blank" rel="noopener">Impressum</a></p>
+
+    <details>
+      <summary>Datenschutzhinweise</summary>
+      <div class="legal-body">
+        <h4>1. Verantwortlicher</h4>
+        <p>eRelation AG – Content in Health, vertreten durch Peter Stegmaier, Johannes-von-Hanstein-Str. 2, 53115 Bonn. Kontakt siehe Impressum.</p>
+        <h4>2. Charakter dieser Seite</h4>
+        <p>Diese Seite ist statisch. Sie setzt <strong>keine Cookies</strong> und bindet <strong>keine Analyse- oder Trackingdienste Dritter</strong> ein. Schriften und Bilder liegen auf demselben Server. Ihr Suchbegriff wird <strong>nicht an uns übertragen</strong>: Er bleibt in Ihrem Browser, bis Sie eine Kachel anklicken, und geht dann ausschließlich an den Stellenmarkt, den Sie öffnen.</p><p>Wie oft die Seite aufgerufen wird, zählen wir auf einem eigenen Server von <i>Monitor Versorgungsforschung</i>. Dabei wird nichts auf Ihrem Endgerät gespeichert oder ausgelesen, und Ihre IP-Adresse wird nicht gespeichert: Sie geht nur gemeinsam mit einer geheimen Zufallszahl in einen nicht umkehrbaren Hashwert ein, der mehrfache Aufrufe desselben Tages als eine Person zählbar macht. Die Zufallszahl wird jede Nacht ersetzt; eine Wiedererkennung über den Tag hinaus findet nicht statt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Aufrufe mit <i>Do Not Track</i> werden nicht gezählt.</p>
+        <h4>3. Server-Protokolle</h4>
+        <p>Die Seite wird bei GitHub Pages (GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA) gehostet. Beim Abruf verarbeitet der Anbieter technisch notwendige Verbindungsdaten wie Ihre IP-Adresse. Rechtsgrundlage ist unser berechtigtes Interesse am sicheren Betrieb (Art. 6 Abs. 1 lit. f DSGVO).</p>
+        <h4>4. Verweise auf fremde Stellenmärkte</h4>
+        <p>Die Kacheln führen auf Stellenmärkte Dritter. Sobald Sie eine Kachel anklicken, verlassen Sie diese Seite; ab dann gelten allein die Datenschutzhinweise des jeweiligen Anbieters, und Ihr Suchbegriff wird Teil der dort aufgerufenen Adresse. Einige dieser Anbieter sitzen außerhalb der EU (unter anderem in den USA und im Vereinigten Königreich) und setzen eigene Cookies. Wir haben auf deren Verarbeitung keinen Einfluss und übernehmen für die dort angezeigten Stellenanzeigen keine Gewähr.</p>
+        <h4>5. Ihre Rechte</h4>
+        <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch sowie das Recht, sich bei einer Aufsichtsbehörde zu beschweren. Zuständig ist die Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen.</p>
+      </div>
+    </details>
+
+    <p class="stand">Stand der Kachelliste: 01.09.2026. Alle Suchadressen wurden am 01.09.2026 im Browser geprüft.</p>
+  </div>
+</footer>
+
+<script>
+// ------------------------------------------------------------- Suchbegriff
+// Die Kacheln sind echte Verweise und bleiben es. Getauscht wird nur ihr Ziel,
+// sobald etwas im Feld steht - so bleiben Mittelklick, "in neuem Tab oeffnen"
+// und die Statuszeile des Browsers brauchbar. Ohne Begriff fuehrt jede Kachel
+// auf die Startseite ihres Stellenmarkts; ein Klick ins Leere gibt es nicht.
+(function () {
+  var feld    = document.getElementById('q');
+  var leeren  = document.getElementById('leeren');
+  var suchen  = document.getElementById('suchen');
+  var stand   = document.getElementById('standSuche');
+  var themen  = document.getElementById('themen');
+  var kacheln = [].slice.call(document.querySelectorAll('.stelle'));
+  if (!feld || !kacheln.length) return;
+
+  // Zwei Begriffe zugleich: Ein Themen-Knopf setzt den deutschen fuer die
+  // deutschsprachigen Maerkte und den englischen fuer die internationalen.
+  // Getippter Text kann das nicht - er geht so, wie er dasteht, an beide.
+  var deutsch = '', englisch = '';
+
+  // Der Zaehler steht weiter unten auf der Seite und definiert window.mvfZ.
+  // Fehlt er - oder wird er von einem Blocker entfernt -, darf das die Suche
+  // nicht anhalten: Eine ungezaehlte Suche ist kein Grund, etwas kaputtzumachen.
+  function zaehle(art, begriff) {
+    try { if (typeof window.mvfZ === 'function') window.mvfZ(art, begriff); }
+    catch (e) { /* still weiter */ }
+  }
+
+  function grundadresse(u) {
+    // Ohne Begriff nicht die Suche mit leerem Parameter oeffnen: Manche
+    // Portale werfen dann eine Fehlerseite, andere die vollstaendige Liste.
+    var i = u.indexOf('?');
+    return i === -1 ? u : u.slice(0, i);
+  }
+
+  function setzen() {
+    var n = 0;
+    kacheln.forEach(function (a) {
+      var muster = a.dataset.u;
+      var wort   = a.dataset.s === 'en' ? (englisch || deutsch) : deutsch;
+      if (a.dataset.t === 'live' && wort) {
+        a.href = muster.replace('%s', encodeURIComponent(wort));
+        a.dataset.bereit = '1';
+        n++;
+      } else {
+        a.href = a.dataset.t === 'live' ? grundadresse(muster) : muster;
+        a.removeAttribute('data-bereit');
+      }
+    });
+    if (!deutsch) { stand.textContent = ''; return; }
+    stand.innerHTML = n + ' von ' + kacheln.length + ' Kacheln suchen jetzt nach <b>'
+      + deutsch.replace(/[<>&]/g, '') + '</b>'
+      + (englisch && englisch !== deutsch
+         ? ', international nach <b>' + englisch.replace(/[<>&]/g, '') + '</b>' : '')
+      + '.';
+  }
+
+  function kreuz() { leeren.hidden = feld.value.length === 0; }
+
+  feld.addEventListener('input', function () {
+    kreuz();
+    deutsch  = feld.value.trim();
+    englisch = '';                       // getippt heisst: fuer beide dasselbe
+    [].forEach.call(themen.querySelectorAll('.thema-chip'),
+                    function (b) { b.setAttribute('aria-pressed', 'false'); });
+    setzen();
+  });
+
+  // Der Knopf und die Eingabetaste stellen dasselbe ein wie das Tippen. Sie sind
+  // technisch nicht noetig - die Kacheln folgen jedem Zeichen -, aber die Hubs
+  // fuehren denselben Knopf, und wer von dort kommt, sucht ihn hier. Er
+  // bestaetigt sichtbar, was schon geschehen ist, und fuehrt zur ersten Kachel.
+  function absenden() {
+    deutsch = feld.value.trim();
+    setzen();
+    if (!deutsch) { feld.focus(); return; }
+    zaehle('stellensuche-abgeschickt', deutsch);
+    var erste = document.querySelector('.stelle[data-bereit="1"]');
+    if (erste) erste.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  suchen.addEventListener('click', absenden);
+  feld.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); absenden(); }
+  });
+
+  leeren.addEventListener('click', function () {
+    feld.value = ''; deutsch = ''; englisch = ''; kreuz();
+    [].forEach.call(themen.querySelectorAll('.thema-chip'),
+                    function (b) { b.setAttribute('aria-pressed', 'false'); });
+    setzen(); feld.focus();
+  });
+
+  themen.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.thema-chip') : null;
+    if (!b) return;
+    [].forEach.call(themen.querySelectorAll('.thema-chip'),
+                    function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    deutsch  = b.dataset.de || '';
+    englisch = b.dataset.en || '';
+    feld.value = deutsch; kreuz();
+    setzen();
+  });
+
+  // Eine geoeffnete Suche zaehlen - dieselbe Meldung wie in den Hubs, damit
+  // sichtbar wird, wonach hier tatsaechlich gesucht wird.
+  kacheln.forEach(function (a) {
+    a.addEventListener('click', function () {
+      if (a.dataset.bereit === '1') zaehle('stellensuche', deutsch);
+    });
+  });
+
+  // Ein Begriff aus der Adresse: /curatiohub.html?q=Pflege - so kann ein Banner
+  // oder ein Beitrag auf m-vf.de direkt mit gesetztem Thema herueberfuehren.
+  try {
+    var mit = new URLSearchParams(location.search).get('q');
+    if (mit) { feld.value = mit; deutsch = mit; kreuz(); setzen(); }
+  } catch (e) { /* alte Browser suchen eben ohne Voreinstellung */ }
+
+  kreuz();
+  setzen();
+})();
+</script>
+
+<!-- ZAEHLER-START --------------------------------------------------------
+     Zaehlt den Aufruf auf dem eigenen Server von Monitor Versorgungsforschung.
+     Kein Cookie, keine Kennung auf dem Geraet, keine fremde Firma. Wer Do Not
+     Track gesetzt hat, wird gar nicht erst gezaehlt. Schlaegt der Abruf fehl,
+     merkt die Seite es nicht - ein Bild, das nicht laedt, ist folgenlos.
+     Gegenstueck: /zaehler/z.php auf monitor-versorgungsforschung.de -->
+<script>
+(function () {
+  // Die Seite meldet Suchen ueber window.mvfZ. Die Funktion steht ab sofort
+  // immer bereit und tut im Zweifel nichts - sonst muesste jede Aufrufstelle
+  // pruefen, ob es sie ueberhaupt gibt, und eine vergessene Pruefung waere
+  // ein Skriptfehler mitten in der Suche.
+  window.mvfZ = function () {};
+  try {
+    if (navigator.doNotTrack === '1' || window.doNotTrack === '1'
+        || navigator.globalPrivacyControl === true) return;
+    // Automatische Umgebungen melden sich selbst: navigator.webdriver setzen
+    // Headless Chrome und Selenium von sich aus. Zuverlaessiger als jede
+    // Liste von Browserkennungen, weil es nicht geraten, sondern gemeldet wird.
+    if (navigator.webdriver) return;
+    if (!screen.width || !screen.height) return;   // kein echter Bildschirm
+    if (!/\.m-vf\.de$/.test(location.hostname)) return;   // lokal nicht zaehlen
+    var r = '';
+    try { r = document.referrer ? new URL(document.referrer).hostname : ''; }
+    catch (e) { r = ''; }
+    if (r === location.hostname) r = '';
+    // Bildschirmbreite nur in Stufen. Die genaue Aufloesung waere eines der
+    // staerksten Merkmale zum Wiedererkennen eines Browsers; fuer die Frage,
+    // fuer welche Breite zu gestalten ist, genuegt die Schublade.
+    var w = screen.width;
+    var stufe = w < 480 ? 'bis480' : w < 768 ? 'bis768' : w < 1024 ? 'bis1024'
+              : w < 1440 ? 'bis1440' : w < 1920 ? 'bis1920' : 'ueber1920';
+    var q = 'h=' + encodeURIComponent(location.hostname)
+          + '&p=' + encodeURIComponent(location.pathname)
+          + '&r=' + encodeURIComponent(r ? 'https://' + r + '/' : '')
+          + '&g=' + (Math.min(screen.width, screen.height) < 768 ? 'm' : 'd')
+          + '&b=' + stufe
+          + '&c=' + Date.now();
+    var ziel = 'https://www.monitor-versorgungsforschung.de/zaehler/z.php?';
+    new Image(1, 1).src = ziel + q;
+
+    // Ein Begriff wird nur mitgeschickt, wenn er wie ein Fachbegriff aussieht.
+    // Ziffern, Klammern, Anfuehrungszeichen, @ und mehr als drei Woerter
+    // deuten auf Freitext oder eine Kennung - so etwas verlaesst den Browser
+    // gar nicht erst. Was uebrig bleibt, prueft der Server noch einmal und
+    // wirft dort zusaetzlich alle Krankheitsbegriffe weg.
+    function sauber(v) {
+      if (typeof v !== 'string') return '';
+      var t = v.toLowerCase().replace(/\s+/g, ' ').trim();
+      if (t.length < 3 || t.length > 40) return '';
+      if (t.split(' ').length > 3) return '';
+      if (/[^a-zßà-öø-ÿ \-]/.test(t)) return '';
+      if (t.charAt(0) === '-') return '';
+      if (/(^| )(and|or|not)( |$)/.test(t)) return '';   // Formel, kein Begriff
+      return t;
+    }
+
+    // Eine abgesendete Suche zaehlen. Kein Seitenaufruf: z.php fuehrt beides
+    // getrennt. sendBeacon ueberlebt einen Seitenwechsel, ein Bild nicht -
+    // wer sucht und sofort auf eine Kachel klickt, wird sonst nicht gezaehlt.
+    window.mvfZ = function (art, begriff) {
+      try {
+        var f = 'h=' + encodeURIComponent(location.hostname)
+              + '&e=' + encodeURIComponent(art)
+              + '&c=' + Date.now();
+        var t = sauber(begriff);
+        if (t) f += '&t=' + encodeURIComponent(t);
+        if (navigator.sendBeacon) navigator.sendBeacon(ziel + f);
+        else new Image(1, 1).src = ziel + f;
+      } catch (e) { /* eine ungezaehlte Suche ist kein Grund, etwas kaputtzumachen */ }
+    };
+  } catch (e) { /* Zaehlung ist nie wichtiger als die Seite */ }
+})();
+</script>
+<!-- ZAEHLER-ENDE -->
