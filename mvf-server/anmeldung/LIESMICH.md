@@ -209,6 +209,14 @@ ob es eine Erst- oder eine Nachbestellung war. Ein Auslöser auf
 Gruppenänderung würde auch bei Neuanmeldungen feuern — die bekämen dann zwei
 Mails.
 
+Die Mail selbst liegt als `dankesmail.html` daneben. In Mailchimp einzusetzen
+über *Vorlage auswählen → Eigene Vorlage erstellen → In eigene Vorlage
+einfügen*; die Basis-Layouts helfen nicht, ein reines Einspalten-Layout gibt es
+dort nicht. Tabellenlayout mit Inline-Styles wie bei der Newsletter-Vorlage —
+Outlook rendert mit der Word-Engine. Die drei Platzhalter `*|UPDATE_PROFILE|*`,
+`*|UNSUB|*` und `*|LIST:ADDRESSLINE|*` sind Pflicht; ohne Abmeldelink und
+Anschrift nimmt Mailchimp die Vorlage nicht an.
+
 **Nicht abgedeckt:** Nachbestellungen über die Landingpage. Die läuft nicht
 über diesen Endpunkt, setzt also keinen Tag.
 
