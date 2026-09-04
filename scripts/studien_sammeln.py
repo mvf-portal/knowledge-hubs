@@ -43,6 +43,7 @@ if hasattr(sys.stdout, "reconfigure"):
 # sind gestaltet, diese Liste soll auffindbar sein. Wer einen Hub ergaenzt,
 # setzt ihn an die alphabetisch richtige Stelle.
 PORTALE = [
+    # erzeugt aus portale.json von portale_pflegen.py - nicht von Hand aendern
     ("Adipositas", "adipositas.m-vf.de", "mvf-portal/adipositas-portal"),
     ("Digitalisierung, KI & Gesundheit", "ki.m-vf.de", "mvf-portal/ki-gesundheit-portal"),
     ("Geschlechtersensible Medizin", "gender.m-vf.de", "mvf-portal/gender-portal"),

@@ -48,14 +48,15 @@ BERICHT_REPO = "mvf-portal/knowledge-hubs"
 
 # Dieselbe Pflegestelle wie PORTALE in versand_bericht.py und studien_sammeln.py.
 PORTALE = [
+    # erzeugt aus portale.json von portale_pflegen.py - nicht von Hand aendern
     ("Versorgungsforschung", "mvf-portal/versorgungsforschung-portal"),
     ("Hitze, Klima & Gesundheit", "mvf-portal/klima-gesundheit-portal"),
     ("Digitalisierung, KI & Gesundheit", "mvf-portal/ki-gesundheit-portal"),
     ("Pflege & Langzeitversorgung", "mvf-portal/pflege-portal"),
     ("Gesundes Altern & Longevity", "mvf-portal/longevity-portal"),
     ("Gesundheitskompetenz", "mvf-portal/healthliteracy-portal"),
-    ("Impfen & Impfpraevention", "mvf-portal/impfen-portal"),
-    ("Nicht uebertragbare Krankheiten", "mvf-portal/ncd-portal"),
+    ("Impfen & Impfprävention", "mvf-portal/impfen-portal"),
+    ("Nicht übertragbare Krankheiten", "mvf-portal/ncd-portal"),
     ("Geschlechtersensible Medizin", "mvf-portal/gender-portal"),
     ("Adipositas", "mvf-portal/adipositas-portal"),
     ("Patientensicherheit", "mvf-portal/safety-portal"),
