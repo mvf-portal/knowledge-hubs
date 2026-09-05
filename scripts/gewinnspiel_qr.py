@@ -61,8 +61,16 @@ def main() -> None:
     eigen.save(str(ziel_svg), scale=10, border=4, dark=FARBE)
     print(f"geschrieben: {ziel_svg.relative_to(HIER)}")
 
-    # 2. Derselbe Code im Plakat.
-    plakat = HIER / "gewinnspiel" / "plakat.html"
+    # 2. Derselbe Code in jedem Druckstueck, das ihn traegt. Zwei Formate,
+    #    ein Code: Wer eines davon von Hand nachtruege, haette irgendwann
+    #    zwei Adressen im Umlauf.
+    for datei in ("plakat.html", "rollup.html"):
+        einsetzen(HIER / "gewinnspiel" / datei, schnipsel)
+    print(f"Adresse im Code: {ADRESSE}")
+    return
+
+
+def einsetzen(plakat: pathlib.Path, schnipsel: str) -> None:
     text = plakat.read_text(encoding="utf-8")
     neu, anzahl = re.subn(
         re.escape(ANFANG) + r".*?" + re.escape(ENDE),
@@ -74,7 +82,6 @@ def main() -> None:
         raise SystemExit(f"Marken {ANFANG} / {ENDE} fehlen in {plakat}")
     plakat.write_text(neu, encoding="utf-8")
     print(f"geschrieben: {plakat.relative_to(HIER)}")
-    print(f"Adresse im Code: {ADRESSE}")
 
 
 if __name__ == "__main__":

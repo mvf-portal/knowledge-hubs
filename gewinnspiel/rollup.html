@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Roll-up 80 × 200 cm — Gewinnspiel zum 25. DKVF</title>
+<link rel="icon" href="/logo/hub-icon.svg" type="image/svg+xml">
+<style>
+  /* ROLL-UP 80 x 200 cm, 1:1 gesetzt.
+     ------------------------------------------------------------------
+     Ein Roll-up ist kein vergroessertes A4. Drei Dinge bestimmen den
+     Aufbau, und alle drei kommen nicht aus der Gestaltung, sondern aus
+     der Aufstellsituation:
+
+     1. UNTEN GEHEN 20 cm VERLOREN. Die meisten Kassetten ziehen das
+        Tuch ein Stueck ein, und davor stehen ausserdem Menschen. Die
+        unteren 200 mm bleiben deshalb LEER - dort steht nichts, was
+        gelesen werden muss.
+     2. DER CODE GEHOERT AUF GREIFHOEHE. Er sitzt 118 bis 142 cm ueber
+        dem Boden - dort, wo ein Handy ohne Buecken oder Strecken
+        hinkommt. Ganz unten waere er unbrauchbar, ganz oben auch.
+     3. DIE UEBERSCHRIFT MUSS AUS FUENF METERN ZIEHEN. Sie steht im
+        oberen Drittel, wo der Blick zuerst hinfaellt, und ist mit 58 mm
+        Schriftgroesse dafuer bemessen.
+
+     Gesetzt ist alles in Millimetern statt in Pixeln: Was hier 220 mm
+     heisst, misst auf dem gedruckten Tuch 220 mm.
+     ------------------------------------------------------------------ */
+
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:400;
+    src:url("/fonts/lato-400.woff2") format("woff2"); }
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:700;
+    src:url("/fonts/lato-700.woff2") format("woff2"); }
+
+  :root{ --brand:#0051A1; --brand-deep:#003B77; --action:#BE9E53;
+         --ink:#111111; --ink-soft:#3F4750; --ink-faint:#6B747D;
+         --linie:#D8DFE9; }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#DDE3EC; }
+  body{ font-family:"Lato", Arial, sans-serif; color:var(--ink);
+        display:flex; justify-content:center; padding:20px; }
+
+  .tuch{
+    width:800mm; height:2000mm; background:#fff; position:relative;
+    padding:0 70mm; display:flex; flex-direction:column;
+    box-shadow:0 20px 60px -30px rgba(0,0,0,.6);
+  }
+  /* Der goldene Balken aus dem MVF-Logo - auf zehn Meter das Erste,
+     was als MVF erkennbar ist. */
+  .tuch::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:26mm;
+    background:var(--action);
+  }
+
+  .kopf{ margin-top:62mm; display:flex; flex-direction:column;
+         align-items:flex-start; gap:14mm; }
+  .kopf img{ width:300mm; height:auto; display:block; }
+  .eyebrow{ margin:4mm 0 0; font-size:9mm; font-weight:700;
+            letter-spacing:.1em; text-transform:uppercase;
+            color:var(--brand); line-height:1.35; }
+
+  h1{ margin:34mm 0 0; font-size:58mm; line-height:1.02; font-weight:700;
+      letter-spacing:-.015em; }
+  .unter{ margin:14mm 0 0; font-size:14mm; line-height:1.35;
+          color:var(--ink-soft); max-width:26ch; }
+  .unter b{ color:var(--ink); }
+
+  /* Der Code sitzt auf Greifhoehe, nicht dort, wo Platz uebrig ist.
+     240 mm Kantenlaenge lesen sich nach der Faustregel (zehnfache
+     Kantenlaenge) noch aus gut zwei Metern. */
+  .code{ margin-top:30mm; display:flex; align-items:center; gap:26mm; }
+  .code svg{ width:240mm; height:240mm; display:block; flex:none; }
+  .scan{ margin:0 0 6mm; font-size:15mm; font-weight:700;
+         color:var(--brand-deep); line-height:1.2; }
+  .adresse{ margin:0; font-size:13mm; font-weight:700; line-height:1.25; }
+  .adresse span{ color:var(--brand); }
+
+  .fakten{
+    margin-top:26mm; padding-top:12mm; border-top:3mm solid var(--action);
+    display:grid; grid-template-columns:auto 1fr; gap:6mm 16mm;
+    font-size:11mm; line-height:1.3;
+  }
+  .fakten dt{ color:var(--ink-faint); white-space:nowrap; }
+  .fakten dd{ margin:0; }
+  .fakten b{ color:var(--brand-deep); }
+
+  .hubs{ margin-top:24mm; }
+  .hubs h2{ margin:0 0 8mm; font-size:12mm; font-weight:700;
+            letter-spacing:.06em; text-transform:uppercase;
+            color:var(--ink-faint); }
+  .hubs ul{ margin:0; padding:0; list-style:none;
+            columns:3; column-gap:16mm; font-size:10.5mm; line-height:1.65;
+            color:var(--ink-soft); }
+  .hubs li{ break-inside:avoid; }
+
+  .fuss{ margin-top:auto; padding-bottom:200mm; font-size:5.5mm;
+         line-height:1.5; color:var(--ink-faint); max-width:60ch; }
+
+  /* Die unteren 200 mm bleiben frei - siehe Punkt 1 oben. Der Strich
+     ist nur im Bildschirmentwurf sichtbar und wird nicht gedruckt. */
+  .sperrzone{ position:absolute; left:0; right:0; bottom:0; height:200mm;
+              border-top:1px dashed #C9D2DE; }
+  .sperrzone span{ position:absolute; left:70mm; top:6mm; font-size:5mm;
+                   color:#9AA6B4; letter-spacing:.08em; }
+
+  @media print{
+    @page{ size:800mm 2000mm; margin:0; }
+    body{ background:#fff; padding:0; display:block; }
+    .tuch{ box-shadow:none; }
+    .sperrzone{ display:none; }
+    *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+</style>
+
+<div class="tuch">
+
+  <div class="kopf">
+    <img src="/logo/mvf-logo-druck.png" width="3380" height="902" alt="Monitor Versorgungsforschung">
+    <p class="eyebrow">25. Deutscher Kongress für Versorgungsforschung<br>Köln, 23.–25. September 2026</p>
+  </div>
+
+  <h1>Ein Kongress&shy;ticket<br>gewinnen</h1>
+
+  <p class="unter">Zwölf Rechercheportale für das deutsche
+  Gesundheitswesen — ein Suchbegriff, alle einschlägigen Datenbanken,
+  jeden Morgen neue Studien mit deutscher Zusammenfassung.
+  <b>Kennenlernen und gewinnen.</b></p>
+
+  <div class="code">
+    <!-- QR-START -->
+<svg viewBox="0 0 45 45"><path stroke="#0051a1" d="M4 4.5h7m2 0h1m3 0h1m2 0h4m2 0h1m1 0h3m3 0h7m-37 1h1m5 0h1m2 0h1m1 0h2m1 0h3m3 0h2m1 0h1m1 0h1m2 0h1m1 0h1m5 0h1m-37 1h1m1 0h3m1 0h1m1 0h1m3 0h2m2 0h2m2 0h3m1 0h2m1 0h1m2 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m3 0h2m1 0h2m2 0h2m1 0h2m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m2 0h1m1 0h2m1 0h1m2 0h2m3 0h3m1 0h1m3 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m2 0h4m3 0h1m1 0h1m4 0h2m1 0h1m3 0h1m5 0h1m-37 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-28 1h1m4 0h2m2 0h1m2 0h1m2 0h2m1 0h2m-26 1h2m1 0h2m3 0h1m1 0h1m1 0h1m1 0h1m1 0h6m1 0h1m1 0h1m4 0h2m-35 1h1m3 0h2m2 0h3m5 0h1m1 0h1m1 0h1m3 0h4m1 0h1m1 0h4m-34 1h1m1 0h4m1 0h1m3 0h3m1 0h4m1 0h2m2 0h1m1 0h4m3 0h3m-37 1h1m1 0h2m3 0h1m2 0h1m1 0h1m2 0h4m2 0h1m1 0h1m2 0h1m1 0h7m-35 1h5m1 0h3m1 0h2m1 0h5m1 0h2m2 0h2m3 0h1m1 0h1m2 0h1m1 0h2m-37 1h2m2 0h1m3 0h1m4 0h3m3 0h2m5 0h4m2 0h1m1 0h2m-36 1h1m1 0h2m1 0h3m1 0h1m3 0h3m1 0h3m1 0h1m1 0h3m1 0h4m2 0h4m-37 1h3m2 0h1m5 0h2m7 0h2m2 0h1m1 0h2m2 0h2m1 0h3m-35 1h1m1 0h2m1 0h3m1 0h1m3 0h5m2 0h1m3 0h1m4 0h1m3 0h1m-31 1h2m1 0h4m3 0h3m4 0h2m1 0h1m1 0h4m1 0h1m1 0h3m-35 1h1m1 0h2m1 0h6m4 0h1m2 0h7m1 0h1m2 0h1m1 0h1m3 0h1m-36 1h5m2 0h2m1 0h4m2 0h1m1 0h4m2 0h1m2 0h1m3 0h2m1 0h1m-35 1h2m2 0h5m1 0h1m1 0h1m3 0h1m2 0h1m2 0h2m2 0h4m1 0h2m-34 1h3m1 0h1m3 0h1m1 0h2m1 0h2m4 0h1m2 0h1m1 0h5m2 0h3m1 0h1m-35 1h2m1 0h1m1 0h1m2 0h1m2 0h1m1 0h1m1 0h1m2 0h3m2 0h1m2 0h1m1 0h2m1 0h3m1 0h1m-37 1h1m1 0h2m1 0h1m2 0h2m2 0h1m3 0h1m1 0h1m2 0h2m4 0h2m2 0h1m1 0h2m1 0h1m-36 1h3m1 0h5m2 0h2m1 0h3m2 0h1m3 0h1m1 0h1m1 0h1m1 0h2m1 0h1m2 0h1m-37 1h5m2 0h2m1 0h1m1 0h1m4 0h1m1 0h2m3 0h1m1 0h4m2 0h1m1 0h2m-36 1h2m4 0h1m3 0h1m1 0h2m3 0h1m1 0h3m2 0h1m2 0h2m1 0h3m1 0h3m-37 1h1m3 0h2m1 0h1m2 0h3m2 0h2m2 0h1m2 0h1m1 0h1m3 0h2m1 0h1m1 0h2m-35 1h1m1 0h2m2 0h3m1 0h3m1 0h1m3 0h1m2 0h5m1 0h10m-29 1h3m1 0h2m3 0h1m2 0h1m1 0h1m5 0h1m3 0h4m-36 1h7m1 0h1m1 0h1m1 0h1m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m6 0h1m1 0h1m1 0h1m1 0h1m2 0h2m1 0h1m2 0h1m3 0h2m-34 1h1m1 0h3m1 0h1m1 0h4m1 0h2m2 0h1m1 0h1m1 0h2m1 0h1m1 0h7m2 0h1m-36 1h1m1 0h3m1 0h1m1 0h3m2 0h3m1 0h4m1 0h1m1 0h3m3 0h1m2 0h1m-34 1h1m1 0h3m1 0h1m4 0h1m1 0h1m1 0h2m1 0h2m2 0h2m1 0h1m6 0h2m1 0h2m-37 1h1m5 0h1m3 0h1m1 0h1m1 0h1m2 0h2m2 0h2m3 0h1m3 0h2m1 0h4m-37 1h7m2 0h2m3 0h2m1 0h1m3 0h2m1 0h1m3 0h1m4 0h1m2 0h1"/></svg>
+<!-- QR-ENDE -->
+    <div>
+      <p class="scan">Scannen und<br>teilnehmen</p>
+      <p class="adresse">knowledge-hubs.m-vf.de<br><span>/gewinnspiel</span></p>
+    </div>
+  </div>
+
+  <dl class="fakten">
+    <dt>Zu gewinnen</dt>
+    <dd><b>Bis zu 10 Tickets</b> für den 15. MVF-Fachkongress
+        „Primärversorgung 2030“ am 27. November 2026 in Berlin,
+        je Person höchstens eines</dd>
+    <dt>Teilnahme</dt>
+    <dd>23. September, 9:00 Uhr bis 25. September 2026, 18:00 Uhr</dd>
+  </dl>
+
+  <div class="hubs">
+    <h2>Die zwölf Knowledge-Hubs</h2>
+    <ul>
+      <li>Versorgungsforschung</li>
+      <li>Gesundheitskompetenz</li>
+      <li>Pflege &amp; Langzeitversorgung</li>
+      <li>Impfen &amp; Impfprävention</li>
+      <li>Chronische Erkrankungen</li>
+      <li>Adipositas</li>
+      <li>Patientensicherheit</li>
+      <li>Psychische Gesundheit</li>
+      <li>Geschlechtersensible Medizin</li>
+      <li>Digitalisierung &amp; KI</li>
+      <li>Hitze, Klima &amp; Gesundheit</li>
+      <li>Gesundes Altern &amp; Longevity</li>
+    </ul>
+  </div>
+
+  <p class="fuss">Veranstalter: eRelation AG – Content in Health,
+  Johannes-von-Hanstein-Str. 2, 53115 Bonn, Verlag von „Monitor
+  Versorgungsforschung“. Teilnahme ab 18 Jahren, kostenlos und unabhängig
+  vom Erwerb von Waren oder Dienstleistungen. Die Bestellung eines
+  Newsletters ist keine Voraussetzung für die Teilnahme. Der Rechtsweg ist
+  ausgeschlossen. Teilnahmebedingungen und Datenschutzhinweise:
+  knowledge-hubs.m-vf.de/gewinnspiel/teilnahmebedingungen.html</p>
+
+  <div class="sperrzone"><span>UNTERE 200 mm — KASSETTENZONE, BLEIBT LEER</span></div>
+
+</div>
+</html>
