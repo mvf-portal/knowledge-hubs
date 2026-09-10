@@ -740,6 +740,18 @@ def lernen() -> int:
 
 
 # -------------------------------------------------------------- WordPress
+class WordPressLehntAb(Exception):
+    """WordPress hat den Entwurf nicht angenommen.
+
+    Eine eigene Ausnahme, weil der Postfachlauf zwei Faelle
+    auseinanderhalten muss: Die Dublette ist erledigt, die Mail darf weg.
+    Eine Ablehnung ist nicht erledigt - dann muss die Mail unmarkiert
+    liegen bleiben. Am 06.09.2026 fiel die Anmeldung aus, und weil beides
+    gleich aussah (Rueckgabe False), wanderten 57 Mitteilungen ungelesen
+    nach Erledigt.
+    """
+
+
 def zugang() -> str | None:
     nutzer = os.environ.get("WPUSER", "").strip()
     passwort = os.environ.get("WPPASSWORT", "").strip()
@@ -759,6 +771,28 @@ def wp_ruf(pfad: str, kopf: str, daten: bytes | None = None,
                                  headers=kopfzeilen)
     with urllib.request.urlopen(req, timeout=120) as r:
         return json.load(r)
+
+
+def anmeldung_geprueft() -> str:
+    """Einmal vorab fragen, ob WordPress uns noch kennt und schreiben laesst.
+
+    Der Postfachlauf schickt jede Mitteilung erst durch das Sprachmodell und
+    dann zu WordPress. Steht die Anmeldung nicht mehr, ist die Modellantwort
+    umsonst geschrieben - deshalb die billige Frage vorweg. Rueckgabe: der
+    Kopf fuer die folgenden Aufrufe.
+    """
+    kopf = zugang()
+    if kopf is None:
+        raise WordPressLehntAb("WPUSER oder WPPASSWORT fehlt")
+    try:
+        ich = wp_ruf("/users/me?context=edit", kopf)
+    except urllib.error.HTTPError as e:
+        antwort = e.read().decode("utf-8", "replace")[:300]
+        raise WordPressLehntAb(f"HTTP {e.code} {e.reason} - {antwort}") from e
+    if not ich.get("capabilities", {}).get("edit_posts"):
+        raise WordPressLehntAb(
+            f"{ich.get('slug', '?')} darf keine Beitraege anlegen")
+    return kopf
 
 
 def schon_da(titel: str, kopf: str) -> dict | None:
@@ -1097,8 +1131,7 @@ def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
     beim Postfachlauf soll die Zaehlung nicht Dubletten mitzaehlen."""
     kopf = zugang()
     if kopf is None:
-        print("WPUSER oder WPPASSWORT fehlt - kein Entwurf angelegt.")
-        return False
+        raise WordPressLehntAb("WPUSER oder WPPASSWORT fehlt")
 
     doppelt = schon_da(meldung["titel"], kopf)
     if doppelt:
@@ -1128,9 +1161,10 @@ def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
                    methode="POST")
     except urllib.error.HTTPError as e:
         # Der Wortlaut aus WordPress sagt, woran es lag - ohne ihn raet man nur.
+        antwort = e.read().decode("utf-8", "replace")[:600]
         print(f"WordPress lehnt ab: HTTP {e.code} {e.reason}")
-        print(f"  Antwort: {e.read().decode('utf-8', 'replace')[:600]}")
-        return False
+        print(f"  Antwort: {antwort}")
+        raise WordPressLehntAb(f"HTTP {e.code} {e.reason}") from e
     print(f"Entwurf angelegt: Nr. {d['id']}")
     print(f"  Bearbeiten: https://www.monitor-versorgungsforschung.de/"
           f"wp-admin/post.php?post={d['id']}&action=edit")
@@ -1344,6 +1378,15 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
     """
     import win32com.client
 
+    # Vor allem anderen: Nimmt WordPress ueberhaupt noch etwas an? Wenn nicht,
+    # wird hier nichts angefasst - keine Modellantwort, keine Mail markiert.
+    try:
+        anmeldung_geprueft()
+    except WordPressLehntAb as fehler:
+        print(f"WordPress nimmt nichts an: {fehler}")
+        print("Nichts bearbeitet - die Mitteilungen bleiben liegen.")
+        return 1
+
     # Zuerst nachsehen, wofuer sich die Redaktion inzwischen entschieden hat -
     # so waechst die Logoliste ohne einen zweiten Zeitplan.
     try:
@@ -1402,7 +1445,7 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
 
     print(f"{len(kandidaten)} Mitteilung(en) gefunden, "
           f"davon werden {min(hoechstens, len(kandidaten))} bearbeitet.\n")
-    fertig = 0
+    fertig, abgebrochen = 0, False
     for mail in kandidaten[:hoechstens]:
         betreff = str(getattr(mail, "Subject", ""))[:70]
         print(f"--- {betreff}")
@@ -1433,10 +1476,20 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
             mail.Move(erledigt)
             fertig += 1 if neu else 0
             print()
+        except WordPressLehntAb as fehler:
+            # Nicht markieren, nicht verschieben, nicht ablegen: Die Mail
+            # kommt beim naechsten Lauf wieder dran. Und Schluss fuer heute -
+            # was einmal abgelehnt wurde, wird auch bei der naechsten
+            # Mitteilung abgelehnt, das braucht keine zweite Modellantwort.
+            print(f"  WordPress hat abgelehnt: {fehler}")
+            print("  Die Mail bleibt unmarkiert liegen, der Lauf endet hier.")
+            print()
+            abgebrochen = True
+            break
         except Exception as fehler:
             print(f"  Fehlgeschlagen: {fehler}\n")
     print(f"{fertig} Entwurf/Entwuerfe angelegt.")
-    return 0
+    return 1 if abgebrochen else 0
 
 
 def main() -> int:
@@ -1512,11 +1565,18 @@ def main() -> int:
     if a.quelle.lower() != "outlook" and not a.quelle.startswith("http"):
         quelldatei = pathlib.Path(a.quelle)
 
-    entwurf(meldung, inhalt, bild, a.trocken, quelldatei)
+    # Beim Einzellauf sieht ein Mensch zu: Die Ablage bleibt auch dann
+    # stehen, wenn WordPress ablehnt - aus ihr laesst sich nacharbeiten.
+    angelegt = True
+    try:
+        entwurf(meldung, inhalt, bild, a.trocken, quelldatei)
+    except WordPressLehntAb as fehler:
+        print(f"Kein Entwurf angelegt: {fehler}")
+        angelegt = False
     if not a.trocken:
         ordner = ablegen(meldung, inhalt, text, quelldatei)
         print(f"  Quelle und Vorschau abgelegt: {ordner}")
-    return 0
+    return 0 if angelegt else 1
 
 
 if __name__ == "__main__":

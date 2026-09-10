@@ -1,20 +1,21 @@
 # Eine Meldung ueber alle Hubs, nachdem deren naechtliche Laeufe durch sind.
 #
-# Zeitplan: Die Portale starten um 03:00 UTC und brauchen ein bis zwei Minuten.
-# 03:45 UTC (05:45 deutscher Sommerzeit) laesst reichlich Luft und liegt gut vier
-# Stunden vor dem Versand um 10:00 Ortszeit - so viel Veto-Fenster bleibt,
-# selbst wenn die Meldung erst beim Fruehstueck gelesen wird.
+# **Nur ueber den Dirigenten, kein eigener Zeitplan.** Bis zum 10.09.2026 stand
+# hier zusaetzlich ein cron auf 03:45 UTC. Damit lief der Workflow jeden
+# Werktag zweimal - einmal per Zeitplan, einmal vom Dirigenten angestossen -
+# und legte jedes Mal einen Beitragsentwurf an. Der fruehe Lauf war dabei
+# immer der schlechtere: Er lief VOR dem Wecken der Portale und meldete den
+# Stand des Vortags. Am 10.09.2026 standen deshalb "66 Studien" (03:55) und
+# "72 Studien" (04:24) nebeneinander im Entwurfsordner, und die Redaktion
+# musste taeglich einen von zweien loeschen.
 #
-# Am 24.08.2026 um eine Stunde vorgezogen: GitHub fuehrt geplante Laeufe unter
-# Last verspaetet aus - an jenem Tag starteten die Portale erst 05:57 UTC, also
-# knapp zwei Stunden zu spaet. Der Bericht waere dann VOR ihnen gelaufen und
-# haette den Stand des Vortags gemeldet. Diese Zeit muss immer nach den Portalen
-# und vor 10:00 Ortszeit liegen - beide zusammen verschieben.
+# Der Dirigent weckt erst die zwoelf Portale, wartet und stoesst dann diesen
+# Workflow an - er ist damit der Einzige, der den vollstaendigen Stand sieht.
+# Die Uhrzeit steht folglich in dirigent.yml; sie muss nach den Portallaeufen
+# und vor 10:00 Ortszeit liegen (Veto-Fenster der Redaktion).
 name: Versand-Bericht (täglich)
 
 on:
-  schedule:
-    - cron: "45 3 * * *"
   workflow_dispatch:
 
 permissions:

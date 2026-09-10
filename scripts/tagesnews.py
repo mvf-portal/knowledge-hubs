@@ -167,13 +167,31 @@ SCHEMA = {
 
 
 # ------------------------------------------------------------------- Daten
+NACHTRAG: dt.date | None = None            # gesetzt von --datum
+
+
+def tag() -> dt.date:
+    """Der Tag, fuer den die Meldung gilt - normalerweise heute.
+
+    Mit --datum laesst sich ein vergangener Tag nachtragen. Gebraucht am
+    10.09.2026: Vom 07. bis 09.09. wies WordPress jede Anmeldung ab
+    (Wordfence hatte die Anwendungskennwoerter abgeschaltet), die Meldungen
+    dieser drei Werktage fehlten. Ohne den Schalter muesste man die
+    Systemuhr stellen.
+
+    Voraussetzung ist, dass studien.json die Neuzugaenge des Tages noch
+    fuehrt - sie wachsen an, es wird nichts weggeworfen.
+    """
+    return NACHTRAG or dt.date.today()
+
+
 def studien_von_heute() -> tuple[list[dict], str]:
     """Die Neuzugaenge des heutigen Tages - Grundlage der Tagesliste."""
     pfad = pathlib.Path("studien.json")
     if not pfad.exists():
         raise SystemExit("studien.json fehlt - erst scripts/studien_sammeln.py laufen lassen.")
     daten = json.loads(pfad.read_text(encoding="utf-8"))
-    heute = dt.date.today().isoformat()
+    heute = tag().isoformat()
     return [e for e in daten.get("studien", []) if e.get("aufgenommen") == heute], heute
 
 
@@ -191,10 +209,10 @@ def studien_fuer_meldung() -> list[dict]:
     trotzdem widersprachen. Beide Wege zaehlen jetzt dasselbe.
     """
     daten = json.loads(pathlib.Path("studien.json").read_text(encoding="utf-8"))
-    tag = dt.date.today()
-    tage = {tag.isoformat()}
-    if tag.weekday() == 0:
-        tage |= {(tag - dt.timedelta(days=n)).isoformat() for n in (1, 2)}
+    heute = tag()
+    tage = {heute.isoformat()}
+    if heute.weekday() == 0:
+        tage |= {(heute - dt.timedelta(days=n)).isoformat() for n in (1, 2)}
     return [e for e in daten.get("studien", []) if e.get("aufgenommen") in tage]
 
 
@@ -714,11 +732,20 @@ def main() -> int:
     p.add_argument("--trocken", action="store_true")
     p.add_argument("--pruefen", action="store_true",
                    help="nur nachsehen, wer die Tagesliste bekaeme")
+    p.add_argument("--datum", metavar="JJJJ-MM-TT",
+                   help="Meldung fuer einen vergangenen Tag nachtragen "
+                        "statt fuer heute")
     p.add_argument("--nachtragen", metavar="ID",
                    help="Beitragsbild und Meta-Beschreibung an einem "
                         "bestehenden Beitrag nachtragen; den Textauszug nur, "
                         "wenn er leer ist")
     a = p.parse_args()
+
+    if a.datum:
+        global NACHTRAG
+        NACHTRAG = dt.date.fromisoformat(a.datum)
+        print(f"Nachtrag fuer {NACHTRAG.strftime('%d.%m.%Y')} "
+              f"statt fuer heute.")
 
     if a.pruefen:
         return mailchimp_pruefen()
@@ -727,7 +754,7 @@ def main() -> int:
         return wordpress_nachtragen(a.nachtragen, len(studien))
     # Montags kann der Tag selbst leer sein und das Wochenende trotzdem etwas
     # gebracht haben. Dann gibt es zwar keine Tagesliste, aber eine Meldung.
-    montag_nachzug = dt.date.today().weekday() == 0 and bool(studien_fuer_meldung())
+    montag_nachzug = tag().weekday() == 0 and bool(studien_fuer_meldung())
     if not studien and not montag_nachzug:
         print(f"Keine neuen Studien am {heute} - nichts zu melden.")
         return 0
@@ -739,7 +766,7 @@ def main() -> int:
     # Tagen niemand damit, und montags kam alles ohnehin ein zweites Mal in der
     # Meldung. Jetzt laeuft die Reihe durchgehend werktags, wie die Newsletter
     # der Portale auch.
-    wochenende = dt.date.today().weekday() >= 5
+    wochenende = tag().weekday() >= 5
     if wochenende:
         print("Wochenende - keine Meldung, keine Tagesliste. "
               "Die Studien laufen am Montag mit.")
