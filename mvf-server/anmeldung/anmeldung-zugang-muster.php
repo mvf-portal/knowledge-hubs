@@ -68,6 +68,12 @@ const INTERESSEN = [
     'adipositas'     => '469cb7b600',   // Studien Newsletter Adipositas
     'safety'         => '5d3b807f19',   // Studien Newsletter Safety
     'mental'         => '7791f837a9',   // Studien Newsletter MentalHealth
+    // Die drei Indikations-Hubs, seit 10.09.2026 online. Sie zeigen nicht ein
+    // Versorgungsthema, sondern ein Krankheitsgebiet - fuer diesen Endpunkt
+    // macht das keinen Unterschied, fuer die Vorschaltseite schon.
+    'onkologie'      => '4679a168c6',   // Studien Newsletter Onkologie
+    'kardio'         => '5cee7f5ca0',   // Studien Newsletter Kardiologie
+    'diabetes'       => '7fccb13bd3',   // Studien Newsletter Diabetes
     'mvf'            => 'e77b605c5e',   // Monitor Versorgungsforschung Newsletter
     // Die Sonderaussendungen der Verlagspartner - Nachfolger des eBlast.
     // Eigener Schluessel, weil es eine eigene Einwilligung ist: Werbung
