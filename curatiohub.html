@@ -83,6 +83,21 @@
   }
   .vor{ margin:0 0 20px; max-width:70ch; color:var(--ink-soft); font-size:16px; }
 
+  /* Ueberschrift der beiden Abschnitte. Bewusst schwaecher als h2: Die
+     Trennung ordnet die Kacheln, sie stellt keinen zweiten Seitenteil daneben.
+     Deshalb duenne Linie statt der goldenen Marke und kein Rahmen. */
+  h3.teil{
+    font-size:clamp(17px,2.2vw,21px); font-weight:700; line-height:1.25;
+    margin:34px 0 6px; padding-bottom:7px;
+    border-bottom:1px solid var(--linie, #d5dfee);
+    display:flex; align-items:baseline; gap:10px;
+  }
+  h3.teil:first-of-type{ margin-top:8px; }
+  .teil-zahl{
+    font-size:13px; font-weight:400; color:var(--ink-soft);
+    border:1px solid var(--linie, #d5dfee); border-radius:11px; padding:1px 9px;
+  }
+
   /* Nebeneinander ist der Regelfall. Untereinander nur auf Handy und Tablet:
      Unter 1000px werden vier Spalten zu schmalen Saeulen, in denen jede
      Ueberschrift dreizeilig umbricht. Beide Gitter tragen dieselbe Spaltenzahl,
@@ -333,7 +348,7 @@
 <header class="top">
   <div class="wrap kopf-oben">
     <div>
-      <a class="zurueck" href="/">← Alle 12 Knowledge-Hubs</a>
+      <a class="zurueck" href="/">← Alle 15 Knowledge-Hubs</a>
       <p class="eyebrow">Monitor Versorgungsforschung · Knowledge-Hubs</p>
       <h1>CuratioHub</h1>
       <p class="untertitel">Das Karriere- und Jobportal der Knowledge-Hubs</p>
@@ -374,18 +389,21 @@
     </div>
     <p class="stand-suche" id="standSuche" role="status"></p>
     <div class="themen" id="themen">
-      <button type="button" class="thema-chip" data-de="Versorgungsforschung" data-en="health services research">Versorgungsforschung</button>
+      <button type="button" class="thema-chip" data-de="Medizininformatik" data-en="artificial intelligence health care">KI</button>
+      <button type="button" class="thema-chip" data-de="Frauengesundheit" data-en="sex and gender differences health">Geschlechtersensible Medizin</button>
+      <button type="button" class="thema-chip" data-de="Geriatrie" data-en="healthy ageing">Longevity</button>
       <button type="button" class="thema-chip" data-de="Gesundheitskompetenz" data-en="health literacy">Gesundheitskompetenz</button>
-      <button type="button" class="thema-chip" data-de="Pflegewissenschaft" data-en="long-term care">Pflege</button>
+      <button type="button" class="thema-chip" data-de="Klimaanpassung" data-en="climate change health">Klima</button>
       <button type="button" class="thema-chip" data-de="Infektionsepidemiologie" data-en="vaccination">Impfen</button>
       <button type="button" class="thema-chip" data-de="Epidemiologie" data-en="chronic disease management">Chronische Erkrankungen</button>
-      <button type="button" class="thema-chip" data-de="Frauengesundheit" data-en="sex and gender differences health">Geschlechtersensible Medizin</button>
-      <button type="button" class="thema-chip" data-de="Adipositas" data-en="obesity treatment">Adipositas</button>
       <button type="button" class="thema-chip" data-de="Klinisches Risikomanagement" data-en="patient safety">Patientensicherheit</button>
+      <button type="button" class="thema-chip" data-de="Pflegewissenschaft" data-en="long-term care">Pflege</button>
       <button type="button" class="thema-chip" data-de="Psychische Gesundheit" data-en="mental health services">Psychische Gesundheit</button>
-      <button type="button" class="thema-chip" data-de="Medizininformatik" data-en="artificial intelligence health care">KI</button>
-      <button type="button" class="thema-chip" data-de="Klimaanpassung" data-en="climate change health">Klima</button>
-      <button type="button" class="thema-chip" data-de="Geriatrie" data-en="healthy ageing">Longevity</button>
+      <button type="button" class="thema-chip" data-de="Versorgungsforschung" data-en="health services research">Versorgungsforschung</button>
+      <button type="button" class="thema-chip" data-de="Adipositas" data-en="obesity treatment">Adipositas</button>
+      <button type="button" class="thema-chip" data-de="Typ-2-Diabetes" data-en="">Diabetes</button>
+      <button type="button" class="thema-chip" data-de="Herzinsuffizienz" data-en="">Kardiologie</button>
+      <button type="button" class="thema-chip" data-de="Immuntherapie" data-en="">Onkologie</button>
     </div>
     <p class="themen-vor">Die Themen-Knöpfe setzen zwei Begriffe zugleich: den deutschen
     für die deutschsprachigen Märkte, den englischen für die internationalen. Beide sind
@@ -490,7 +508,7 @@
     <p>Die Leserschaft von <i>Monitor Versorgungsforschung</i> und der Knowledge-Hubs ist
     genau die, die hier gesucht wird: Forschende, Ärztinnen und Ärzte, Fachleute aus
     Kassen, Kliniken und Selbstverwaltung. Eine Stellenanzeige erreicht sie über die
-    Zeitschrift, die Portale und die täglichen Newsletter der 12 Hubs.</p>
+    Zeitschrift, die Portale und die täglichen Newsletter der 15 Hubs.</p>
     <p>Sie wollen Ihre Mitarbeitersuche mit einer <b>Printanzeige in der kommenden
     Ausgabe</b> unterstützen? Formate, Termine und Preise stehen in den Mediadaten —
     schauen Sie dort zuerst hinein und schreiben Sie dann an Anke Heiser,
@@ -554,7 +572,7 @@
       </div>
     </details>
 
-    <p class="stand">Stand der Kachelliste: 08.09.2026. Alle Suchadressen wurden am 01.09.2026 im Browser geprüft.</p>
+    <p class="stand">Stand der Kachelliste: 10.09.2026. Alle Suchadressen wurden am 01.09.2026 im Browser geprüft.</p>
   </div>
 </footer>
 

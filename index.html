@@ -2,7 +2,7 @@
 <html lang="de">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Die Knowledge-Hubs von Monitor Versorgungsforschung: 12 Rechercheportale zu Versorgungsforschung, Gesundheitskompetenz, Pflege, Impfen, Chronische Erkrankungen, Geschlechtersensible Medizin, Adipositas, Patientensicherheit, Psychische Gesundheit, KI, Klima und Longevity. Gebündelte Live-Suchen über 1021 Datenbanken und täglich neue Studien mit deutscher Zusammenfassung.">
+<meta name="description" content="Die Knowledge-Hubs von Monitor Versorgungsforschung: 15 Rechercheportale zu KI, Geschlechtersensible Medizin, Longevity, Gesundheitskompetenz, Klima, Impfen, Chronische Erkrankungen, Patientensicherheit, Pflege, Psychische Gesundheit, Versorgungsforschung, Adipositas, Diabetes, Kardiologie und Onkologie. Gebündelte Live-Suchen über 1189 Datenbanken und täglich neue Studien mit deutscher Zusammenfassung.">
 <title>Die Knowledge-Hubs von Monitor Versorgungsforschung</title>
 <link rel="canonical" href="https://knowledge-hubs.m-vf.de/">
 <!-- Ohne Icon zeigen Tableiste und Schnellwahl nur den Anfangsbuchstaben des
@@ -86,6 +86,21 @@
     margin:0 0 6px; padding-bottom:9px; border-bottom:2px solid var(--brand);
   }
   .vor{ margin:0 0 20px; max-width:70ch; color:var(--ink-soft); font-size:16px; }
+
+  /* Ueberschrift der beiden Abschnitte. Bewusst schwaecher als h2: Die
+     Trennung ordnet die Kacheln, sie stellt keinen zweiten Seitenteil daneben.
+     Deshalb duenne Linie statt der goldenen Marke und kein Rahmen. */
+  h3.teil{
+    font-size:clamp(17px,2.2vw,21px); font-weight:700; line-height:1.25;
+    margin:34px 0 6px; padding-bottom:7px;
+    border-bottom:1px solid var(--linie, #d5dfee);
+    display:flex; align-items:baseline; gap:10px;
+  }
+  h3.teil:first-of-type{ margin-top:8px; }
+  .teil-zahl{
+    font-size:13px; font-weight:400; color:var(--ink-soft);
+    border:1px solid var(--linie, #d5dfee); border-radius:11px; padding:1px 9px;
+  }
 
   /* Nebeneinander ist der Regelfall. Untereinander nur auf Handy und Tablet:
      Unter 1000px werden vier Spalten zu schmalen Saeulen, in denen jede
@@ -233,33 +248,72 @@
 
 <main class="wrap">
 
-  <h2>12 Hubs sind online</h2>
-  <p class="vor">Zusammen 1021 Datenbanken, davon 482 mit echter Live-Suche;
-  2021 Suchbegriffe im deutsch-englischen Glossar. Jeder Hub ist eigenständig und
+  <h2>15 Hubs sind online</h2>
+  <p class="vor">Zusammen 1189 Datenbanken, davon 563 mit echter Live-Suche;
+  2273 Suchbegriffe im deutsch-englischen Glossar. Jeder Hub ist eigenständig und
   hat seinen eigenen täglichen Newsletter. Die Suchräume berühren sich dabei durchaus — je nach Hub
   liegen 3 bis 28 Prozent der gefundenen Arbeiten auch im Feld eines anderen (geprüft 08/2026);
   der obere Wert betrifft allein Gesundheitskompetenz und KI, ohne den KI-Hub reicht die Spanne
   nur bis 13 Prozent.
-  In der täglichen Auswahl schlägt das kaum durch: Von 946 bisher ausgelieferten
+  In der täglichen Auswahl schlägt das kaum durch: Von 976 bisher ausgelieferten
   Studien erschienen 34 in mehr als einem Hub.</p>
+
+  <h3 class="teil">Themengebiete <span class="teil-zahl">11</span></h3>
+  <p class="vor">Diese Hubs folgen einem Versorgungsthema quer durch alle Krankheitsbilder —
+  wie gepflegt, geimpft, digitalisiert und entschieden wird. Ausgewählt wird, was das
+  Versorgungsgeschehen verändert.</p>
 
   <div class="gitter">
       <article class="hub">
-        <p class="hub-thema">Versorgungsforschung</p>
-        <h3><a href="https://wissen.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Versorgungsforschung</a></h3>
-        <p class="hub-satz">Der erste Hub der Reihe: Versorgungsforschung und Health Services Research in ihrer ganzen Breite — Versorgungsformen, Qualität, Steuerung, Nutzenbewertung.</p>
+        <p class="hub-thema">Digitalisierung, KI & Gesundheit</p>
+        <h3><a href="https://ki.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Digitalisierung, KI & Gesundheit</a></h3>
+        <p class="hub-satz">Digitale Anwendungen und Künstliche Intelligenz in der Versorgung. Sucht in zwei Wissenschaftskulturen zugleich: in medizinischen Zeitschriften und in der Konferenzliteratur der Informatik.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>57</dd></div>
-          <div><dt>davon Live-Suche</dt><dd>29</dd></div>
-          <div><dt>Rubriken</dt><dd>8</dd></div>
-          <div><dt>Glossarbegriffe</dt><dd>167</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>122</dd></div>
+          <div><dt>Datenbanken</dt><dd>106</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>49</dd></div>
+          <div><dt>Rubriken</dt><dd>10</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>250</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>92</dd></div>
         </dl>
         <p class="hub-wege">
-          <a class="btn" href="https://wissen.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
-          <a class="dazu" href="https://wissen.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+          <a class="btn" href="https://ki.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="https://ki.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
         </p>
-        <p class="hub-adresse">wissen.m-vf.de</p>
+        <p class="hub-adresse">ki.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Geschlecht & Gesundheit</p>
+        <h3><a href="http://gender.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Geschlechtersensible Medizin</a></h3>
+        <p class="hub-satz">Geschlecht als Einflussgröße in der Versorgung: Diagnostik, Dosierung und Zugang — und die Frage, ob ein Unterschied aus der Biologie stammt oder aus dem Weg dorthin.</p>
+        <dl class="zahlen">
+          <div><dt>Datenbanken</dt><dd>93</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>45</dd></div>
+          <div><dt>Rubriken</dt><dd>10</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>169</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>69</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="http://gender.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="http://gender.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+        </p>
+        <p class="hub-adresse">gender.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Gesundes Altern & Longevity</p>
+        <h3><a href="https://longevity.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Gesundes Altern & Longevity</a></h3>
+        <p class="hub-satz">Lebensspanne und gesunde Lebensjahre: Prävention, Geriatrie und Alternskohorten — und die Biologie des Alterns, die hier eine eigene Rubrik bekommt.</p>
+        <dl class="zahlen">
+          <div><dt>Datenbanken</dt><dd>100</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>51</dd></div>
+          <div><dt>Rubriken</dt><dd>11</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>219</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>78</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://longevity.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="https://longevity.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+        </p>
+        <p class="hub-adresse">longevity.m-vf.de</p>
       </article>
       <article class="hub">
         <p class="hub-thema">Gesundheitskompetenz & Health Literacy</p>
@@ -279,21 +333,21 @@
         <p class="hub-adresse">healthliteracy.m-vf.de</p>
       </article>
       <article class="hub">
-        <p class="hub-thema">Pflege & Langzeitversorgung</p>
-        <h3><a href="https://pflege.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Pflege & Langzeitversorgung</a></h3>
-        <p class="hub-satz">Pflegerische Versorgung, Langzeitpflege und die Lage der Pflegenden — Personal, Qualität, Angehörige, dazu Expertenstandards und Einrichtungsvergleiche.</p>
+        <p class="hub-thema">Hitze, Klima & Gesundheit</p>
+        <h3><a href="https://klima.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Hitze, Klima & Gesundheit</a></h3>
+        <p class="hub-satz">Hitze, Extremwetter und Klimawandel und was sie für Versorgung, Praxis und Bevölkerungsgesundheit bedeuten. Mit einer eigenen Rubrik für Klima- und Umweltmessdaten statt Publikationen.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>88</dd></div>
-          <div><dt>davon Live-Suche</dt><dd>42</dd></div>
-          <div><dt>Rubriken</dt><dd>11</dd></div>
-          <div><dt>Glossarbegriffe</dt><dd>156</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>75</dd></div>
+          <div><dt>Datenbanken</dt><dd>90</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>40</dd></div>
+          <div><dt>Rubriken</dt><dd>9</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>237</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>80</dd></div>
         </dl>
         <p class="hub-wege">
-          <a class="btn" href="https://pflege.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
-          <a class="dazu" href="https://pflege.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+          <a class="btn" href="https://klima.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="https://klima.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
         </p>
-        <p class="hub-adresse">pflege.m-vf.de</p>
+        <p class="hub-adresse">klima.m-vf.de</p>
       </article>
       <article class="hub">
         <p class="hub-thema">Impfen & Impfprävention</p>
@@ -330,40 +384,6 @@
         <p class="hub-adresse">ncd.m-vf.de</p>
       </article>
       <article class="hub">
-        <p class="hub-thema">Geschlecht & Gesundheit</p>
-        <h3><a href="http://gender.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Geschlechtersensible Medizin</a></h3>
-        <p class="hub-satz">Geschlecht als Einflussgröße in der Versorgung: Diagnostik, Dosierung und Zugang — und die Frage, ob ein Unterschied aus der Biologie stammt oder aus dem Weg dorthin.</p>
-        <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>93</dd></div>
-          <div><dt>davon Live-Suche</dt><dd>45</dd></div>
-          <div><dt>Rubriken</dt><dd>10</dd></div>
-          <div><dt>Glossarbegriffe</dt><dd>169</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>69</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="http://gender.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
-          <a class="dazu" href="http://gender.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
-        </p>
-        <p class="hub-adresse">gender.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Adipositas</p>
-        <h3><a href="https://adipositas.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Adipositas</a></h3>
-        <p class="hub-satz">Adipositas als Versorgungsfrage: Gewichtsmanagement, Arzneimitteltherapie und Chirurgie — und die Frage, wer die Behandlung bezahlt, wenn Paragraf 34 SGB V sie ausschliesst.</p>
-        <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>65</dd></div>
-          <div><dt>davon Live-Suche</dt><dd>31</dd></div>
-          <div><dt>Rubriken</dt><dd>10</dd></div>
-          <div><dt>Glossarbegriffe</dt><dd>162</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>72</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://adipositas.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
-          <a class="dazu" href="https://adipositas.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
-        </p>
-        <p class="hub-adresse">adipositas.m-vf.de</p>
-      </article>
-      <article class="hub">
         <p class="hub-thema">Patientensicherheit</p>
         <h3><a href="https://safety.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Patientensicherheit</a></h3>
         <p class="hub-satz">Vermeidbarer Schaden in der Versorgung: Behandlungs- und Medikationsfehler, Krankenhausinfektionen und Sepsis — und die Frage, wer meldet, wenn Melden zur Haftungsfrage wird.</p>
@@ -379,6 +399,23 @@
           <a class="dazu" href="https://safety.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
         </p>
         <p class="hub-adresse">safety.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Pflege & Langzeitversorgung</p>
+        <h3><a href="https://pflege.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Pflege & Langzeitversorgung</a></h3>
+        <p class="hub-satz">Pflegerische Versorgung, Langzeitpflege und die Lage der Pflegenden — Personal, Qualität, Angehörige, dazu Expertenstandards und Einrichtungsvergleiche.</p>
+        <dl class="zahlen">
+          <div><dt>Datenbanken</dt><dd>88</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>42</dd></div>
+          <div><dt>Rubriken</dt><dd>11</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>156</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>75</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://pflege.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="https://pflege.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+        </p>
+        <p class="hub-adresse">pflege.m-vf.de</p>
       </article>
       <article class="hub">
         <p class="hub-thema">Psychische Gesundheit</p>
@@ -398,55 +435,98 @@
         <p class="hub-adresse">mental.m-vf.de</p>
       </article>
       <article class="hub">
-        <p class="hub-thema">Digitalisierung, KI & Gesundheit</p>
-        <h3><a href="https://ki.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Digitalisierung, KI & Gesundheit</a></h3>
-        <p class="hub-satz">Digitale Anwendungen und Künstliche Intelligenz in der Versorgung. Sucht in zwei Wissenschaftskulturen zugleich: in medizinischen Zeitschriften und in der Konferenzliteratur der Informatik.</p>
+        <p class="hub-thema">Versorgungsforschung</p>
+        <h3><a href="https://wissen.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Versorgungsforschung</a></h3>
+        <p class="hub-satz">Der erste Hub der Reihe: Versorgungsforschung und Health Services Research in ihrer ganzen Breite — Versorgungsformen, Qualität, Steuerung, Nutzenbewertung.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>106</dd></div>
-          <div><dt>davon Live-Suche</dt><dd>49</dd></div>
+          <div><dt>Datenbanken</dt><dd>57</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>29</dd></div>
+          <div><dt>Rubriken</dt><dd>8</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>167</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>152</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://wissen.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="https://wissen.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+        </p>
+        <p class="hub-adresse">wissen.m-vf.de</p>
+      </article>
+  </div>
+
+  <h3 class="teil">Indikationsgebiete <span class="teil-zahl">4</span></h3>
+  <p class="vor">Diese Hubs folgen einem Krankheitsgebiet. Sie sind anders gebaut: Sie lesen
+  die Kernzeitschriften des Fachs und zeigen die klinische <em>und</em> die
+  Grundlagenforschung — Versorgungsforschung ist darin eine Rubrik, nicht der Maßstab.
+  Wer wissen will, was sich in einem Fach bewegt, ist hier richtig.</p>
+
+  <div class="gitter">
+      <article class="hub">
+        <p class="hub-thema">Adipositas</p>
+        <h3><a href="https://adipositas.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Adipositas</a></h3>
+        <p class="hub-satz">Adipositas als Versorgungsfrage: Gewichtsmanagement, Arzneimitteltherapie und Chirurgie — und die Frage, wer die Behandlung bezahlt, wenn Paragraf 34 SGB V sie ausschliesst.</p>
+        <dl class="zahlen">
+          <div><dt>Datenbanken</dt><dd>65</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>31</dd></div>
           <div><dt>Rubriken</dt><dd>10</dd></div>
-          <div><dt>Glossarbegriffe</dt><dd>250</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>92</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>162</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>72</dd></div>
         </dl>
         <p class="hub-wege">
-          <a class="btn" href="https://ki.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
-          <a class="dazu" href="https://ki.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+          <a class="btn" href="https://adipositas.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="https://adipositas.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
         </p>
-        <p class="hub-adresse">ki.m-vf.de</p>
+        <p class="hub-adresse">adipositas.m-vf.de</p>
       </article>
       <article class="hub">
-        <p class="hub-thema">Hitze, Klima & Gesundheit</p>
-        <h3><a href="https://klima.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Hitze, Klima & Gesundheit</a></h3>
-        <p class="hub-satz">Hitze, Extremwetter und Klimawandel und was sie für Versorgung, Praxis und Bevölkerungsgesundheit bedeuten. Mit einer eigenen Rubrik für Klima- und Umweltmessdaten statt Publikationen.</p>
+        <p class="hub-thema">Diabetes</p>
+        <h3><a href="https://diabetes.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Diabetes</a></h3>
+        <p class="hub-satz">Diabetes aus rund dreißig Kernzeitschriften: Typ 1 und Typ 2, Folgeerkrankungen an Auge, Niere, Nerv und Fuß, Glukosetechnik und Disease-Management-Programme. Gewicht und Adipositaschirurgie stehen im Schwesterportal adipositas.m-vf.de.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>90</dd></div>
-          <div><dt>davon Live-Suche</dt><dd>40</dd></div>
+          <div><dt>Datenbanken</dt><dd>61</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>28</dd></div>
           <div><dt>Rubriken</dt><dd>9</dd></div>
-          <div><dt>Glossarbegriffe</dt><dd>237</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>80</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>83</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>0</dd></div>
         </dl>
         <p class="hub-wege">
-          <a class="btn" href="https://klima.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
-          <a class="dazu" href="https://klima.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+          <a class="btn" href="https://diabetes.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="https://diabetes.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
         </p>
-        <p class="hub-adresse">klima.m-vf.de</p>
+        <p class="hub-adresse">diabetes.m-vf.de</p>
       </article>
       <article class="hub">
-        <p class="hub-thema">Gesundes Altern & Longevity</p>
-        <h3><a href="https://longevity.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Gesundes Altern & Longevity</a></h3>
-        <p class="hub-satz">Lebensspanne und gesunde Lebensjahre: Prävention, Geriatrie und Alternskohorten — und die Biologie des Alterns, die hier eine eigene Rubrik bekommt.</p>
+        <p class="hub-thema">Kardiologie</p>
+        <h3><a href="https://kardio.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Kardiologie</a></h3>
+        <p class="hub-satz">Herz und Kreislauf aus rund 35 Kernzeitschriften, von Circulation bis Clinical Research in Cardiology. Von allen Hubs der Reihe der mit dem höchsten Europabezug — europäische Kardiologie veröffentlicht in europäischen Titeln.</p>
         <dl class="zahlen">
-          <div><dt>Datenbanken</dt><dd>100</dd></div>
-          <div><dt>davon Live-Suche</dt><dd>51</dd></div>
-          <div><dt>Rubriken</dt><dd>11</dd></div>
-          <div><dt>Glossarbegriffe</dt><dd>219</dd></div>
-          <div><dt>Studien im Archiv</dt><dd>78</dd></div>
+          <div><dt>Datenbanken</dt><dd>53</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>28</dd></div>
+          <div><dt>Rubriken</dt><dd>9</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>84</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>0</dd></div>
         </dl>
         <p class="hub-wege">
-          <a class="btn" href="https://longevity.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
-          <a class="dazu" href="https://longevity.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+          <a class="btn" href="https://kardio.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="https://kardio.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
         </p>
-        <p class="hub-adresse">longevity.m-vf.de</p>
+        <p class="hub-adresse">kardio.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Onkologie</p>
+        <h3><a href="https://onkologie.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge-Hub Onkologie</a></h3>
+        <p class="hub-satz">Krebsforschung und Krebsversorgung aus rund dreißig Kernzeitschriften — von Lancet Oncology bis Nature. Das erste Portal der Reihe, das nicht ein Versorgungsthema abbildet, sondern ein Krankheitsgebiet: Klinik und Grundlagen, Versorgungsforschung als Rubrik darin.</p>
+        <dl class="zahlen">
+          <div><dt>Datenbanken</dt><dd>54</dd></div>
+          <div><dt>davon Live-Suche</dt><dd>25</dd></div>
+          <div><dt>Rubriken</dt><dd>9</dd></div>
+          <div><dt>Glossarbegriffe</dt><dd>85</dd></div>
+          <div><dt>Studien im Archiv</dt><dd>0</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://onkologie.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zum Hub</a>
+          <a class="dazu" href="https://onkologie.m-vf.de/newsletter.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Newsletter bestellen</a>
+        </p>
+        <p class="hub-adresse">onkologie.m-vf.de</p>
       </article>
   </div>
 
@@ -642,7 +722,7 @@
       </div>
     </details>
 
-    <p class="stand">Stand der Zahlen: 08.09.2026. Sie werden bei jedem Bau aus den Portalen selbst gezählt.</p>
+    <p class="stand">Stand der Zahlen: 10.09.2026. Sie werden bei jedem Bau aus den Portalen selbst gezählt.</p>
   </div>
 </footer>
 
