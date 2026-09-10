@@ -47,6 +47,9 @@ PORTALE = [
     ("Adipositas", "mvf-portal/adipositas-portal"),
     ("Patientensicherheit", "mvf-portal/safety-portal"),
     ("Psychische Gesundheit", "mvf-portal/mental-portal"),
+    ("Onkologie", "mvf-portal/onkologie-portal"),
+    ("Kardiologie", "mvf-portal/kardio-portal"),
+    ("Diabetes", "mvf-portal/diabetes-portal"),
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 ROH_ARCHIV = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"

@@ -45,13 +45,16 @@ if hasattr(sys.stdout, "reconfigure"):
 PORTALE = [
     # erzeugt aus portale.json von portale_pflegen.py - nicht von Hand aendern
     ("Adipositas", "adipositas.m-vf.de", "mvf-portal/adipositas-portal"),
+    ("Diabetes", "diabetes.m-vf.de", "mvf-portal/diabetes-portal"),
     ("Digitalisierung, KI & Gesundheit", "ki.m-vf.de", "mvf-portal/ki-gesundheit-portal"),
     ("Geschlechtersensible Medizin", "gender.m-vf.de", "mvf-portal/gender-portal"),
     ("Gesundes Altern & Longevity", "longevity.m-vf.de", "mvf-portal/longevity-portal"),
     ("Gesundheitskompetenz", "healthliteracy.m-vf.de", "mvf-portal/healthliteracy-portal"),
     ("Hitze, Klima & Gesundheit", "klima.m-vf.de", "mvf-portal/klima-gesundheit-portal"),
     ("Impfen & Impfprävention", "impfen.m-vf.de", "mvf-portal/impfen-portal"),
+    ("Kardiologie", "kardio.m-vf.de", "mvf-portal/kardio-portal"),
     ("Nicht übertragbare Krankheiten", "ncd.m-vf.de", "mvf-portal/ncd-portal"),
+    ("Onkologie", "onkologie.m-vf.de", "mvf-portal/onkologie-portal"),
     ("Patientensicherheit", "safety.m-vf.de", "mvf-portal/safety-portal"),
     ("Pflege & Langzeitversorgung", "pflege.m-vf.de", "mvf-portal/pflege-portal"),
     ("Psychische Gesundheit", "mental.m-vf.de", "mvf-portal/mental-portal"),
