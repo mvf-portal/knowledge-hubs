@@ -680,6 +680,66 @@ def baue_html(meldung: dict, erlaubt: list[str], bild_dabei: bool = False) -> st
     return "\n".join(t for t in teile if t)
 
 
+# ------------------------------------------------- Schon eingespielt?
+# Der Titelvergleich in schon_da() reicht nicht. Am 11.09.2026 kam dieselbe
+# Virchowbund-Mitteilung zweimal an und wurde im selben Lauf zweimal
+# eingespielt - als "Landesgruppe MV waehlt Vorstand neu: ..." und als
+# "Landesvorstand Mecklenburg-Vorpommern neu gewaehlt: ...". Beide Quelltexte
+# waren auf das Byte gleich (16.002 Zeichen), nur hatte das Modell zweimal
+# anders getitelt, und die ersten 40 Zeichen der Titel gehen auseinander.
+#
+# Der Quelltext ist der verlaessliche Anker: Er kommt vom Absender, nicht vom
+# Modell. Geprueft wird VOR dem Modellaufruf - eine Dublette kostet so nicht
+# einmal mehr eine Antwort.
+EINGESPIELT_DATEI = pathlib.Path(__file__).with_name("eingespielt.json")
+EINGESPIELT_TAGE = 120          # Aelteres wird beim Schreiben weggeworfen
+
+
+def fingerabdruck(text: str) -> str:
+    """Ein Kennzeichen des Quelltextes, unempfindlich gegen Formatierung.
+
+    Kleinschreibung und zusammengefasste Leerzeichen: Derselbe Text, einmal
+    als Nur-Text und einmal aus HTML gewonnen, unterscheidet sich sonst in
+    jeder zweiten Zeile. Mehr Nachsicht waere gefaehrlich - zwei Mitteilungen
+    desselben Absenders duerfen nicht verschmelzen.
+    """
+    import hashlib
+
+    kern = " ".join((text or "").lower().split())
+    return hashlib.sha256(kern.encode("utf-8")).hexdigest()[:16]
+
+
+def eingespielt_laden() -> dict:
+    try:
+        return json.loads(EINGESPIELT_DATEI.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def eingespielt_merken(verzeichnis: dict, abdruck: str, titel: str) -> None:
+    import datetime
+
+    heute = datetime.date.today()
+    verzeichnis[abdruck] = {"titel": titel, "datum": heute.isoformat()}
+    grenze = (heute - datetime.timedelta(days=EINGESPIELT_TAGE)).isoformat()
+    bleibt = {a: e for a, e in verzeichnis.items()
+              if e.get("datum", "") >= grenze}
+    verzeichnis.clear()
+    verzeichnis.update(bleibt)
+    EINGESPIELT_DATEI.write_text(
+        json.dumps(verzeichnis, ensure_ascii=False, indent=1, sort_keys=True),
+        encoding="utf-8")
+
+
+def mail_abhaken(mail, erledigt) -> None:
+    """Markieren, als gelesen setzen, wegraeumen - in dieser Reihenfolge."""
+    vorhanden = str(getattr(mail, "Categories", "")).strip()
+    mail.Categories = f"{vorhanden}; {PM_MARKE}".strip("; ")
+    mail.UnRead = False
+    mail.Save()
+    mail.Move(erledigt)
+
+
 # ------------------------------------------------------------ Absenderlogos
 def domain_von(adresse: str) -> str:
     treffer = re.search(r"@([\w.-]+\.\w{2,})", adresse or "")
@@ -879,29 +939,65 @@ def in_ordner(medien: list[int], kopf: str,
               f"Bild liegt in der Mediathek ohne Ordner.")
 
 
-def bilder_aus_pdf(pfad: pathlib.Path) -> list[tuple[str, bytes]]:
-    """Die Bilder aus der Mitteilung - Logos, Diagramme, Fotos.
+# Was aus einem PDF als Beitragsbild taugt - drei Huerden statt einer.
+#
+# Am 11.09.2026 nachgemessen: In den letzten zwoelf Mitteilungen mit PDF
+# liess die alte Regel (nur Breite >= 300) 52 Bilder durch, und **kein
+# einziges davon war ein Pressefoto**. Es waren Logostreifen, Trennlinien von
+# einem Pixel Hoehe und als Bild gerenderte Textbloecke - beim Virchowbund
+# allein 16 Stueck je Entwurf, bei zwei Durchlaeufen 32 Eintraege in der
+# Mediathek fuer eine Mitteilung. Echte Fotos haengen als Datei an der Mail
+# oder liegen zum Herunterladen bereit; im PDF stehen sie so gut wie nie.
+PDF_MINDESTBREITE = 300
+PDF_MINDESTHOEHE = 300          # Trennlinien sind breit und einen Pixel hoch
+PDF_MAX_VERHAELTNIS = 3.0       # Briefkopf und Fusszeile sind lange Streifen
+PDF_MIN_DICHTE = 0.04           # Byte je Pixel: Text auf Weiss ist flach,
+                                # ein Foto traegt zehnmal so viel Information
 
-    Anke braucht ein Beitragsbild, und das Material dafuer steckt meist schon
-    in der Mitteilung. Zu kleine Bilder faellt weg: Aufzaehlungspunkte,
-    Trennlinien und Briefkopf-Schnipsel taugen nicht als Beitragsbild.
+
+def taugt_als_bild(breite: int, hoehe: int, umfang: int) -> str:
+    """Leer, wenn das Bild durchdarf - sonst der Grund, es wegzulassen."""
+    if breite < PDF_MINDESTBREITE or hoehe < PDF_MINDESTHOEHE:
+        return f"zu klein ({breite}x{hoehe})"
+    if max(breite / hoehe, hoehe / breite) > PDF_MAX_VERHAELTNIS:
+        return f"Streifen ({breite/hoehe:.1f}:1)"
+    dichte = umfang / (breite * hoehe)
+    if dichte < PDF_MIN_DICHTE:
+        return f"flach ({dichte:.3f} Byte/Pixel)"
+    return ""
+
+
+def bilder_aus_pdf(pfad: pathlib.Path) -> list[tuple[str, bytes]]:
+    """Die Bilder aus dem angehaengten PDF - was davon ein Foto sein kann.
+
+    Anke braucht ein Beitragsbild, und manchmal steckt das Material schon in
+    der Mitteilung. Gesiebt wird nach Groesse, Seitenverhaeltnis und
+    Informationsdichte; siehe taugt_als_bild().
     """
     try:
         from pypdf import PdfReader
     except ImportError:
         return []
-    gefunden = []
+    gefunden, verworfen = [], 0
     for nummer, seite in enumerate(PdfReader(str(pfad)).pages, 1):
         try:
             bilder = list(seite.images)
         except Exception:
             continue                    # ohne Pillow gibt es keine Bilder
         for lfd, bild in enumerate(bilder, 1):
-            breite = getattr(getattr(bild, "image", None), "width", 0) or 0
-            if breite < 300:
+            masse_bild = getattr(bild, "image", None)
+            breite = getattr(masse_bild, "width", 0) or 0
+            hoehe = getattr(masse_bild, "height", 0) or 0
+            if not (breite and hoehe):
+                continue
+            if taugt_als_bild(breite, hoehe, len(bild.data)):
+                verworfen += 1
                 continue
             endung = pathlib.Path(bild.name).suffix or ".png"
             gefunden.append((f"seite{nummer}-bild{lfd}{endung}", bild.data))
+    if verworfen:
+        print(f"  {verworfen} Bild(er) aus dem PDF verworfen "
+              f"(Logo, Trennlinie oder Textblock).")
     return gefunden
 
 
@@ -1491,6 +1587,7 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
 
     print(f"{len(kandidaten)} Mitteilung(en) gefunden, "
           f"davon werden {min(hoechstens, len(kandidaten))} bearbeitet.\n")
+    verzeichnis = eingespielt_laden()
     fertig, abgebrochen = 0, False
     for mail in kandidaten[:hoechstens]:
         betreff = str(getattr(mail, "Subject", ""))[:70]
@@ -1499,6 +1596,21 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
             text = saeubern(text_aus_mailobjekt(mail, laut=False))
             if len(text) < 400:
                 print("  Zu wenig Text - uebersprungen.\n")
+                continue
+            # Vor dem Modell: Kennen wir diesen Wortlaut schon?
+            abdruck = fingerabdruck(text)
+            bekannt = verzeichnis.get(abdruck)
+            if bekannt:
+                print(f"  Wortgleich schon eingespielt am "
+                      f"{bekannt.get('datum', '?')}: "
+                      f"{bekannt.get('titel', '')}")
+                # --trocken fasst nichts an, auch hier nicht.
+                if trocken:
+                    print("  [trocken] kein Entwurf, Mail bleibt liegen.")
+                else:
+                    print("  Kein zweiter Entwurf - Mail wird abgehakt.")
+                    mail_abhaken(mail, erledigt)
+                print()
                 continue
             meldung = schreibe_meldung(text, adressen(text))
             if meldung.get("schlagwort") not in SCHLAGWOERTER:
@@ -1515,13 +1627,13 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
                           domain_von(str(getattr(mail, "SenderEmailAddress",
                                                  ""))))
             ablegen(meldung, inhalt, text, None)
+            # Auch eine Dublette, die erst WordPress auffaellt, gehoert ins
+            # Verzeichnis: Beim naechsten Mal soll sie gar nicht erst durchs
+            # Modell.
+            eingespielt_merken(verzeichnis, abdruck, meldung["titel"])
             # Erst jetzt anfassen: Was schiefgeht, bleibt unmarkiert liegen
             # und kommt beim naechsten Lauf wieder dran.
-            vorhanden = str(getattr(mail, "Categories", "")).strip()
-            mail.Categories = f"{vorhanden}; {PM_MARKE}".strip("; ")
-            mail.UnRead = False
-            mail.Save()
-            mail.Move(erledigt)
+            mail_abhaken(mail, erledigt)
             fertig += 1 if neu else 0
             print()
         except WordPressLehntAb as fehler:
