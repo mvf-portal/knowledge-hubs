@@ -51,6 +51,29 @@ PORTALE = [
     ("Kardiologie", "mvf-portal/kardio-portal"),
     ("Diabetes", "mvf-portal/diabetes-portal"),
 ]
+# Portale, die in portale.json auf `bereit: false` stehen: gebaut und im Netz,
+# aber noch nicht scharfgeschaltet - sie fehlen bewusst in der Liste des
+# Dirigenten und werden deshalb nicht geweckt. Sie legen an den meisten Tagen
+# keine Statusdatei an.
+#
+# "An den meisten Tagen", weil ihr eigener GitHub-Cron weiter eingetragen ist.
+# Am 11.09.2026 hat er beim Diabetes-Hub um 07:58 UTC doch ausgeloest - fast
+# drei Stunden nach der eingetragenen Zeit, denn genau diese Unzuverlaessigkeit
+# ist der Grund, warum es den Dirigenten gibt. Die Statusdatei von heute hat
+# darum Vorrang vor der Wartezeile: Was tatsaechlich terminiert ist, muss im
+# Bericht stehen, gewollt oder nicht.
+#
+# Bis zum 11.09.2026 meldete der Bericht sie taeglich als "keine Statusdatei -
+# der Lauf ist entweder noch nicht durch oder abgebrochen". Das war sachlich
+# falsch: Es gibt keinen Lauf, weil es keinen geben soll. Drei solche Zeilen
+# jeden Morgen gewoehnen einem das Hinsehen ab, und dann faellt die eine echte
+# Zeile daneben auch nicht mehr auf.
+WARTEND = [
+    # erzeugt aus portale.json von portale_pflegen.py - nicht von Hand aendern
+    "mvf-portal/onkologie-portal",
+    "mvf-portal/kardio-portal",
+    "mvf-portal/diabetes-portal",
+]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 ROH_ARCHIV = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"
 # Der Ausschreibungsradar laeuft nicht in jedem Hub, sondern einmal zentral im
@@ -223,6 +246,13 @@ def zeile(name: str, repo: str, s: dict | None, heute: str, ruhetag: bool = Fals
     # gemeldet - die Ruhetag-Auskunft gilt nur fuer die fehlende Statusdatei.
     if ruhetag and (s is None or s.get("datum") != heute):
         return f"- 🗓 **{name}** — planmäßig kein Versand."
+    # Wie beim Ruhetag: Terminiert ein wartendes Portal doch etwas - etwa nach
+    # einem Lauf von Hand -, wird das normal gemeldet. Die Wartezeile gilt nur
+    # fuer die fehlende Statusdatei.
+    if repo in WARTEND and (s is None or s.get("datum") != heute):
+        return (f"- 💤 **{name}** — noch nicht scharfgeschaltet (`bereit: false` in "
+                f"portale.json). Nicht im Weckruf des Dirigenten, deshalb kein "
+                f"nächtlicher Lauf und kein Versand.")
     if s is None:
         return (f"- **{name}** — keine Statusdatei. Der Lauf ist entweder noch nicht "
                 f"durch oder abgebrochen. [Actions ansehen](https://github.com/{repo}/actions)")
@@ -326,7 +356,7 @@ def main() -> int:
     trocken = "--trocken" in sys.argv
     heute = dt.date.today().isoformat()
     ruhetag = dt.date.fromisoformat(heute).weekday() in RUHETAGE
-    zeilen, terminiert, gestoppt, offen, ruhend = [], 0, 0, 0, 0
+    zeilen, terminiert, gestoppt, offen, ruhend, wartend = [], 0, 0, 0, 0, 0
     gesammelt: dict[str, list[str]] = {}
     for name, repo in PORTALE:
         s = hole(repo)
@@ -334,7 +364,11 @@ def main() -> int:
         if s and s.get("datum") == heute and s.get("pmids"):
             gesammelt[name] = s["pmids"]
         if s is None or s.get("datum") != heute:
-            if ruhetag:
+            # Wartende zaehlen weder als "ohne Meldung" noch als ruhend: Sie
+            # fehlen nicht, sie sind noch nicht dran.
+            if repo in WARTEND:
+                wartend += 1
+            elif ruhetag:
                 ruhend += 1
             else:
                 offen += 1
@@ -345,10 +379,13 @@ def main() -> int:
 
     # Am Ruhetag ohne jede Terminierung fuehrt "0 terminiert" in die Irre - dann
     # ist der Ruhetag die ganze Nachricht.
-    if ruhetag and ruhend == len(PORTALE):
+    # Wartende sind hier abzuziehen: Sie ruhen nicht, sie sind noch gar nicht
+    # angeschlossen. Ohne den Abzug bliebe die Kurzfassung am Wochenende aus,
+    # solange auch nur ein Hub wartet.
+    if ruhetag and ruhend == len(PORTALE) - wartend:
         teile = ["Wochenende, planmäßig kein Versand"]
         # Neun gleichlautende Zeilen wären nur Lärm: Zu veto'en gibt es nichts.
-        zeilen = [f"Alle {len(PORTALE)} Hubs ruhen."]
+        zeilen = [f"Alle {ruhend} angeschlossenen Hubs ruhen."]
     else:
         teile = [f"{terminiert} terminiert"]
         if gestoppt:
@@ -357,6 +394,8 @@ def main() -> int:
             teile.append(f"{ruhend} planmäßig ohne Versand")
         if offen:
             teile.append(f"{offen} ohne Meldung")
+    if wartend:
+        teile.append(f"{wartend} wartend")
     titel = (f"Newsletter {dt.date.fromisoformat(heute).strftime('%d.%m.%Y')} — "
              + ", ".join(teile))
 

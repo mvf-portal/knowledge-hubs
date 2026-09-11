@@ -54,7 +54,7 @@ WOCHENENDE_AUS = True
 # (versand_bericht, studien_sammeln, abfrage_wache), und eine vierte waere eine
 # vierte Stelle, an der ein neuer Hub vergessen werden kann.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from versand_bericht import PORTALE  # noqa: E402
+from versand_bericht import PORTALE, WARTEND  # noqa: E402
 
 ROH_PORTAL = "https://raw.githubusercontent.com/{repo}/main/portal.json"
 
@@ -113,6 +113,11 @@ def main() -> int:
     for name, repo in PORTALE:
         if repo.endswith("knowledge-hubs"):
             continue
+        # Wartende Portale haben noch keine Mailchimp-Gruppe und legen deshalb
+        # keine Kampagne an. Sie hier als "keine Kampagne" zu fuehren, waere
+        # eine Frage an etwas, das gar nicht gefragt wurde.
+        if repo in WARTEND:
+            continue
         pre = praefix(repo)
         if not pre:
             zeilen.append(f"?  {name:<34} portal.json nicht lesbar")
@@ -141,7 +146,8 @@ def main() -> int:
             zeilen.append(f"!! {name:<34} Status '{stand}' - NICHT versendet")
             offen.append(name)
 
-    zahl = len([x for x in PORTALE if not x[1].endswith("knowledge-hubs")])
+    zahl = len([x for x in PORTALE
+                if not x[1].endswith("knowledge-hubs") and x[1] not in WARTEND])
     zeilen.append(f"\n{versendet} von {zahl} versendet.")
     text = "\n".join(zeilen)
     print(text)
