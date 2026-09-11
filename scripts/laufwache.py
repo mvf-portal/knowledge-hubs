@@ -32,6 +32,7 @@ import pathlib
 import shutil
 import subprocess
 import sys
+import time
 from zoneinfo import ZoneInfo
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -71,16 +72,44 @@ def gh_ruf(*args: str) -> subprocess.CompletedProcess:
                           env={**__import__("os").environ, "GH_PAGER": "cat", "PAGER": "cat"})
 
 
+# Ein einzelner Fehlschlag der Abfrage ist kein Befund, sondern meist ein
+# Aussetzer. Am 11.09.2026 um 09:00 kam `gh run list` fuer das Safety-Portal
+# mit einem Fehlercode zurueck - 23 Minuten zuvor und unmittelbar danach lief
+# dieselbe Abfrage einwandfrei. Nachgestellt werden konnte nichts: kein Rate
+# Limit (4997 von 5000 frei), keine Zeitueberschreitung, dreimal sauber
+# wiederholt.
+#
+# Das Wiederholen ist hier unbedenklich, weil nur GELESEN wird. Fuer
+# anstossen() gilt das ausdruecklich NICHT - ein zweiter Versuch waere dort ein
+# zweiter Lauf und damit womoeglich ein zweiter Newsletter.
+ABFRAGE_VERSUCHE = 3
+ABFRAGE_PAUSE = 5
+
+
 def laeufe_von_heute(repo: str, workflow: str, heute: str) -> list[dict]:
     """Die heutigen Laeufe dieses Workflows, neueste zuerst.
 
     Gefiltert wird in Python und nicht ueber --created: Die Suchsyntax von gh
     rechnet in UTC, und ein Lauf um 05:30 UTC gehoert zum deutschen Heute.
     """
-    r = gh_ruf("run", "list", "-R", repo, "--workflow", workflow, "--limit", "20",
-               "--json", "status,conclusion,createdAt,databaseId,event")
-    if r.returncode != 0:
-        raise RuntimeError(f"gh run list fehlgeschlagen: {r.stderr.strip()[:200]}")
+    for versuch in range(1, ABFRAGE_VERSUCHE + 1):
+        r = gh_ruf("run", "list", "-R", repo, "--workflow", workflow, "--limit", "20",
+                   "--json", "status,conclusion,createdAt,databaseId,event")
+        if r.returncode == 0:
+            break
+        if versuch < ABFRAGE_VERSUCHE:
+            time.sleep(ABFRAGE_PAUSE)
+    else:
+        # Alles protokollieren, was der Prozess hergibt. Bis zum 11.09.2026
+        # stand hier nur stderr - und weil gh an diesem Morgen mit leerer
+        # Fehlerausgabe zurueckkam, lautete die Meldung "gh run list
+        # fehlgeschlagen: " und sagte nichts. Ein Fehler, der sich nicht
+        # beschreiben laesst, ist beim naechsten Mal nicht zu finden.
+        raise RuntimeError(
+            f"gh run list fehlgeschlagen nach {ABFRAGE_VERSUCHE} Versuchen: "
+            f"Rueckgabewert {r.returncode}, "
+            f"Fehlerausgabe {r.stderr.strip()[:200] or '(leer)'}, "
+            f"Ausgabe {r.stdout.strip()[:200] or '(leer)'}")
     aus = []
     for j in json.loads(r.stdout or "[]"):
         wann = dt.datetime.fromisoformat(j["createdAt"].replace("Z", "+00:00")).astimezone(TZ)
