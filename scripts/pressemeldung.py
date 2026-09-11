@@ -1125,17 +1125,28 @@ def masse(rohdaten: bytes) -> tuple[int, int]:
 
 
 def bestes_bild(bilder: list[tuple[str, bytes]]) -> int:
-    """Welches Bild traegt die Meldung am ehesten?
+    """Welches Bild traegt die Meldung am ehesten? -1, wenn keines taugt.
 
-    Das flaechenmaessig groesste. Briefkoepfe und Signaturlogos sind breite
-    schmale Streifen; ein Diagramm oder ein Foto hat mehr Flaeche. Perfekt
-    ist die Regel nicht - deshalb setzt sie nur einen Vorschlag, den die
-    Redaktion im Beitrag mit zwei Klicks austauscht.
+    Unter denen, die taugt_als_bild() durchlaesst, gewinnt das
+    flaechenmaessig groesste.
+
+    **Die Flaeche allein war der Fehler.** Ein Briefkopfstreifen von
+    1890x299 Pixeln hat mehr Flaeche als ein Foto von 600x600 - und genau so
+    kam es dazu, dass am 11.09.2026 drei veroeffentlichte Beitraege einen
+    Logostreifen von 300x57 als Beitragsbild trugen. Wer breit und flach
+    ist, scheidet jetzt vorher aus.
+
+    Taugt keines, bleibt der Vorschlag aus: Danach kommt ohnehin das
+    Absenderlogo zum Zug, und das ist besser als ein Textstreifen.
     """
-    beste, bester_wert = 0, -1
+    beste, bester_wert = -1, -1
     for nummer, (_, rohdaten) in enumerate(bilder):
         breite, hoehe = masse(rohdaten)
-        wert = breite * hoehe or len(rohdaten)
+        if not (breite and hoehe):
+            continue                    # ohne Pillow keine Masse, kein Urteil
+        if taugt_als_bild(breite, hoehe, len(rohdaten)):
+            continue
+        wert = breite * hoehe
         if wert > bester_wert:
             beste, bester_wert = nummer, wert
     return beste
@@ -1321,11 +1332,18 @@ def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
         print(f"  {len(bilder)} Bild(er) aus der Mitteilung:")
         hochgeladen = bilder_anhaengen(bilder, d["id"], kopf, meldung["titel"])
 
-    # Immer eines eintragen: Ein Entwurf ohne Bild sieht in der Liste aus wie
-    # ein Fehler. Welches es am Ende wird, entscheidet die Redaktion - das
-    # Austauschen kostet zwei Klicks, das erste Suchen kostet Minuten.
-    if not nummer and hochgeladen:
-        vorschlag = hochgeladen[min(bestes_bild(bilder), len(hochgeladen) - 1)]
+    # Wenn moeglich eines eintragen: Ein Entwurf ohne Bild sieht in der Liste
+    # aus wie ein Fehler. Welches es am Ende wird, entscheidet die Redaktion -
+    # das Austauschen kostet zwei Klicks, das erste Suchen kostet Minuten.
+    # Lieber gar keiner als ein falscher Vorschlag: Ein Streifen aus dem
+    # Briefkopf sieht im Beitrag schlimmer aus als ein leeres Feld, und er
+    # bleibt oft stehen, weil niemand ihn fuer einen Fehler haelt.
+    wahl = bestes_bild(bilder) if (not nummer and hochgeladen) else -1
+    if wahl < 0 and not nummer and hochgeladen:
+        print("  Keines der Bilder taugt als Beitragsbild (Streifen oder "
+              "Textblock) - kein Vorschlag.")
+    if wahl >= 0:
+        vorschlag = hochgeladen[min(wahl, len(hochgeladen) - 1)]
         try:
             wp_ruf(f"/posts/{d['id']}", kopf,
                    json.dumps({"featured_media": vorschlag}).encode("utf-8"),
