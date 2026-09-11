@@ -188,6 +188,11 @@ SCHEMA = {
             },
         },
         "hintergrund": {"type": "string"},
+        # Bildunterschrift und Bildnachweis der Mitteilung - nur im Wortlaut
+        # der Quelle. Ausgegeben werden sie allein dann, wenn der Meldung auch
+        # ein Bild beiliegt; siehe baue_html().
+        "bildzeile": {"type": "string"},
+        "bildnachweis": {"type": "string"},
         # Ein bis zwei Suchbegriffe fuer das MVF-Archiv. Das Modell nennt nur
         # die Begriffe - die Adressen holt verwandtes.py aus der
         # WordPress-Suche. Ein Modell, das Beitragsadressen nennen darf,
@@ -524,6 +529,17 @@ def schreibe_meldung(text: str, links: list[str], hinweis: str = "") -> dict:
         "'Pflegepersonaluntergrenzen', 'Organspende', 'Klinikreform'. Nicht "
         "der Absendername und keine ganzen Sätze. Zwei Begriffe sind besser "
         "als einer, wenn die Meldung zwei Themenstränge hat.\n"
+        "- bildzeile: die Bildunterschrift der Mitteilung, falls eine "
+        "dabeisteht - im Wortlaut, höchstens zwei Sätze. Sie steht meist "
+        "hinter 'Bildunterschrift', 'Bildtext', 'BU' oder direkt beim "
+        "Bildverweis. Steht keine da, lass das Feld weg. **Niemals selbst "
+        "eine formulieren** - eine erfundene Bildzeile behauptet, wer oder "
+        "was auf einem Bild zu sehen ist, das du gar nicht gesehen hast.\n"
+        "- bildnachweis: Quelle, Fotografin oder Fotograf und "
+        "Copyright-Vermerk zum Bild, falls genannt - etwa "
+        "'Foto: Deutsche Krebshilfe/Kim Müller' oder '© BVMed'. Nur im "
+        "Wortlaut der Quelle, sonst weglassen. Der Nachweis entscheidet "
+        "darüber, ob die Redaktion das Bild überhaupt verwenden darf.\n"
         "- schlagwort: genau eines aus der Hausliste, und zwar das inhaltlich "
         "nächstliegende. 'Vermischtes' ist die Notlösung für Meldungen, die "
         "wirklich in keine Rubrik passen - nicht die bequeme Wahl, wenn zwei "
@@ -595,7 +611,28 @@ def escape(t: str) -> str:
     return html.escape(t or "", quote=True)
 
 
-def baue_html(meldung: dict, erlaubt: list[str]) -> str:
+def bildzeile_html(meldung: dict) -> str:
+    """Bildzeile und Bildnachweis, vier Leerzeilen unter der Meldung.
+
+    Der Abstand ist Absicht und keine Formatierungslaune: Der Block ist
+    Zuarbeit fuer die Redaktion, nicht Teil des Fliesstextes. Anke Heiser
+    setzt das Beitragsbild von Hand - ein Standmotiv gibt es bewusst nicht -
+    und braucht dafuer beides beieinander: was auf dem Bild zu sehen ist und
+    wem es gehoert. Ohne Nachweis darf es nicht verwendet werden.
+
+    Beides steht nur dann in der Meldung, wenn die Quelle es nennt.
+    """
+    zeile = (meldung.get("bildzeile") or "").strip()
+    nachweis = (meldung.get("bildnachweis") or "").strip()
+    if not (zeile or nachweis):
+        return ""
+    innen = escape(zeile)
+    if nachweis:
+        innen += ("<br>" if zeile else "") + escape(nachweis)
+    return "<p>&nbsp;</p>" * 4 + f"<p><em>{innen}</em></p>"
+
+
+def baue_html(meldung: dict, erlaubt: list[str], bild_dabei: bool = False) -> str:
     teile = []
     for a in meldung.get("absaetze", []):
         # Bis zum 26.08.2026 waren die Absaetze schlichte Zeichenketten. Aeltere
@@ -625,13 +662,22 @@ def baue_html(meldung: dict, erlaubt: list[str]) -> str:
     if meldung.get("hintergrund"):
         teile.append(f"<p>{escape(meldung['hintergrund'])}</p>")
 
+    # Die Bildzeile gehoert zur Meldung und steht deshalb VOR "Mehr zum
+    # Thema" - jener Block fuehrt aus der Meldung heraus. Ohne Bild entfaellt
+    # sie ganz: Eine Bildunterschrift ohne Bild verwirrt nur.
+    if bild_dabei:
+        teile.append(bildzeile_html(meldung))
+    elif meldung.get("bildzeile") or meldung.get("bildnachweis"):
+        print("  Bildzeile in der Mitteilung, aber kein Bild dabei - "
+              "weggelassen.")
+
     # "Mehr zum Thema" ganz am Schluss, nach dem Hintergrundabsatz: Der Block
     # fuehrt aus der Meldung heraus und hat vor ihrem Ende nichts zu suchen.
     block = verwandtes.html_block(
         verwandtes.finde(meldung.get("verwandte_suche") or []))
     if block:
         teile.append(block)
-    return "\n".join(teile)
+    return "\n".join(t for t in teile if t)
 
 
 # ------------------------------------------------------------ Absenderlogos
@@ -1457,13 +1503,15 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
             meldung = schreibe_meldung(text, adressen(text))
             if meldung.get("schlagwort") not in SCHLAGWOERTER:
                 meldung["schlagwort"] = "Vermischtes"
-            inhalt = baue_html(meldung, adressen(text))
+            # Erst das Bildmaterial, dann der Satz: Die Bildzeile kommt nur
+            # in die Meldung, wenn auch ein Bild dabei ist.
+            bilder = bilder_aus_mailobjekt(mail)
+            inhalt = baue_html(meldung, adressen(text), bool(bilder))
             print(f"  {meldung['titel']}")
             if trocken:
                 print("  [trocken] kein Entwurf, Mail bleibt liegen.\n")
                 continue
-            neu = entwurf(meldung, inhalt, None, False, None,
-                          bilder_aus_mailobjekt(mail),
+            neu = entwurf(meldung, inhalt, None, False, None, bilder,
                           domain_von(str(getattr(mail, "SenderEmailAddress",
                                                  ""))))
             ablegen(meldung, inhalt, text, None)
@@ -1544,7 +1592,8 @@ def main() -> int:
               "Vermischtes gesetzt.")
         meldung["schlagwort"] = "Vermischtes"
 
-    inhalt = baue_html(meldung, links)
+    # Beim Einzellauf zaehlt das Bild, das die Redaktion mitgibt: --bild.
+    inhalt = baue_html(meldung, links, bool(a.bild))
     if len(meldung["titel"]) > 75:
         # Laengere Titel schneidet die Trefferliste der Suchmaschinen ab.
         print(f"Hinweis: Titel ist {len(meldung['titel'])} Zeichen lang - "
