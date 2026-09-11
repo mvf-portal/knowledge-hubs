@@ -1,4 +1,4 @@
-# Ein Weckruf von aussen, dreizehn Laeufe - der Dirigent.
+# Ein Weckruf von aussen, sechzehn Laeufe - der Dirigent.
 #
 # GitHubs Cron ist "best effort" und hat am 27. und 28.08.2026 zwei Naechte
 # hintereinander gar nichts ausgeloest, obwohl alle Workflows aktiv waren und
@@ -8,15 +8,15 @@
 # Deshalb kommt der Weckruf von aussen - vom Cron des MVF-Servers, siehe
 # mvf-server/LIESMICH.md - und trifft NUR dieses Repo:
 #
-#   MVF-Server  --repository_dispatch-->  Dirigent  --workflow_dispatch--> 12 Hubs
+#   MVF-Server  --repository_dispatch-->  Dirigent  --workflow_dispatch--> 15 Hubs
 #
 # Der Vorteil dieser Kette: Der Server macht einen einzigen Aufruf, und die
-# Verteilung auf zwoelf Repos geschieht innerhalb von GitHub. Am 30.08.2026
+# Verteilung auf fuenfzehn Repos geschieht innerhalb von GitHub. Am 30.08.2026
 # gegen eine Fassung mit Cloudflare-Worker entschieden - der Server laeuft
 # ohnehin durch, und der Schluessel bleibt im Haus.
 #
 # Es ist EIN Token an zwei Stellen: hier als Secret DIRIGENT_TOKEN (Actions:
-# write, zum Starten der zwoelf Portale) und auf dem Server in
+# write, zum Starten der fuenfzehn Portale) und auf dem Server in
 # wecker-zugang.php (Contents: write, fuer repository_dispatch).
 #
 # Doppelte Weckrufe kosten nichts: update_studies.py bricht ab, wenn das Archiv
@@ -39,9 +39,9 @@ jobs:
   wecken:
     runs-on: ubuntu-latest
     steps:
-      - name: Die zwölf Hubs anstoßen
+      - name: Die fünfzehn Hubs anstoßen
         env:
-          # Fein granuliertes Token mit "Actions: write" auf den zwölf
+          # Fein granuliertes Token mit "Actions: write" auf den fünfzehn
           # Portal-Repos. Ohne dieses Secret bricht der Lauf sofort ab - der
           # GITHUB_TOKEN dieses Repos darf in fremden Repos nichts starten.
           GH_TOKEN: ${{ secrets.DIRIGENT_TOKEN }}
@@ -56,7 +56,8 @@ jobs:
           for REPO in \
             versorgungsforschung-portal klima-gesundheit-portal ki-gesundheit-portal \
             pflege-portal longevity-portal healthliteracy-portal impfen-portal \
-            ncd-portal gender-portal adipositas-portal safety-portal mental-portal
+            ncd-portal gender-portal adipositas-portal safety-portal mental-portal \
+            onkologie-portal kardio-portal diabetes-portal
           do
             if gh workflow run update-studies.yml -R "mvf-portal/$REPO" \
                  -f nur_studien="$NUR_STUDIEN"; then
@@ -67,9 +68,9 @@ jobs:
             fi
           done
           echo "$FEHLER Repo(s) ohne Start."
-          # Ein einzelner Ausfall darf die übrigen elf nicht mitreißen; erst
+          # Ein einzelner Ausfall darf die übrigen vierzehn nicht mitreißen; erst
           # wenn NICHTS lief, ist der Weckruf gescheitert.
-          [ "$FEHLER" -lt 12 ]
+          [ "$FEHLER" -lt 15 ]
 
       # Der Sammelbericht liest die Statusdateien der Hubs. Er braucht Vorlauf,
       # deshalb erst nach einer Weile - die Hubs brauchen ein bis zwei Minuten.

@@ -43,9 +43,14 @@ WURZEL = pathlib.Path(__file__).resolve().parent.parent
 PROTOKOLL = WURZEL / "laufwache.log"
 MELDEADRESSE = "stegmaier@m-vf.de"
 
-# Dieselbe Pflegestelle wie PORTALE in versand_bericht.py, studien_sammeln.py
-# und abfrage_wache.py. Der Sammelbericht steht mit in der Liste: Faellt er aus,
-# faellt die einzige taegliche Rueckmeldung ueber alle Hubs aus.
+# ACHTUNG: Diese Liste wird NICHT von portale_pflegen.py erzeugt, anders als
+# PORTALE in versand_bericht.py, studien_sammeln.py und abfrage_wache.py. Sie
+# steht bewusst daneben - die Wache prueft nur, was der Dirigent auch weckt,
+# und der weckt nur, was versenden soll. Ein neuer Hub gehoert deshalb von Hand
+# hierher UND in dirigent.yml; portale.json allein genuegt nicht.
+#
+# Der Sammelbericht steht mit in der Liste: Faellt er aus, faellt die einzige
+# taegliche Rueckmeldung ueber alle Hubs aus.
 LAEUFE = [
     ("Versorgungsforschung", "mvf-portal/versorgungsforschung-portal", "update-studies.yml"),
     ("Hitze, Klima & Gesundheit", "mvf-portal/klima-gesundheit-portal", "update-studies.yml"),
@@ -59,6 +64,9 @@ LAEUFE = [
     ("Adipositas", "mvf-portal/adipositas-portal", "update-studies.yml"),
     ("Patientensicherheit", "mvf-portal/safety-portal", "update-studies.yml"),
     ("Psychische Gesundheit", "mvf-portal/mental-portal", "update-studies.yml"),
+    ("Onkologie", "mvf-portal/onkologie-portal", "update-studies.yml"),
+    ("Kardiologie", "mvf-portal/kardio-portal", "update-studies.yml"),
+    ("Diabetes", "mvf-portal/diabetes-portal", "update-studies.yml"),
     ("Sammelbericht", "mvf-portal/knowledge-hubs", "versand-bericht.yml"),
 ]
 

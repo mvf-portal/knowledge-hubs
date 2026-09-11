@@ -70,9 +70,6 @@ PORTALE = [
 # Zeile daneben auch nicht mehr auf.
 WARTEND = [
     # erzeugt aus portale.json von portale_pflegen.py - nicht von Hand aendern
-    "mvf-portal/onkologie-portal",
-    "mvf-portal/kardio-portal",
-    "mvf-portal/diabetes-portal",
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 ROH_ARCHIV = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"
@@ -116,15 +113,25 @@ def hole(repo: str) -> dict | None:
         raise
 
 
-def ortszeit(utc_iso: str | None) -> str:
-    """Versandzeitpunkt in deutscher Ortszeit - danach richtet sich der Leser."""
+def ortszeit(utc_iso: str | None, heute: str | None = None) -> str:
+    """Versandzeitpunkt in deutscher Ortszeit - danach richtet sich der Leser.
+
+    Das Datum steht nur dabei, wenn der Versand NICHT heute ist. Sonst waere es
+    bei zwoelf gleichzeitig terminierten Hubs zwoelfmal dieselbe ueberfluessige
+    Angabe. Am 11.09.2026 hat der Diabetes-Hub gezeigt, warum es die Ausnahme
+    braucht: Sein Lauf kam so spaet, dass die Kampagne auf Montag terminiert
+    wurde - im Bericht stand trotzdem nur "geht um 10:00 Uhr raus", und das las
+    sich wie heute.
+    """
     if not utc_iso:
-        return "?"
+        return "zu unbekannter Zeit"
     try:
         z = dt.datetime.fromisoformat(utc_iso).astimezone(ZoneInfo("Europe/Berlin"))
-        return z.strftime("%H:%M Uhr")
     except ValueError:
         return utc_iso
+    if heute and z.date().isoformat() != heute:
+        return z.strftime("am %d.%m.%Y um %H:%M Uhr")
+    return z.strftime("um %H:%M Uhr")
 
 
 def letzter_zugang(repo: str) -> str | None:
@@ -260,7 +267,7 @@ def zeile(name: str, repo: str, s: dict | None, heute: str, ruhetag: bool = Fals
         return (f"- **{name}** — Status ist vom {s.get('datum')}, nicht von heute. "
                 f"Der nächtliche Lauf hat nichts Neues gefunden." + frische(repo, heute))
     if s.get("stand") == "terminiert":
-        uhr = ortszeit(s.get("termin_utc"))
+        uhr = ortszeit(s.get("termin_utc"), heute)
         # Die Empfaengerzahl steht bewusst im Bericht: Sie ist die einzige
         # Zahl, an der ein verrutschtes Segment taeglich auffaellt.
         wer = ""
@@ -268,7 +275,7 @@ def zeile(name: str, repo: str, s: dict | None, heute: str, ruhetag: bool = Fals
             wer = f" an {s['empfaenger']} Empfänger"
             if s.get("listengroesse"):
                 wer += f" von {s['listengroesse']}"
-        return (f"- ✅ **{name}** — {s['anzahl']} Studien, geht um {uhr}{wer} raus. "
+        return (f"- ✅ **{name}** — {s['anzahl']} Studien, geht {uhr}{wer} raus. "
                 f"[Ansehen oder absagen]({s['kampagne']})  \n"
                 f"  <sub>{s.get('betreff', '')}</sub>{_aussortiert(s)}"
                 + poolzeile(s) + frische(repo, heute))
