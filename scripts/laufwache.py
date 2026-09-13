@@ -126,6 +126,40 @@ def laeufe_von_heute(repo: str, workflow: str, heute: str) -> list[dict]:
     return aus
 
 
+# Der Dirigent weckt dieselben Repos wie diese Wache. Laeuft er noch, ist er
+# zustaendig - und die Wache haelt still.
+#
+# Am 13.09.2026 tat sie es nicht: GitHub liess den um 04:20 Uhr angelegten
+# Dirigenten-Lauf zwei Stunden und zehn Minuten auf einen Runner warten. Um
+# 08:30 Uhr sah die Wache fuer die ersten drei Portale "KEIN Lauf heute" und
+# stiess sie an - fuenf Sekunden bevor der Dirigent dasselbe tat. Beide Laeufe
+# holten die Studien, beide wollten pushen, der zweite bekam
+# "! [rejected] main -> main". Ab dem vierten Portal waren die Anstoesse des
+# Dirigenten sichtbar, deshalb traf es genau die ersten drei.
+DIRIGENT_REPO = "mvf-portal/knowledge-hubs"
+DIRIGENT_WORKFLOW = "dirigent.yml"
+
+
+def dirigent_unterwegs(heute: str) -> dict | None:
+    """Ein Dirigenten-Lauf von heute, der noch nicht durch ist - oder nichts.
+
+    Ohne Altersgrenze: Ein Lauf, der seit Stunden auf einen Runner wartet,
+    weckt die Hubs trotzdem, sobald er einen bekommt. Genau daran ist der
+    13.09.2026 gescheitert.
+
+    Laesst sich die Frage nicht beantworten, gilt der Dirigent als nicht
+    unterwegs: Eine Wache, die bei jeder Stoerung der Abfrage schweigt, ist
+    keine.
+    """
+    try:
+        for lauf in laeufe_von_heute(DIRIGENT_REPO, DIRIGENT_WORKFLOW, heute):
+            if lauf["status"] != "completed":
+                return lauf
+    except Exception:  # noqa: BLE001
+        return None
+    return None
+
+
 def anstossen(repo: str, workflow: str) -> str:
     r = gh_ruf("workflow", "run", workflow, "-R", repo)
     return "angestossen" if r.returncode == 0 else f"START FEHLGESCHLAGEN: {r.stderr.strip()[:120]}"
@@ -157,6 +191,16 @@ def main() -> int:
     heute = jetzt.date().isoformat()
     zeilen, auffaellig = [], []
 
+    # Erst den Dirigenten fragen, dann die Hubs: Sonst wecken beide.
+    wartend = dirigent_unterwegs(heute)
+    if wartend:
+        zeilen.append(f"!! Dirigent: seit {wartend['wann']:%H:%M} Uhr noch nicht "
+                      f"durch ({wartend['status']}) - diese Runde stoesst "
+                      f"nichts an, er ist zustaendig.")
+        # Trotzdem melden: Haengt der Dirigent wirklich fest, darf die Wache
+        # nicht auch noch schweigen.
+        auffaellig.append("Dirigent")
+
     for name, repo, workflow in LAEUFE:
         try:
             heutige = laeufe_von_heute(repo, workflow, heute)
@@ -172,7 +216,12 @@ def main() -> int:
             zeilen.append(f"…  {name}: laeuft gerade ({laufend[0]['wann']:%H:%M} Uhr).")
         else:
             grund = "fehlgeschlagen" if heutige else "KEIN Lauf heute"
-            tat = "nicht angestossen (--trocken)" if a.trocken else anstossen(repo, workflow)
+            if a.trocken:
+                tat = "nicht angestossen (--trocken)"
+            elif wartend:
+                tat = "nicht angestossen (Dirigent ist noch unterwegs)"
+            else:
+                tat = anstossen(repo, workflow)
             zeilen.append(f"!! {name}: {grund} - {tat}")
             auffaellig.append(name)
 
@@ -183,10 +232,20 @@ def main() -> int:
         f.write(text + "\n\n")
 
     if auffaellig and not a.ohne_mail:
+        if wartend:
+            nachsatz = ("\n\nAngestoßen wurde nichts: Der Dirigent steht noch aus "
+                        "und weckt die Hubs selbst, sobald GitHub ihm einen Runner "
+                        "gibt. Zwei Wecker zugleich hatten am 13.09.2026 zu "
+                        "abgelehnten Pushes geführt. Die nächste Runde dieser Wache "
+                        "sieht nach, ob es gereicht hat:"
+                        "\nhttps://github.com/mvf-portal\n")
+        else:
+            nachsatz = ("\n\nDie fehlenden Läufe sind angestoßen worden, sofern "
+                        "GitHub erreichbar war. Bis zum Versand um 10:00 Uhr bleibt "
+                        "Zeit, das Ergebnis anzusehen:"
+                        "\nhttps://github.com/mvf-portal\n")
         melden(f"Knowledge-Hubs: {len(auffaellig)} Lauf/Laeufe fehlten heute früh",
-               text + "\n\nDie fehlenden Läufe sind angestoßen worden, sofern GitHub "
-                      "erreichbar war. Bis zum Versand um 10:00 Uhr bleibt Zeit, das "
-                      "Ergebnis anzusehen:\nhttps://github.com/mvf-portal\n")
+               text + nachsatz)
     return 0
 
 
