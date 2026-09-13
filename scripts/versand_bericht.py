@@ -359,6 +359,46 @@ def doppelungen(gesammelt: dict[str, list[str]]) -> str:
     return chr(10).join(zeilen)
 
 
+def bestehende_meldung(praefix: str) -> int | None:
+    """Nummer einer OFFENEN Tagesmeldung mit diesem Titelanfang - oder None.
+
+    Am 13.09.2026 standen zwei wortgleiche Meldungen desselben Tages im Repo
+    (#50 und #51). Der Dirigent hatte ueber zwei Stunden auf einen Runner
+    gewartet und weckte die Hubs erst um 06:30 UTC - genau in der Minute, in
+    der die Laufwache nachsieht. Sie fand keinen Lauf, stiess selbst an und
+    startete dabei auch den Sammelbericht; vier Minuten spaeter tat der
+    Dirigent dasselbe.
+
+    Gesucht wird ueber den Titelanfang mit Datum, nicht ueber den ganzen
+    Titel: Der Rest zaehlt Terminiertes und Gestopptes und kann sich zwischen
+    zwei Laeufen desselben Morgens durchaus aendern - dann soll die Meldung
+    fortgeschrieben werden, nicht verdoppelt.
+
+    Nur OFFENE Meldungen zaehlen. Wer die Meldung des Morgens geschlossen hat,
+    ist mit ihr durch; ein spaeterer Lauf darf dann eine neue anlegen.
+
+    Bei jedem Zweifel None: Lieber eine zweite Meldung als gar keine - der
+    Sammelbericht ist die einzige taegliche Rueckmeldung ueber alle Hubs.
+    """
+    r = subprocess.run(["gh", "issue", "list", "-R", BERICHT_REPO,
+                        "--state", "open", "--limit", "30",
+                        "--json", "number,title"],
+                       capture_output=True, text=True,
+                       encoding="utf-8", errors="replace")
+    if r.returncode:
+        print(f"Suche nach einer bestehenden Meldung fehlgeschlagen "
+              f"({r.stderr.strip()[:120] or 'ohne Meldung'}) - es wird eine neue angelegt.")
+        return None
+    try:
+        offen = json.loads(r.stdout or "[]")
+    except json.JSONDecodeError:
+        return None
+    for e in offen:
+        if e.get("title", "").startswith(praefix):
+            return e["number"]
+    return None
+
+
 def main() -> int:
     trocken = "--trocken" in sys.argv
     heute = dt.date.today().isoformat()
@@ -446,6 +486,15 @@ def main() -> int:
     if not os.environ.get("GH_TOKEN") and not os.environ.get("GITHUB_TOKEN"):
         print("\nKein Token - keine Issue angelegt.")
         return 0
+    # Steht die Meldung dieses Tages schon offen, wird sie fortgeschrieben.
+    nummer = bestehende_meldung(
+        f"Newsletter {dt.date.fromisoformat(heute).strftime('%d.%m.%Y')} —")
+    if nummer:
+        subprocess.run(["gh", "issue", "edit", str(nummer), "-R", BERICHT_REPO,
+                        "--title", titel, "--body", rumpf], check=True)
+        print(f"\nMeldung #{nummer} fortgeschrieben - keine zweite angelegt.")
+        return 0
+
     befehl = ["gh", "issue", "create", "-R", BERICHT_REPO,
               "--title", titel, "--body", rumpf]
     if BERICHT_ZUSTAENDIG:
