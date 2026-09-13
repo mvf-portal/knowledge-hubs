@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import datetime
 import json
 import os
 import pathlib
@@ -211,7 +212,27 @@ def main() -> int:
     ziel.mkdir(parents=True, exist_ok=True)
     neu_indd = ziel / f"MVF_NL Header_{nummer:02d}-{jahr}.indd"
 
+    # Der Kopf darf lange vor dem Erscheinen gebaut werden - eingesetzt wird er
+    # erst am Erscheinungstag. Der Hinweis erspart ein zu frueh getauschtes Bild.
+    try:
+        termine = json.loads(
+            (pathlib.Path(__file__).with_name("druckausgaben.json"))
+            .read_text(encoding="utf-8"))["ausgaben"]
+        tag = termine.get(f"{nummer:02d}-{jahr}")
+    except Exception:
+        tag = None
+
     print(f"Titelkopf Ausgabe {nummer:02d}/{jahr}")
+    if tag:
+        erscheint = datetime.date.fromisoformat(tag)
+        if erscheint > datetime.date.today():
+            print(f"  Erscheint am {erscheint:%d.%m.%Y} - bis dahin bleibt der "
+                  "Kopf der Vorausgabe der richtige.")
+        else:
+            print(f"  Erschienen am {erscheint:%d.%m.%Y} - dieser Kopf gilt.")
+    else:
+        print(f"  Kein Erscheinungstag in druckausgaben.json - bitte "
+              f"'{nummer:02d}-{jahr}' dort eintragen.")
     print(f"  Vorlage:    {vorlage}")
     print(f"  Titelbild:  {bild}")
     print(f"  Neue Datei: {neu_indd}")

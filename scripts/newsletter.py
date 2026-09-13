@@ -50,6 +50,7 @@ import datetime as dt
 import html
 import json
 import os
+import pathlib
 import re
 import sys
 import urllib.error
@@ -94,6 +95,10 @@ RUBRIKEN = [
 NEWS_RUBRIK = 1000
 NICHT = {2924, 2923}
 
+# Die Erscheinungstage der gedruckten Ausgaben. Daran haengt allein der
+# Titelkopf des Newsletters - siehe newsletter_kopf.py.
+DRUCKAUSGABEN = pathlib.Path(__file__).with_name("druckausgaben.json")
+
 # Das Bild in einer Meldung ist kein Bild, sondern ein Zaehlpixel: die Adresse
 # des Artikels mit ?iActionPost. Wer das weglaesst, nimmt der Redaktion die
 # Reichweitenmessung - ohne dass im Newsletter etwas fehlte.
@@ -117,6 +122,9 @@ PUNKT = ("https://gallery.mailchimp.com/f4c91757bc7d8c740641acb50/images/"
 # Absichtlich ohne Zeilenende: Die Entwuerfe heissen "MVF Newsletter 2026-19
 # (Vorschlag 1 - alles)". Wird einer davon ohne Umbenennen versendet, findet
 # ihn die Zaehlung der naechsten Ausgabe trotzdem wieder.
+#
+# Die Erscheinungstage der Hefte stehen daneben in druckausgaben.json -
+# daran haengt allein der Titelkopf, siehe newsletter_kopf.py.
 AUSGABE_MUSTER = re.compile(r"^MVF Newsletter (\d{4})-(\d+)\b")
 
 
@@ -199,6 +207,42 @@ def versandte_adressen(ausgaben_liste: list[dict], wieviele: int) -> set[str]:
             adressen.add(gefunden.group(1))
     return adressen
 
+
+
+def titelkopf(stichtag: dt.datetime) -> str:
+    """Welche Druckausgabe an diesem Tag auf dem Titelkopf steht.
+
+    Der Kopf zeigt das Cover des aktuellen Hefts. Er wechselt nicht mit dem
+    Newsletter, sondern mit dem Heft, also sechsmal im Jahr. Weil der Entwurf
+    eine Kopie ist, erbt er den Kopf der Vorausgabe - richtig in zwoelf von
+    dreizehn Faellen. Verglichen wird deshalb mit dem Stand beim letzten
+    Versand: Nur wenn dazwischen ein Heft erschienen ist, ist der geerbte Kopf
+    falsch, und nur dann soll der Bericht davon anfangen.
+    """
+    try:
+        eintraege = json.loads(DRUCKAUSGABEN.read_text(encoding="utf-8"))["ausgaben"]
+    except Exception:
+        return ""
+    gueltig = ""
+    for name, tag in sorted(eintraege.items(), key=lambda paar: paar[1]):
+        if dt.date.fromisoformat(tag) <= stichtag.date():
+            gueltig = name
+    return gueltig
+
+
+def kopfadresse(ausgabe: str) -> str:
+    """Die Adresse des Titelkopfs in Mailchimps Dateiverwaltung, wenn er dort
+    schon liegt - newsletter_kopf.py legt ihn unter festem Namen ab."""
+    gesucht = f"NL_Header_{ausgabe}-620px.jpg"
+    try:
+        d = mc("/file-manager/files", {"count": 60, "type": "image",
+                                       "sort_field": "added_date", "sort_dir": "DESC"})
+    except SystemExit:
+        return ""
+    for datei in d.get("files", []):
+        if datei.get("name") == gesucht:
+            return datei.get("full_size_url", "")
+    return ""
 
 # --------------------------------------------------------------------------
 # WordPress
@@ -532,9 +576,23 @@ def main() -> int:
     print(f"Aufmacher: {nurtext(topthema['title']['rendered'])[:70]}")
     print("\nWas die Redaktion noch selbst pruefen muss:")
     print("  - Das Werbebanner stammt unveraendert aus der Vorausgabe.")
-    print("  - Ebenso der Titelkopf. Er wechselt nur mit der Druckausgabe;")
-    print("    den neuen baut 'python scripts/newsletter_kopf.py NN-JJJJ',")
-    print("    eingesetzt wird er von Hand im Baukasten.")
+    jetzt, vorher = titelkopf(heute), titelkopf(gesendet)
+    if not jetzt:
+        print("  - Der Titelkopf stammt ebenfalls aus der Vorausgabe. Fuer welches")
+        print("    Heft er gilt, steht nicht in druckausgaben.json.")
+    elif vorher and jetzt != vorher:
+        print(f"  - HEFTWECHSEL: Seit dem letzten Versand ist Heft {jetzt}")
+        print(f"    erschienen. Der Entwurf traegt noch den Kopf {vorher} - im")
+        print("    Baukasten oben auf den Kopf klicken und tauschen;")
+        print("    danach erbt ihn jede weitere Kopie.")
+        adresse = kopfadresse(jetzt)
+        if adresse:
+            print(f"    Liegt bereit: {adresse}")
+        else:
+            print(f"    Noch zu bauen: python scripts/newsletter_kopf.py {jetzt}")
+    else:
+        print(f"  - Der Titelkopf ({jetzt}) ist der richtige und kommt unveraendert")
+        print("    aus der Vorausgabe. Nichts zu tun.")
     if auszug_namen:
         print("  - 'Aus der aktuellen Ausgabe' neu gesetzt - Langtitel, "
               "die bisher von Hand gekuerzt wurden:")

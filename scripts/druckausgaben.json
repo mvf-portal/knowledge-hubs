@@ -1,0 +1,24 @@
+{
+  "_liesmich": [
+    "Erscheinungstage der gedruckten Ausgaben. Daran haengt allein der",
+    "Titelkopf des Newsletters: Ab dem genannten Tag gilt der neue Kopf,",
+    "vorher der alte. newsletter.py sagt im Bericht, welcher gerade richtig",
+    "ist, und mahnt den Wechsel nur an, wenn er faellig ist.",
+    "",
+    "Eine neue Ausgabe: eine Zeile ergaenzen. Fehlt sie, sagt der Bericht,",
+    "dass kein Termin eingetragen ist - er raet nicht.",
+    "",
+    "Die Tage bis 04/26 sind aus den Upload-Tagen der Titelkoepfe in",
+    "Mailchimps Dateiverwaltung abgeleitet und koennen um ein, zwei Tage",
+    "danebenliegen; fuer den Zweck reicht das. 05/26 hat Peter Stegmaier am",
+    "13.09.2026 genannt."
+  ],
+  "ausgaben": {
+    "06-2025": "2025-12-09",
+    "01-2026": "2026-02-03",
+    "02-2026": "2026-04-14",
+    "03-2026": "2026-06-09",
+    "04-2026": "2026-08-04",
+    "05-2026": "2026-10-04"
+  }
+}
