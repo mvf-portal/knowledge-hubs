@@ -61,6 +61,8 @@ JPG = 1246775072                 # ExportFormat.JPG
 NICHT_SICHERN = 1852776480       # SaveOptions.NO
 MAXIMAL = 1701727608             # JPEGOptionsQuality.MAXIMUM ("enMx")
 RGB = 1666336578                 # JPEGColorSpace.RGB ("cRGB")
+SEITENRAHMEN = 1131573328        # PDFCrop.CROP_PDF
+INHALTSRAHMEN = 1131566703       # PDFCrop.CROP_CONTENT_VISIBLE_LAYERS
 
 AUSGABE_MUSTER = re.compile(r"^(\d{2})-(\d{4})$")
 
@@ -73,11 +75,43 @@ def mc_schluessel() -> str:
     return ""
 
 
+def mc(pfad: str, method: str = "GET", body: dict | None = None) -> dict:
+    schluessel = mc_schluessel()
+    rechenzentrum = schluessel.rsplit("-", 1)[-1]
+    daten = json.dumps(body).encode("utf-8") if body is not None else None
+    anfrage = urllib.request.Request(
+        f"https://{rechenzentrum}.api.mailchimp.com/3.0{pfad}", data=daten, method=method)
+    anfrage.add_header("Authorization", "Basic " + base64.b64encode(
+        f"any:{schluessel}".encode()).decode())
+    anfrage.add_header("Content-Type", "application/json")
+    with urllib.request.urlopen(anfrage, timeout=180) as antwort:
+        roh = antwort.read()
+    return json.loads(roh) if roh else {}
+
+
+def aufraeumen(name: str) -> None:
+    """Eine aeltere Datei gleichen Namens weg. Mailchimp laesst Doppel zu, und
+    zwei gleich heissende Titelkoepfe in der Auswahl sind eine Falle - die
+    Redaktion greift zum falschen."""
+    try:
+        d = mc("/file-manager/files?count=60&sort_field=added_date&sort_dir=DESC&type=image")
+    except Exception:
+        return
+    for datei in d.get("files", []):
+        if datei.get("name") == name:
+            try:
+                mc(f"/file-manager/files/{datei['id']}", method="DELETE")
+                print(f"  aeltere Fassung entfernt (Nr. {datei['id']})")
+            except Exception as fehler:
+                print(f"  aeltere Fassung blieb liegen: {fehler}")
+
+
 def hochladen(bild: pathlib.Path) -> str:
     """Legt das Bild in Mailchimps Dateiverwaltung und gibt die Adresse zurueck."""
     schluessel = mc_schluessel()
     if not schluessel:
         return ""
+    aufraeumen(bild.name)
     rechenzentrum = schluessel.rsplit("-", 1)[-1]
     koerper = json.dumps({"name": bild.name,
                           "file_data": base64.b64encode(bild.read_bytes()).decode()})
@@ -218,7 +252,18 @@ def main() -> int:
         # Bildausschnitt bleiben damit auf den Millimeter dieselben. Ein
         # "einpassen" waere Auslegungssache und verschoebe das Cover.
         grenzen = grafik.GeometricBounds
-        rahmen.Place(str(bild))
+        # Ein PDF platziert InDesign von Haus aus auf seinen INHALT - bei
+        # MVf0526-Titell.pdf sind das 202,2 x 285,4 mm statt der 210 x 297 der
+        # Seite. Das Titelbild fuellte damit den Rahmen bis zur Unterkante, und
+        # die ragt 2,3 mm ueber die weisse Flaeche hinaus, auf der der Titel
+        # liegt: Die letzte Zeile des Covers stand im Gruen. Mit dem
+        # Seitenrahmen sitzt das PDF so wie die JPGs der Vorjahre.
+        vorher = indesign.PDFPlacePreferences.PDFCrop
+        indesign.PDFPlacePreferences.PDFCrop = SEITENRAHMEN
+        try:
+            rahmen.Place(str(bild))
+        finally:
+            indesign.PDFPlacePreferences.PDFCrop = vorher
         rahmen.Graphics.Item(1).GeometricBounds = grenzen
 
         # Neben dem Titelbild steht "Ausgabe 04/26" - in einem Textrahmen
