@@ -1,0 +1,77 @@
+# Alle zwei Wochen montags: der naechste MVF-Newsletter als Entwurf.
+#
+# Der Lauf ist TAEGLICH, die Ausgabe trotzdem vierzehntaegig - entschieden wird
+# das im Skript, nicht im Cron. Drei Bedingungen muessen zusammenkommen: kein
+# offener Entwurf, mindestens zehn Tage seit der letzten versendeten Ausgabe,
+# und Montag. Ist eine Ausgabe ueberfaellig (vierzehn Tage), laeuft es auch an
+# einem anderen Tag an.
+#
+# Warum taeglich und nicht "0 5 * * 1": GitHubs Cron ist ausdruecklich best
+# effort und hat im August 2026 zwei Naechte hintereinander gar nichts
+# ausgeloest (siehe mvf-server/LIESMICH.md). Ein ausgefallener Montag haette
+# die Ausgabe um eine Woche verschoben; so holt der Dienstag sie nach.
+#
+# Angelegt wird ein ENTWURF. Versendet wird in Mailchimp, von Hand.
+
+name: MVF-Newsletter (Entwurf)
+
+on:
+  schedule:
+    - cron: "20 5 * * *"          # 07:20 Berlin, nach dem Morgenlauf der Hubs
+  workflow_dispatch:
+    inputs:
+      trocken:
+        description: "Nur zeigen, nichts anlegen"
+        type: boolean
+        default: false
+      immer:
+        description: "Torwächter übergehen (auch ohne Montag und Abstand)"
+        type: boolean
+        default: false
+      pro_rubrik:
+        description: "Meldungen je Rubrik; mehrere Zahlen = mehrere Entwürfe"
+        type: string
+        default: "0,6"
+      ohne_auszuege:
+        description: "„Aus der aktuellen Ausgabe\" aus der Vorausgabe übernehmen"
+        type: boolean
+        default: false
+
+permissions: {}
+
+jobs:
+  entwurf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Entwurf anlegen
+        env:
+          # Derselbe Mailchimp-Schluessel wie in den Tagesnews.
+          KNOWLEDGEHUBSMC: ${{ secrets.KNOWLEDGEHUBSMC }}
+        run: |
+          set -u
+          if [ -z "${KNOWLEDGEHUBSMC:-}" ]; then
+            echo "::error::KNOWLEDGEHUBSMC fehlt"
+            exit 1
+          fi
+          ARGUMENTE="--pro-rubrik ${{ inputs.pro_rubrik || '0,6' }}"
+          [ "${{ inputs.trocken }}" = "true" ] && ARGUMENTE="$ARGUMENTE --trocken"
+          [ "${{ inputs.immer }}" = "true" ]   && ARGUMENTE="$ARGUMENTE --immer"
+          [ "${{ inputs.ohne_auszuege }}" = "true" ] && ARGUMENTE="$ARGUMENTE --ohne-auszuege"
+          # Der Torwaechter meldet sich mit Ruecksprung 0, wenn nichts faellig
+          # ist - ein taeglicher Lauf soll deswegen nicht rot werden.
+          python scripts/newsletter.py $ARGUMENTE | tee bericht.txt
+
+      - name: Bericht in die Zusammenfassung
+        if: always()
+        run: |
+          {
+            echo '```'
+            cat bericht.txt 2>/dev/null || echo "(kein Bericht)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
