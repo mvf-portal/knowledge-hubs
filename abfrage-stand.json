@@ -2,64 +2,79 @@
  "_": "Trefferzahl jeder Hub-Abfrage ueber die letzten 365 Tage, woechentlich von abfrage_wache.py fortgeschrieben.",
  "hubs": {
   "mvf-portal/versorgungsforschung-portal": {
-   "datum": "2026-09-07",
-   "treffer": 7470,
-   "pro_tag": 20.5
+   "datum": "2026-09-14",
+   "treffer": 7550,
+   "pro_tag": 20.7
   },
   "mvf-portal/klima-gesundheit-portal": {
-   "datum": "2026-09-07",
-   "treffer": 4931,
-   "pro_tag": 13.5
+   "datum": "2026-09-14",
+   "treffer": 5000,
+   "pro_tag": 13.7
   },
   "mvf-portal/ki-gesundheit-portal": {
-   "datum": "2026-09-07",
-   "treffer": 31434,
-   "pro_tag": 86.1
+   "datum": "2026-09-14",
+   "treffer": 31916,
+   "pro_tag": 87.4
   },
   "mvf-portal/pflege-portal": {
-   "datum": "2026-09-07",
-   "treffer": 15126,
-   "pro_tag": 41.4
+   "datum": "2026-09-14",
+   "treffer": 15440,
+   "pro_tag": 42.3
   },
   "mvf-portal/longevity-portal": {
-   "datum": "2026-09-07",
-   "treffer": 7105,
-   "pro_tag": 19.5
+   "datum": "2026-09-14",
+   "treffer": 7225,
+   "pro_tag": 19.8
   },
   "mvf-portal/healthliteracy-portal": {
-   "datum": "2026-09-07",
-   "treffer": 4410,
-   "pro_tag": 12.1
+   "datum": "2026-09-14",
+   "treffer": 4498,
+   "pro_tag": 12.3
   },
   "mvf-portal/impfen-portal": {
-   "datum": "2026-09-07",
-   "treffer": 7393,
-   "pro_tag": 20.3
+   "datum": "2026-09-14",
+   "treffer": 7489,
+   "pro_tag": 20.5
   },
   "mvf-portal/ncd-portal": {
-   "datum": "2026-09-07",
-   "treffer": 10667,
-   "pro_tag": 29.2
+   "datum": "2026-09-14",
+   "treffer": 10809,
+   "pro_tag": 29.6
   },
   "mvf-portal/gender-portal": {
-   "datum": "2026-09-07",
-   "treffer": 5775,
-   "pro_tag": 15.8
+   "datum": "2026-09-14",
+   "treffer": 5844,
+   "pro_tag": 16.0
   },
   "mvf-portal/adipositas-portal": {
-   "datum": "2026-09-07",
-   "treffer": 11679,
-   "pro_tag": 32.0
+   "datum": "2026-09-14",
+   "treffer": 11888,
+   "pro_tag": 32.6
   },
   "mvf-portal/safety-portal": {
-   "datum": "2026-09-07",
-   "treffer": 11675,
-   "pro_tag": 32.0
+   "datum": "2026-09-14",
+   "treffer": 11854,
+   "pro_tag": 32.5
   },
   "mvf-portal/mental-portal": {
-   "datum": "2026-09-07",
-   "treffer": 10506,
-   "pro_tag": 28.8
+   "datum": "2026-09-14",
+   "treffer": 10658,
+   "pro_tag": 29.2
+  },
+  "mvf-portal/onkologie-portal": {
+   "datum": "2026-09-14",
+   "treffer": 7178,
+   "pro_tag": 19.7
+  },
+  "mvf-portal/kardio-portal": {
+   "datum": "2026-09-14",
+   "treffer": 8291,
+   "pro_tag": 22.7
+  },
+  "mvf-portal/diabetes-portal": {
+   "datum": "2026-09-14",
+   "treffer": 5317,
+   "pro_tag": 14.6
   }
  }
 }
