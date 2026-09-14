@@ -39,6 +39,23 @@ jobs:
   wecken:
     runs-on: ubuntu-latest
     steps:
+      # Zuerst, und mit Absicht vor den Hubs: Der Newsletter hat mit ihnen
+      # nichts zu tun, und ein Hub, der klemmt, darf ihn nicht mitreißen.
+      #
+      # Ob überhaupt etwas entsteht, entscheidet der Torwächter im Skript:
+      # Montag, mindestens zehn Tage seit der letzten Ausgabe, kein offener
+      # Entwurf. An allen anderen Tagen kostet der Aufruf zwei Sekunden.
+      #
+      # Warum hier und nicht im Cron von newsletter-entwurf.yml: GitHubs Cron
+      # ist best effort und hat den Lauf am 14.09.2026 ausgelassen — genau am
+      # ersten Montag, an dem er zählte. Der Weckruf vom MVF-Server kommt
+      # zuverlässig. Der Cron dort bleibt als zweites Netz; wer zuerst kommt,
+      # legt an, der andere findet einen offenen Entwurf und tut nichts.
+      - name: Newsletter-Entwurf anstoßen
+        env:
+          GH_TOKEN: ${{ secrets.DIRIGENT_TOKEN }}
+        run: gh workflow run newsletter-entwurf.yml -R mvf-portal/knowledge-hubs
+
       - name: Die fünfzehn Hubs anstoßen
         env:
           # Fein granuliertes Token mit "Actions: write" auf den fünfzehn

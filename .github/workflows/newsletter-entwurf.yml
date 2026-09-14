@@ -15,9 +15,22 @@
 
 name: MVF-Newsletter (Entwurf)
 
+# Angestoßen wird zweifach, und das ist Absicht:
+#
+#   1. vom **Dirigenten**, der seinen Weckruf vom Cron des MVF-Servers bekommt
+#      (siehe mvf-server/LIESMICH.md) — das ist der verlässliche Weg;
+#   2. zusätzlich von GitHubs eigenem Cron als zweites Netz.
+#
+# Doppelte Aufrufe kosten nichts: Wer zuerst kommt, legt die Entwürfe an, der
+# andere findet einen offenen Entwurf und tut nichts. Die beiden liegen eine
+# Stunde auseinander, ein Wettlauf ist also ausgeschlossen.
+#
+# Am 14.09.2026 hat GitHubs Cron den Lauf ausgelassen — am ersten Montag, an
+# dem er gezählt hätte. Deshalb der Dirigent.
+
 on:
   schedule:
-    - cron: "20 5 * * *"          # 07:20 Berlin, nach dem Morgenlauf der Hubs
+    - cron: "20 5 * * *"          # 07:20 Berlin, eine Stunde nach dem Dirigenten
   workflow_dispatch:
     inputs:
       trocken:
