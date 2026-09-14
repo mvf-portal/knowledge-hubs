@@ -95,9 +95,6 @@ RUBRIKEN = [
 NEWS_RUBRIK = 1000
 NICHT = {2924, 2923}
 
-# Die Erscheinungstage der gedruckten Ausgaben. Daran haengt allein der
-# Titelkopf des Newsletters - siehe newsletter_kopf.py.
-DRUCKAUSGABEN = pathlib.Path(__file__).with_name("druckausgaben.json")
 
 # Das Bild in einer Meldung ist kein Bild, sondern ein Zaehlpixel: die Adresse
 # des Artikels mit ?iActionPost. Wer das weglaesst, nimmt der Redaktion die
@@ -122,9 +119,6 @@ PUNKT = ("https://gallery.mailchimp.com/f4c91757bc7d8c740641acb50/images/"
 # Absichtlich ohne Zeilenende: Die Entwuerfe heissen "MVF Newsletter 2026-19
 # (Vorschlag 1 - alles)". Wird einer davon ohne Umbenennen versendet, findet
 # ihn die Zaehlung der naechsten Ausgabe trotzdem wieder.
-#
-# Die Erscheinungstage der Hefte stehen daneben in druckausgaben.json -
-# daran haengt allein der Titelkopf, siehe newsletter_kopf.py.
 AUSGABE_MUSTER = re.compile(r"^MVF Newsletter (\d{4})-(\d+)\b")
 
 
@@ -185,12 +179,25 @@ def ausgaben() -> list[dict]:
     return treffer
 
 
-def offener_entwurf() -> dict | None:
+def offener_entwurf(seit: str) -> dict | None:
+    """Ein Entwurf, der die naechste Ausgabe sein koennte.
+
+    `seit` ist der Versandtag der letzten Ausgabe. Aelteres zaehlt nicht - in
+    Mailchimp liegen Karteileichen aus Jahren: "MVF Newsletter 2025-21" vom
+    16.10.2025, "MVF Newsletter 2022-20", ein halbes Dutzend mehr. Ohne diese
+    Grenze hielt eine davon jede kuenftige Ausgabe auf; genau das ist am
+    14.09.2026 passiert, der erste Lauf legte nichts an.
+    """
     for status in ("save", "schedule", "paused"):
         for kampagne in kampagnen(status, 60):
             titel = (kampagne.get("settings") or {}).get("title") or ""
-            if AUSGABE_MUSTER.match(titel):
-                return {"id": kampagne["id"], "titel": titel, "status": status}
+            if not AUSGABE_MUSTER.match(titel):
+                continue
+            angelegt = kampagne.get("create_time") or ""
+            if angelegt and angelegt < seit:
+                continue
+            return {"id": kampagne["id"], "titel": titel, "status": status,
+                    "angelegt": angelegt[:10]}
     return None
 
 
@@ -219,15 +226,29 @@ def titelkopf(stichtag: dt.datetime) -> str:
     Versand: Nur wenn dazwischen ein Heft erschienen ist, ist der geerbte Kopf
     falsch, und nur dann soll der Bericht davon anfangen.
     """
-    try:
-        eintraege = json.loads(DRUCKAUSGABEN.read_text(encoding="utf-8"))["ausgaben"]
-    except Exception:
-        return ""
-    gueltig = ""
-    for name, tag in sorted(eintraege.items(), key=lambda paar: paar[1]):
-        if dt.date.fromisoformat(tag) <= stichtag.date():
-            gueltig = name
-    return gueltig
+    tag = stichtag.date()
+    for jahr in (tag.year, tag.year - 1):
+        for nummer in range(6, 0, -1):
+            if erscheinungstag(nummer, jahr) <= tag:
+                return f"{nummer:02d}-{jahr}"
+    return ""
+
+
+def erscheinungstag(nummer: int, jahr: int) -> dt.date:
+    """Der Erscheinungstag eines Hefts.
+
+    Sechs Ausgaben im Jahr, jede am **ersten Montag** ihres Monats, und die
+    Monate sind die geraden: Ausgabe 1 im Februar, 2 im April, ... 6 im
+    Dezember (Peter Stegmaier, 14.09.2026). Nachgerechnet gegen die Mediadaten
+    2026 - alle sechs Termine stimmen auf den Tag.
+
+    Eine Tabelle stand hier vorher und war falsch: Ihre Daten stammten aus den
+    Upload-Tagen der Titelkoepfe in Mailchimp, also aus dem Tag, an dem der
+    Kopf VORBEREITET wurde, nicht aus dem Erscheinungstag. Bis zu neun Tage
+    daneben. Eine Regel kann nicht veralten, eine Tabelle schon.
+    """
+    erster = dt.date(jahr, 2 * nummer, 1)
+    return erster + dt.timedelta(days=(0 - erster.weekday()) % 7)
 
 
 def kopfadresse(ausgabe: str) -> str:
@@ -439,10 +460,10 @@ def main() -> int:
     # faengt ab, dass GitHubs Cron einen Montag ausfallen laesst; das ist im
     # August 2026 zweimal vorgekommen, siehe mvf-server/LIESMICH.md.
     if not argumente.immer:
-        offen = offener_entwurf()
+        offen = offener_entwurf(vorausgabe["gesendet"])
         if offen:
-            print(f"Es liegt schon ein Entwurf: {offen['titel']} ({offen['status']}). "
-                  "Nichts angelegt.")
+            print(f"Es liegt schon ein Entwurf: {offen['titel']} "
+                  f"({offen['status']}, vom {offen['angelegt']}). Nichts angelegt.")
             return 0
         if seither < argumente.abstand:
             print(f"Noch keine {argumente.abstand} Tage seit der letzten Ausgabe. "
@@ -578,8 +599,7 @@ def main() -> int:
     print("  - Das Werbebanner stammt unveraendert aus der Vorausgabe.")
     jetzt, vorher = titelkopf(heute), titelkopf(gesendet)
     if not jetzt:
-        print("  - Der Titelkopf stammt ebenfalls aus der Vorausgabe. Fuer welches")
-        print("    Heft er gilt, steht nicht in druckausgaben.json.")
+        print("  - Der Titelkopf stammt ebenfalls aus der Vorausgabe.")
     elif vorher and jetzt != vorher:
         print(f"  - HEFTWECHSEL: Seit dem letzten Versand ist Heft {jetzt}")
         print(f"    erschienen. Der Entwurf traegt noch den Kopf {vorher} - im")
