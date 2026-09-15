@@ -8,3 +8,7 @@ scripts/geprueft.json
 # Das Muster daneben (anmeldung-zugang-muster.php) bleibt versioniert.
 mvf-server/anmeldung/anmeldung-zugang.php
 mvf-server/anmeldung/daten/
+
+# Die fertigen Sponsorenberichte. Sie gehen an einen Kunden, nicht ins
+# oeffentliche Repo - und sie lassen sich jederzeit neu bauen.
+berichte/
