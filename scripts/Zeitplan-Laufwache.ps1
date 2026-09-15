@@ -13,7 +13,7 @@
 # Entfernen laesst sich das jederzeit mit:
 #   Unregister-ScheduledTask -TaskName "MVF Laufwache" -Confirm:$false
 
-$skript = "$env:USERPROFILE\Documents\knowledge-hubs\scripts\laufwache.py"
+$skript = "$env:USERPROFILE\Documents\Claude-Daten\knowledge-hubs\scripts\laufwache.py"
 if (-not (Test-Path $skript)) { throw "Skript nicht gefunden: $skript" }
 
 # pyw.exe startet Python ohne Fenster - wie bei den Pressemeldungen. Das
@@ -23,7 +23,7 @@ if (-not (Test-Path $pyw)) { throw "pyw.exe nicht gefunden: $pyw" }
 
 $aktion = New-ScheduledTaskAction -Execute $pyw `
     -Argument "-3 `"$skript`"" `
-    -WorkingDirectory "$env:USERPROFILE\Documents\knowledge-hubs"
+    -WorkingDirectory "$env:USERPROFILE\Documents\Claude-Daten\knowledge-hubs"
 
 # ZWEIMAL taeglich, und das ist seit dem 28.08.2026 die eigentliche Absicherung:
 # GitHubs Cron hat die Laeufe an zwei Tagen hintereinander gar nicht gestartet.

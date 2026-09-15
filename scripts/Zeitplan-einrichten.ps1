@@ -7,7 +7,7 @@
 # Entfernen laesst sich das jederzeit mit:
 #   Unregister-ScheduledTask -TaskName "MVF Pressemeldungen" -Confirm:$false
 
-$skript = "$env:USERPROFILE\Documents\knowledge-hubs\scripts\pressemeldung.py"
+$skript = "$env:USERPROFILE\Documents\Claude-Daten\knowledge-hubs\scripts\pressemeldung.py"
 if (-not (Test-Path $skript)) { throw "Skript nicht gefunden: $skript" }
 
 # pyw.exe statt py.exe: startet Python ohne Fenster, damit nicht alle 15
@@ -17,7 +17,7 @@ $pyw = "$env:LOCALAPPDATA\Microsoft\WindowsApps\pyw.exe"
 
 $aktion = New-ScheduledTaskAction -Execute $pyw `
     -Argument "-3 `"$skript`" postfach --hoechstens 5" `
-    -WorkingDirectory "$env:USERPROFILE\Documents\knowledge-hubs"
+    -WorkingDirectory "$env:USERPROFILE\Documents\Claude-Daten\knowledge-hubs"
 
 # Alle 15 Minuten, dazu einmal bei jeder Anmeldung.
 $takt = New-ScheduledTaskTrigger -Once -At (Get-Date).Date.AddMinutes(5) `
