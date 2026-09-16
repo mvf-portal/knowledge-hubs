@@ -199,6 +199,11 @@ SCHEMA = {
         # nachgemessen: HTTP 403). Die Adresse im Entwurf erspart der
         # Redaktion aber das Suchen in der Mail.
         "bildmaterial_link": {"type": "string"},
+        # Wer die Mitteilung herausgibt - als Einrichtung, nicht als Person.
+        # Outlook nennt im Anzeigenamen oft den Pressesprecher ("Manfred
+        # Beeres"); in der Bildzeile soll aber der Verband stehen, der das
+        # Bild herausgibt ("BVMed").
+        "absender_institution": {"type": "string"},
         # Ein bis zwei Suchbegriffe fuer das MVF-Archiv. Das Modell nennt nur
         # die Begriffe - die Adressen holt verwandtes.py aus der
         # WordPress-Suche. Ein Modell, das Beitragsadressen nennen darf,
@@ -613,6 +618,12 @@ def schreibe_meldung(text: str, links: list[str], hinweis: str = "") -> dict:
         "erfundene und keine abgewandelte. Gemeint ist das Bildangebot, "
         "nicht die Online-Fassung des Textes. Gibt es keines, lass das Feld "
         "weg.\n"
+        "- absender_institution: wer die Mitteilung herausgibt, als "
+        "Einrichtung und nicht als Person - der Verband, das Institut, das "
+        "Unternehmen, so wie es sich selbst nennt. Kurzform, wenn es eine "
+        "gebraeuchliche gibt: 'BVMed' statt 'BVMed - Bundesverband "
+        "Medizintechnologie e.V.'. Nicht der Name des Pressesprechers. "
+        "Steht keine Einrichtung in der Mitteilung, lass das Feld weg.\n"
         "- schlagwort: genau eines aus der Hausliste, und zwar das inhaltlich "
         "nächstliegende. 'Vermischtes' ist die Notlösung für Meldungen, die "
         "wirklich in keine Rubrik passen - nicht die bequeme Wahl, wenn zwei "
@@ -829,6 +840,37 @@ def eingespielt_merken(verzeichnis: dict, abdruck: str, titel: str) -> None:
     EINGESPIELT_DATEI.write_text(
         json.dumps(verzeichnis, ensure_ascii=False, indent=1, sort_keys=True),
         encoding="utf-8")
+
+
+def bild_vom_angebot(meldung: dict) -> list[tuple[str, bytes]]:
+    """Zeigt das Bildangebot direkt auf eine Bilddatei, wird sie geholt.
+
+    Am 16.09.2026 stand in einer BVMed-Mitteilung
+    `https://www.bvmed.de/download/moell-marc-pierre-2026.jpg` - das Portraet
+    des Geschaeftsfuehrers, frei abrufbar. Das Skript schrieb nur die Adresse
+    in den Entwurf, obwohl es die Datei haette laden koennen: Die allgemeine
+    Adressensuche in bilder_aus_mailobjekt() laeuft nur an, wenn die Mail
+    weniger als drei Bilder mitbringt, und diese brachte vier Logos und
+    Schmuckbilder mit.
+
+    Diese eine Adresse ist etwas anderes als der allgemeine Bilderfang: Das
+    Modell hat sie als das Bildangebot der Mitteilung erkannt. Sie wird
+    deshalb immer versucht - die Bremse fuer Newsletter-Bilderfluten bleibt
+    davon unberuehrt.
+
+    Steckt dahinter eine Galerie (picdrop, WeTransfer, Drive), kommt nichts
+    zurueck, und die Adresse bleibt im Entwurf stehen - dort ist sie richtig.
+    """
+    link = (meldung.get("bildmaterial_link") or "").strip()
+    if not link:
+        return []
+    geholt = bilder_aus_adressen(link, hoechstens=1)
+    if not geholt:
+        return []
+    print(f"  Bild vom verlinkten Angebot geholt: {geholt[0][0]}")
+    # Es haengt jetzt am Entwurf; die Adresse dazu waere nur noch Ballast.
+    meldung["bildmaterial_link"] = ""
+    return geholt
 
 
 def absender_name(mail) -> str:
@@ -1751,8 +1793,15 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
             # Erst das Bildmaterial, dann der Satz: Die Bildzeile kommt nur
             # in die Meldung, wenn auch ein Bild dabei ist.
             bilder = bilder_aus_mailobjekt(mail)
-            inhalt = baue_html(meldung, adressen(text), bool(bilder),
-                               absender_name(mail))
+            vorhanden = {n.lower() for n, _ in bilder}
+            for name, rohdaten in bild_vom_angebot(meldung):
+                if name.lower() not in vorhanden:
+                    bilder.append((name, rohdaten))
+            # Die Einrichtung ist die bessere Quellenangabe als der
+            # Anzeigename, hinter dem oft nur der Pressesprecher steht.
+            quelle = (meldung.get("absender_institution") or "").strip() \
+                or absender_name(mail)
+            inhalt = baue_html(meldung, adressen(text), bool(bilder), quelle)
             print(f"  {meldung['titel']}")
             if trocken:
                 print("  [trocken] kein Entwurf, Mail bleibt liegen.\n")
