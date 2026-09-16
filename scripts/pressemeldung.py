@@ -1195,6 +1195,18 @@ def bilder_aus_mailobjekt(mail) -> list[tuple[str, bytes]]:
     return gefunden
 
 
+# Wie gross ein geholtes Bild hoechstens sein darf.
+#
+# Bis zum 16.09.2026 stand hier `r.read(8_000_000)` - und das schnitt ab,
+# statt abzulehnen. Das Portraet des BVMed-Geschaeftsfuehrers ist 8.000.027
+# Byte gross; es kamen 8.000.000 an, und Pillow meldete beim Verkleinern
+# "image file is truncated (27 bytes not processed)". Die Ausnahme fing
+# verkleinern() stillschweigend ab und reichte das Bild unveraendert weiter -
+# so landete es in voller Groesse und um 27 Byte gekuerzt in der Mediathek.
+# Ein stiller Fehler mit drei Stationen, an jeder einzelnen nicht zu sehen.
+BILD_GRENZE = 20_000_000
+
+
 # Zaehlpixel und Platzhalter, die in keiner Mediathek etwas verloren haben.
 KEIN_BILD = ("pixel.", "spacer", "1x1", "/track", "/open", "beacon", "logo-mail")
 
@@ -1239,9 +1251,18 @@ def bilder_aus_adressen(text: str, hoechstens: int = 6
                 req = urllib.request.Request(versuch,
                                              headers={"User-Agent": KENNUNG})
                 with urllib.request.urlopen(req, timeout=45) as r:
-                    if str(r.headers.get_content_type()).startswith("image/"):
-                        rohdaten = r.read(8_000_000)
-                        break
+                    if not str(r.headers.get_content_type()).startswith("image/"):
+                        continue
+                    # Ein Byte ueber die Grenze lesen: Daran ist zu erkennen,
+                    # ob die Datei zu gross war - ohne es waere nicht zu
+                    # unterscheiden, ob sie genau aufgeht oder abgeschnitten
+                    # ist.
+                    rohdaten = r.read(BILD_GRENZE + 1)
+                    if len(rohdaten) > BILD_GRENZE:
+                        print(f"  {name}: groesser als "
+                              f"{BILD_GRENZE // 1_000_000} MB - ausgelassen.")
+                        rohdaten = b""
+                    break
             except Exception:
                 continue
         if not rohdaten:
