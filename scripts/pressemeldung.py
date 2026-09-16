@@ -193,6 +193,12 @@ SCHEMA = {
         # ein Bild beiliegt; siehe baue_html().
         "bildzeile": {"type": "string"},
         "bildnachweis": {"type": "string"},
+        # Wo der Absender Pressefotos bereithaelt. Holen kann das Skript sie
+        # dort nicht - picdrop, WeTransfer und Google Drive geben ihre Bilder
+        # nur an einen angemeldeten Browser heraus (am 16.09.2026
+        # nachgemessen: HTTP 403). Die Adresse im Entwurf erspart der
+        # Redaktion aber das Suchen in der Mail.
+        "bildmaterial_link": {"type": "string"},
         # Ein bis zwei Suchbegriffe fuer das MVF-Archiv. Das Modell nennt nur
         # die Begriffe - die Adressen holt verwandtes.py aus der
         # WordPress-Suche. Ein Modell, das Beitragsadressen nennen darf,
@@ -271,11 +277,71 @@ def text_aus_outlook() -> str:
     return text_aus_mailobjekt(mail)
 
 
+# Verweise, die in keinen Beitrag gehoeren.
+VERWEIS_NICHT = ("unsubscribe", "abmeld", "optout", "opt-out", "mailto:",
+                 "/track", "/open", "webversion", "datenschutz", "impressum",
+                 "linkedin.com/in/", "twitter.com/intent", "facebook.com/sharer")
+
+# Anfuehrungszeichen zur Laufzeit zusammengesetzt - im Quelltext stehen sie
+# sonst dreifach verschachtelt in einem Regex in einer Zeichenkette.
+ANFUEHRUNG = chr(34) + chr(39)
+ANKER = re.compile(r"(?is)<a\b[^>]*\bhref\s*=\s*([^\s>]+)[^>]*>(.*?)</a>")
+ALTTEXT = re.compile(r"(?is)\balt\s*=\s*[" + ANFUEHRUNG + r"]([^"
+                     + ANFUEHRUNG + r"]*)[" + ANFUEHRUNG + r"]")
+
+
+def verweise_aus_html(html_text: str, hoechstens: int = 12) -> str:
+    """Beschriftete Verweise aus der HTML-Fassung, als Nachtrag zum Text.
+
+    Outlook liefert in `Body` eine Reintext-Fassung der Mail. Ein Verweis
+    steht darin als "Beschriftung <adresse>" - aber nur, wenn er im HTML auch
+    Text trug. Ein Knopf, der bloss aus einer verlinkten Grafik besteht,
+    faellt ersatzlos weg.
+
+    Am 16.09.2026 aufgefallen: In der Zi-Mitteilung stand "Die
+    Medieninformation zum Download" nur als solcher Knopf. Das Modell bekam
+    die Adresse nie zu sehen und konnte sie folglich auch nicht setzen.
+
+    Deshalb hier die Verweise aus dem HTML mit ihrer Beschriftung - und wo
+    die fehlt, mit dem Alternativtext der Grafik. Der Reintext bleibt
+    unangetastet: Er ist die erprobte Grundlage, dies ist nur ein Nachtrag.
+    """
+    if not html_text:
+        return ""
+    gefunden, gesehen = [], set()
+    for treffer in ANKER.finditer(html_text):
+        adresse = html.unescape(treffer.group(1)).strip().strip(ANFUEHRUNG)
+        if not adresse.lower().startswith("http"):
+            continue
+        if any(m in adresse.lower() for m in VERWEIS_NICHT):
+            continue
+        if adresse in gesehen:
+            continue
+        inneres = treffer.group(2)
+        beschriftung = " ".join(
+            html.unescape(re.sub(r"(?is)<[^>]+>", " ", inneres)).split())
+        if not beschriftung:
+            alt = ALTTEXT.search(inneres)
+            beschriftung = " ".join(html.unescape(alt.group(1)).split()) if alt else ""
+        if any(m in beschriftung.lower() for m in ("abmelden", "unsubscribe")):
+            continue
+        gesehen.add(adresse)
+        gefunden.append(f"{beschriftung or '(ohne Beschriftung)'}: {adresse}")
+        if len(gefunden) >= hoechstens:
+            break
+    if not gefunden:
+        return ""
+    return "Verweise aus der Mail:" + chr(10) + chr(10).join(gefunden)
+
+
 def text_aus_mailobjekt(mail, laut: bool = True) -> str:
-    """Betreff, Text und die PDF-Anhaenge einer Outlook-Nachricht."""
+    """Betreff, Text, HTML-Verweise und die PDF-Anhaenge einer Nachricht."""
     import tempfile
 
     teile = [str(getattr(mail, "Subject", "")), str(getattr(mail, "Body", ""))]
+    verweise = verweise_aus_html(str(getattr(mail, "HTMLBody", "") or ""))
+    if verweise:
+        teile.append(verweise)
     # Anhaenge kann nur Outlook selbst herausgeben, und nur als Datei.
     ordner = pathlib.Path(tempfile.mkdtemp(prefix="pm-anhang-"))
     for anhang in mail.Attachments:
@@ -540,6 +606,13 @@ def schreibe_meldung(text: str, links: list[str], hinweis: str = "") -> dict:
         "'Foto: Deutsche Krebshilfe/Kim Müller' oder '© BVMed'. Nur im "
         "Wortlaut der Quelle, sonst weglassen. Der Nachweis entscheidet "
         "darüber, ob die Redaktion das Bild überhaupt verwenden darf.\n"
+        "- bildmaterial_link: die Adresse, unter der die Mitteilung "
+        "Pressefotos zum Herunterladen bereithaelt - erkennbar an Wendungen "
+        "wie 'Bildmaterial', 'Pressefotos', 'Fotos zum Download' oder "
+        "'Bildergalerie'. NUR eine Adresse aus der Liste oben, keine "
+        "erfundene und keine abgewandelte. Gemeint ist das Bildangebot, "
+        "nicht die Online-Fassung des Textes. Gibt es keines, lass das Feld "
+        "weg.\n"
         "- schlagwort: genau eines aus der Hausliste, und zwar das inhaltlich "
         "nächstliegende. 'Vermischtes' ist die Notlösung für Meldungen, die "
         "wirklich in keine Rubrik passen - nicht die bequeme Wahl, wenn zwei "
@@ -611,7 +684,8 @@ def escape(t: str) -> str:
     return html.escape(t or "", quote=True)
 
 
-def bildzeile_html(meldung: dict, absender: str = "") -> str:
+def bildzeile_html(meldung: dict, absender: str = "",
+                   bild_dabei: bool = False, bildmaterial: str = "") -> str:
     """Bildzeile, Herkunft und Bildnachweis, vier Leerzeilen unter der Meldung.
 
     Der Abstand ist Absicht und keine Formatierungslaune: Der Block ist
@@ -625,11 +699,13 @@ def bildzeile_html(meldung: dict, absender: str = "") -> str:
     hat die Mail ja bekommen. Fotograf und Copyright nennt es, sofern die
     Quelle sie nennt; erfunden wird nichts.
     """
+    if not (bild_dabei or bildmaterial):
+        return ""
     zeile = (meldung.get("bildzeile") or "").strip()
     nachweis = (meldung.get("bildnachweis") or "").strip()
     absender = (absender or "").strip()
     herkunft = []
-    if absender:
+    if bild_dabei and absender:
         herkunft.append(f"Quelle: {escape(absender)}")
     if nachweis:
         herkunft.append(escape(nachweis))
@@ -638,6 +714,12 @@ def bildzeile_html(meldung: dict, absender: str = "") -> str:
         teile.append(escape(zeile))
     if herkunft:
         teile.append(" &middot; ".join(herkunft))
+    if bildmaterial:
+        # Anklickbar, nicht bloss abgedruckt: Die Adresse ist eine
+        # Arbeitsanweisung an die Redaktion, kein Lesestoff.
+        teile.append(
+            f'Bildmaterial beim Absender: <a href="{escape(bildmaterial)}" '
+            f'target="_blank" rel="noopener">{escape(bildmaterial)}</a>')
     if not teile:
         return ""
     return "<p>&nbsp;</p>" * 4 + f"<p><em>{'<br>'.join(teile)}</em></p>"
@@ -677,11 +759,17 @@ def baue_html(meldung: dict, erlaubt: list[str], bild_dabei: bool = False,
     # Die Bildzeile gehoert zur Meldung und steht deshalb VOR "Mehr zum
     # Thema" - jener Block fuehrt aus der Meldung heraus. Ohne Bild entfaellt
     # sie ganz: Eine Bildunterschrift ohne Bild verwirrt nur.
-    if bild_dabei:
-        teile.append(bildzeile_html(meldung, absender))
+    bildmaterial = (meldung.get("bildmaterial_link") or "").strip()
+    if bildmaterial and bildmaterial not in erlaubt:
+        print(f"Hinweis: Bildmaterial-Adresse nicht in der Quelle, "
+              f"weggelassen: {bildmaterial}")
+        bildmaterial = ""
+    block = bildzeile_html(meldung, absender, bild_dabei, bildmaterial)
+    if block:
+        teile.append(block)
     elif meldung.get("bildzeile") or meldung.get("bildnachweis"):
-        print("  Bildzeile in der Mitteilung, aber kein Bild dabei - "
-              "weggelassen.")
+        print("  Bildzeile in der Mitteilung, aber weder Bild noch "
+              "Bildadresse - weggelassen.")
 
     # "Mehr zum Thema" ganz am Schluss, nach dem Hintergrundabsatz: Der Block
     # fuehrt aus der Meldung heraus und hat vor ihrem Ende nichts zu suchen.
