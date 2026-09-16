@@ -709,14 +709,24 @@ def bildzeile_html(meldung: dict, absender: str = "",
     noch Nachweis fuehrt: Woher ein Bild stammt, weiss das Skript immer - es
     hat die Mail ja bekommen. Fotograf und Copyright nennt es, sofern die
     Quelle sie nennt; erfunden wird nichts.
+
+    **Auch ohne angehaengtes Bild.** Bis zum 16.09.2026 fiel der Block weg,
+    wenn die Mail kein Bild mitbrachte - "eine Bildunterschrift ohne Bild
+    verwirrt nur". Am selben Tag zeigte die Herzstiftung, dass das falsch
+    herum gedacht war: Ihre Mitteilung fuehrte Bildunterschrift und
+    Rechtehinweis ("Collage: Deutsche Herzstiftung/Cover: Thieme Verlag"),
+    das Bild selbst lag auf der Webseite. Beides fiel weg - ausgerechnet
+    dann, wenn die Redaktion es am noetigsten braucht: Sie muss das Bild ja
+    selbst besorgen und wissen, wem es gehoert. Jetzt erscheint der Block,
+    sobald es ueberhaupt etwas zu sagen gibt.
     """
-    if not (bild_dabei or bildmaterial):
-        return ""
     zeile = (meldung.get("bildzeile") or "").strip()
     nachweis = (meldung.get("bildnachweis") or "").strip()
     absender = (absender or "").strip()
+    if not (bild_dabei or bildmaterial or zeile or nachweis):
+        return ""
     herkunft = []
-    if bild_dabei and absender:
+    if absender:
         herkunft.append(f"Quelle: {escape(absender)}")
     if nachweis:
         herkunft.append(escape(nachweis))
@@ -778,9 +788,6 @@ def baue_html(meldung: dict, erlaubt: list[str], bild_dabei: bool = False,
     block = bildzeile_html(meldung, absender, bild_dabei, bildmaterial)
     if block:
         teile.append(block)
-    elif meldung.get("bildzeile") or meldung.get("bildnachweis"):
-        print("  Bildzeile in der Mitteilung, aber weder Bild noch "
-              "Bildadresse - weggelassen.")
 
     # "Mehr zum Thema" ganz am Schluss, nach dem Hintergrundabsatz: Der Block
     # fuehrt aus der Meldung heraus und hat vor ihrem Ende nichts zu suchen.
