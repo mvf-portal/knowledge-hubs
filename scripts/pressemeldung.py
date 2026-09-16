@@ -611,28 +611,40 @@ def escape(t: str) -> str:
     return html.escape(t or "", quote=True)
 
 
-def bildzeile_html(meldung: dict) -> str:
-    """Bildzeile und Bildnachweis, vier Leerzeilen unter der Meldung.
+def bildzeile_html(meldung: dict, absender: str = "") -> str:
+    """Bildzeile, Herkunft und Bildnachweis, vier Leerzeilen unter der Meldung.
 
     Der Abstand ist Absicht und keine Formatierungslaune: Der Block ist
     Zuarbeit fuer die Redaktion, nicht Teil des Fliesstextes. Anke Heiser
     setzt das Beitragsbild von Hand - ein Standmotiv gibt es bewusst nicht -
-    und braucht dafuer beides beieinander: was auf dem Bild zu sehen ist und
-    wem es gehoert. Ohne Nachweis darf es nicht verwendet werden.
+    und braucht dafuer alles beieinander: was auf dem Bild zu sehen ist,
+    woher es kommt und wem es gehoert.
 
-    Beides steht nur dann in der Meldung, wenn die Quelle es nennt.
+    **Die Quelle steht immer da**, auch wenn die Mitteilung weder Bildzeile
+    noch Nachweis fuehrt: Woher ein Bild stammt, weiss das Skript immer - es
+    hat die Mail ja bekommen. Fotograf und Copyright nennt es, sofern die
+    Quelle sie nennt; erfunden wird nichts.
     """
     zeile = (meldung.get("bildzeile") or "").strip()
     nachweis = (meldung.get("bildnachweis") or "").strip()
-    if not (zeile or nachweis):
-        return ""
-    innen = escape(zeile)
+    absender = (absender or "").strip()
+    herkunft = []
+    if absender:
+        herkunft.append(f"Quelle: {escape(absender)}")
     if nachweis:
-        innen += ("<br>" if zeile else "") + escape(nachweis)
-    return "<p>&nbsp;</p>" * 4 + f"<p><em>{innen}</em></p>"
+        herkunft.append(escape(nachweis))
+    teile = []
+    if zeile:
+        teile.append(escape(zeile))
+    if herkunft:
+        teile.append(" &middot; ".join(herkunft))
+    if not teile:
+        return ""
+    return "<p>&nbsp;</p>" * 4 + f"<p><em>{'<br>'.join(teile)}</em></p>"
 
 
-def baue_html(meldung: dict, erlaubt: list[str], bild_dabei: bool = False) -> str:
+def baue_html(meldung: dict, erlaubt: list[str], bild_dabei: bool = False,
+              absender: str = "") -> str:
     teile = []
     for a in meldung.get("absaetze", []):
         # Bis zum 26.08.2026 waren die Absaetze schlichte Zeichenketten. Aeltere
@@ -666,7 +678,7 @@ def baue_html(meldung: dict, erlaubt: list[str], bild_dabei: bool = False) -> st
     # Thema" - jener Block fuehrt aus der Meldung heraus. Ohne Bild entfaellt
     # sie ganz: Eine Bildunterschrift ohne Bild verwirrt nur.
     if bild_dabei:
-        teile.append(bildzeile_html(meldung))
+        teile.append(bildzeile_html(meldung, absender))
     elif meldung.get("bildzeile") or meldung.get("bildnachweis"):
         print("  Bildzeile in der Mitteilung, aber kein Bild dabei - "
               "weggelassen.")
@@ -729,6 +741,21 @@ def eingespielt_merken(verzeichnis: dict, abdruck: str, titel: str) -> None:
     EINGESPIELT_DATEI.write_text(
         json.dumps(verzeichnis, ensure_ascii=False, indent=1, sort_keys=True),
         encoding="utf-8")
+
+
+def absender_name(mail) -> str:
+    """Wer die Mitteilung geschickt hat - fuer die Zeile "Quelle:".
+
+    Der Anzeigename des Absenders ist fast immer der Verband oder das
+    Institut ("Zi - Zentralinstitut ...", "BVMed"). Steht dort nur eine
+    Person oder gar nichts, bleibt die Domain - die sagt immer noch, woher
+    das Bild kam.
+    """
+    name = str(getattr(mail, "SenderName", "") or "").strip()
+    # Ein Anzeigename, der nur die Adresse wiederholt, hilft nicht weiter.
+    if name and "@" not in name:
+        return name
+    return domain_von(str(getattr(mail, "SenderEmailAddress", "") or ""))
 
 
 def mail_abhaken(mail, erledigt) -> None:
@@ -1636,7 +1663,8 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
             # Erst das Bildmaterial, dann der Satz: Die Bildzeile kommt nur
             # in die Meldung, wenn auch ein Bild dabei ist.
             bilder = bilder_aus_mailobjekt(mail)
-            inhalt = baue_html(meldung, adressen(text), bool(bilder))
+            inhalt = baue_html(meldung, adressen(text), bool(bilder),
+                               absender_name(mail))
             print(f"  {meldung['titel']}")
             if trocken:
                 print("  [trocken] kein Entwurf, Mail bleibt liegen.\n")
