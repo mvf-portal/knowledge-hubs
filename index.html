@@ -118,6 +118,34 @@
   /* ---------- Studien aller Hubs ---------- */
   .studien{ margin:0 0 42px; }
   .st-laedt{ color:var(--ink-faint); font-size:14px; margin:0 0 16px; }
+
+  /* Suche ueber die Studien aller Hubs */
+  .st-suche{
+    background:var(--card); border:1px solid var(--line); border-radius:8px;
+    padding:16px 18px 14px; margin:0 0 20px;
+  }
+  .st-suche-label{
+    display:block; font-size:11.5px; font-weight:700; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px;
+  }
+  .st-suche-zeile{ display:flex; gap:8px; flex-wrap:wrap; }
+  .st-suche-feld{
+    flex:1 1 220px; min-width:0; font:inherit; font-size:15px;
+    padding:10px 13px; border:1px solid var(--line); border-radius:6px;
+    background:var(--card-2); color:var(--ink);
+  }
+  .st-suche-feld:focus{
+    outline:2px solid var(--brand); outline-offset:1px; border-color:var(--brand);
+  }
+  .st-suche-knopf{
+    flex:0 0 auto; font:inherit; font-size:15px; font-weight:700; cursor:pointer;
+    padding:10px 22px; border:0; border-radius:6px;
+    background:var(--brand); color:#fff; transition:filter .14s;
+  }
+  .st-suche-knopf:hover{ filter:brightness(1.1); }
+  .st-suche-fuss{
+    font-size:13px; line-height:1.5; color:var(--ink-faint); margin:10px 0 0;
+  }
   /* Eine Karte je Hub - mehr wuerde die Uebersicht zur Liste machen. */
   .st-gitter{ display:grid; gap:12px; grid-template-columns:1fr; }
   @media (min-width:900px){ .st-gitter{ grid-template-columns:1fr 1fr; } }
@@ -636,6 +664,27 @@
     <h2 id="stTitel">Die neuesten Studien</h2>
     <p class="vor" id="stVor">Aus jedem Hub die jüngste Arbeit — Zusammenfassung, Ergebnis
     und Einordnung stehen im Hub selbst.</p>
+
+    <!-- Suche ueber die Studien ALLER Hubs.
+         Sie laeuft bewusst nicht hier: Diese Seite ist statisch, sie muesste
+         den gesamten Suchbestand in den Browser laden. Heute waeren das rund
+         440 KB, bei etwa 85 neuen Studien am Tag in einem Jahr aber ein
+         Vielfaches - das truege kein Jahr. Monitor Versorgungsforschung haelt
+         die Studien ohnehin durchsuchbar vor; dort sucht eine Datenbank, nicht
+         der Browser, und die Trefferliste blaettert und filtert nach Zeitraum.
+         Ein reines GET-Formular, damit es auch ohne JavaScript funktioniert. -->
+    <form class="st-suche" method="get" target="_blank" rel="noopener"
+          action="https://www.monitor-versorgungsforschung.de/">
+      <input type="hidden" name="typ" value="studie">
+      <label class="st-suche-label" for="stSuchfeld">Studien aus allen Hubs durchsuchen</label>
+      <div class="st-suche-zeile">
+        <input type="search" id="stSuchfeld" name="s" class="st-suche-feld" required
+               autocomplete="off" placeholder="Begriff, Journal oder Autor …">
+        <button type="submit" class="st-suche-knopf">Suchen</button>
+      </div>
+      <p class="st-suche-fuss">Durchsucht die deutschen Zusammenfassungen aller 15 Hubs. Die Trefferliste öffnet sich bei Monitor Versorgungsforschung in einem neuen Tab — dort lässt sie sich zusätzlich nach Zeitraum eingrenzen. Wer nur in einem Thema sucht, findet im jeweiligen Hub ein eigenes Suchfeld.</p>
+    </form>
+
     <p class="st-laedt" id="stLaedt">Wird geladen …</p>
     <div id="stListe"></div>
     <noscript><p class="st-laedt">Für diese Übersicht wird JavaScript benötigt. Die Studien
