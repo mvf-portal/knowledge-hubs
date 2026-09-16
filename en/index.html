@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="The Knowledge Hubs of Monitor Versorgungsforschung: 15 research portals on Digitalisation, AI & health, Sex, gender & health, Healthy ageing & longevity, Health literacy, Heat, climate & health, Vaccination & immunisation, Noncommunicable diseases, Patient safety, Nursing & long-term care, Mental health, Health services research, Obesity, Diabetes, Cardiology and Oncology. Bundled live searches across 1189 databases and a fresh selection of studies every morning. The hubs are in German.">
+<title>The Knowledge Hubs of Monitor Versorgungsforschung</title>
+<link rel="canonical" href="https://knowledge-hubs.m-vf.de/en/">
+<!-- Beide Sprachfassungen verweisen aufeinander. Ohne diese drei Zeilen
+     behandelt eine Suchmaschine sie als zwei Seiten, die dasselbe sagen -
+     und zeigt die falsche. x-default ist die deutsche: Die Hubs sind
+     deutsch, wer nichts anderes verlangt, soll dort landen. -->
+<link rel="alternate" hreflang="de" href="https://knowledge-hubs.m-vf.de/">
+<link rel="alternate" hreflang="en" href="https://knowledge-hubs.m-vf.de/en/">
+<link rel="alternate" hreflang="x-default" href="https://knowledge-hubs.m-vf.de/">
+<!-- Ohne Icon zeigen Tableiste und Schnellwahl nur den Anfangsbuchstaben des
+     Titels - bei Firefox stand dort ein goldenes "D". Das SVG gilt ueberall,
+     wo es geht; die PNG-Fassungen sind fuer Safari und die Kachelansichten,
+     die favicon.ico fuer alles Aeltere. Gebaut mit scripts/icon_bauen.py. -->
+<link rel="icon" href="/logo/hub-icon.svg" type="image/svg+xml">
+<link rel="icon" href="/logo/hub-icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/logo/hub-icon-180.png">
+<meta name="theme-color" content="#0051A1">
+<style>
+
+  /* Schrift, Farben und Gerüst wie in den Hubs - die Seite gehört sichtbar dazu. */
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:300;
+    src:url("/fonts/lato-300.woff2") format("woff2"); font-display:swap; }
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:400;
+    src:url("/fonts/lato-400.woff2") format("woff2"); font-display:swap; }
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:700;
+    src:url("/fonts/lato-700.woff2") format("woff2"); font-display:swap; }
+
+  :root{
+    --paper:#EDF2FA; --card:#FFFFFF; --card-2:#F7FAFD;
+    --ink:#111111; --ink-soft:#444A50; --ink-faint:#545C63;
+    --line:#D0D8E4; --line-soft:#E3EAF3;
+    --brand:#0051A1; --brand-deep:#003B77; --brand-tint:#E1EAF6;
+    --action:#BE9E53; --on-action:#2A2207;
+    --shadow:0 1px 2px rgba(16,40,38,.05), 0 8px 24px -16px rgba(16,40,38,.28);
+    --shadow-hover:0 2px 4px rgba(16,40,38,.06), 0 18px 40px -20px rgba(16,40,38,.40);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+      --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+      --line:#22314A; --line-soft:#1A2639;
+      --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+      --action:#D4B878; --on-action:#221A08;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+      --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+    --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+    --line:#22314A; --line-soft:#1A2639;
+    --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+    --action:#D4B878; --on-action:#221A08;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+    --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Lato", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size:16px; line-height:1.6;
+  }
+  .wrap{ width:min(1280px, 94vw); margin:0 auto; }
+  a{ color:var(--brand); text-underline-offset:2px; }
+  a:focus-visible{ outline:2px solid var(--brand); outline-offset:3px; border-radius:3px; }
+
+  header.top{ background:var(--card); border-bottom:1px solid var(--line); padding:30px 0 34px; }
+  .kopf-oben{ display:flex; justify-content:space-between; align-items:flex-start; gap:24px; }
+  .eyebrow{
+    margin:0 0 8px; font-size:11.5px; font-weight:700; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-faint);
+  }
+  h1{ margin:0 0 12px; font-size:clamp(26px,4.2vw,40px); line-height:1.15; font-weight:700; }
+  .standfirst{ margin:0; max-width:64ch; font-size:clamp(16px,1.9vw,18.5px); color:var(--ink-soft); }
+  .marke img{ display:block; width:200px; height:auto; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .marke{ background:#fff; padding:9px 12px; border-radius:4px; } }
+  :root[data-theme="dark"] .marke{ background:#fff; padding:9px 12px; border-radius:4px; }
+  @media (max-width:760px){
+    .kopf-oben{ flex-direction:column-reverse; align-items:flex-start; gap:16px; }
+    .marke img{ width:150px; max-width:52vw; }
+  }
+
+  main{ padding:34px 0 60px; }
+  h2{
+    font-size:clamp(19px,2.6vw,24px); font-weight:700; line-height:1.25;
+    margin:0 0 6px; padding-bottom:9px; border-bottom:2px solid var(--brand);
+  }
+  .vor{ margin:0 0 20px; max-width:70ch; color:var(--ink-soft); font-size:16px; }
+
+  /* Ueberschrift der beiden Abschnitte. Bewusst schwaecher als h2: Die
+     Trennung ordnet die Kacheln, sie stellt keinen zweiten Seitenteil daneben.
+     Deshalb duenne Linie statt der goldenen Marke und kein Rahmen. */
+  h3.teil{
+    font-size:clamp(17px,2.2vw,21px); font-weight:700; line-height:1.25;
+    margin:34px 0 6px; padding-bottom:7px;
+    border-bottom:1px solid var(--linie, #d5dfee);
+    display:flex; align-items:baseline; gap:10px;
+  }
+  h3.teil:first-of-type{ margin-top:8px; }
+  .teil-zahl{
+    font-size:13px; font-weight:400; color:var(--ink-soft);
+    border:1px solid var(--linie, #d5dfee); border-radius:11px; padding:1px 9px;
+  }
+
+  /* Nebeneinander ist der Regelfall. Untereinander nur auf Handy und Tablet:
+     Unter 1000px werden vier Spalten zu schmalen Saeulen, in denen jede
+     Ueberschrift dreizeilig umbricht. Beide Gitter tragen dieselbe Spaltenzahl,
+     damit die angekuendigten Kacheln so breit sind wie die der laufenden Hubs. */
+  .gitter{ display:grid; gap:16px; grid-template-columns:1fr; margin:0 0 42px; }
+
+  /* ---------- Studien aller Hubs ---------- */
+  .studien{ margin:0 0 42px; }
+  .st-laedt{ color:var(--ink-faint); font-size:14px; margin:0 0 16px; }
+  /* Eine Karte je Hub - mehr wuerde die Uebersicht zur Liste machen. */
+  .st-gitter{ display:grid; gap:12px; grid-template-columns:1fr; }
+  @media (min-width:900px){ .st-gitter{ grid-template-columns:1fr 1fr; } }
+  .st-karte{
+    background:var(--card); border:1px solid var(--line); border-radius:6px;
+    padding:15px 17px; display:flex; flex-direction:column;
+  }
+  .st-kopf{ display:flex; flex-wrap:wrap; align-items:baseline; gap:9px; margin:0 0 6px; }
+  .st-hub{
+    font-size:11.5px; font-weight:700; letter-spacing:.04em;
+    background:var(--brand-tint); color:var(--brand);
+    border-radius:4px; padding:2px 8px; text-decoration:none; white-space:nowrap;
+  }
+  .st-hub:hover{ text-decoration:underline; }
+  .st-quelle{ font-size:12.5px; color:var(--ink-faint); }
+  .st-titel{ font-weight:700; line-height:1.35; margin:0 0 6px; }
+  .st-text{ font-size:14.5px; line-height:1.55; margin:0 0 5px; color:var(--ink-soft); }
+  .st-text b{ color:var(--ink); }
+  .st-mehr{
+    display:inline-block; margin:auto 0 0; padding-top:12px;
+    font-size:13px; font-weight:700;
+    color:var(--brand); text-decoration:none;
+  }
+  .st-mehr:hover{ text-decoration:underline; }
+  .st-leer{ color:var(--ink-faint); font-size:14px; }
+  @media (min-width:1000px){ .gitter{ grid-template-columns:repeat(4, 1fr); } }
+
+  .hub{
+    display:flex; flex-direction:column; background:var(--card);
+    border:1px solid var(--line); border-radius:8px; padding:20px 20px 18px;
+    box-shadow:var(--shadow); transition:box-shadow .16s, border-color .16s;
+  }
+  .hub:hover{ box-shadow:var(--shadow-hover); border-color:var(--brand); }
+  .hub-thema{
+    margin:0 0 6px; font-size:11.5px; font-weight:700; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--brand-deep);
+  }
+  .hub h3{ margin:0 0 9px; font-size:clamp(17px,1.5vw,19px); line-height:1.28; font-weight:700; }
+  .hub h3 a{ color:inherit; text-decoration:none; }
+  .hub h3 a:hover{ color:var(--brand); text-decoration:underline; }
+  .hub-satz{ margin:0 0 16px; font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+
+  .zahlen{
+    display:grid; grid-template-columns:1fr auto; gap:2px 12px;
+    margin:0 0 18px; padding:12px 14px;
+    background:var(--card-2); border:1px solid var(--line-soft); border-radius:6px;
+    font-size:13.5px;
+  }
+  .zahlen > div{ display:contents; }
+  .zahlen dt{ color:var(--ink-faint); }
+  .zahlen dd{ margin:0; text-align:right; font-weight:700; font-variant-numeric:tabular-nums; }
+
+  .hub-wege{ display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin:auto 0 8px; }
+  .btn{
+    display:inline-flex; align-items:center; min-height:40px; padding:0 18px;
+    background:var(--action); color:var(--on-action);
+    font-weight:700; font-size:14.5px; text-decoration:none; border-radius:6px;
+    transition:filter .14s;
+  }
+  .btn:hover{ filter:brightness(1.08); }
+  .dazu{ font-size:13.5px; font-weight:700; }
+  .hub-adresse{ margin:0; font-size:12.5px; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+
+  .hub.kommt{ background:var(--card-2); border-style:dashed; box-shadow:none; }
+  .hub.kommt:hover{ border-color:var(--line); box-shadow:none; }
+  .hub.kommt h3{ color:var(--ink-soft); }
+  .bald{
+    margin:auto 0 0; display:inline-block; align-self:flex-start;
+    font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--brand-deep); background:var(--brand-tint);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  /* Das Band zu CuratioHub. Waagerecht, damit es nicht als dreizehnte
+     Hub-Kachel gelesen wird - es fuehrt auf etwas anderes als die zwoelf. */
+  .karriere-band{
+    display:flex; align-items:center; gap:16px;
+    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--action);
+    border-radius:8px; padding:18px 22px; margin:0 0 34px;
+    text-decoration:none; color:inherit; box-shadow:var(--shadow);
+    transition:box-shadow .16s, border-color .16s;
+  }
+  .karriere-band:hover{ box-shadow:var(--shadow-hover); border-color:var(--brand); }
+  .kb-marke{
+    flex:0 0 auto; font-size:11.5px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--on-action); background:var(--action);
+    border-radius:4px; padding:3px 9px;
+  }
+  .kb-text{ flex:1 1 auto; font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+  .kb-text b{ display:block; color:var(--ink); font-size:16px; margin-bottom:2px; }
+  .kb-pfeil{ flex:0 0 auto; font-size:22px; color:var(--brand); }
+  @media (max-width:620px){
+    .karriere-band{ flex-wrap:wrap; gap:10px; }
+    .kb-pfeil{ display:none; }
+  }
+
+  .gemeinsam{
+    background:var(--card); border:1px solid var(--line); border-radius:8px;
+    padding:22px 24px; margin:0 0 34px;
+  }
+  .gemeinsam h2{ margin-bottom:14px; }
+  .punkte{ display:grid; gap:16px; grid-template-columns:1fr; margin:0; padding:0; list-style:none; }
+  @media (min-width:760px){ .punkte{ grid-template-columns:1fr 1fr; } }
+  .punkte li{ font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+  .punkte b{ display:block; color:var(--ink); font-size:15px; margin-bottom:2px; }
+
+  footer{
+    border-top:1px solid var(--line); background:var(--card);
+    padding:26px 0 40px; font-size:14px; color:var(--ink-faint);
+  }
+  footer p{ margin:0 0 8px; max-width:74ch; }
+  footer a{ color:var(--ink-soft); }
+  details{ margin:14px 0 0; }
+  summary{ cursor:pointer; font-weight:700; color:var(--ink-soft); }
+  .legal-body{ padding:10px 0 4px; max-width:74ch; }
+  .legal-body h4{ margin:14px 0 4px; font-size:13.5px; }
+  .legal-body p{ margin:0 0 8px; }
+  .stand{ margin-top:16px; font-size:12.5px; }
+
+  /* Der DE/EN-Umschalter. Er sitzt ueber dem Logo statt neben der
+     Ueberschrift: Oben rechts sucht ihn jeder, und im Textblock wuerde er
+     den Vorspann zerteilen. Auf schmalen Schirmen dreht .kopf-oben die
+     Reihenfolge um; .kopf-rechts dreht deshalb mit, sonst stuende der
+     Umschalter unter dem Logo statt darueber. */
+  .kopf-rechts{ display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+  .sprache{
+    display:flex; margin:0; border:1px solid var(--line); border-radius:6px;
+    overflow:hidden; font-size:12.5px; font-weight:700; letter-spacing:.06em;
+  }
+  .sprache a, .sprache span{ display:block; padding:4px 11px; text-decoration:none; color:var(--ink-soft); }
+  .sprache a:hover{ background:var(--brand-tint); color:var(--brand); }
+  .sprache [aria-current]{ background:var(--brand); color:#fff; }
+  @media (max-width:760px){
+    .kopf-rechts{ align-items:flex-start; flex-direction:column-reverse; }
+  }
+
+  /* Nur auf der englischen Seite: der Hinweis, dass die Hubs deutsch sind.
+     Er steht ganz oben und nicht im Fuss - wer ihn erst unten liest, hat
+     vorher fuenfzehn Kacheln angesehen, die er nicht lesen kann. */
+  .sprachnotiz{
+    background:var(--card); border:1px solid var(--line);
+    border-left:4px solid var(--brand); border-radius:8px;
+    padding:16px 20px; margin:0 0 30px;
+    font-size:14.5px; line-height:1.55; color:var(--ink-soft);
+  }
+  .sprachnotiz b{ display:block; color:var(--ink); font-size:16px; margin-bottom:3px; }
+</style>
+
+<header class="top">
+  <div class="wrap kopf-oben">
+    <div>
+      <p class="eyebrow">Monitor Versorgungsforschung</p>
+      <h1>The Knowledge Hubs</h1>
+      <p class="standfirst">Research portals for the German healthcare system: one search term opens the
+      live search in every relevant database — and each morning brings a new selection of
+      studies. This page explains what the hubs do; the hubs themselves are in German.</p>
+    </div>
+    <div class="kopf-rechts">
+      <p class="sprache"><a href="/" hreflang="de" lang="de" title="Diese Seite auf Deutsch">DE</a><span aria-current="true">EN</span></p>
+      <a class="marke" href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=logo" target="_blank" rel="noopener" title="Monitor Versorgungsforschung — publisher of these portals">
+        <img src="/logo/mvf-logo.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="sprachnotiz"><b>A note on language</b>
+  The hubs are written in German: the interface, the search glossary and the daily study
+  summaries. The literature behind them is international and English-language — what the hubs
+  add is the bridge into German. If you read German, everything here is open to you at no cost
+  and without registration. If you do not, our English-language journal
+  <a href="https://www.monitor-healthcare-research.com/" target="_blank" rel="noopener">Monitor
+  Healthcare Research</a> is the better starting point.</p>
+
+  <h2>15 hubs are online</h2>
+  <p class="vor">Together 1189 databases, 563 of them with a genuine live search;
+  2325 search terms in the German–English glossary. Each hub stands on its own and
+  has its own daily newsletter. The search spaces do touch — depending on the hub, 3 to 28
+  per cent of the works found also fall within the field of another (checked 08/2026);
+  the upper figure concerns health literacy and AI alone, and without the AI hub the range
+  reaches only 13 per cent.
+  In the daily selection this barely shows: of 1949 studies delivered so far,
+  70 have appeared in more than one hub.</p>
+
+  <h3 class="teil">Topics in care <span class="teil-zahl">11</span></h3>
+  <p class="vor">These hubs follow a topic in health care across all conditions — how care is
+  given, how people are vaccinated, how services are digitalised and how decisions are
+  made. What gets selected is what changes care delivery.</p>
+
+  <div class="gitter">
+      <article class="hub">
+        <p class="hub-thema">Digitalisation, AI & health</p>
+        <h3><a href="https://ki.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Digitalisation, AI & Health</a></h3>
+        <p class="hub-satz">Digital applications and artificial intelligence in care. Searches two research cultures at once: medical journals and the conference literature of computer science.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>106</dd></div>
+          <div><dt>of them live search</dt><dd>49</dd></div>
+          <div><dt>Categories</dt><dd>10</dd></div>
+          <div><dt>Glossary terms</dt><dd>253</dd></div>
+          <div><dt>Studies in the archive</dt><dd>163</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://ki.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://ki.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">ki.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Sex, gender & health</p>
+        <h3><a href="http://gender.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Sex- and Gender-Sensitive Medicine</a></h3>
+        <p class="hub-satz">Sex and gender as factors in care: diagnosis, dosing and access — and whether a difference stems from biology or from the path to treatment.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>93</dd></div>
+          <div><dt>of them live search</dt><dd>45</dd></div>
+          <div><dt>Categories</dt><dd>10</dd></div>
+          <div><dt>Glossary terms</dt><dd>173</dd></div>
+          <div><dt>Studies in the archive</dt><dd>144</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="http://gender.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="http://gender.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">gender.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Healthy ageing & longevity</p>
+        <h3><a href="https://longevity.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Healthy Ageing & Longevity</a></h3>
+        <p class="hub-satz">Lifespan and healthy life years: prevention, geriatrics and ageing cohorts — and the biology of ageing, which gets a category of its own here.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>100</dd></div>
+          <div><dt>of them live search</dt><dd>51</dd></div>
+          <div><dt>Categories</dt><dd>11</dd></div>
+          <div><dt>Glossary terms</dt><dd>222</dd></div>
+          <div><dt>Studies in the archive</dt><dd>152</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://longevity.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://longevity.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">longevity.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Health literacy</p>
+        <h3><a href="https://healthliteracy.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Health Literacy</a></h3>
+        <p class="hub-satz">Understandable health information, decision aids and patient involvement — and the question of who is not reached by any of it.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>76</dd></div>
+          <div><dt>of them live search</dt><dd>36</dd></div>
+          <div><dt>Categories</dt><dd>10</dd></div>
+          <div><dt>Glossary terms</dt><dd>165</dd></div>
+          <div><dt>Studies in the archive</dt><dd>157</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://healthliteracy.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://healthliteracy.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">healthliteracy.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Heat, climate & health</p>
+        <h3><a href="https://klima.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Heat, Climate & Health</a></h3>
+        <p class="hub-satz">Heat, extreme weather and climate change, and what they mean for care delivery, practice and population health. With a category of its own for climate and environmental measurement data rather than publications.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>90</dd></div>
+          <div><dt>of them live search</dt><dd>40</dd></div>
+          <div><dt>Categories</dt><dd>9</dd></div>
+          <div><dt>Glossary terms</dt><dd>240</dd></div>
+          <div><dt>Studies in the archive</dt><dd>153</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://klima.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://klima.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">klima.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Vaccination & immunisation</p>
+        <h3><a href="https://impfen.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Vaccination</a></h3>
+        <p class="hub-satz">Vaccination as a question of care delivery: coverage, willingness to vaccinate and what raises uptake — with categories of their own for notifiable-disease data and for the safety registers of PEI, EMA and CDC.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>97</dd></div>
+          <div><dt>of them live search</dt><dd>50</dd></div>
+          <div><dt>Categories</dt><dd>10</dd></div>
+          <div><dt>Glossary terms</dt><dd>167</dd></div>
+          <div><dt>Studies in the archive</dt><dd>147</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://impfen.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://impfen.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">impfen.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Noncommunicable diseases</p>
+        <h3><a href="https://ncd.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Chronic Conditions</a></h3>
+        <p class="hub-satz">Care for the chronically ill: diabetes, cardiovascular disease, cancer and multimorbidity — programmes, guidelines and the question of how much of it reaches everyday practice.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>102</dd></div>
+          <div><dt>of them live search</dt><dd>41</dd></div>
+          <div><dt>Categories</dt><dd>11</dd></div>
+          <div><dt>Glossary terms</dt><dd>158</dd></div>
+          <div><dt>Studies in the archive</dt><dd>146</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://ncd.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://ncd.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">ncd.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Patient safety</p>
+        <h3><a href="https://safety.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Patient Safety</a></h3>
+        <p class="hub-satz">Preventable harm in health care: treatment and medication errors, hospital-acquired infections and sepsis — and who reports, when reporting becomes a question of liability.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>75</dd></div>
+          <div><dt>of them live search</dt><dd>34</dd></div>
+          <div><dt>Categories</dt><dd>11</dd></div>
+          <div><dt>Glossary terms</dt><dd>95</dd></div>
+          <div><dt>Studies in the archive</dt><dd>141</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://safety.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://safety.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">safety.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Nursing & long-term care</p>
+        <h3><a href="https://pflege.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Nursing & Long-Term Care</a></h3>
+        <p class="hub-satz">Nursing care, long-term care and the situation of those who provide it — staffing, quality, family carers, plus expert standards and facility comparisons.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>88</dd></div>
+          <div><dt>of them live search</dt><dd>42</dd></div>
+          <div><dt>Categories</dt><dd>11</dd></div>
+          <div><dt>Glossary terms</dt><dd>156</dd></div>
+          <div><dt>Studies in the archive</dt><dd>149</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://pflege.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://pflege.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">pflege.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Mental health</p>
+        <h3><a href="https://mental.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Mental Health</a></h3>
+        <p class="hub-satz">Care for people with mental illness: access, waiting times, community-based services and crisis care — not whether treatment works, but who reaches it in time.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>72</dd></div>
+          <div><dt>of them live search</dt><dd>34</dd></div>
+          <div><dt>Categories</dt><dd>9</dd></div>
+          <div><dt>Glossary terms</dt><dd>96</dd></div>
+          <div><dt>Studies in the archive</dt><dd>139</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://mental.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://mental.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">mental.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Health services research</p>
+        <h3><a href="https://wissen.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Health Services Research</a></h3>
+        <p class="hub-satz">The first hub of the series: health services research in its full breadth — models of care, quality, governance and benefit assessment.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>57</dd></div>
+          <div><dt>of them live search</dt><dd>29</dd></div>
+          <div><dt>Categories</dt><dd>8</dd></div>
+          <div><dt>Glossary terms</dt><dd>170</dd></div>
+          <div><dt>Studies in the archive</dt><dd>193</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://wissen.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://wissen.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">wissen.m-vf.de</p>
+      </article>
+  </div>
+
+  <h3 class="teil">Disease areas <span class="teil-zahl">4</span></h3>
+  <p class="vor">These hubs follow a disease area. They are built differently: they read the
+  core journals of the field and show clinical <em>and</em> basic research — health
+  services research is one category within them, not the yardstick. If you want to know
+  what is moving in a field, this is the place.</p>
+
+  <div class="gitter">
+      <article class="hub">
+        <p class="hub-thema">Obesity</p>
+        <h3><a href="https://adipositas.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Obesity</a></h3>
+        <p class="hub-satz">Obesity as a question of care delivery: weight management, drug therapy and surgery — and who pays for treatment when Section 34 of the German Social Code Book V rules it out.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>65</dd></div>
+          <div><dt>of them live search</dt><dd>31</dd></div>
+          <div><dt>Categories</dt><dd>10</dd></div>
+          <div><dt>Glossary terms</dt><dd>166</dd></div>
+          <div><dt>Studies in the archive</dt><dd>147</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://adipositas.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://adipositas.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">adipositas.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Diabetes</p>
+        <h3><a href="https://diabetes.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Diabetes</a></h3>
+        <p class="hub-satz">Diabetes from some thirty core journals: type 1 and type 2, complications of the eye, kidney, nerve and foot, glucose technology and disease management programmes. Weight and bariatric surgery are covered by the sister portal adipositas.m-vf.de.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>61</dd></div>
+          <div><dt>of them live search</dt><dd>28</dd></div>
+          <div><dt>Categories</dt><dd>9</dd></div>
+          <div><dt>Glossary terms</dt><dd>87</dd></div>
+          <div><dt>Studies in the archive</dt><dd>42</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://diabetes.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://diabetes.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">diabetes.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Cardiology</p>
+        <h3><a href="https://kardio.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Cardiology</a></h3>
+        <p class="hub-satz">Heart and circulation from some 35 core journals, from Circulation to Clinical Research in Cardiology. Of all the hubs in the series the one with the strongest European focus — European cardiology publishes in European titles.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>53</dd></div>
+          <div><dt>of them live search</dt><dd>28</dd></div>
+          <div><dt>Categories</dt><dd>9</dd></div>
+          <div><dt>Glossary terms</dt><dd>88</dd></div>
+          <div><dt>Studies in the archive</dt><dd>33</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://kardio.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://kardio.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">kardio.m-vf.de</p>
+      </article>
+      <article class="hub">
+        <p class="hub-thema">Oncology</p>
+        <h3><a href="https://onkologie.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Knowledge Hub Oncology</a></h3>
+        <p class="hub-satz">Cancer research and cancer care from some thirty core journals — from Lancet Oncology to Nature. The first portal of the series built around a disease area rather than a topic in care: clinical and basic research, with health services research as one category within it.</p>
+        <dl class="zahlen">
+          <div><dt>Databases</dt><dd>54</dd></div>
+          <div><dt>of them live search</dt><dd>25</dd></div>
+          <div><dt>Categories</dt><dd>9</dd></div>
+          <div><dt>Glossary terms</dt><dd>89</dd></div>
+          <div><dt>Studies in the archive</dt><dd>43</dd></div>
+        </dl>
+        <p class="hub-wege">
+          <a class="btn" href="https://onkologie.m-vf.de/?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Open the hub</a>
+          <a class="dazu" href="https://onkologie.m-vf.de/newsletter.html?utm_source=hub-uebersicht-en&amp;utm_medium=referral&amp;utm_campaign=newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a>
+        </p>
+        <p class="hub-adresse">onkologie.m-vf.de</p>
+      </article>
+  </div>
+
+  <!-- Verweis auf CuratioHub. Steht bewusst unter den Hub-Kacheln und nicht im
+       Kopf: Wer hier ankommt, sucht zuerst ein Thema, nicht eine Stelle. -->
+  <a class="karriere-band" href="/curatiohub.html">
+    <span class="kb-marke">New</span>
+    <span class="kb-text"><b>CuratioHub — the careers and jobs portal (in German)</b>
+    Positions in health services research, public health and medicine: one term, and the
+    search runs across the relevant job markets, German-language and international.</span>
+    <span class="kb-pfeil" aria-hidden="true">→</span>
+  </a>
+
+  <!-- Verweis aufs Gewinnspiel zum 25. DKVF. BEFRISTET, und zwar doppelt
+       abgesichert: Der Block wird gar nicht erst erzeugt, wenn zur Bauzeit
+       schon der 25.09.2026 18:00 vorbei ist, und was einmal gebaut wurde,
+       raeumt sich unten per Skript selbst weg. Ohne das eine oder das
+       andere stuende hier im Dezember noch eine Einladung zu einer
+       Verlosung, die im September endete - und niemand faende den Grund. -->
+
+
+
+  <!-- Die Studien aller Hubs. Die Datei wird taeglich von
+       scripts/studien_sammeln.py gebaut; geladen wird sie erst, wenn der
+       Abschnitt ins Bild kommt - sie ist bei vollem Fenster gut ein halbes
+       Megabyte gross und darf den Seitenaufbau nicht aufhalten. -->
+  <section class="gemeinsam">
+    <h2>What all hubs have in common</h2>
+    <ul class="punkte">
+      <li><b>One search, every database</b>One term is enough: each tile opens the matching
+      live search in a new tab. Where a source does not allow that, the tile leads to the start
+      page — and says so.</li>
+      <li><b>Search in German, find in English</b>A curated search glossary translates the German
+      technical term for the international databases; German-language sources keep it.</li>
+      <li><b>New studies every morning</b>An AI selects from the new entries in PubMed what
+      matters for the German healthcare system and summarises it in German — with the result
+      figures and an assessment of how far it transfers.</li>
+      <li><b>Newsletter and downloads</b>The daily selection comes by e-mail on request, plus as
+      a Word and an Excel file. Every newsletter page also lets you subscribe to the newsletters
+      of the other hubs.</li>
+      <li><b>No cookies, no third-party services</b>Static pages without third-party analytics.
+      Fonts and images sit on our own server. How often the pages are opened we count ourselves —
+      without cookies and without storing IP addresses.</li>
+      <li><b>Free and open</b>No account, no registration, no paywall. Where a database itself
+      requires a licence, the tile is marked as licence-restricted.</li>
+    </ul>
+  </section>
+
+  <section class="studien" id="studien">
+    <h2 id="stTitel">The latest studies</h2>
+    <p class="vor" id="stVor">The most recent work from each hub — summary, result and context are in the
+    hub itself, in German.</p>
+    <p class="st-laedt" id="stLaedt">Loading …</p>
+    <div id="stListe"></div>
+    <noscript><p class="st-laedt">This overview needs JavaScript. The studies are available in each hub
+    individually.</p></noscript>
+  </section>
+
+</main>
+
+<script>
+// ---------------------------------------------------------------- Studien
+// Aus jedem Hub die juengste Arbeit - eine Karte je Hub, nicht eine Liste. Die
+// Sammeldatei baut scripts/studien_sammeln.py jede Nacht; geladen wird sie
+// erst, wenn der Abschnitt ins Bild kommt.
+(function () {
+  var abschnitt = document.getElementById('studien');
+  var listeEl   = document.getElementById('stListe');
+  var laedtEl   = document.getElementById('stLaedt');
+  var vorEl     = document.getElementById('stVor');
+  if (!abschnitt || !listeEl) return;
+  var geholt = false;
+
+  // Ohne Maskierung stuende ein spitzes Zeichen aus einem Studientitel als
+  // Markup in der Seite. Die Portale duerfen ohne arbeiten, weil ihre Inhalte
+  // von Hand gepflegt sind - hier kommen sie aus den Archiven aller Hubs.
+  function sicher(t) {
+    return String(t == null ? '' : t)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function karte(e, hub, uebrig) {
+    var quelle = [e.journal, e.year].filter(Boolean).join(' · ');
+    var h = '<article class="st-karte">'
+      + '<div class="st-kopf">'
+      + '<a class="st-hub" href="https://' + sicher(hub.domain) + '/" target="_blank"'
+      + ' rel="noopener">' + sicher(hub.name) + '</a>'
+      + '<span class="st-quelle">' + sicher(quelle) + '</span></div>'
+      + '<p class="st-titel">' + sicher(e.title) + '</p>';
+    // Bewusst ohne Ergebnis und ohne PubMed-Link: Die Karte soll neugierig
+    // machen und in den Hub fuehren, nicht aus der Reihe heraus.
+    var text = uebrig > 0
+      ? 'This and ' + uebrig + ' more studies in the hub'
+      : 'To the study in the hub';
+    h += '<a class="st-mehr" href="https://' + sicher(hub.domain) + '/" target="_blank"'
+      + ' rel="noopener">' + text + ' ' + sicher(hub.name) + ' &rarr;</a>';
+    return h + '</article>';
+  }
+
+  function zeichne(d) {
+    var teile = [], gesamt = 0;
+    d.hubs.forEach(function (hub) {
+      var seine = d.studien.filter(function (e) { return e.hub === hub.name; });
+      gesamt += seine.length;
+      if (!seine.length) return;
+      teile.push(karte(seine[0], hub, seine.length - 1));
+    });
+    listeEl.innerHTML = '<div class="st-gitter">' + teile.join('') + '</div>';
+    if (vorEl) {
+      vorEl.textContent = 'The most recent work from each hub. Over the past '
+        + d.fenster_tage + ' days the series found and published ' + gesamt
+        + ' studies — summary, result and context are in the respective hub, in German.';
+    }
+  }
+
+  function laden() {
+    if (geholt) return;
+    geholt = true;
+    fetch('/studien.json', { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (d) { laedtEl.hidden = true; zeichne(d); })
+      .catch(function () {
+        laedtEl.textContent = 'This overview could not be loaded. The studies are available in each hub individually.';
+      });
+  }
+
+  if ('IntersectionObserver' in window) {
+    var beobachter = new IntersectionObserver(function (eintraege) {
+      if (eintraege.some(function (x) { return x.isIntersecting; })) {
+        beobachter.disconnect();
+        laden();
+      }
+    }, { rootMargin: '400px' });
+    beobachter.observe(abschnitt);
+  } else {
+    laden();
+  }
+})();
+</script>
+
+<footer>
+  <div class="wrap">
+    <p>Published by „Monitor Versorgungsforschung" · eRelation AG – Content in Health</p>
+
+    <details id="impressum">
+      <summary>Legal notice (Impressum)</summary>
+      <div class="legal-body">
+        <h4>Information pursuant to § 5 DDG and § 18 (2) MStV</h4>
+        <p>eRelation AG – Content in Health<br>Johannes-von-Hanstein-Str. 2<br>53115 Bonn, Germany</p>
+        <p>Represented by the Executive Board: Peter Stegmaier (Chairman)</p>
+        <p>Phone: +49 228 76 36 80-30<br>Fax: +49 228 76 36 80-01<br>E-mail: info@m-vf.de</p>
+        <p>Register court: Amtsgericht Bonn · Registration number: HRB 9392</p>
+        <p>Responsible for content pursuant to § 18 (2) MStV: Peter Stegmaier (address as above, stegmaier@m-vf.de)</p>
+        <p>Publisher: Prof. Dr. Reinhold Roski · Editor-in-chief: Peter Stegmaier</p>
+        <p>This is a translation for convenience. The <a href="/#impressum">German version</a> is the legally binding one.</p>
+      </div>
+    </details>
+
+    <details id="datenschutz">
+      <summary>Privacy notice</summary>
+      <div class="legal-body">
+        <h4>1. Controller</h4>
+        <p>eRelation AG – Content in Health, represented by Peter Stegmaier, Johannes-von-Hanstein-Str. 2, 53115 Bonn, Germany. Contact details in the legal notice above.</p>
+        <h4>2. Nature of this page</h4>
+        <p>This overview is a static page. It sets <strong>no cookies</strong> and embeds <strong>no third-party analytics or tracking services</strong>. Fonts and images are served from the same server; no third-party content is loaded. There is no form on this page.</p><p>How often the page is opened we count on a server of our own at <i>Monitor Versorgungsforschung</i>. Nothing is stored on or read from your device, and your IP address is not stored: it enters, together with a secret random number, into a non-reversible hash value that makes repeated visits on the same day countable as one person. The random number is replaced every night; recognition beyond the day does not take place. The legal basis is Art. 6 (1) (f) GDPR. Visits sending <i>Do Not Track</i> are not counted.</p>
+        <h4>3. Server logs</h4>
+        <p>This page is hosted by GitHub Pages (GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA). On retrieval the provider processes technically necessary connection data such as your IP address. The legal basis is our legitimate interest in secure operation (Art. 6 (1) (f) GDPR).</p>
+        <h4>4. Links to other pages</h4>
+        <p>The tiles lead to the individual Knowledge Hubs and to monitor-versorgungsforschung.de. For their content and data processing, the privacy notices published there apply; newsletter subscription takes place there only.</p>
+        <h4>5. Your rights</h4>
+        <p>You have the right to information, rectification, erasure, restriction of processing, data portability and objection, as well as the right to lodge a complaint with a supervisory authority. The competent authority is the State Commissioner for Data Protection and Freedom of Information of North Rhine-Westphalia.</p>
+        <p>This is a translation for convenience. The <a href="/#datenschutz">German version</a> is the legally binding one.</p>
+      </div>
+    </details>
+
+    <p class="stand">Figures as of 16 September 2026. They are counted from the portals themselves on every build.</p>
+  </div>
+</footer>
+
+<!-- ZAEHLER-START --------------------------------------------------------
+     Zaehlt den Aufruf auf dem eigenen Server von Monitor Versorgungsforschung.
+     Kein Cookie, keine Kennung auf dem Geraet, keine fremde Firma. Wer Do Not
+     Track gesetzt hat, wird gar nicht erst gezaehlt. Schlaegt der Abruf fehl,
+     merkt die Seite es nicht - ein Bild, das nicht laedt, ist folgenlos.
+     Gegenstueck: /zaehler/z.php auf monitor-versorgungsforschung.de -->
+<script>
+(function () {
+  // Die Seite meldet Suchen ueber window.mvfZ. Die Funktion steht ab sofort
+  // immer bereit und tut im Zweifel nichts - sonst muesste jede Aufrufstelle
+  // pruefen, ob es sie ueberhaupt gibt, und eine vergessene Pruefung waere
+  // ein Skriptfehler mitten in der Suche.
+  window.mvfZ = function () {};
+  try {
+    if (navigator.doNotTrack === '1' || window.doNotTrack === '1'
+        || navigator.globalPrivacyControl === true) return;
+    // Automatische Umgebungen melden sich selbst: navigator.webdriver setzen
+    // Headless Chrome und Selenium von sich aus. Zuverlaessiger als jede
+    // Liste von Browserkennungen, weil es nicht geraten, sondern gemeldet wird.
+    if (navigator.webdriver) return;
+    if (!screen.width || !screen.height) return;   // kein echter Bildschirm
+    if (!/\.m-vf\.de$/.test(location.hostname)) return;   // lokal nicht zaehlen
+    var r = '';
+    try { r = document.referrer ? new URL(document.referrer).hostname : ''; }
+    catch (e) { r = ''; }
+    if (r === location.hostname) r = '';
+    // Bildschirmbreite nur in Stufen. Die genaue Aufloesung waere eines der
+    // staerksten Merkmale zum Wiedererkennen eines Browsers; fuer die Frage,
+    // fuer welche Breite zu gestalten ist, genuegt die Schublade.
+    var w = screen.width;
+    var stufe = w < 480 ? 'bis480' : w < 768 ? 'bis768' : w < 1024 ? 'bis1024'
+              : w < 1440 ? 'bis1440' : w < 1920 ? 'bis1920' : 'ueber1920';
+    var q = 'h=' + encodeURIComponent(location.hostname)
+          + '&p=' + encodeURIComponent(location.pathname)
+          + '&r=' + encodeURIComponent(r ? 'https://' + r + '/' : '')
+          + '&g=' + (Math.min(screen.width, screen.height) < 768 ? 'm' : 'd')
+          + '&b=' + stufe
+          + '&c=' + Date.now();
+    var ziel = 'https://www.monitor-versorgungsforschung.de/zaehler/z.php?';
+    new Image(1, 1).src = ziel + q;
+
+    // Ein Begriff wird nur mitgeschickt, wenn er wie ein Fachbegriff aussieht.
+    // Ziffern, Klammern, Anfuehrungszeichen, @ und mehr als drei Woerter
+    // deuten auf Freitext oder eine Kennung - so etwas verlaesst den Browser
+    // gar nicht erst. Was uebrig bleibt, prueft der Server noch einmal und
+    // wirft dort zusaetzlich alle Krankheitsbegriffe weg.
+    function sauber(v) {
+      if (typeof v !== 'string') return '';
+      var t = v.toLowerCase().replace(/\s+/g, ' ').trim();
+      if (t.length < 3 || t.length > 40) return '';
+      if (t.split(' ').length > 3) return '';
+      if (/[^a-zßà-öø-ÿ \-]/.test(t)) return '';
+      if (t.charAt(0) === '-') return '';
+      if (/(^| )(and|or|not)( |$)/.test(t)) return '';   // Formel, kein Begriff
+      return t;
+    }
+
+    // Eine abgesendete Suche zaehlen. Kein Seitenaufruf: z.php fuehrt beides
+    // getrennt. sendBeacon ueberlebt einen Seitenwechsel, ein Bild nicht -
+    // wer sucht und sofort auf eine Kachel klickt, wird sonst nicht gezaehlt.
+    window.mvfZ = function (art, begriff) {
+      try {
+        var f = 'h=' + encodeURIComponent(location.hostname)
+              + '&e=' + encodeURIComponent(art)
+              + '&c=' + Date.now();
+        var t = sauber(begriff);
+        if (t) f += '&t=' + encodeURIComponent(t);
+        if (navigator.sendBeacon) navigator.sendBeacon(ziel + f);
+        else new Image(1, 1).src = ziel + f;
+      } catch (e) { /* eine ungezaehlte Suche ist kein Grund, etwas kaputtzumachen */ }
+    };
+  } catch (e) { /* Zaehlung ist nie wichtiger als die Seite */ }
+})();
+</script>
+<!-- ZAEHLER-ENDE -->
+</html>

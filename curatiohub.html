@@ -226,6 +226,34 @@
   .legal-body p{ margin:0 0 8px; }
   .stand{ margin-top:16px; font-size:12.5px; }
 
+  /* Der DE/EN-Umschalter. Er sitzt ueber dem Logo statt neben der
+     Ueberschrift: Oben rechts sucht ihn jeder, und im Textblock wuerde er
+     den Vorspann zerteilen. Auf schmalen Schirmen dreht .kopf-oben die
+     Reihenfolge um; .kopf-rechts dreht deshalb mit, sonst stuende der
+     Umschalter unter dem Logo statt darueber. */
+  .kopf-rechts{ display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+  .sprache{
+    display:flex; margin:0; border:1px solid var(--line); border-radius:6px;
+    overflow:hidden; font-size:12.5px; font-weight:700; letter-spacing:.06em;
+  }
+  .sprache a, .sprache span{ display:block; padding:4px 11px; text-decoration:none; color:var(--ink-soft); }
+  .sprache a:hover{ background:var(--brand-tint); color:var(--brand); }
+  .sprache [aria-current]{ background:var(--brand); color:#fff; }
+  @media (max-width:760px){
+    .kopf-rechts{ align-items:flex-start; flex-direction:column-reverse; }
+  }
+
+  /* Nur auf der englischen Seite: der Hinweis, dass die Hubs deutsch sind.
+     Er steht ganz oben und nicht im Fuss - wer ihn erst unten liest, hat
+     vorher fuenfzehn Kacheln angesehen, die er nicht lesen kann. */
+  .sprachnotiz{
+    background:var(--card); border:1px solid var(--line);
+    border-left:4px solid var(--brand); border-radius:8px;
+    padding:16px 20px; margin:0 0 30px;
+    font-size:14.5px; line-height:1.55; color:var(--ink-soft);
+  }
+  .sprachnotiz b{ display:block; color:var(--ink); font-size:16px; margin-bottom:3px; }
+
   /* ---------- nur auf der Karriereseite ---------- */
   .zurueck { display:inline-block; margin:0 0 14px; font-size:13.5px; font-weight:700; text-decoration:none; }
   .zurueck:hover { text-decoration:underline; }
@@ -401,9 +429,9 @@
       <button type="button" class="thema-chip" data-de="Psychische Gesundheit" data-en="mental health services">Psychische Gesundheit</button>
       <button type="button" class="thema-chip" data-de="Versorgungsforschung" data-en="health services research">Versorgungsforschung</button>
       <button type="button" class="thema-chip" data-de="Adipositas" data-en="obesity treatment">Adipositas</button>
-      <button type="button" class="thema-chip" data-de="Typ-2-Diabetes" data-en="">Diabetes</button>
-      <button type="button" class="thema-chip" data-de="Herzinsuffizienz" data-en="">Kardiologie</button>
-      <button type="button" class="thema-chip" data-de="Immuntherapie" data-en="">Onkologie</button>
+      <button type="button" class="thema-chip" data-de="Typ-2-Diabetes" data-en="diabetes care">Diabetes</button>
+      <button type="button" class="thema-chip" data-de="Herzinsuffizienz" data-en="cardiovascular disease">Kardiologie</button>
+      <button type="button" class="thema-chip" data-de="Immuntherapie" data-en="cancer research">Onkologie</button>
     </div>
     <p class="themen-vor">Die Themen-Knöpfe setzen zwei Begriffe zugleich: den deutschen
     für die deutschsprachigen Märkte, den englischen für die internationalen. Beide sind
@@ -572,7 +600,7 @@
       </div>
     </details>
 
-    <p class="stand">Stand der Kachelliste: 10.09.2026. Alle Suchadressen wurden am 01.09.2026 im Browser geprüft.</p>
+    <p class="stand">Stand der Kachelliste: 16.09.2026. Alle Suchadressen wurden am 01.09.2026 im Browser geprüft.</p>
   </div>
 </footer>
 
