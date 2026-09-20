@@ -172,6 +172,15 @@
   .st-mehr:hover{ text-decoration:underline; }
   .st-leer{ color:var(--ink-faint); font-size:14px; }
   @media (min-width:1000px){ .gitter{ grid-template-columns:repeat(4, 1fr); } }
+  @media (min-width:1000px){
+    .gitter--eins{ grid-template-columns:1fr; }
+    .hub--breit .hub-texte{ grid-template-columns:repeat(3, 1fr); }
+    .hub--breit .zahlen{ grid-template-columns:repeat(4, auto); gap:2px 28px;
+      justify-content:start; }
+    .hub--breit .zahlen > div{ display:block; }
+    .hub--breit .zahlen dd{ text-align:left; font-size:17px; }
+    .hub--breit .hub-fuss{ grid-template-columns:1fr auto; }
+  }
 
   .hub{
     display:flex; flex-direction:column; background:var(--card);
@@ -197,6 +206,15 @@
   .zahlen > div{ display:contents; }
   .zahlen dt{ color:var(--ink-faint); }
   .zahlen dd{ margin:0; text-align:right; font-weight:700; font-variant-numeric:tabular-nums; }
+
+  /* Ein Abschnitt mit einer einzigen Kachel: sie nimmt die ganze
+     Breite, und ihre drei Absaetze stehen nebeneinander statt
+     untereinander. */
+  .hub--breit .hub-texte{ display:grid; gap:0 26px; }
+  .hub--breit .hub-satz{ margin-bottom:14px; }
+  .hub--breit .hub-fuss{ display:grid; gap:14px 26px; align-items:center; }
+  .hub--breit .zahlen{ margin:0; }
+  .hub--breit .hub-wege{ margin:0; }
 
   .hub-wege{ display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin:auto 0 8px; }
   .btn{
@@ -329,10 +347,11 @@
   Auswertung einer einzigen Quelle: aller Förderprojekte und Beschlüsse des
   Innovationsfonds beim Gemeinsamen Bundesausschuss.</p>
 
-  <div class="gitter">
-      <article class="hub">
+  <div class="gitter gitter--eins">
+      <article class="hub hub--breit">
         <p class="hub-thema">Innovationsfonds G-BA</p>
         <h3><a href="https://innofonds.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Innofonds-Wissen</a></h3>
+        <div class="hub-texte">
         <p class="hub-satz"><b>Was es ist.</b> Eine täglich nachgeführte
         Auswertung aller Förderprojekte des Innovationsfonds — Projekte,
         Konsortialpartner und die Beschlüsse des Innovationsausschusses,
@@ -347,6 +366,8 @@
         jedes Konsortium anfängt: Was wurde zu meiner Fragestellung schon
         versucht, und woran lag es? Fehlende Abgrenzung zum Bestehenden ist
         die häufigste Ablehnungsursache — hier steht sie belegt.</p>
+        </div>
+        <div class="hub-fuss">
         <dl class="zahlen">
           <div><dt>Förderprojekte</dt><dd>861</dd></div>
           <div><dt>Einrichtungen</dt><dd>1077</dd></div>
@@ -356,6 +377,7 @@
         <p class="hub-wege">
           <a class="btn" href="https://innofonds.m-vf.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=uebersicht" target="_blank" rel="noopener">Zur Auswertung</a>
         </p>
+        </div>
         <p class="hub-adresse">innofonds.m-vf.de</p>
       </article>
   </div>
