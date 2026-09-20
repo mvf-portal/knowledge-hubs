@@ -107,6 +107,34 @@
   /* ---------- Studien aller Hubs ---------- */
   .studien{ margin:0 0 42px; }
   .st-laedt{ color:var(--ink-faint); font-size:14px; margin:0 0 16px; }
+
+  /* Suche ueber die Studien aller Hubs */
+  .st-suche{
+    background:var(--card); border:1px solid var(--line); border-radius:8px;
+    padding:16px 18px 14px; margin:0 0 20px;
+  }
+  .st-suche-label{
+    display:block; font-size:11.5px; font-weight:700; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px;
+  }
+  .st-suche-zeile{ display:flex; gap:8px; flex-wrap:wrap; }
+  .st-suche-feld{
+    flex:1 1 220px; min-width:0; font:inherit; font-size:15px;
+    padding:10px 13px; border:1px solid var(--line); border-radius:6px;
+    background:var(--card-2); color:var(--ink);
+  }
+  .st-suche-feld:focus{
+    outline:2px solid var(--brand); outline-offset:1px; border-color:var(--brand);
+  }
+  .st-suche-knopf{
+    flex:0 0 auto; font:inherit; font-size:15px; font-weight:700; cursor:pointer;
+    padding:10px 22px; border:0; border-radius:6px;
+    background:var(--brand); color:#fff; transition:filter .14s;
+  }
+  .st-suche-knopf:hover{ filter:brightness(1.1); }
+  .st-suche-fuss{
+    font-size:13px; line-height:1.5; color:var(--ink-faint); margin:10px 0 0;
+  }
   /* Eine Karte je Hub - mehr wuerde die Uebersicht zur Liste machen. */
   .st-gitter{ display:grid; gap:12px; grid-template-columns:1fr; }
   @media (min-width:900px){ .st-gitter{ grid-template-columns:1fr 1fr; } }
@@ -600,7 +628,7 @@
       </div>
     </details>
 
-    <p class="stand">Stand der Kachelliste: 16.09.2026. Alle Suchadressen wurden am 01.09.2026 im Browser geprüft.</p>
+    <p class="stand">Stand der Kachelliste: 20.09.2026. Alle Suchadressen wurden am 01.09.2026 im Browser geprüft.</p>
   </div>
 </footer>
 
