@@ -173,8 +173,10 @@
   .st-leer{ color:var(--ink-faint); font-size:14px; }
   @media (min-width:1000px){ .gitter{ grid-template-columns:repeat(4, 1fr); } }
   @media (min-width:1000px){
-    .gitter--eins{ grid-template-columns:1fr; }
-    .hub--breit .hub-texte{ grid-template-columns:repeat(3, 1fr); }
+    /* Zwei Spalten statt vier: breiter als eine Hub-Kachel, aber in
+       der Flucht des Vorspanns darueber, der bei 70 Zeichen endet. */
+    .gitter--eins{ grid-template-columns:minmax(0, 880px); }
+    .hub--breit .hub-texte{ grid-template-columns:repeat(2, 1fr); }
     .hub--breit .zahlen{ grid-template-columns:repeat(4, auto); gap:2px 28px;
       justify-content:start; }
     .hub--breit .zahlen > div{ display:block; }
