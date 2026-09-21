@@ -161,6 +161,17 @@
   .st-mehr:hover{ text-decoration:underline; }
   .st-leer{ color:var(--ink-faint); font-size:14px; }
   @media (min-width:1000px){ .gitter{ grid-template-columns:repeat(4, 1fr); } }
+  @media (min-width:1000px){
+    /* Zwei Spalten statt vier: breiter als eine Hub-Kachel, aber in
+       der Flucht des Vorspanns darueber, der bei 70 Zeichen endet. */
+    .gitter--eins{ grid-template-columns:minmax(0, 880px); }
+    .hub--breit .hub-texte{ grid-template-columns:repeat(2, 1fr); }
+    .hub--breit .zahlen{ grid-template-columns:repeat(4, auto); gap:2px 28px;
+      justify-content:start; }
+    .hub--breit .zahlen > div{ display:block; }
+    .hub--breit .zahlen dd{ text-align:left; font-size:17px; }
+    .hub--breit .hub-fuss{ grid-template-columns:1fr auto; }
+  }
 
   .hub{
     display:flex; flex-direction:column; background:var(--card);
@@ -186,6 +197,15 @@
   .zahlen > div{ display:contents; }
   .zahlen dt{ color:var(--ink-faint); }
   .zahlen dd{ margin:0; text-align:right; font-weight:700; font-variant-numeric:tabular-nums; }
+
+  /* Ein Abschnitt mit einer einzigen Kachel: sie nimmt die ganze
+     Breite, und ihre drei Absaetze stehen nebeneinander statt
+     untereinander. */
+  .hub--breit .hub-texte{ display:grid; gap:0 26px; }
+  .hub--breit .hub-satz{ margin-bottom:14px; }
+  .hub--breit .hub-fuss{ display:grid; gap:14px 26px; align-items:center; }
+  .hub--breit .zahlen{ margin:0; }
+  .hub--breit .hub-wege{ margin:0; }
 
   .hub-wege{ display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin:auto 0 8px; }
   .btn{
@@ -413,7 +433,7 @@
       14 Kacheln öffnen damit unmittelbar ihre Trefferliste, deutschsprachig wie
       international.</p>
     </div>
-    <a class="marke" href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=karriere" target="_blank" rel="noopener" title="Monitor Versorgungsforschung — Herausgeber dieser Portale">
+    <a class="marke" href="https://www.monitor-versorgungsforschung.de/" target="_blank" rel="noopener" title="Monitor Versorgungsforschung — Herausgeber dieser Portale">
       <img src="logo/mvf-logo.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
     </a>
   </div>
@@ -570,9 +590,9 @@
     schauen Sie dort zuerst hinein und schreiben Sie dann an Anke Heiser,
     Anzeigenleitung.</p>
     <div class="wege">
-      <a class="btn" href="https://www.monitor-versorgungsforschung.de/internals/mediadaten/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=mediadaten" target="_blank" rel="noopener">Mediadaten ansehen</a>
+      <a class="btn" href="https://www.monitor-versorgungsforschung.de/internals/mediadaten/" target="_blank" rel="noopener">Mediadaten ansehen</a>
       <a class="dazu" href="mailto:heiser@m-vf.de?subject=Stellenanzeige%20in%20Monitor%20Versorgungsforschung">heiser@m-vf.de</a>
-      <a class="dazu" href="https://wissen.m-vf.de/ausschreibungen.html?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=radar" target="_blank" rel="noopener">Zum Ausschreibungsradar →</a>
+      <a class="dazu" href="https://wissen.m-vf.de/ausschreibungen.html" target="_blank" rel="noopener">Zum Ausschreibungsradar →</a>
     </div>
   </section>
 
@@ -628,7 +648,7 @@
       </div>
     </details>
 
-    <p class="stand">Stand der Kachelliste: 20.09.2026. Alle Suchadressen wurden am 01.09.2026 im Browser geprüft.</p>
+    <p class="stand">Stand der Kachelliste: 21.09.2026. Alle Suchadressen wurden am 01.09.2026 im Browser geprüft.</p>
   </div>
 </footer>
 
