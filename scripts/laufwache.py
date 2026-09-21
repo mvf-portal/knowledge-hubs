@@ -49,8 +49,6 @@ MELDEADRESSE = "stegmaier@m-vf.de"
 # und der weckt nur, was versenden soll. Ein neuer Hub gehoert deshalb von Hand
 # hierher UND in dirigent.yml; portale.json allein genuegt nicht.
 #
-# Der Sammelbericht steht mit in der Liste: Faellt er aus, faellt die einzige
-# taegliche Rueckmeldung ueber alle Hubs aus.
 LAEUFE = [
     ("Versorgungsforschung", "mvf-portal/versorgungsforschung-portal", "update-studies.yml"),
     ("Hitze, Klima & Gesundheit", "mvf-portal/klima-gesundheit-portal", "update-studies.yml"),
@@ -67,8 +65,24 @@ LAEUFE = [
     ("Onkologie", "mvf-portal/onkologie-portal", "update-studies.yml"),
     ("Kardiologie", "mvf-portal/kardio-portal", "update-studies.yml"),
     ("Diabetes", "mvf-portal/diabetes-portal", "update-studies.yml"),
-    ("Sammelbericht", "mvf-portal/knowledge-hubs", "versand-bericht.yml"),
 ]
+
+# Der Sammelbericht wird mitgeprueft - faellt er aus, faellt die einzige
+# taegliche Rueckmeldung ueber alle Hubs aus -, aber NICHT in derselben Runde
+# wie die Hubs. Er steht deshalb hier und nicht in LAEUFE.
+#
+# Bis zum 21.09.2026 war er der sechzehnte Eintrag der Liste, und die Schleife
+# stiess ihn im selben Durchgang an wie die fuenfzehn Hubs. An jedem Morgen, an
+# dem GitHubs Cron ausfiel, weckte die Wache also den Berichterstatter
+# gleichzeitig mit denen, ueber die er berichten sollte: Er las den Stand von
+# vorgestern und meldete "Heute ist keine Ausgabe terminiert" - waehrend die
+# Hubs nebenan gerade terminierten. Am 21.09.2026 (Montag, Versandtag) stand
+# das fuer alle fuenfzehn Hubs in der Mail, obwohl alle fuenfzehn Ausgaben
+# sauber fuer 10:00 Uhr standen.
+#
+# Eine falsche Entwarnung ist schlimmer als gar keine Meldung: Beim naechsten
+# Mal haelt man eine echte Stoerung fuer denselben Fehlalarm.
+SAMMELBERICHT = ("Sammelbericht", "mvf-portal/knowledge-hubs", "versand-bericht.yml")
 
 GH = shutil.which("gh") or r"C:\Program Files\GitHub CLI\gh.exe"
 
@@ -165,6 +179,78 @@ def anstossen(repo: str, workflow: str) -> str:
     return "angestossen" if r.returncode == 0 else f"START FEHLGESCHLAGEN: {r.stderr.strip()[:120]}"
 
 
+# Wie lange die Wache auf die Hub-Laeufe wartet, bevor sie den Sammelbericht
+# trotzdem anstoesst. Ein Hub-Lauf braucht ein bis zwei Minuten; zwanzig
+# Minuten decken auch den Fall ab, dass GitHub die Runner nur zoegerlich
+# zuteilt. Laenger zu warten hilft nicht: Um 06:00 liegen vier Stunden bis zum
+# Versand, aber ein Bericht, der erst um 06:40 kommt, wird nicht mehr gelesen.
+# Reicht es nicht, geht der Bericht trotzdem raus - mit einem Hinweis, dass er
+# unvollstaendig sein kann.
+WARTEFRIST = 20 * 60
+WARTETAKT = 45
+
+
+def warten_bis_durch(offen: list[tuple[str, str, str]], heute: str) -> tuple[list[str], int]:
+    """Wartet, bis die geweckten Hub-Laeufe durch sind.
+
+    Zurueck kommen die Namen, die nach Ablauf der Frist immer noch nicht fertig
+    waren, und die verstrichenen Sekunden.
+
+    Gefragt wird nur nach den Repos, auf die tatsaechlich gewartet wird, und
+    ein fertiges faellt sofort aus der Runde - sonst summierten sich bei
+    fuenfzehn Hubs ueber zwanzig Minuten mehrere hundert Abfragen.
+
+    Ein frisch angestossener Lauf taucht in der Abfrage nicht sofort auf.
+    Solange von einem Repo noch gar kein heutiger Lauf zu sehen ist, gilt er
+    deshalb als ausstehend und nicht als fertig - sonst waere das Warten genau
+    in dem Moment vorbei, in dem es anfangen muesste.
+    """
+    beginn = time.monotonic()
+    wartend = list(offen)
+    while wartend and time.monotonic() - beginn < WARTEFRIST:
+        time.sleep(WARTETAKT)
+        noch = []
+        for eintrag in wartend:
+            name, repo, workflow = eintrag
+            try:
+                heutige = laeufe_von_heute(repo, workflow, heute)
+            except Exception:  # noqa: BLE001 - eine stockende Abfrage ist kein Grund,
+                noch.append(eintrag)  # den Lauf fuer fertig zu erklaeren
+                continue
+            if heutige and all(j["status"] == "completed" for j in heutige):
+                continue
+            noch.append(eintrag)
+        wartend = noch
+    return [n for n, _, _ in wartend], int(time.monotonic() - beginn)
+
+
+def pruefen(name: str, repo: str, workflow: str, heute: str,
+            trocken: bool, wartend: dict | None) -> tuple[str, bool, bool]:
+    """Ein Eintrag: Zeile fuers Protokoll, auffaellig?, laeuft jetzt?
+
+    "laeuft jetzt" meint beides - eben angestossen oder schon unterwegs. Auf
+    beides muss der Sammelbericht warten.
+    """
+    try:
+        heutige = laeufe_von_heute(repo, workflow, heute)
+    except Exception as e:  # noqa: BLE001
+        return f"?  {name}: nicht abfragbar ({e})", True, False
+    erfolgreich = [j for j in heutige if j["conclusion"] == "success"]
+    laufend = [j for j in heutige if j["status"] != "completed"]
+    if erfolgreich:
+        return f"OK {name}: {erfolgreich[0]['wann']:%H:%M} Uhr gelaufen.", False, False
+    if laufend:
+        return f"…  {name}: laeuft gerade ({laufend[0]['wann']:%H:%M} Uhr).", False, True
+    grund = "fehlgeschlagen" if heutige else "KEIN Lauf heute"
+    if trocken:
+        tat = "nicht angestossen (--trocken)"
+    elif wartend:
+        tat = "nicht angestossen (Dirigent ist noch unterwegs)"
+    else:
+        tat = anstossen(repo, workflow)
+    return f"!! {name}: {grund} - {tat}", True, tat == "angestossen"
+
+
 def melden(betreff: str, text: str) -> bool:
     """Meldung ueber das laufende Outlook - derselbe Weg wie bei den Pressemeldungen."""
     try:
@@ -201,28 +287,54 @@ def main() -> int:
         # nicht auch noch schweigen.
         auffaellig.append("Dirigent")
 
+    # Erst die Hubs, dann der Sammelbericht - und dazwischen wird gewartet.
+    offen: list[tuple[str, str, str]] = []
     for name, repo, workflow in LAEUFE:
-        try:
-            heutige = laeufe_von_heute(repo, workflow, heute)
-        except Exception as e:  # noqa: BLE001
-            zeilen.append(f"?  {name}: nicht abfragbar ({e})")
+        zeile, ist_auffaellig, laeuft = pruefen(name, repo, workflow, heute,
+                                                a.trocken, wartend)
+        zeilen.append(zeile)
+        if ist_auffaellig:
             auffaellig.append(name)
-            continue
-        erfolgreich = [j for j in heutige if j["conclusion"] == "success"]
-        laufend = [j for j in heutige if j["status"] != "completed"]
-        if erfolgreich:
-            zeilen.append(f"OK {name}: {erfolgreich[0]['wann']:%H:%M} Uhr gelaufen.")
-        elif laufend:
-            zeilen.append(f"…  {name}: laeuft gerade ({laufend[0]['wann']:%H:%M} Uhr).")
+        if laeuft:
+            offen.append((name, repo, workflow))
+
+    # Gewartet wird nur, wenn danach auch etwas passiert. Im Trockenlauf und
+    # solange der Dirigent zustaendig ist, wird der Bericht ohnehin nicht
+    # angestossen - dann waeren zwanzig Minuten Warten reine Verzoegerung.
+    if offen and (a.trocken or wartend):
+        zeilen.append(f"-- {len(offen)} Hub-Lauf/Laeufe noch offen; nicht "
+                      f"abgewartet, es wird nichts angestossen.")
+    elif offen:
+        zeilen.append(f"-- Warte auf {len(offen)} Hub-Lauf/Laeufe, bevor der "
+                      f"Sammelbericht angestossen wird.")
+        haengen, dauer = warten_bis_durch(offen, heute)
+        if haengen:
+            zeilen.append(f"-- Nach {dauer // 60} Minuten noch nicht durch: "
+                          f"{', '.join(haengen)}. Der Sammelbericht geht "
+                          f"trotzdem raus und kann diese Hubs zu alt zeigen.")
+            auffaellig.extend(haengen)
         else:
-            grund = "fehlgeschlagen" if heutige else "KEIN Lauf heute"
-            if a.trocken:
-                tat = "nicht angestossen (--trocken)"
-            elif wartend:
-                tat = "nicht angestossen (Dirigent ist noch unterwegs)"
-            else:
-                tat = anstossen(repo, workflow)
-            zeilen.append(f"!! {name}: {grund} - {tat}")
+            zeilen.append(f"-- Alle Hub-Laeufe durch nach {dauer // 60}:"
+                          f"{dauer % 60:02d} Minuten.")
+
+    name, repo, workflow = SAMMELBERICHT
+    if offen and not a.trocken and not wartend:
+        # Hier wird ohne Ruecksicht darauf angestossen, ob heute schon ein
+        # Bericht lief: Lief er, dann VOR den Hub-Laeufen, die diese Runde
+        # eben geweckt hat - und damit auf dem Stand von gestern. Der
+        # GitHub-eigene Zeitplan um 03:45 UTC ist genau dieser Fall, wenn die
+        # Hub-Zeitplaene ausfallen und seiner nicht.
+        #
+        # Der Preis ist an solchen Morgen ein zweiter Bericht. Der zweite ist
+        # der richtige, und zwei Berichte sind besser als ein falscher.
+        tat = anstossen(repo, workflow)
+        zeilen.append(f"!! {name}: nach den Hub-Laeufen neu {tat}")
+        auffaellig.append(name)
+    else:
+        zeile, ist_auffaellig, _ = pruefen(name, repo, workflow, heute,
+                                           a.trocken, wartend)
+        zeilen.append(zeile)
+        if ist_auffaellig:
             auffaellig.append(name)
 
     kopf = f"Laufwache {jetzt:%d.%m.%Y %H:%M}"
