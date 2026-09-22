@@ -1,0 +1,58 @@
+# WEGWERF-WORKFLOW - wird nach dem Lauf wieder entfernt.
+#
+# Prueft die eine Annahme, auf der die Meldung ausgefallener Newsletter-Laeufe
+# in update-studies.yml beruht: Ein Schritt mit continue-on-error, der
+# scheitert, hat outcome == 'failure' (waehrend conclusion 'success' ist), und
+# ein spaeterer Schritt kann den Lauf daran umwerfen.
+#
+# Drei Jobs, drei Faelle. Erwartet: nur der erste faellt um.
+name: Probe outcome (wegwerf)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  faellt_aus:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Newsletter-Schritt scheitert
+        id: newsletter
+        continue-on-error: true
+        run: exit 1
+      - name: Zwischenschritt laeuft trotzdem
+        run: echo "bis hierher kommt der Lauf - hier wird sonst committet"
+      - name: outcome zeigen
+        run: echo "outcome=${{ steps.newsletter.outcome }} conclusion=${{ steps.newsletter.conclusion }}"
+      - name: Ausgefallenen Newsletter-Schritt melden
+        if: steps.newsletter.outcome == 'failure'
+        run: |
+          echo "::error::Der Newsletter-Schritt ist gescheitert."
+          exit 1
+
+  laeuft_durch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Newsletter-Schritt gelingt
+        id: newsletter
+        continue-on-error: true
+        run: echo ok
+      - name: outcome zeigen
+        run: echo "outcome=${{ steps.newsletter.outcome }}"
+      - name: Ausgefallenen Newsletter-Schritt melden
+        if: steps.newsletter.outcome == 'failure'
+        run: exit 1
+
+  uebersprungen:
+    runs-on: ubuntu-latest
+    steps:
+      # Der Fall nur_studien=true: Der Schritt wird gar nicht ausgefuehrt.
+      - name: Newsletter-Schritt entfaellt
+        id: newsletter
+        if: false
+        continue-on-error: true
+        run: exit 1
+      - name: outcome zeigen
+        run: echo "outcome=${{ steps.newsletter.outcome }}"
+      - name: Ausgefallenen Newsletter-Schritt melden
+        if: steps.newsletter.outcome == 'failure'
+        run: exit 1
