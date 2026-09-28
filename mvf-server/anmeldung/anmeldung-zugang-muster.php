@@ -78,7 +78,7 @@ const INTERESSEN = [
     // Die Sonderaussendungen der Verlagspartner - Nachfolger des eBlast.
     // Eigener Schluessel, weil es eine eigene Einwilligung ist: Werbung
     // ist nicht vom Haekchen fuer einen Newsletter gedeckt.
-    'sonderaussendungen' => ''          ,   // Sonderaussendungen unserer Verlagspartner
+    'sonderaussendungen' => '7327dd903d',   // Sonderaussendungen unserer Verlagspartner
     'datenschutz'    => 'c19f3e28e4',   // Datenschutzerklaerung gelesen - wird immer mitgesetzt
 ];
 
