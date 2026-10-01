@@ -2,8 +2,8 @@
 <html lang="de">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Gewinnspiel zum 25. DKVF in Köln: Mit den Knowledge-Hubs von Monitor Versorgungsforschung eines von bis zu 10 Tickets für den 15. MVF-Fachkongress „Primärversorgung 2030“ am 27. November 2026 in Berlin gewinnen.">
-<title>Gewinnspiel zum 25. DKVF — Die Knowledge-Hubs von Monitor Versorgungsforschung</title>
+<meta name="description" content="Mit den Knowledge-Hubs von Monitor Versorgungsforschung eines von bis zu 10 Tickets für den 15. MVF-Fachkongress „Primärversorgung 2030“ am 27. November 2026 in Berlin gewinnen. Teilnahme bis 11. November 2026.">
+<title>Gewinnspiel — Die Knowledge-Hubs von Monitor Versorgungsforschung</title>
 <link rel="canonical" href="https://knowledge-hubs.m-vf.de/gewinnspiel/">
 <link rel="icon" href="/logo/hub-icon.svg" type="image/svg+xml">
 <link rel="icon" href="/logo/hub-icon-32.png" sizes="32x32" type="image/png">
@@ -160,7 +160,7 @@ summary{ cursor:pointer; font-weight:700; }
 <header class="top">
   <div class="wrap kopf-oben">
     <div>
-      <p class="eyebrow">25. Deutscher Kongress für Versorgungsforschung · Köln</p>
+      <p class="eyebrow">Die Knowledge-Hubs von Monitor Versorgungsforschung</p>
       <h1>Ein Kongressticket gewinnen</h1>
       <p class="standfirst">Zwölf Rechercheportale für das deutsche Gesundheitswesen — ein
       Suchbegriff öffnet die Live-Suche in allen einschlägigen Datenbanken, und jeden Morgen
@@ -168,7 +168,7 @@ summary{ cursor:pointer; font-weight:700; }
       Knowledge-Hubs kennen und gewinnen Sie ein Ticket für den 15. MVF-Fachkongress, der in
       Kooperation mit dem DNVF veranstaltet wird.</p>
     </div>
-    <a class="marke" href="https://www.monitor-versorgungsforschung.de/?utm_source=gewinnspiel&amp;utm_medium=referral&amp;utm_campaign=dkvf2026" target="_blank" rel="noopener" title="Monitor Versorgungsforschung — Herausgeber dieser Portale">
+    <a class="marke" href="https://www.monitor-versorgungsforschung.de/?utm_source=gewinnspiel&amp;utm_medium=referral&amp;utm_campaign=gewinnspiel" target="_blank" rel="noopener" title="Monitor Versorgungsforschung — Herausgeber dieser Portale">
       <img src="/logo/mvf-logo.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
     </a>
   </div>
@@ -185,7 +185,7 @@ summary{ cursor:pointer; font-weight:700; }
       <dt>Wann</dt><dd>Freitag, 27. November 2026, 9:00 bis 16:00 Uhr</dd>
       <dt>Wo</dt><dd>Scharounsaal, 1. OG, AOK Nordost, Wilhelmstraße 1, 10963 Berlin</dd>
       <dt>Wert</dt><dd>125 Euro je Ticket · eine Barauszahlung ist nicht möglich</dd>
-      <dt>Teilnahme</dt><dd>23.09.2026, 9:00 Uhr bis 25.09.2026, 18:00 Uhr</dd>
+      <dt>Teilnahme</dt><dd>bis 11.11.2026, 23:59 Uhr</dd>
     </dl>
   </section>
 
@@ -318,21 +318,24 @@ const ZIEL = "https://www.monitor-versorgungsforschung.de/anmeldung/anmeldung.ph
 const TAG_GEWINNSPIEL = "Gewinnspiel DKVF 2026";
 
 // ---------------------------------------------------------------------------
-// Der Teilnahmezeitraum aus Nummer 3 der Teilnahmebedingungen: 23.09.2026,
-// 9:00 Uhr bis 25.09.2026, 18:00 Uhr. Beides mit dem Sommerzeit-Versatz +02:00
-// geschrieben, damit die Grenze fuer jeden Besucher dieselbe ist, egal in
-// welcher Zeitzone sein Geraet steht.
+// Der Teilnahmezeitraum aus Nummer 3 der Teilnahmebedingungen. Seit dem
+// 01.10.2026 ist das Gewinnspiel vom DKVF geloest und laeuft offen bis zum
+// 11.11.2026.
 //
-// Warum das hier steht und nicht von Hand geschaltet wird: Sonst muesste am
-// Kongressmorgen jemand um 9:00 Uhr eine Datei hochladen. Wer die Frist
-// aendert, aendert sie in den Teilnahmebedingungen mit - die beiden Stellen
-// gehoeren zusammen.
+// ACHTUNG BEIM VERSATZ: Der Beginn liegt in der Sommerzeit (+02:00), das Ende
+// NACH der Umstellung am 25.10.2026 und damit in der Winterzeit (+01:00). Wer
+// hier gedankenlos +02:00 schreibt, verschiebt den Schluss um eine Stunde.
+// Geschrieben wird er ueberhaupt, damit die Grenze fuer jeden Besucher
+// dieselbe ist, egal in welcher Zeitzone sein Geraet steht.
+//
+// Wer die Frist aendert, aendert sie in den Teilnahmebedingungen mit - die
+// beiden Stellen gehoeren zusammen.
 //
 // Die Uhr des Besuchers kann falsch gehen; das ist hingenommen. Sie entscheidet
 // nur ueber die Anzeige. Was zaehlt, ist der Eingang beim Endpunkt.
 // ---------------------------------------------------------------------------
-const BEGINN = new Date("2026-09-23T09:00:00+02:00");
-const ENDE   = new Date("2026-09-25T18:00:00+02:00");
+const BEGINN = new Date("2026-10-01T00:00:00+02:00");
+const ENDE   = new Date("2026-11-11T23:59:59+01:00");
 
 // Die Hubs. Dieselbe Reihe wie in der newsletter.html der Portale; die
 // Schluessel sind die des Endpunkts.
@@ -415,9 +418,9 @@ if (!offen) {
   einwGs.checked  = false;
   einwGs.disabled = true;
   hinweis.innerHTML = jetzt < BEGINN
-    ? '<br>Die Teilnahme öffnet am 23. September 2026 um 9:00 Uhr — zum Start des 25. DKVF. '
+    ? '<br>Die Teilnahme öffnet am 1. Oktober 2026. '
       + 'Einen Newsletter können Sie schon jetzt bestellen.'
-    : '<br>Der Teilnahmezeitraum ist am 25. September 2026 um 18:00 Uhr abgelaufen. '
+    : '<br>Der Teilnahmezeitraum ist am 11. November 2026 um 23:59 Uhr abgelaufen. '
       + 'Einen Newsletter können Sie weiterhin bestellen.';
   knopf.textContent = 'Newsletter bestellen';
 }
