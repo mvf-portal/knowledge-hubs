@@ -445,6 +445,45 @@ def baue_html(news: dict, studien: list[dict]) -> str:
 
 
 # -------------------------------------------------------------- WordPress
+# Der Sammelbericht - und mit ihm dieses Skript - laeuft an manchen Morgen
+# zweimal: Die Laufwache stoesst ihn um 06:00 nach den Hub-Laeufen an, der
+# Dirigent um 06:20 noch einmal. Der Bericht selbst schreibt dann seine Issue
+# fort; die Tagesnews legte bis zum 02.10.2026 aber jedes Mal einen neuen
+# WordPress-Entwurf an und verschickte die Tagesliste ein zweites Mal - vom
+# 30.09. bis 02.10. an jedem Morgen (Entwuerfe 89937 und 89939 am 02.10.).
+# Seither gilt: Was es fuer den Tag schon gibt, wird nicht noch einmal angelegt.
+# Ueberschrieben wird ebenfalls nichts - an einem Entwurf arbeitet womoeglich
+# schon die Redaktion.
+def wordpress_schon_da(kopf: str) -> dict | None:
+    """Die Meldung dieses Benutzers fuer tag(), falls es sie schon gibt."""
+    def hole(pfad: str):
+        req = urllib.request.Request(
+            f"{WP}{pfad}", headers={
+                "Authorization": f"Basic {kopf}",
+                "User-Agent": "MVF-Knowledge-Hubs/1.0 (+https://knowledge-hubs.m-vf.de)",
+                "Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return json.load(r)
+    ich = hole("/users/me")["id"]
+    von = tag()
+    bis = von + dt.timedelta(days=1)
+    # "private" darf die Rolle Autor nicht abfragen - mit ihm antwortet
+    # WordPress auf die ganze Anfrage mit 400. Und "author=" steht bewusst
+    # NICHT in der Adresse: m-vf.de beantwortet jede Anfrage mit diesem
+    # Parameter mit einer HTML-Seite 404 (Schutz gegen das Ausforschen von
+    # Benutzernamen). Gefiltert wird deshalb hier.
+    beitraege = hole(
+        f"/posts?categories={WP_KATEGORIE}"
+        f"&status=draft,pending,future,publish&context=edit&per_page=50"
+        f"&after={von.isoformat()}T00:00:00&before={bis.isoformat()}T00:00:00")
+    # Derselbe Benutzer legt auch die Pressemeldungen an (pressemeldung.py),
+    # ebenfalls als Entwurf in News. Die Tagesnews erkennt man an ihren
+    # Verweisen in die Hubs, die alle UTM tragen.
+    eigene = [b for b in beitraege if b.get("author") == ich
+              and "utm_campaign=tagesnews" in (b.get("content") or {}).get("raw", "")]
+    return eigene[0] if eigene else None
+
+
 def wordpress_entwurf(titel: str, html: str, anzahl: int, vorspann: str,
                       trocken: bool, meta: str = "") -> None:
     nutzer = os.environ.get("WPUSER", "").strip()
@@ -703,6 +742,23 @@ def mailchimp_liste(studien: list[dict], heute: str, trocken: bool) -> None:
         return
 
     mc = Mailchimp(schluessel)
+    # Zweiter Lauf am selben Tag: siehe wordpress_schon_da(). Verschickt ist
+    # verschickt; ein liegengebliebener Entwurf (Lauf zwischen Anlegen und
+    # Senden abgebrochen) wird verworfen und neu gebaut.
+    titel = f"Redaktion Tagesliste {datum}"
+    seit = (dt.date.fromisoformat(heute) - dt.timedelta(days=1)).isoformat()
+    vorhanden = mc.ruf(f"/campaigns?count=50&since_create_time={seit}T00:00:00Z"
+                       f"&fields=campaigns.id,campaigns.status,campaigns.settings.title")
+    for k in vorhanden.get("campaigns", []):
+        if k.get("settings", {}).get("title") != titel:
+            continue
+        if k.get("status") in ("sent", "sending", "schedule"):
+            print(f"Tagesliste {datum} ist schon {k['status']} ({k['id']}) - "
+                  f"kein zweiter Versand.")
+            return
+        mc.ruf(f"/campaigns/{k['id']}", None, "DELETE")
+        print(f"Liegengebliebenen Entwurf der Tagesliste ({k['id']}, "
+              f"{k.get('status')}) verworfen - wird neu gebaut.")
     kat, interesse = mc.gruppe(MC_GRUPPE_NAME)
     print(f"Empfaenger: Gruppe '{MC_GRUPPE_NAME}' ({interesse}).")
     kampagne = mc.ruf("/campaigns", {
@@ -715,7 +771,7 @@ def mailchimp_liste(studien: list[dict], heute: str, trocken: bool) -> None:
         },
         "settings": {
             "subject_line": f"Neuzugänge {spanne} — {len(studien)} Studien aus {len(gruppen)} Hubs",
-            "title": f"Redaktion Tagesliste {datum}",
+            "title": titel,
             "from_name": MC_ABSENDER, "reply_to": MC_ANTWORT,
         },
     }, "POST")
@@ -771,7 +827,19 @@ def main() -> int:
         print("Wochenende - keine Meldung, keine Tagesliste. "
               "Die Studien laufen am Montag mit.")
 
-    if not a.nur_mail and not wochenende:
+    schon_da = None
+    if not a.nur_mail and not wochenende and not a.trocken:
+        nutzer = os.environ.get("WPUSER", "").strip()
+        passwort = os.environ.get("WPPASSWORT", "").strip()
+        if nutzer and passwort:
+            # Vor der Modellanfrage, damit ein zweiter Lauf auch nichts kostet.
+            schon_da = wordpress_schon_da(base64.b64encode(
+                f"{nutzer}:{passwort}".encode()).decode())
+        if schon_da:
+            print(f"WordPress-Meldung fuer {tag():%d.%m.%Y} gibt es schon: "
+                  f"{schon_da['id']} ({schon_da.get('status')}) - keine zweite.")
+
+    if not a.nur_mail and not wochenende and not schon_da:
         fuer_meldung = studien_fuer_meldung()
         news = schreibe_news(fuer_meldung)
         html = baue_html(news, fuer_meldung)
