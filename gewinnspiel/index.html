@@ -180,11 +180,11 @@ summary{ cursor:pointer; font-weight:700; }
     <h2>Zu gewinnen gibt es bis zu 10 Tickets</h2>
     <p>Wir verlosen bis zu 10 Tickets für den <strong>15. MVF-Fachkongress „Primärversorgung
     2030 — Implementierung und Verbindlichkeit“</strong>. Jede Teilnehmerin und jeder
-    Teilnehmer kann dabei höchstens ein Ticket gewinnen.</p>
+    Teilnehmer des Gewinnspiels kann dabei höchstens ein Ticket gewinnen.</p>
     <dl>
       <dt>Wann</dt><dd>Freitag, 27. November 2026, 9:00 bis 16:00 Uhr</dd>
       <dt>Wo</dt><dd>Scharounsaal, 1. OG, AOK Nordost, Wilhelmstraße 1, 10963 Berlin</dd>
-      <dt>Wert</dt><dd>125 Euro je Ticket · eine Barauszahlung ist nicht möglich</dd>
+      <dt>Wert</dt><dd>bis zu 225 Euro je Ticket · eine Barauszahlung ist nicht möglich</dd>
       <dt>Teilnahme</dt><dd>bis 11.11.2026, 23:59 Uhr</dd>
     </dl>
   </section>
@@ -362,6 +362,12 @@ const HUBS = [
     was:"Geschlecht als Einflussgröße in der Versorgung." },
   { hub:"safety",         titel:"Patientensicherheit",
     was:"Behandlungs- und Medikationsfehler, Infektionen, Sepsis." },
+  { hub:"onkologie",      titel:"Onkologie",
+    was:"Von der Grundlagenforschung bis zur Versorgung, mit Blick auf Deutschland." },
+  { hub:"kardio",         titel:"Kardiologie",
+    was:"Herz, Kreislauf und Gefäße — Forschung und Versorgung." },
+  { hub:"diabetes",       titel:"Diabetes",
+    was:"Typ 1 und Typ 2, Folgeerkrankungen, Technik und Versorgung." },
   { hub:"mental",         titel:"Psychische Gesundheit",
     was:"Zugang, Wartezeiten, gemeindenahe Angebote, Krisenversorgung." }
 ];
@@ -572,6 +578,25 @@ form.addEventListener('submit', async (e)=>{
     new Image(1, 1).src =
       'https://www.monitor-versorgungsforschung.de/zaehler/z.php?' + q;
   } catch (e) { /* Zaehlung ist nie wichtiger als die Seite */ }
+})();
+</script>
+<script>
+// Ein Verweis auf #datenschutz soll den Kasten auch oeffnen. Browser tun
+// das von sich aus nur, wenn das Sprungziel INNERHALB des <details>
+// liegt - hier ist es das <details> selbst, also von Hand. Ohne das
+// springt der Leser an eine zugeklappte Zeile und haelt den Link fuer
+// kaputt.
+(function(){
+  function aufklappen(){
+    var id = location.hash.replace("#", "");
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    var d = el.tagName === "DETAILS" ? el : el.closest("details");
+    if (d) { d.open = true; d.scrollIntoView({block:"start"}); }
+  }
+  window.addEventListener("hashchange", aufklappen);
+  aufklappen();
 })();
 </script>
 <!-- ZAEHLER-ENDE -->
