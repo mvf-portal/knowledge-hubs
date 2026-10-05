@@ -1,0 +1,68 @@
+Bestellendpunkt fuer die Evidenzsynthesen: zwei Dateien, neuer Ordner
+
+WAS DAS IST
+
+Ein neuer, eigenstaendiger Endpunkt unter /bestellung/. Er nimmt
+Bestellungen aus dem Portal innofonds.m-vf.de entgegen, rechnet den
+Preis auf dem Server, legt den Vorgang ab und verschickt zwei Mails:
+eine Auftragsbestaetigung an den Besteller und die Bestellung an die
+Rechnungsstelle.
+
+Mit der Einreichungsseite hat er nichts zu tun. Nichts dort wird
+angefasst.
+
+EINRICHTEN
+
+1. Ordner anlegen:
+   <Wurzel>/bestellung/
+
+2. bestellung.php hineinlegen (Anhang 1).
+
+3. bestellung-zugang-muster.php (Anhang 2) in denselben Ordner legen und
+   dabei umbenennen in:
+   bestellung-zugang.php
+
+   Die Werte darin bitte so lassen, wie sie sind. Sie sind ausgefuellt:
+   Empfaenger rechnung@erelation.org, Kopie stegmaier@erelation.org,
+   Absender redaktion@m-vf.de, Steuersatz 19 Prozent, Preise und
+   Nachlaesse. Der Steuersatz kann sich noch aendern, dann kommt eine
+   neue Zeile von uns - dafuer steht er in dieser Datei und nicht im
+   Code.
+
+   Ohne diese Datei antwortet der Endpunkt mit "nicht-eingerichtet".
+
+4. Unterordner daten/ muss fuer PHP beschreibbar sein. Er legt sich beim
+   ersten Aufruf selbst an, wenn die Rechte stimmen.
+
+WICHTIG ZU daten/
+
+Der Ordner darf im Web nicht lesbar sein. Dort stehen Anschriften.
+Alle Dateien darin heissen .json.php und beginnen mit <?php exit; ?>.
+Das ist Absicht: MVF laeuft auf nginx, und nginx liest keine .htaccess,
+eine .json waere also abrufbar. Bitte weder die Endung aendern noch die
+erste Zeile entfernen.
+
+PRUEFEN
+
+curl -i -X POST https://www.monitor-versorgungsforschung.de/bestellung/bestellung.php -H "Content-Type: application/json" -H "Origin: https://innofonds.m-vf.de" -d "{\"institution\":\"Testhaus\",\"name\":\"Test\",\"strasse\":\"Weg 1\",\"plz\":\"53115\",\"ort\":\"Bonn\",\"email\":\"IHRE-ADRESSE\",\"kohorte\":\"Pflege\",\"stufe\":1,\"umfang\":\"einzeln\",\"nachlass\":\"keiner\",\"einverstanden\":true}"
+
+Erwartet wird:
+  {"ok":true,"nummer":"ER-IW-2026-0001", ...}
+und zwei Mails.
+
+Die Testbestellung steht danach in
+daten/bestellungen-2026-09.json.php und muss von Hand geloescht werden.
+Die Nummer bleibt vergeben, das ist richtig so.
+
+Ein Aufruf ohne den Origin-Kopf oder von einer fremden Adresse muss
+abgelehnt werden. Erlaubt sind nur innofonds.m-vf.de und
+knowledge-hubs.m-vf.de.
+
+ES EILT NICHT
+
+Im Portal ist der Reiter Evidenzsynthese derzeit als "in Arbeit"
+ausgegraut, das Bestellformular ist noch nicht erreichbar. Der Endpunkt
+soll aber liegen, bevor der Knopf freigeschaltet wird, sonst greift er
+ins Leere.
+
+Rueckmeldung genuegt, wenn es liegt und der Testaufruf durchgeht.

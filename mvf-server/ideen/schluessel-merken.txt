@@ -1,0 +1,7 @@
+Berichtsschluessel fuer die anonyme Themenliste des Ideenchecks
+(steht in ideen-zugang.php auf dem Server, nicht im Repo veroeffentlichen)
+
+vCcXGFOBzi9OSpQ5eNpRg2FhUk0vmDV-
+
+Abruf:
+curl -sS -X POST https://www.monitor-versorgungsforschung.de/ideen/ideen.php -H "Content-Type: application/json" -d '{"art":"bericht","schluessel":"vCcXGFOBzi9OSpQ5eNpRg2FhUk0vmDV-","monat":"2026-09"}'

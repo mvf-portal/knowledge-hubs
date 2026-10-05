@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="MVF-Einreichungsplattform: Wie Autorinnen und Autoren ihren Beitrag für „Monitor Versorgungsforschung“ selbst einreichen — Rubriken, Bestandteile, Bildmaße, Lizenz und Ablauf, Schritt für Schritt erklärt.">
+<title>MVF-Einreichungsplattform — Beitrag einreichen</title>
+<link rel="canonical" href="https://knowledge-hubs.m-vf.de/einreichung.html">
+<link rel="icon" href="/logo/hub-icon.svg" type="image/svg+xml">
+<link rel="icon" href="/logo/hub-icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/logo/hub-icon-180.png">
+<meta name="theme-color" content="#0051A1">
+<style>
+
+  /* Schrift, Farben und Gerüst wie in den Hubs und auf CuratioHub - die Seite
+     gehört sichtbar dazu, auch wenn sie mit den Hubs inhaltlich nichts zu tun
+     hat: Sie ist die Startseite für Einreichungen, nicht ein Recherchethema. */
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:300;
+    src:url("fonts/lato-300.woff2") format("woff2"); font-display:swap; }
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:400;
+    src:url("fonts/lato-400.woff2") format("woff2"); font-display:swap; }
+  @font-face{ font-family:"Lato"; font-style:normal; font-weight:700;
+    src:url("fonts/lato-700.woff2") format("woff2"); font-display:swap; }
+
+  :root{
+    --paper:#EDF2FA; --card:#FFFFFF; --card-2:#F7FAFD;
+    --ink:#111111; --ink-soft:#444A50; --ink-faint:#545C63;
+    --line:#D0D8E4; --line-soft:#E3EAF3;
+    --brand:#0051A1; --brand-deep:#003B77; --brand-tint:#E1EAF6;
+    --action:#BE9E53; --on-action:#2A2207;
+    --ok:#1F6B4F; --ok-tint:#E4F1EB;
+    --warn:#8A4A22; --warn-tint:#FAEDE4;
+    --shadow:0 1px 2px rgba(16,40,38,.05), 0 8px 24px -16px rgba(16,40,38,.28);
+    --shadow-hover:0 2px 4px rgba(16,40,38,.06), 0 18px 40px -20px rgba(16,40,38,.40);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+      --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+      --line:#22314A; --line-soft:#1A2639;
+      --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+      --action:#D4B878; --on-action:#221A08;
+      --ok:#7FC9A8; --ok-tint:#12251E;
+      --warn:#E0A276; --warn-tint:#2A1F17;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+      --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+    --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+    --line:#22314A; --line-soft:#1A2639;
+    --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+    --action:#D4B878; --on-action:#221A08;
+    --ok:#7FC9A8; --ok-tint:#12251E;
+    --warn:#E0A276; --warn-tint:#2A1F17;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+    --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+  @media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Lato", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size:16px; line-height:1.6;
+  }
+  .wrap{ width:min(1280px, 94vw); margin:0 auto; }
+  a{ color:var(--brand); text-underline-offset:2px; }
+  a:focus-visible{ outline:2px solid var(--brand); outline-offset:3px; border-radius:3px; }
+
+  header.top{ background:var(--card); border-bottom:1px solid var(--line); padding:30px 0 34px; }
+  .kopf-oben{ display:flex; justify-content:space-between; align-items:flex-start; gap:24px; }
+  .eyebrow{
+    margin:0 0 8px; font-size:11.5px; font-weight:700; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-faint);
+  }
+  h1{ margin:0 0 12px; font-size:clamp(26px,4.2vw,40px); line-height:1.15; font-weight:700; }
+  .untertitel{
+    margin:-6px 0 12px; font-size:clamp(15px,2vw,17px); font-weight:700;
+    color:var(--brand-deep); letter-spacing:.005em;
+  }
+  .standfirst{ margin:0; max-width:64ch; font-size:clamp(16px,1.9vw,18.5px); color:var(--ink-soft); }
+  .zurueck{ display:inline-block; margin:0 0 14px; font-size:13.5px; font-weight:700; text-decoration:none; }
+  .zurueck:hover{ text-decoration:underline; }
+  .marke img{ display:block; width:200px; height:auto; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .marke{ background:#fff; padding:9px 12px; border-radius:4px; } }
+  :root[data-theme="dark"] .marke{ background:#fff; padding:9px 12px; border-radius:4px; }
+  @media (max-width:760px){
+    .kopf-oben{ flex-direction:column-reverse; align-items:flex-start; gap:16px; }
+    .marke img{ width:150px; max-width:52vw; }
+  }
+
+  main{ padding:34px 0 60px; }
+  section{ margin:0 0 44px; }
+  h2{
+    font-size:clamp(19px,2.6vw,24px); font-weight:700; line-height:1.25;
+    margin:0 0 6px; padding-bottom:9px; border-bottom:2px solid var(--brand);
+  }
+  h3{ font-size:16.5px; font-weight:700; margin:24px 0 6px; }
+  .vor{ margin:0 0 20px; max-width:70ch; color:var(--ink-soft); font-size:16px; }
+  p{ margin:0 0 14px; max-width:74ch; }
+
+  /* ---------- Der Knopf, um den es geht ---------- */
+  /* Steht zweimal auf der Seite: oben, weil wer schon weiss, was zu tun ist,
+     nicht erst alles lesen soll - und unten, weil wer alles gelesen hat,
+     nicht zurueckscrollen soll. */
+  .start{
+    background:var(--card); border:1px solid var(--line); border-radius:8px;
+    padding:22px 24px; margin:0 0 40px; box-shadow:var(--shadow);
+    display:flex; flex-wrap:wrap; align-items:center; gap:18px 26px;
+  }
+  .start .text{ flex:1 1 320px; }
+  .start h2{ border:0; padding:0; margin:0 0 4px; }
+  .start p{ margin:0; font-size:15px; color:var(--ink-soft); max-width:60ch; }
+  .knopf{
+    display:inline-flex; align-items:center; gap:9px;
+    background:var(--action); color:var(--on-action);
+    font-size:16px; font-weight:700; text-decoration:none;
+    padding:14px 26px; border-radius:6px; border:1px solid transparent;
+    box-shadow:var(--shadow); white-space:nowrap;
+  }
+  .knopf:hover{ box-shadow:var(--shadow-hover); }
+  .knopf.zweit{
+    background:transparent; color:var(--brand);
+    border-color:var(--line); box-shadow:none; font-size:15px; padding:12px 20px;
+  }
+  .knopf.zweit:hover{ border-color:var(--brand); box-shadow:none; }
+  .knopf-zeile{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+
+  /* ---------- Ablauf ---------- */
+  .ablauf{ list-style:none; margin:0; padding:0; display:grid; gap:12px; }
+  @media (min-width:900px){ .ablauf{ grid-template-columns:1fr 1fr; } }
+  .ablauf li{
+    background:var(--card); border:1px solid var(--line); border-radius:6px;
+    padding:15px 17px; display:grid; grid-template-columns:30px 1fr; gap:0 14px;
+  }
+  .ablauf .n{
+    font-size:13px; font-weight:700; color:var(--brand);
+    background:var(--brand-tint); border-radius:4px;
+    height:26px; display:flex; align-items:center; justify-content:center;
+  }
+  .ablauf .t{ font-weight:700; margin:2px 0 4px; }
+  .ablauf .d{ font-size:14.5px; line-height:1.55; color:var(--ink-soft); margin:0; max-width:none; }
+  .ablauf .d b{ color:var(--ink); }
+
+  /* ---------- Rubriken ---------- */
+  .rubriken{ list-style:none; margin:0 0 14px; padding:0; display:flex; flex-wrap:wrap; gap:9px; }
+  .rubriken li{
+    background:var(--card); border:1px solid var(--line); border-radius:5px;
+    padding:9px 14px; font-weight:700; font-size:14.5px;
+  }
+  .rubriken li span{ display:block; font-weight:400; font-size:13px; color:var(--ink-faint); }
+  .rubriken li.gesperrt{ background:var(--card-2); color:var(--ink-faint); border-style:dashed; }
+
+  /* ---------- Bestandteile: aufklappbar ---------- */
+  /* Die Aufgabe nannte Mouseover. Aufklappen statt Mouseover, weil ein
+     Mouseover auf dem Telefon nicht existiert - und die Haelfte der Autoren
+     liest so etwas abends auf dem Sofa. Wer eine Maus hat, klickt einmal;
+     wer keine hat, kommt genauso hin. */
+  .felder{ display:grid; gap:8px; }
+  .felder details{
+    background:var(--card); border:1px solid var(--line); border-radius:6px;
+  }
+  .felder summary{
+    cursor:pointer; padding:12px 16px; font-weight:700; font-size:15px;
+    display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px;
+    list-style:none;
+  }
+  .felder summary::-webkit-details-marker{ display:none; }
+  .felder summary::after{
+    content:"Erklärung"; margin-left:auto; font-size:12px; font-weight:400;
+    color:var(--brand); white-space:nowrap;
+  }
+  .felder details[open] summary::after{ content:"schließen"; color:var(--ink-faint); }
+  .felder summary:focus-visible{ outline:2px solid var(--brand); outline-offset:-2px; border-radius:6px; }
+  .felder .pflicht{
+    font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--brand-tint); color:var(--brand); border-radius:3px; padding:2px 7px;
+  }
+  .felder .kann{
+    font-size:11px; font-weight:400; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--card-2); color:var(--ink-faint); border:1px solid var(--line-soft);
+    border-radius:3px; padding:1px 6px;
+  }
+  .felder .inhalt{ padding:0 16px 14px; border-top:1px solid var(--line-soft); }
+  .felder .inhalt p{ margin:12px 0 0; font-size:14.5px; line-height:1.6; color:var(--ink-soft); max-width:70ch; }
+  .felder .inhalt p b{ color:var(--ink); }
+  .felder .inhalt .beispiel{
+    margin:10px 0 0; padding:9px 12px; background:var(--card-2);
+    border-left:3px solid var(--line); font-size:14px; color:var(--ink-soft);
+  }
+  .felder .inhalt .beispiel b{ color:var(--ink); }
+
+  /* ---------- Maße ---------- */
+  .masse{ display:grid; gap:12px; grid-template-columns:1fr; margin:0 0 16px; }
+  @media (min-width:760px){ .masse{ grid-template-columns:repeat(3,1fr); } }
+  .masse > div{
+    background:var(--card); border:1px solid var(--line); border-radius:6px; padding:16px 18px;
+  }
+  .masse .lbl{
+    margin:0 0 6px; font-size:11.5px; font-weight:700; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-faint);
+  }
+  .masse .val{ margin:0; font-size:28px; font-weight:700; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .masse .sub{ margin:7px 0 0; font-size:14px; line-height:1.5; color:var(--ink-soft); max-width:none; }
+
+  /* ---------- Hinweiskästen ---------- */
+  .kasten{
+    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--brand);
+    border-radius:6px; padding:16px 18px; margin:0 0 18px;
+  }
+  .kasten.gut{ border-left-color:var(--ok); background:var(--ok-tint); }
+  .kasten.acht{ border-left-color:var(--warn); background:var(--warn-tint); }
+  .kasten p{ margin:0 0 9px; font-size:15px; line-height:1.6; }
+  .kasten p:last-child{ margin-bottom:0; }
+  .kasten .titel{ font-weight:700; color:var(--ink); }
+
+  /* ---------- Lizenz ---------- */
+  .lizenzen{ display:grid; gap:12px; grid-template-columns:1fr; }
+  @media (min-width:760px){ .lizenzen{ grid-template-columns:1fr 1fr; } }
+  .lizenzen > div{
+    background:var(--card); border:1px solid var(--line); border-radius:6px; padding:16px 18px;
+  }
+  .lizenzen .kuerzel{ margin:0 0 4px; font-size:17px; font-weight:700; }
+  .lizenzen .voreinstellung{
+    font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--ok-tint); color:var(--ok); border-radius:3px; padding:2px 7px; margin-left:8px;
+  }
+  .lizenzen p{ margin:8px 0 0; font-size:14.5px; line-height:1.55; color:var(--ink-soft); max-width:none; }
+
+  /* ---------- Kontakt ---------- */
+  .kontakt{ display:grid; gap:12px; grid-template-columns:1fr; }
+  @media (min-width:760px){ .kontakt{ grid-template-columns:repeat(3,1fr); } }
+  .kontakt > div{
+    background:var(--card); border:1px solid var(--line); border-radius:6px; padding:15px 17px;
+  }
+  .kontakt .rolle{ margin:0 0 3px; font-size:11.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); }
+  .kontakt .name{ margin:0 0 2px; font-weight:700; }
+  .kontakt .mail{ margin:0; font-size:14.5px; word-break:break-word; }
+
+  footer{
+    border-top:1px solid var(--line); background:var(--card);
+    padding:26px 0 40px; font-size:14px; color:var(--ink-faint);
+  }
+  footer p{ margin:0 0 8px; max-width:74ch; }
+  footer a{ color:var(--ink-soft); }
+  details.recht{ margin:14px 0 0; }
+  details.recht summary{ cursor:pointer; font-weight:700; color:var(--ink-soft); }
+  .legal-body{ padding:10px 0 4px; max-width:74ch; }
+  .legal-body h4{ margin:14px 0 4px; font-size:13.5px; }
+  .legal-body p{ margin:0 0 8px; }
+  .stand{ margin-top:16px; font-size:12.5px; }
+</style>
+
+<header class="top">
+  <div class="wrap kopf-oben">
+    <div>
+      <a class="zurueck" href="/">← Alle 12 Knowledge-Hubs</a>
+      <p class="eyebrow">Monitor Versorgungsforschung</p>
+      <h1>Beitrag einreichen</h1>
+      <p class="untertitel">Die Einreichungsplattform von „Monitor Versorgungsforschung“</p>
+      <p class="standfirst">Hier stellen Sie Ihren Beitrag selbst ein — in einem Formular,
+      das Sie zwischenspeichern und zu mehreren ausfüllen können. Diese Seite erklärt
+      vorher, was gebraucht wird, damit Sie nicht mitten im Formular feststellen,
+      dass eine Abbildung zu klein ist.</p>
+    </div>
+    <a class="marke" href="https://www.monitor-versorgungsforschung.de/?utm_source=einreichung&amp;utm_medium=referral&amp;utm_campaign=einreichung" target="_blank" rel="noopener" title="Monitor Versorgungsforschung — Herausgeber">
+      <img src="logo/mvf-logo.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
+    </a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="start">
+    <div class="text">
+      <h2>Einreichung beginnen</h2>
+      <p>Beim ersten Mal melden Sie sich an und werden von der Redaktion freigegeben.
+      Danach genügt Ihre E-Mail-Adresse — ein Passwort brauchen Sie nie.</p>
+    </div>
+    <div class="knopf-zeile">
+      <a class="knopf" href="https://www.monitor-versorgungsforschung.de/einreichung/">Zum Formular</a>
+      <a class="knopf zweit" href="#bestandteile">Erst die Bestandteile ansehen</a>
+    </div>
+  </div>
+
+  <section id="warum">
+    <h2>Warum es diese Seite gibt</h2>
+    <p class="vor">Bisher kam ein Beitrag per E-Mail, oft in mehreren Anhängen, und die
+    Redaktion hat zusammengesucht, was zusammengehört. Was dabei regelmäßig fehlte,
+    fehlte erst im Satz: das englische Abstract, die Bildunterschrift zu Abbildung 3,
+    die Vita des dritten Mitautors.</p>
+    <p>Dieses Formular führt die Bestandteile <b>vor</b> der Einreichung zusammen und sagt
+    Ihnen sofort, wenn etwas fehlt oder eine Datei zu klein ist. Für Sie heißt das: eine
+    Rückfrage weniger und ein Beitrag, der in der geplanten Ausgabe erscheint statt in
+    der nächsten.</p>
+    <div class="kasten">
+      <p><span class="titel">Sie müssen nicht alles auf einmal schaffen.</span>
+      Das Formular speichert Ihren Stand automatisch und lässt sich beliebig oft
+      unterbrechen. Erst wenn Sie <i>Speichern und einreichen</i> drücken, geht der
+      Beitrag an die Redaktion.</p>
+    </div>
+  </section>
+
+  <section id="ablauf">
+    <h2>Der Ablauf in sechs Schritten</h2>
+    <p class="vor">Vom ersten Aufruf bis zur Eingangsbestätigung.</p>
+    <ol class="ablauf">
+      <li>
+        <span class="n">1</span>
+        <div>
+          <p class="t">Anmelden</p>
+          <p class="d">Name, Einrichtung, E-Mail-Adresse, geplante Rubrik. <b>Kein Passwort.</b>
+          Sie erhalten eine Bestätigung an die angegebene Adresse.</p>
+        </div>
+      </li>
+      <li>
+        <span class="n">2</span>
+        <div>
+          <p class="t">Freigabe abwarten</p>
+          <p class="d">Herausgeber oder Redaktion gibt Sie als Autor frei — in der Regel am
+          nächsten Werktag. Dann kommt die Nachricht: <b>„Sie können Ihren Beitrag nun
+          einreichen.“</b></p>
+        </div>
+      </li>
+      <li>
+        <span class="n">3</span>
+        <div>
+          <p class="t">Formular ausfüllen</p>
+          <p class="d">In beliebig vielen Sitzungen. Der Stand wird automatisch gespeichert,
+          zusätzlich können Sie jederzeit selbst speichern. Oben steht immer, <b>wann zuletzt
+          gesichert wurde</b>.</p>
+        </div>
+      </li>
+      <li>
+        <span class="n">4</span>
+        <div>
+          <p class="t">Mitautoren einladen</p>
+          <p class="d">Bis zu zehn, per E-Mail. Sie füllen ihr <b>Autorenprofil selbst</b> aus —
+          Bild, kurze Vita, Kontakt — und können am Text mitarbeiten. Sie selbst bleiben
+          Korrespondenzautor.</p>
+        </div>
+      </li>
+      <li>
+        <span class="n">5</span>
+        <div>
+          <p class="t">Prüfung vor dem Absenden</p>
+          <p class="d">Das Formular nennt, was noch fehlt: ein leeres Pflichtfeld, eine zu
+          schmale Abbildung, eine Ausgabe ohne genügend Vorlauf. <b>Nichts geht verloren</b>,
+          solange Sie nicht eingereicht haben.</p>
+        </div>
+      </li>
+      <li>
+        <span class="n">6</span>
+        <div>
+          <p class="t">Speichern und einreichen</p>
+          <p class="d">Sie erhalten eine Bestätigung mit Titel, Datum und Uhrzeit. Ab da liegt
+          der Beitrag bei der Redaktion; <b>Änderungen nur nach Rücksprache</b>.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section id="rubriken">
+    <h2>Die Rubriken</h2>
+    <p class="vor">Ein Beitrag gehört zu genau einer Rubrik. Sie bestimmt, wie er begutachtet
+    und wie er im Heft gesetzt wird — wählen Sie im Zweifel die, die dem Charakter Ihres
+    Textes am nächsten kommt; die Redaktion korrigiert das notfalls.</p>
+    <ul class="rubriken">
+      <li>Wissenschaft <span>Originalarbeit, Peer Review</span></li>
+      <li>Wissen <span>gesichertes Fachwissen, aufbereitet</span></li>
+      <li>Wissenstransfer <span>Weg von der Erkenntnis in die Praxis</span></li>
+      <li>Haupttext <span>tragender Beitrag der Ausgabe</span></li>
+      <li>Hintergrund <span>Indikation oder Methodik erklärt</span></li>
+      <li>Report <span>Bericht, Kongress, Veranstaltung</span></li>
+      <li>Kommentar <span>Standpunkt, gezeichnet</span></li>
+      <li class="gesperrt">Editorial <span>dem Herausgeber vorbehalten</span></li>
+    </ul>
+    <div class="kasten">
+      <p><span class="titel">Peer Review nur in der Rubrik Wissenschaft.</span>
+      Dort begutachten zwei Fachgutachter Ihren Beitrag. Rechnen Sie dafür mit
+      <b>sechs Wochen</b> — deshalb die Vorlauffrist bei der Ausgabe.</p>
+    </div>
+  </section>
+
+  <section id="bestandteile">
+    <h2>Die Bestandteile Ihres Beitrags</h2>
+    <p class="vor">Klicken Sie auf einen Eintrag, um zu sehen, was genau erwartet wird.
+    <span class="pflicht">Pflicht</span> heißt: ohne dieses Feld können Sie nicht einreichen.</p>
+
+    <div class="felder">
+
+      <details>
+        <summary>Rubrik <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Eine Auswahlliste, keine freie Eingabe. Die Beschreibungen der sieben für Sie
+          wählbaren Rubriken stehen <a href="#rubriken">im Abschnitt darüber</a>.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Vorzeile <span class="kann">optional</span></summary>
+        <div class="inhalt">
+          <p>Die kleine Zeile über der Überschrift, die das Thema einordnet. Zwei bis fünf
+          Wörter, kein Satz, kein Punkt am Ende.</p>
+          <p class="beispiel"><b>Beispiel:</b> Ambulante Notfallversorgung</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Headline <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Der Titel Ihres Beitrags. Er darf lang sein, aber er soll die Aussage tragen —
+          nicht nur das Thema nennen. Wenn Ihr Beitrag ein Ergebnis hat, gehört es hierher.</p>
+          <p class="beispiel"><b>Statt</b> „Ersteinschätzungsinstrumente im internationalen
+          Vergleich“ <b>besser</b> „Ersteinschätzung in der Versorgung: Internationale
+          Erfahrungen und Handlungsoptionen für Deutschland“</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Vorspann <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Der eingerückte Absatz vor dem Beitrag, der zum Weiterlesen bringt. Etwa
+          <b>600 bis 900 Zeichen</b>. Kein Abstract in Kurzform — der Vorspann nennt die
+          Frage und deutet die Antwort an, ohne sie schon abzuhandeln.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Beitragstext <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Ihr Beitrag, auf zwei Wegen zugleich: als <b>Datei</b> (<code>.docx</code>) und
+          eingefügt in das Textfeld. Die Datei ist die Fassung, die in den Satz geht; der
+          eingefügte Text macht Ihren Beitrag in der Redaktion sofort lesbar.</p>
+          <p>Bitte <b>ohne Layout</b> — keine Textrahmen, keine mehrspaltigen Bereiche, Bilder
+          nicht in die Datei einbetten, sondern einzeln hochladen. Zwischenüberschriften und
+          Hervorhebungen gerne, sie überleben den Weg in den Satz.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Abstract deutsch <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Zusammenfassung Ihres Beitrags, etwa <b>1.000 bis 1.500 Zeichen</b>: Hintergrund,
+          Methode, Ergebnis, Schlussfolgerung — in dieser Reihenfolge, ohne Zwischentitel und
+          ohne Literaturverweise.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Schlüsselwörter deutsch <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Drei bis sechs Begriffe, <b>mit Komma getrennt</b>. Keine Wörter, die schon in der
+          Überschrift stehen — sie helfen beim Finden nicht weiter.</p>
+          <p class="beispiel"><b>Beispiel:</b> Triage, Versorgungssteuerung, Notaufnahme,
+          Primärversorgung</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Headline und Abstract englisch <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Zwei getrennte Felder: die englische Überschrift und die englische Zusammenfassung,
+          im Umfang wie die deutsche. Bitte <b>keine Maschinenübersetzung ungeprüft</b> —
+          das englische Abstract ist das, was international von Ihrem Beitrag ankommt, und es
+          steht mit Ihrem Namen darunter.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Keywords englisch <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Drei bis sechs Begriffe, mit Komma getrennt. Nach Möglichkeit
+          <b>MeSH-Begriffe</b> — dann wird Ihr Beitrag in der internationalen Suche gefunden.
+          Nachsehen können Sie sie im
+          <a href="https://www.ncbi.nlm.nih.gov/mesh/" target="_blank" rel="noopener">MeSH-Browser
+          der National Library of Medicine</a>.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Abbildungen und Bildunterschriften <span class="kann">optional</span></summary>
+        <div class="inhalt">
+          <p>Beliebig viele, jede mit ihrer Unterschrift. <b>Nur <code>.jpg</code> oder
+          <code>.png</code></b>, mindestens <b>2.126 Pixel breit</b> — das entspricht 180 mm
+          Satzbreite bei 300 dpi. Die Maße stehen unten noch einmal
+          <a href="#dateien">mit Begründung</a>.</p>
+          <p>Die Unterschrift ist keine Wiederholung des Titels: Sie sagt, was in der
+          Abbildung zu sehen ist und woher die Daten stammen. Wenn eine Abbildung aus einer
+          anderen Veröffentlichung stammt, <b>brauchen wir die Rechte daran</b> — bitte hier
+          vermerken.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Tabellen und Tabellenunterschriften <span class="kann">optional</span></summary>
+        <div class="inhalt">
+          <p>Als <b><code>.docx</code> oder <code>.xlsx</code></b> hochladen, nicht als Bild
+          und nicht ins Textfeld getippt. Nur so lässt sich eine Tabelle im Satz umbrechen
+          und in der Online-Fassung lesbar darstellen.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Zitation <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Wie Ihr Beitrag zitiert werden soll. Die Redaktion ergänzt Seitenzahl und DOI
+          nach dem Satz — Sie geben Autoren, Titel, Ausgabe vor.</p>
+          <p class="beispiel"><b>Muster:</b> Ansmann, L., Ernstmann, N., Stegmaier, P.:
+          „Versorgungsforschung gelingt wirklich nur gemeinsam“, in „Monitor
+          Versorgungsforschung“ (04/26), S. 6–10.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Literatur <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Die Quellenliste, in der Reihenfolge, in der sie im Text vorkommen, und im Text
+          mit Ziffern in Klammern verwiesen — <i>(1)</i>, <i>(1–3)</i>. Bitte <b>mit DOI</b>,
+          wo vorhanden.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Danksagung <span class="kann">optional</span></summary>
+        <div class="inhalt">
+          <p>Wem zu danken ist, und wer den Beitrag gefördert hat. <b>Fördermittel gehören
+          hierher</b>, mit Geldgeber und Kennzeichen.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Vorgesehene Ausgabe <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Eine Auswahlliste in der Form <code>MVF 05/26</code> — sechs Hefte im Jahr. Zur
+          Wahl stehen nur Ausgaben mit <b>mindestens sechs Wochen Vorlauf</b>, damit das Peer
+          Review Platz hat.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Lizenz <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Zwei Möglichkeiten, <a href="#lizenz">unten erklärt</a>. Voreingestellt ist
+          <b>CC BY</b>.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Korrespondenzautor <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Sie selbst: <b>Autorenbild</b> (mindestens 354 Pixel breit), kurze Vita von zwei
+          bis vier Sätzen, Kontakt-E-Mail. Die Vita erscheint neben Ihrem Beitrag, die
+          E-Mail-Adresse als Kontakt für Rückfragen.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Weitere Autoren <span class="kann">optional</span></summary>
+        <div class="inhalt">
+          <p>Bis zu zehn. Sie legen sie mit Namen und E-Mail an und laden sie ein; jede und
+          jeder <b>füllt das eigene Profil selbst</b> aus. Das ist nicht nur bequemer — es
+          stellt auch sicher, dass die Vita stimmt und die Einwilligung von der Person selbst
+          kommt.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Autorenerklärung <span class="pflicht">Pflicht</span></summary>
+        <div class="inhalt">
+          <p>Ein Ankreuzfeld am Ende, mit dem Sie bestätigen: eigener unveröffentlichter Text,
+          Rechte an allen Abbildungen, offengelegte Interessenkonflikte, Einverständnis aller
+          Mitautoren, Zustimmung zur gewählten Lizenz. <b>Den vollen Wortlaut lesen Sie im
+          Formular</b>, bevor Sie ankreuzen.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Bemerkungen an die Redaktion <span class="kann">optional</span></summary>
+        <div class="inhalt">
+          <p>Alles, was sonst keinen Platz hat: ein Terminwunsch, ein Hinweis auf eine
+          parallele Veröffentlichung, eine Bitte um bestimmte Gutachter. Erscheint nicht im
+          Heft.</p>
+        </div>
+      </details>
+
+    </div>
+  </section>
+
+  <section id="dateien">
+    <h2>Bilder, Tabellen, Dateien</h2>
+    <p class="vor">Das Formular prüft jede Datei beim Hochladen und sagt Ihnen sofort, wenn
+    etwas nicht passt. Damit es nicht dazu kommt, hier die Maße vorab.</p>
+
+    <div class="masse">
+      <div>
+        <p class="lbl">Abbildung</p>
+        <p class="val">2.126 px</p>
+        <p class="sub">Mindestbreite. Entspricht 180 mm Satzbreite bei 300 dpi.
+        <code>.jpg</code> oder <code>.png</code>.</p>
+      </div>
+      <div>
+        <p class="lbl">Autorenbild</p>
+        <p class="val">354 px</p>
+        <p class="sub">Mindestbreite. Entspricht 30 mm bei 300 dpi. Hochformat oder
+        quadratisch, Gesicht nicht angeschnitten.</p>
+      </div>
+      <div>
+        <p class="lbl">Tabellen</p>
+        <p class="val">.docx<span style="font-size:20px"> / </span>.xlsx</p>
+        <p class="sub">Als Datei, nicht als Bild — nur so ist die Tabelle im Satz und online
+        umbrechbar.</p>
+      </div>
+    </div>
+
+    <div class="kasten acht">
+      <p><span class="titel">Warum Pixel und nicht dpi?</span>
+      „300 dpi“ steht in einer Bilddatei nur als Notiz und lässt sich in jedem Programm
+      umschreiben, ohne dass sich ein einziger Bildpunkt ändert. Ein Bild mit 800 Pixeln
+      Breite kann „300 dpi“ behaupten und bleibt im Druck unscharf. <b>Prüfbar ist allein
+      die Pixelbreite</b> — deshalb nennt das Formular sie, und deshalb steht sie hier.</p>
+      <p>Wenn Sie unsicher sind: Rechtsklick auf die Datei, <i>Eigenschaften</i>, Reiter
+      <i>Details</i>. Dort steht die Breite in Pixeln.</p>
+    </div>
+  </section>
+
+  <section id="lizenz">
+    <h2>Ihre Lizenz</h2>
+    <p class="vor">Ihr Beitrag erscheint frei zugänglich. Sie behalten das Urheberrecht und
+    entscheiden, was andere damit tun dürfen.</p>
+    <div class="lizenzen">
+      <div>
+        <p class="kuerzel">CC BY 4.0 <span class="voreinstellung">voreingestellt</span></p>
+        <p>Andere dürfen Ihren Beitrag weiterverwenden, bearbeiten und auch kommerziell
+        nutzen — solange Sie als Urheber genannt werden. Die offenste der beiden Lizenzen,
+        und die, die Ihrem Beitrag die weiteste Verbreitung gibt.</p>
+      </div>
+      <div>
+        <p class="kuerzel">CC BY-NC-ND 4.0</p>
+        <p>Nennung ebenfalls Pflicht, aber <b>keine kommerzielle Nutzung</b> und
+        <b>keine Bearbeitung</b>. Sinnvoll, wenn Sie nicht möchten, dass Auszüge Ihres
+        Beitrags in fremdem Zusammenhang erscheinen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="fragen">
+    <h2>Wenn etwas unklar ist</h2>
+    <p class="vor">Rufen Sie an oder schreiben Sie, bevor Sie etwas zweimal machen.</p>
+    <div class="kontakt">
+      <div>
+        <p class="rolle">Herausgeber</p>
+        <p class="name">Prof. Dr. Reinhold Roski</p>
+        <p class="mail"><a href="mailto:roski@m-vf.de">roski@m-vf.de</a></p>
+      </div>
+      <div>
+        <p class="rolle">Chefredaktion</p>
+        <p class="name">Peter Stegmaier</p>
+        <p class="mail"><a href="mailto:stegmaier@m-vf.de">stegmaier@m-vf.de</a></p>
+      </div>
+      <div>
+        <p class="rolle">Redaktion</p>
+        <p class="name">Mariann Stegmaier</p>
+        <p class="mail"><a href="mailto:mariann.stegmaier@m-vf.de">mariann.stegmaier@m-vf.de</a></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="start">
+    <div class="text">
+      <h2>Bereit?</h2>
+      <p>Beim ersten Mal dauert die Anmeldung zwei Minuten. Ihren Stand können Sie
+      danach jederzeit weiterbearbeiten.</p>
+    </div>
+    <div class="knopf-zeile">
+      <a class="knopf" href="https://www.monitor-versorgungsforschung.de/einreichung/">Zum Formular</a>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>MVF-Einreichungsplattform</b> — ein Angebot von <i>Monitor Versorgungsforschung</i>,
+    eRelation AG – Content in Health, Bonn.
+    <a href="/">Zur Übersicht aller Knowledge-Hubs</a> ·
+    <a href="https://www.monitor-versorgungsforschung.de/impressum/" target="_blank" rel="noopener">Impressum</a></p>
+
+    <details class="recht">
+      <summary>Datenschutzhinweise</summary>
+      <div class="legal-body">
+        <h4>1. Verantwortlicher</h4>
+        <p>eRelation AG – Content in Health, vertreten durch Peter Stegmaier, Johannes-von-Hanstein-Str. 2, 53115 Bonn. Kontakt siehe Impressum.</p>
+        <h4>2. Charakter dieser Seite</h4>
+        <p>Diese Seite ist statisch und reine Erklärung. Sie setzt <strong>keine Cookies</strong>, bindet <strong>keine Analyse- oder Trackingdienste Dritter</strong> ein und nimmt selbst <strong>keine Eingaben</strong> auf. Schriften und Bilder liegen auf demselben Server.</p>
+        <p>Wie oft die Seite aufgerufen wird, zählen wir auf einem eigenen Server von <i>Monitor Versorgungsforschung</i>. Dabei wird nichts auf Ihrem Endgerät gespeichert oder ausgelesen, und Ihre IP-Adresse wird nicht gespeichert: Sie geht nur gemeinsam mit einer geheimen Zufallszahl in einen nicht umkehrbaren Hashwert ein, der mehrfache Aufrufe desselben Tages als eine Person zählbar macht. Die Zufallszahl wird jede Nacht ersetzt; eine Wiedererkennung über den Tag hinaus findet nicht statt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Aufrufe mit <i>Do Not Track</i> werden nicht gezählt.</p>
+        <h4>3. Server-Protokolle</h4>
+        <p>Die Seite wird bei GitHub Pages (GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA) gehostet. Beim Abruf verarbeitet der Anbieter technisch notwendige Verbindungsdaten wie Ihre IP-Adresse. Rechtsgrundlage ist unser berechtigtes Interesse am sicheren Betrieb (Art. 6 Abs. 1 lit. f DSGVO).</p>
+        <h4>4. Das Einreichungsformular</h4>
+        <p>Das Formular selbst liegt <strong>nicht auf dieser Seite</strong>, sondern unter <i>monitor-versorgungsforschung.de/einreichung/</i>. Sobald Sie es aufrufen, gelten die dortigen Datenschutzhinweise. Dort verarbeiten wir die Angaben, die Sie zur Einreichung machen — Name, Einrichtung, E-Mail-Adresse, Beitragsinhalte und Dateien — zur Durchführung des Redaktions- und Begutachtungsverfahrens (Art. 6 Abs. 1 lit. b DSGVO). Angenommene Beiträge werden mit den von Ihnen gemachten Autorenangaben veröffentlicht.</p>
+        <h4>5. Ihre Rechte</h4>
+        <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch sowie das Recht, sich bei einer Aufsichtsbehörde zu beschweren. Zuständig ist die Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen.</p>
+      </div>
+    </details>
+
+    <p class="stand">Stand: 03.09.2026. Bild- und Dateimaße gelten für die Ausgaben ab MVF 06/26.</p>
+  </div>
+</footer>
+
+<!-- ZAEHLER-ANFANG
+     Zaehlt den Aufruf auf dem eigenen Server von Monitor Versorgungsforschung.
+     Kein Cookie, keine Kennung auf dem Geraet, keine fremde Firma. Wer Do Not
+     Track gesetzt hat, wird gar nicht erst gezaehlt. Schlaegt der Abruf fehl,
+     merkt die Seite es nicht - ein Bild, das nicht laedt, ist folgenlos.
+     Gegenstueck: /zaehler/z.php auf monitor-versorgungsforschung.de -->
+<script>
+(function () {
+  try {
+    if (navigator.doNotTrack === '1' || window.doNotTrack === '1'
+        || navigator.globalPrivacyControl === true) return;
+    if (navigator.webdriver) return;
+    if (!screen.width || !screen.height) return;   // kein echter Bildschirm
+    if (!/\.m-vf\.de$/.test(location.hostname)) return;   // lokal nicht zaehlen
+    var r = '';
+    try { r = document.referrer ? new URL(document.referrer).hostname : ''; }
+    catch (e) { r = ''; }
+    if (r === location.hostname) r = '';
+    var w = screen.width;
+    var stufe = w < 480 ? 'bis480' : w < 768 ? 'bis768' : w < 1024 ? 'bis1024'
+              : w < 1440 ? 'bis1440' : w < 1920 ? 'bis1920' : 'ueber1920';
+    var q = 'h=' + encodeURIComponent(location.hostname)
+          + '&p=' + encodeURIComponent(location.pathname)
+          + '&r=' + encodeURIComponent(r ? 'https://' + r + '/' : '')
+          + '&g=' + (Math.min(screen.width, screen.height) < 768 ? 'm' : 'd')
+          + '&b=' + stufe
+          + '&c=' + Date.now();
+    var ziel = 'https://www.monitor-versorgungsforschung.de/zaehler/z.php?';
+    new Image(1, 1).src = ziel + q;
+
+    // Der Weg zum Formular ist die einzige Kennzahl, die diese Seite braucht:
+    // Wie viele lesen, und wie viele fangen danach wirklich an. Kein Begriff,
+    // keine Eingabe - nur der Klick.
+    var knoepfe = document.querySelectorAll('a.knopf[href*="/einreichung/"]');
+    for (var i = 0; i < knoepfe.length; i++) {
+      knoepfe[i].addEventListener('click', function () {
+        try {
+          var f = 'h=' + encodeURIComponent(location.hostname)
+                + '&e=' + encodeURIComponent('einreichung-begonnen')
+                + '&c=' + Date.now();
+          if (navigator.sendBeacon) navigator.sendBeacon(ziel + f);
+          else new Image(1, 1).src = ziel + f;
+        } catch (e) { /* ein ungezaehlter Klick ist kein Grund, den Weg zu blockieren */ }
+      });
+    }
+  } catch (e) { /* Zaehlung ist nie wichtiger als die Seite */ }
+})();
+</script>
+<!-- ZAEHLER-ENDE -->

@@ -1081,116 +1081,6 @@ def schon_da(titel: str, kopf: str) -> dict | None:
     return None
 
 
-# ------------------------------------------- Inhaltlich schon dagewesen?
-# Der Titelvergleich greift nur bei gleichem Wortlaut, der Fingerabdruck nur
-# bei wortgleicher Quelle. Beides geht ins Leere, sobald die Redaktion die
-# Meldung umschreibt und veroeffentlicht: Am 05.10.2026 lagen neun Entwuerfe
-# herum, deren Gegenstand laengst erschienen war - die ASICS-Studie etwa als
-# "86 Prozent der Wachzeit ohne Bewegung" statt "Bewegungsmangel weltweit".
-# Von der Wortfolge blieb nichts, von den seltenen Begriffen alles.
-#
-# Verglichen wird deshalb die Schnittmenge der seltenen Woerter, gewichtet
-# nach ihrer Haeufigkeit im Vergleichsbestand: "asics" oder "nogo-a" wiegen
-# schwer, "versorgung" nichts.
-VERGLEICH_TAGE = 21
-# Die Grenzen sind gemessen, nicht geschaetzt (Gegenprobe vom 05.10.2026):
-# derselbe Beitrag gegen sich selbst 0,97; derselbe Text halbiert und neu
-# betitelt 0,44; die neun echten Doppel vom selben Tag 0,52 bis 0,89 - und
-# zwei beliebige Beitraege gegen den ganzen Bestand nur 0,07 und 0,10.
-# Dazwischen liegt viel Luft, also darf die Grenze tief stehen.
-VERGLEICH_GRENZE = 0.38         # ab hier gilt es als dieselbe Meldung
-VERGLEICH_MELDEN = 0.25         # ab hier taucht es im Aufraeum-Bericht auf
-ALLERWELT = set("""der die das und oder aber auch noch nur schon sehr mehr
- bei mit von vom zum zur fuer für auf aus dem den des ein eine einer einem
- eines nicht sind ist war wird werden wurde wurden haben hat hatte sich
- prozent jahr jahre jahren million millionen euro deutschland deutschen
- patienten versorgung gesundheit studie studien neue neuen laut nach ueber
- über dass sie ihre ihr man sowie dabei damit dazu durch gegen ohne unter
- zwischen vor seit bis als wie wenn weil dann dort hier""".split())
-
-_bestand: list | None = None            # einmal je Lauf geholt
-
-
-def begriffe(text: str) -> set:
-    """Die seltenen Woerter eines Textes - Eigennamen, Fachbegriffe, Zahlen."""
-    nur_text = html.unescape(re.sub(r"<[^>]+>", " ", text or ""))
-    worte = re.findall(r"[\wÄÖÜäöüß-]{4,}", nur_text.lower())
-    return {w for w in worte if w not in ALLERWELT}
-
-
-def bestand(kopf: str, tage: int = VERGLEICH_TAGE) -> list:
-    """Was in den letzten Wochen erschien oder als Entwurf angelegt wurde.
-
-    Einmal je Lauf geholt: Bei fuenf Meldungen hintereinander waeren es sonst
-    fuenf gleiche Abfragen.
-    """
-    global _bestand
-    if _bestand is not None:
-        return _bestand
-    import datetime
-
-    nach = (datetime.date.today()
-            - datetime.timedelta(days=tage)).isoformat() + "T00:00:00"
-    gesammelt = []
-    for stand in ("publish", "draft,pending"):
-        for seite in (1, 2, 3):
-            frage = urllib.parse.urlencode({
-                "status": stand, "after": nach, "per_page": 100,
-                "page": seite, "orderby": "date", "order": "desc",
-                "_fields": "id,date,link,title,content,status"})
-            try:
-                teil = wp_ruf(f"/posts?{frage}", kopf)
-            except Exception:
-                break
-            if not teil:
-                break
-            gesammelt.extend(teil)
-            if len(teil) < 100:
-                break
-    _bestand = [(e, begriffe(e["title"]["rendered"])
-                 | begriffe(e["content"].get("rendered", "")[:1500]))
-                for e in gesammelt]
-    return _bestand
-
-
-def inhaltlich_schon_da(titel: str, inhalt: str, kopf: str,
-                        ausser: int = 0) -> tuple[float, dict | None]:
-    """Der naechstliegende Beitrag im Bestand und wie nah er ist.
-
-    Zurueck kommt immer der beste Treffer, auch ein schwacher - ueber die
-    Grenze entscheidet, wer fragt.
-    """
-    import collections
-    import math
-
-    liste = bestand(kopf)
-    if not liste:
-        return 0.0, None
-    haeufig = collections.Counter()
-    for _, menge in liste:
-        haeufig.update(menge)
-    gesamt = len(liste)
-
-    def gewicht(wort: str) -> float:
-        return math.log(gesamt / (1 + haeufig[wort]))
-
-    eigen = begriffe(titel) | begriffe(inhalt[:1500])
-    if not eigen:
-        return 0.0, None
-    unten = sum(gewicht(w) for w in eigen) or 1
-    bester, bestwert = None, 0.0
-    for eintrag, menge in liste:
-        if eintrag["id"] == ausser:
-            continue
-        gemeinsam = eigen & menge
-        if not gemeinsam:
-            continue
-        wert = sum(gewicht(w) for w in gemeinsam) / unten
-        if wert > bestwert:
-            bester, bestwert = eintrag, wert
-    return bestwert, bester
-
-
 def in_ordner(medien: list[int], kopf: str,
               ordner: int = WP_MEDIENORDNER) -> None:
     """Hochgeladene Bilder in den Mediathek-Ordner der Redaktion einsortieren."""
@@ -1485,46 +1375,6 @@ def verkleinern(name: str, rohdaten: bytes) -> tuple[str, bytes]:
         return name, rohdaten
 
 
-def kopfbilder_dazu(bilder: list[tuple[str, bytes]]) -> list[tuple[str, bytes]]:
-    """Zu jedem Bild mit genau einem Gesicht zusaetzlich das Kopfbild.
-
-    WARUM HIER UND NICHT SPAETER
-    Direkt danach laeuft verkleinern() und macht aus dem Bild 300 Punkte
-    Breite. Ein Gesichtsausschnitt daraus waere rund 100 Punkte breit - zu
-    wenig, und vergroessert wird nicht. Am 05.10.2026 nachgemessen: Von
-    vierzehn Personalien-Bildern in der Mediathek war KEINES gross genug,
-    weil alle als 300er abgelegt sind. Vor dem Verkleinern ist das Bild noch
-    so gross, wie die Pressestelle es geschickt hat.
-
-    WAS DABEI NICHT PASSIERT
-    Das Original bleibt in der Liste und wird wie bisher hochgeladen. Das
-    Kopfbild kommt daneben, als zweite Datei. Welches die Meldung traegt,
-    entscheidet weiterhin die Redaktion im Dialog *Beitragsbild festlegen* -
-    sie sieht beide nebeneinander.
-
-    Ein Verbandslogo hat kein Gesicht und geht deshalb unveraendert durch.
-    Ohne OpenCV faellt der Zuschnitt aus und sonst nichts.
-    """
-    try:
-        import kopfbild
-    except ImportError:
-        return bilder
-    geht, auskunft = kopfbild.verfuegbar()
-    if not geht:
-        print(f"  kein Kopfbild-Zuschnitt: {auskunft}")
-        return bilder
-    heraus: list[tuple[str, bytes]] = []
-    for name, rohdaten in bilder:
-        heraus.append((name, rohdaten))
-        zuschnitt, wie = kopfbild.zuschneiden(rohdaten)
-        if zuschnitt is None:
-            print(f"  {name}: kein Kopfbild - {wie}")
-            continue
-        heraus.append((pathlib.Path(name).stem + "-kopf.jpg", zuschnitt))
-        print(f"  {name}: Kopfbild dazu - {wie}")
-    return heraus
-
-
 def bilder_anhaengen(bilder: list[tuple[str, bytes]], beitrag: int,
                      kopf: str, titel: str) -> list[int]:
     """Die Bilder der Mitteilung an den Entwurf haengen.
@@ -1534,7 +1384,7 @@ def bilder_anhaengen(bilder: list[tuple[str, bytes]], beitrag: int,
     Hand - welches Bild eine Meldung traegt, entscheidet die Redaktion.
     """
     neue = []
-    for name, rohdaten in kopfbilder_dazu(bilder):
+    for name, rohdaten in bilder:
         vorher = len(rohdaten)
         name, rohdaten = verkleinern(name, rohdaten)
         if len(rohdaten) < vorher:
@@ -1627,20 +1477,6 @@ def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
               f"{doppelt.get('link','')}")
         print("Kein zweiter Entwurf angelegt.")
         return False
-
-    # Derselbe Gegenstand, anders betitelt - der haeufigere Fall.
-    wert, nahe = inhaltlich_schon_da(meldung["titel"], inhalt, kopf)
-    if nahe is not None and wert >= VERGLEICH_GRENZE:
-        print(f"Inhaltlich schon da ({wert:.2f}, {nahe['status']}, "
-              f"Nr. {nahe['id']}): {nahe['title']['rendered'][:70]}")
-        print(f"  {nahe.get('link','')}")
-        print("Kein zweiter Entwurf angelegt.")
-        return False
-    if nahe is not None and wert >= VERGLEICH_MELDEN:
-        # Nah, aber nicht nah genug: anlegen und die Naehe vermerken, damit
-        # die Redaktion zweimal hinsieht.
-        print(f"  Hinweis: aehnelt Nr. {nahe['id']} ({wert:.2f}) "
-              f"\"{nahe['title']['rendered'][:56]}\" - trotzdem angelegt.")
 
     if trocken:
         print(f"[trocken] Entwurf waere angelegt: {meldung['titel']}")
@@ -1824,138 +1660,6 @@ class Zweifach:
                 pass
 
 
-# ----------------------------------------------------------- Aufraeumen
-# Der Abgleich beim Anlegen sieht nur, was es in dem Augenblick schon gab.
-# Veroeffentlicht die Redaktion ihre eigene Fassung erst Tage spaeter, bleibt
-# unser Entwurf liegen - am 05.10.2026 waren das neun Stueck. Dieser Lauf
-# meldet solche Faelle; geloescht wird nichts, das bleibt eine Entscheidung
-# der Redaktion.
-AUFRAEUM_DATEI = pathlib.Path(__file__).with_name("aufraeumen-zuletzt.json")
-AUFRAEUM_TAGE = 7               # einmal die Woche genuegt
-AUFRAEUM_FENSTER = 120          # so weit zurueck werden Entwuerfe angesehen
-
-
-def tagzahl(datum: str) -> int:
-    """Grobes Tagesmass fuer den Abstand zweier Beitraege."""
-    return int(datum[:4]) * 372 + int(datum[5:7]) * 31 + int(datum[8:10])
-
-
-def aufraeumen(melden_ab: float = VERGLEICH_MELDEN) -> int:
-    """Welche eigenen Entwuerfe haben inzwischen ein veroeffentlichtes
-    Gegenstueck? Ergebnis als Bericht, ohne einen Finger daran zu ruehren."""
-    import collections
-    import datetime
-    import math
-
-    kopf = zugang()
-    if kopf is None:
-        print("WPUSER oder WPPASSWORT fehlt - kein Aufraeum-Bericht.")
-        return 1
-
-    def seitenweise(stand: str, nach: str | None = None) -> list:
-        gesammelt = []
-        for seite in range(1, 8):
-            felder = {"status": stand, "per_page": 100, "page": seite,
-                      "orderby": "date", "order": "desc",
-                      "_fields": "id,date,link,title,content,status"}
-            if nach:
-                felder["after"] = nach
-            try:
-                teil = wp_ruf(f"/posts?{urllib.parse.urlencode(felder)}", kopf)
-            except Exception:
-                break
-            if not teil:
-                break
-            gesammelt.extend(teil)
-            if len(teil) < 100:
-                break
-        return gesammelt
-
-    nach = (datetime.date.today()
-            - datetime.timedelta(days=AUFRAEUM_FENSTER)).isoformat() \
-        + "T00:00:00"
-    entwuerfe = seitenweise("draft")
-    erschienen = seitenweise("publish", nach)
-    print(f"Aufraeumen: {len(entwuerfe)} eigene Entwuerfe gegen "
-          f"{len(erschienen)} Beitraege der letzten {AUFRAEUM_TAGE * 17} Tage")
-
-    aufbereitet = [(e, begriffe(e["title"]["rendered"])
-                    | begriffe(e["content"].get("rendered", "")[:1500]))
-                   for e in erschienen]
-    haeufig = collections.Counter()
-    for _, menge in aufbereitet:
-        haeufig.update(menge)
-    gesamt = max(len(aufbereitet), 1)
-
-    def gewicht(wort: str) -> float:
-        return math.log(gesamt / (1 + haeufig[wort]))
-
-    zeilen = []
-    for e in entwuerfe:
-        eigen = begriffe(e["title"]["rendered"]) | begriffe(
-            e["content"].get("rendered", "")[:1500])
-        if not eigen:
-            continue
-        unten = sum(gewicht(w) for w in eigen) or 1
-        bester, bestwert = None, 0.0
-        for v, menge in aufbereitet:
-            if abs(tagzahl(v["date"][:10]) - tagzahl(e["date"][:10])) > VERGLEICH_TAGE:
-                continue
-            gemeinsam = eigen & menge
-            if not gemeinsam:
-                continue
-            wert = sum(gewicht(w) for w in gemeinsam) / unten
-            if wert > bestwert:
-                bester, bestwert = v, wert
-        if bester is not None and bestwert >= melden_ab:
-            zeilen.append((bestwert, e, bester))
-
-    zeilen.sort(key=lambda z: -z[0])
-    heute = dt_heute()
-    bericht = [f"# Aufraeum-Bericht {heute}", "",
-               f"{len(zeilen)} von {len(entwuerfe)} Entwuerfen haben ein "
-               f"veroeffentlichtes Gegenstueck.", "",
-               "Geloescht wurde nichts. Wer loeschen will: in WordPress "
-               "oeffnen und in den Papierkorb legen - das ist umkehrbar.", ""]
-    for wert, e, v in zeilen:
-        bericht.append(f"- **{wert:.2f}** Entwurf {e['id']} "
-                       f"({e['date'][:10]}): {e['title']['rendered']}")
-        bericht.append(f"  erschienen als {v['id']} ({v['date'][:10]}): "
-                       f"{v['title']['rendered']}")
-        bericht.append(f"  {v.get('link','')}")
-        print(f"  {wert:.2f}  Entwurf {e['id']}: "
-              f"{e['title']['rendered'][:56]}")
-        print(f"        erschienen als {v['id']}: "
-              f"{v['title']['rendered'][:56]}")
-    if not zeilen:
-        print("  Kein Entwurf hat ein veroeffentlichtes Gegenstueck.")
-
-    try:
-        ziel = ablageordner() / f"aufraeumen-{heute}.md"
-        ziel.parent.mkdir(parents=True, exist_ok=True)
-        ziel.write_text("\n".join(bericht) + "\n", encoding="utf-8")
-        print(f"  Bericht: {ziel}")
-    except Exception as fehler:
-        print(f"  Bericht nicht geschrieben: {str(fehler)[:90]}")
-
-    AUFRAEUM_DATEI.write_text(json.dumps({"zuletzt": heute}),
-                              encoding="utf-8")
-    return 0
-
-
-def aufraeumen_faellig() -> bool:
-    """Ist der woechentliche Lauf dran?"""
-    import datetime
-
-    try:
-        zuletzt = json.loads(AUFRAEUM_DATEI.read_text(encoding="utf-8"))["zuletzt"]
-        alt = (datetime.date.today()
-               - datetime.date.fromisoformat(zuletzt)).days
-    except Exception:
-        return True
-    return alt >= AUFRAEUM_TAGE
-
-
 # ------------------------------------------------------------ Postfachlauf
 PM_ORDNER = "Pressemitteilungen"
 PM_ERLEDIGT = "erledigt"
@@ -2034,14 +1738,6 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
         lernen()
     except Exception as fehler:
         print(f"Logos lernen fehlgeschlagen: {str(fehler)[:120]}")
-
-    # Einmal die Woche derselbe Blick von der anderen Seite: Welche Entwuerfe
-    # sind inzwischen anderweitig erschienen? Braucht keinen zweiten Zeitplan.
-    if aufraeumen_faellig():
-        try:
-            aufraeumen()
-        except Exception as fehler:
-            print(f"Aufraeum-Lauf fehlgeschlagen: {str(fehler)[:120]}")
 
     raum = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
     posteingang = raum.GetDefaultFolder(6)                  # olFolderInbox
@@ -2187,9 +1883,6 @@ def main() -> int:
 
     if a.quelle.lower() == "lernen":
         return lernen()
-
-    if a.quelle.lower() in ("aufraeumen", "aufräumen"):
-        return aufraeumen()
 
     if a.quelle.lower() == "postfach":
         # Der Zeitplan startet das Skript ohne Fenster - was dabei geschieht,

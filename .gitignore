@@ -12,3 +12,4 @@ mvf-server/anmeldung/daten/
 # Die fertigen Sponsorenberichte. Sie gehen an einen Kunden, nicht ins
 # oeffentliche Repo - und sie lassen sich jederzeit neu bauen.
 berichte/
+scripts/aufraeumen-zuletzt.json

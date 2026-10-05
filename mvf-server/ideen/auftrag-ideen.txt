@@ -1,0 +1,72 @@
+Ideencheck: zwei Dateien, neuer Ordner /ideen/
+
+WAS DAS IST
+
+Ein zweiter eigenstaendiger Endpunkt, Bauart wie /bestellung/ von
+gestern. Er gehoert zum neuen Reiter "Ideencheck" auf
+innofonds.m-vf.de.
+
+Dort kann jemand seine Projektidee eingeben und bekommt die
+aehnlichsten gefoerderten Vorhaben angezeigt. Das rechnet vollstaendig
+im Browser. Dieser Endpunkt macht nur zweierlei:
+
+1. Er zaehlt anonym mit, zu welchem Themenfeld eine Anfrage gehoerte
+   und welche drei Bausteine sie beruehrt hat. Kein Text, keine
+   Adresse, keine Kennung. Daraus wird eine Tagessumme.
+
+2. Er nimmt entgegen, wenn jemand seine Idee ausdruecklich zuschickt,
+   mit Haekchen und Adresse. Dann gehen zwei Mails hinaus, eine an die
+   Redaktion, eine Bestaetigung an den Absender.
+
+Mit der Einreichungsseite hat er nichts zu tun. Nichts dort wird
+angefasst.
+
+EINRICHTEN
+
+1. Ordner anlegen:
+   <Wurzel>/ideen/
+
+2. ideen.php hineinlegen (Anhang 1).
+
+3. ideen-zugang-muster.php (Anhang 2) in denselben Ordner legen und
+   dabei umbenennen in:
+   ideen-zugang.php
+
+   Die Werte darin bitte so lassen. Sie sind ausgefuellt: Empfaenger
+   redaktion@m-vf.de, drei Zusendungen je Rechner und Tag, und ein
+   Schluessel, mit dem sich die anonyme Themenliste abrufen laesst.
+
+   Ohne diese Datei antwortet der Endpunkt mit "nicht-eingerichtet".
+
+4. Unterordner daten/ muss fuer PHP beschreibbar sein. Er legt sich
+   beim ersten Aufruf selbst an, wenn die Rechte stimmen.
+
+WICHTIG ZU daten/
+
+In diesem Ordner stehen unveroeffentlichte Projektideen. Alle Dateien
+heissen .json.php und beginnen mit <?php exit; ?>. MVF laeuft auf
+nginx, nginx liest keine .htaccess, eine .json waere also abrufbar.
+Bitte weder die Endung aendern noch die erste Zeile entfernen.
+
+PRUEFEN, OHNE ETWAS ANZULEGEN
+
+Drei Aufrufe, keiner schreibt etwas:
+
+curl -i https://www.monitor-versorgungsforschung.de/ideen/ideen.php
+   Erwartet: 405 {"ok":false,"grund":"nur-post"}
+   Kommt 500 nicht-eingerichtet, fehlt die Zugangsdatei.
+
+curl -i -X POST -H "Origin: https://example.com" -H "Content-Type: application/json" -d "{}" https://www.monitor-versorgungsforschung.de/ideen/ideen.php
+   Erwartet: 403 {"ok":false,"grund":"herkunft"}
+
+curl -i -X POST -H "Origin: https://innofonds.m-vf.de" -H "Content-Type: application/json" -d "{\"beschreibung\":\"kurz\"}" https://www.monitor-versorgungsforschung.de/ideen/ideen.php
+   Erwartet: 400 {"ok":false,"grund":"keine-einwilligung"}
+
+Der dritte ist der wichtigste: Ohne ausdrueckliches Haekchen darf nichts
+durchgehen. Ueber dem Eingabefeld im Portal steht die Zusage, dass die
+Beschreibung den Rechner nicht verlaesst, und die muss halten.
+
+RUECKMELDUNG
+
+Es genuegt die Nachricht, dass es liegt und die drei Aufrufe das
+Erwartete liefern.
