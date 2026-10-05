@@ -193,13 +193,14 @@ summary{ cursor:pointer; font-weight:700; }
     </dl>
   </section>
 
-  <!-- Der Kurztext steht bewusst ueber dem Formular und nicht darunter: Wer am
-       Stand einen QR-Code scannt, liest die ersten zwei Saetze und sonst nichts. -->
+  <!-- Der Kurztext steht bewusst ueber dem Formular und nicht darunter: Wer
+       ueber einen Verweis hereinkommt, liest die ersten zwei Saetze und sonst
+       nichts. -->
   <h2>Mitmachen</h2>
   <p>Tragen Sie Ihre E-Mail-Adresse ein und setzen Sie das Häkchen bei „Ich nehme am
   Gewinnspiel teil“. Zusätzlich können Sie den täglichen Studien-Newsletter einzelner
-  Knowledge-Hubs abonnieren: fünf bis sechs neue Arbeiten pro Tag, jede mit deutscher
-  Zusammenfassung, kostenfrei und jederzeit abbestellbar.
+  Knowledge-Hubs abonnieren: fünf bis sechs neue Arbeiten pro Tag in einer E-Mail, jede
+  mit deutscher Zusammenfassung, kostenfrei und jederzeit abbestellbar.
   <strong>Ihre Gewinnchance hängt davon nicht ab.</strong></p>
 
   <form id="anmeldung" novalidate>
@@ -244,8 +245,8 @@ summary{ cursor:pointer; font-weight:700; }
     </label>
 
     <!-- Das Haekchen sperrt sich ausserhalb des Teilnahmezeitraums selbst - siehe
-         Skript. Es steht auch dann sichtbar da: Wer den QR-Code am Stand vorab
-         scannt, soll sehen, worum es geht, und nicht raten muessen. -->
+         Skript. Es steht auch dann sichtbar da: Wer die Seite ausserhalb des
+         Zeitraums findet, soll sehen, worum es geht, und nicht raten muessen. -->
     <label class="einwilligung pflicht" id="feldGewinnspiel">
       <input type="checkbox" id="einwilligungGs">
       <span><strong>Ich nehme am Gewinnspiel teil.</strong> Ich bin mindestens 18 Jahre alt und
@@ -436,7 +437,7 @@ if (!offen) {
 
 function sage(text, art){ meldung.className = 'meldung ' + (art || ''); meldung.innerHTML = text; }
 
-const NOTAUSGANG = ' Bitte versuchen Sie es später noch einmal, sprechen Sie uns am Stand an '
+const NOTAUSGANG = ' Bitte versuchen Sie es später noch einmal '
   + 'oder bestellen Sie über die <a href="' + MC_SEITE + '" target="_blank" rel="noopener">'
   + 'Anmeldeseite von Monitor Versorgungsforschung</a>.';
 
@@ -526,19 +527,25 @@ form.addEventListener('submit', async (e)=>{
     sage('Diese E-Mail-Adresse konnten wir nicht annehmen. Bitte prüfen Sie die Schreibweise.', 'fehler');
     feldMail.focus();
   } else if (grund === 'abgemeldet') {
+    // Wir duerfen nicht, die Person selbst schon: Art. 7 Abs. 3 DSGVO
+    // verbietet uns das Wiedereintragen, nicht ihr die Neuanmeldung.
+    // Deshalb der Weg ueber Mailchimps eigene Seite statt einer Sackgasse.
     sage('<b>Diese Adresse hat sich früher von unseren E-Mails abgemeldet.</b> Aus rechtlichen '
-       + 'Gründen dürfen wir sie nicht selbst wieder eintragen. Bitte verwenden Sie eine andere '
-       + 'Adresse oder sprechen Sie uns am Stand an.', 'fehler');
+       + 'Gründen dürfen wir sie nicht selbst wieder eintragen — das können nur Sie, über die '
+       + '<a href="' + MC_SEITE + '" target="_blank" rel="noopener">Anmeldeseite von Monitor '
+       + 'Versorgungsforschung</a>. Danach ist die Teilnahme hier möglich. Oder Sie verwenden '
+       + 'eine andere Adresse.', 'fehler');
   } else if (grund === 'unzustellbar') {
     sage('An diese Adresse war eine frühere E-Mail nicht zustellbar. Bitte prüfen Sie die '
        + 'Schreibweise oder verwenden Sie eine andere Adresse.', 'fehler');
     feldMail.focus();
   } else if (grund === 'zu-oft') {
-    // Am Messestand teilen sich viele Menschen ein WLAN und damit eine
-    // IP-Adresse. Deshalb der ausdrueckliche Verweis auf den Stand.
-    sage('Von diesem Anschluss sind heute schon ungewöhnlich viele Eingaben gekommen — am '
-       + 'Kongress-WLAN kann das passieren. Bitte sprechen Sie uns am Stand an, wir tragen '
-       + 'Sie dann ein.', 'fehler');
+    // In einem Firmen- oder Tagungsnetz teilen sich viele Menschen eine
+    // IP-Adresse - die Taktbremse trifft dann Unbeteiligte.
+    sage('Von diesem Anschluss sind heute schon ungewöhnlich viele Eingaben gekommen — in '
+       + 'einem Firmen- oder WLAN-Netz kann das passieren, ohne dass Sie etwas falsch gemacht '
+       + 'haben. Bitte versuchen Sie es morgen noch einmal oder schreiben Sie uns an '
+       + '<a href="mailto:info@m-vf.de">info@m-vf.de</a>.', 'fehler');
   } else {
     sage('<b>Ihre Eingabe ist nicht durchgegangen.</b> Unser Versanddienstleister hat sie '
        + 'abgelehnt (' + (grund || 'unbekannt') + ').' + NOTAUSGANG, 'fehler');
