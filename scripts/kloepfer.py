@@ -772,6 +772,10 @@ def schreiben(hoechstens: int, trocken: bool, nur_woche: str = "") -> int:
                     return 0
                 if eintrag.name in fertig:
                     continue
+                # Die zweite Entscheidung: Ohne Freigabe wird nicht
+                # geschrieben. Das ist die Bremse vor den Modellkosten.
+                if freigabe_laden(woche).get(eintrag.name) != "schreiben":
+                    continue
                 pdfs = ([eintrag] if eintrag.is_file()
                         else sorted(eintrag.glob("*.pdf")))
                 if not pdfs:
@@ -865,7 +869,7 @@ def schreiben(hoechstens: int, trocken: bool, nur_woche: str = "") -> int:
                     print(f"    WordPress: {str(fehler)[:110]}")
                     continue
                 if angelegt:
-                    fertig[eintrag.name] = {"datum": dt_heute(),
+                    fertig[eintrag.name] = {"datum": pm.dt_heute(),
                                             "titel": meldung["titel"],
                                             "zeichen": laenge}
                     ziel = woche / "geschrieben" / eintrag.name
@@ -935,6 +939,81 @@ KNOEPFE = [("wichtig-ausfuehrlich", "ausführlich", "15.000"),
            ("wichtig-kurz", "kurz", "2.000"),
            ("sichern", "sichern", ""),
            ("papierkorb", "weg", "")]
+
+
+# Die zweite Entscheidung: Einsortiert heisst noch nicht geschrieben. Erst
+# die Freigabe loest den teuren Modellaufruf aus - ein zurueckgestelltes
+# Thema kostet nichts und bleibt trotzdem auffindbar.
+FREIGABE_DATEI = "freigabe.json"
+# Grobe Hausnummern je Laenge, damit auf der Seite steht, was ein Lauf kostet.
+# Gemessen am 06.10.2026: eine Meldung aus einem 40-Seiten-Gutachten lag bei
+# etwa 25 Cent.
+KOSTEN = {"wichtig-ausfuehrlich": 0.60, "wichtig-lang": 0.40,
+          "wichtig-mittel": 0.25, "wichtig-kurz": 0.15}
+
+
+def freigabe_laden(woche: pathlib.Path) -> dict:
+    try:
+        return json.loads((woche / FREIGABE_DATEI).read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def freigabe_setzen(woche: pathlib.Path, name: str, wert: str) -> None:
+    daten = freigabe_laden(woche)
+    daten[name] = wert
+    (woche / FREIGABE_DATEI).write_text(
+        json.dumps(daten, ensure_ascii=False, indent=1, sort_keys=True),
+        encoding="utf-8")
+
+
+def eingeordnete_posten() -> list:
+    """Was in den Laengen-Ordnern liegt und auf die Freigabe wartet."""
+    posten = []
+    for woche in sorted(stammordner().glob("*-KW*"), reverse=True):
+        daten = sichtung_laden(woche)
+        stand = freigabe_laden(woche)
+        try:
+            fertig = json.loads(
+                (woche / "geschrieben.json").read_text(encoding="utf-8"))
+        except Exception:
+            fertig = {}
+        for fach in LAENGEN:
+            ordner = woche / fach
+            if not ordner.exists():
+                continue
+            for eintrag in sorted(ordner.iterdir()):
+                if eintrag.is_dir():
+                    teile = sorted(eintrag.glob("*.pdf"))
+                    if not teile:
+                        continue
+                    stuecke = sorted((daten.get(t.name, {}) for t in teile),
+                                     key=lambda e: e.get("platz", 99))
+                    titel = eintrag.name.replace("Thema - ", "")
+                    absender = ", ".join(dict.fromkeys(
+                        e.get("absender", "") for e in stuecke))
+                    seiten = sum(e.get("seiten", 0) for e in stuecke)
+                    worum = (stuecke[0].get("buendel_warum")
+                             or stuecke[0].get("worum", "")) if stuecke else ""
+                    anzahl = len(teile)
+                elif eintrag.suffix.lower() == ".pdf":
+                    e = daten.get(eintrag.name, {})
+                    titel = e.get("titel", eintrag.stem)
+                    absender = e.get("absender", "")
+                    seiten = e.get("seiten", 0)
+                    worum = e.get("worum", "")
+                    anzahl = 1
+                else:
+                    continue
+                posten.append({
+                    "woche": woche.name, "name": eintrag.name, "fach": fach,
+                    "titel": titel, "absender": absender, "seiten": seiten,
+                    "worum": worum, "anzahl": anzahl,
+                    "zeichen": LAENGEN[fach],
+                    "kosten": KOSTEN.get(fach, 0.25),
+                    "stand": ("geschrieben" if eintrag.name in fertig
+                              else stand.get(eintrag.name, "offen"))})
+    return posten
 
 
 def offene_posten() -> list:
@@ -1019,6 +1098,40 @@ def seite_bauen() -> str:
             f"<div class='knoepfe'>{knoepfe}</div>"
             "</article>")
 
+    # Zweiter Teil: Was einsortiert ist, wartet auf die Freigabe. Geschrieben
+    # wird nur, was hier freigegeben ist - das ist die Bremse vor den Kosten.
+    zweite = []
+    eingeordnet = eingeordnete_posten()
+    freigegeben = [p for p in eingeordnet if p["stand"] == "schreiben"]
+    summe = sum(p["kosten"] for p in freigegeben)
+    for p in eingeordnet:
+        knopf = {"offen": "", "schreiben": "freigegeben",
+                 "zurueckgestellt": "zurückgestellt",
+                 "geschrieben": "geschrieben"}[p["stand"]]
+        zweite.append(
+            f"<article class='zweite {p['stand']}' "
+            f"data-woche='{html.escape(p['woche'])}' "
+            f"data-name=\"{html.escape(p['name'])}\">"
+            f"<div class='kopf'>"
+            f"<span class='fachmarke'>{p['fach'].replace('wichtig-', '')}"
+            f"<small>{p['zeichen']:,}</small></span>".replace(",", ".")
+            + (f"<span class='buendelmarke'>{p['anzahl']} Dok.</span>"
+               if p["anzahl"] > 1 else "")
+            + f"<h2>{html.escape(p['titel'])}</h2></div>"
+            f"<div class='meta'>{html.escape(p['absender'][:70])} · "
+            f"{p['seiten']} S. · {html.escape(p['woche'])} · "
+            f"ca. {p['kosten']:.2f} €</div>".replace(".", ",", 1)
+            + f"<p class='worum'>{html.escape(p['worum'][:240])}</p>"
+            + ("<div class='knoepfe'>"
+               "<button data-wert='schreiben' class='k schreiben'>"
+               "wirklich schreiben</button>"
+               "<button data-wert='zurueckgestellt' class='k zurueck'>"
+               "zurückstellen</button></div>"
+               if p["stand"] in ("offen", "schreiben", "zurueckgestellt")
+               else "")
+            + (f"<p class='stand'>{knopf}</p>" if knopf else "")
+            + "</article>")
+
     return f"""<!doctype html><meta charset="utf-8">
 <title>Kloepfer einsortieren</title>
 <style>
@@ -1052,18 +1165,38 @@ def seite_bauen() -> str:
   border-color:#1a7f37;color:#1a7f37}}
  .papierkorb{{border-color:#cf222e;color:#cf222e}}
  .fertig{{color:#1a7f37;font-weight:600}}
+ h1.zwei{{margin-top:2em;border-top:2px solid #d8dee4;padding-top:1em}}
+ .fachmarke{{background:#1a7f37;color:#fff;border-radius:6px;
+  padding:.1em .6em;font-size:12px;font-weight:600;display:flex;gap:.4em}}
+ .fachmarke small{{font-weight:400;opacity:.8}}
+ article.zweite{{border-left:4px solid #d0d7de}}
+ article.schreiben{{border-left-color:#1a7f37;background:#f6fbf7}}
+ article.zurueckgestellt{{opacity:.5}}
+ article.geschrieben{{opacity:.45;border-left-color:#8250df}}
+ button.zurueck{{border-color:#9a6700;color:#9a6700}}
+ .stand{{font-weight:600;color:#1a7f37;margin:.2em 0 0}}
+ .summe{{background:#eef1f4;border-radius:8px;padding:.7em 1em;
+  margin:.6em 0 1.4em;font-size:14px}}
 </style>
 <h1>Kloepfer einsortieren</h1>
-<p class="hinweis">{len(posten)} offene Dokumente. Ein Klick verschiebt die
-Datei – grün heißt: daraus wird eine Meldung in dieser Länge.
-Bündel werden zu <em>einer</em> Meldung.</p>
-{"".join(zeilen) or "<p>Nichts offen.</p>"}
+<p class="hinweis">{len(posten)} Dokumente noch ohne Entscheidung. Ein Klick
+verschiebt die Datei – grün heißt: daraus soll eine Meldung in dieser Länge
+werden. Bündel werden zu <em>einer</em> Meldung.</p>
+{"".join(zeilen) or "<p class='hinweis'>Alles einsortiert.</p>"}
+
+<h1 class="zwei">Freigeben – was wirklich geschrieben wird</h1>
+<p class="summe" id="summe">{len(freigegeben)} von {len(eingeordnet)}
+freigegeben · geschätzte Kosten des nächsten Laufs:
+<strong>{summe:.2f} €</strong>. Zurückgestelltes bleibt liegen und kostet
+nichts – es lässt sich jederzeit nachträglich freigeben.</p>
+{"".join(zweite) or "<p class='hinweis'>Noch nichts einsortiert.</p>"}
 <p><button class="k" onclick="fetch('/fertig').then(()=>document.body.innerHTML=
  '<h1>Fertig.</h1><p>Das Fenster kann zu.</p>')">Fertig – Dienst beenden</button>
  <span class="hinweis">Beendet sich auch von selbst, wenn zwei Stunden nichts
  geschieht.</span></p>
 <script>
-document.querySelectorAll('button.k').forEach(k => {{
+// Erste Entscheidung: die Datei in einen Laengen-Ordner verschieben.
+document.querySelectorAll('button.k[data-fach]').forEach(k => {{
   k.addEventListener('click', async () => {{
     const a = k.closest('article');
     const antwort = await fetch('/entscheiden', {{
@@ -1073,8 +1206,28 @@ document.querySelectorAll('button.k').forEach(k => {{
     const d = await antwort.json();
     a.classList.add('erledigt');
     a.querySelector('.knoepfe').innerHTML =
-      d.ok ? '<span class="fertig">→ ' + d.fach + '</span>'
+      d.ok ? '<span class="fertig">→ ' + d.fach + ' · die Freigabe steht '
+             + 'unten</span>'
            : '<span style="color:#cf222e">' + d.fehler + '</span>';
+  }});
+}});
+
+// Zweite Entscheidung: freigeben oder zuruecklegen.
+document.querySelectorAll('button.k[data-wert]').forEach(k => {{
+  k.addEventListener('click', async () => {{
+    const a = k.closest('article');
+    const antwort = await fetch('/freigeben', {{
+      method:'POST', headers:{{'Content-Type':'application/json'}},
+      body: JSON.stringify({{woche:a.dataset.woche, name:a.dataset.name,
+                            wert:k.dataset.wert}})}});
+    const d = await antwort.json();
+    if (!d.ok) return;
+    a.classList.remove('schreiben','zurueckgestellt');
+    a.classList.add(d.wert);
+    document.getElementById('summe').innerHTML =
+      d.anzahl + ' von ' + d.gesamt + ' freigegeben · geschätzte Kosten des '
+      + 'nächsten Laufs: <strong>' + d.summe.toFixed(2).replace('.', ',')
+      + ' €</strong>';
   }});
 }});
 </script>
@@ -1119,6 +1272,21 @@ def dienst(oeffnen: bool = True) -> int:
             wunsch = json.loads(self.rfile.read(laenge) or b"{}")
             woche = stammordner() / str(wunsch.get("woche", ""))
             name = str(wunsch.get("name", ""))
+
+            if self.path.startswith("/freigeben"):
+                wert = str(wunsch.get("wert", ""))
+                antwort = {"ok": False, "wert": wert}
+                if wert in ("schreiben", "zurueckgestellt") and woche.exists():
+                    freigabe_setzen(woche, name, wert)
+                    alle = eingeordnete_posten()
+                    frei = [p for p in alle if p["stand"] == "schreiben"]
+                    antwort = {"ok": True, "wert": wert, "anzahl": len(frei),
+                               "gesamt": len(alle),
+                               "summe": round(sum(p["kosten"] for p in frei), 2)}
+                self._sende(json.dumps(antwort).encode("utf-8"),
+                            "application/json")
+                return
+
             fach = str(wunsch.get("fach", ""))
             antwort = {"ok": False, "fehler": "unbekannt", "fach": fach}
             if fach in FAECHER and (woche / "00-neu" / name).exists():
