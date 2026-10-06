@@ -223,6 +223,12 @@ RANG_SYSTEM = (
     "Stellungnahme eines Verbands zur eigenen Branche, eine Umfrage ohne "
     "Versorgungsbezug, ein Positionspapier, das die bekannte Position "
     "wiederholt.\n"
+    "Ebenfalls hinten stehen reine Branchenthemen ohne Versorgungsbezug: "
+    "Standortpolitik, Herstellerabschläge, Industrieförderung, "
+    "Lieferkettenfragen. Das Magazin schreibt über die Versorgung, nicht "
+    "über die Pharmaindustrie. Sobald ein solches Thema erkennbar auf die "
+    "Versorgung durchschlägt - Verfügbarkeit von Arzneimitteln, Kosten für "
+    "die GKV, Nutzenbewertung -, gilt das nicht.\n"
     "Schreibe mit Umlauten (ä, ö, ü, ß), nie in Ersatzschreibung."
 )
 RANG_SCHEMA = {
