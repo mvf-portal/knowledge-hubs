@@ -223,12 +223,6 @@ RANG_SYSTEM = (
     "Stellungnahme eines Verbands zur eigenen Branche, eine Umfrage ohne "
     "Versorgungsbezug, ein Positionspapier, das die bekannte Position "
     "wiederholt.\n"
-    "Ebenfalls hinten stehen reine Branchenthemen ohne Versorgungsbezug: "
-    "Standortpolitik, Herstellerabschläge, Industrieförderung, "
-    "Lieferkettenfragen. Das Magazin schreibt über die Versorgung, nicht "
-    "über die Pharmaindustrie. Sobald ein solches Thema erkennbar auf die "
-    "Versorgung durchschlägt - Verfügbarkeit von Arzneimitteln, Kosten für "
-    "die GKV, Nutzenbewertung -, gilt das nicht.\n"
     "Schreibe mit Umlauten (ä, ö, ü, ß), nie in Ersatzschreibung."
 )
 RANG_SCHEMA = {
@@ -939,6 +933,38 @@ def baue_beitrag(meldung: dict, stuecke: list) -> tuple[str, int]:
     return "\n".join(teile), laenge
 
 
+def titelbild_aus_pdf(pfad: pathlib.Path) -> bytes | None:
+    """Der Kopf der Titelseite als Bild.
+
+    Gerade die diagrammlastigen Papiere geben nichts her: Beim
+    DGB-Sozialstaatsradar wurden 300 Bilder verworfen, weil die Grafiken
+    Vektorzeichnungen sind und kein einziges Bitmap enthalten. Die
+    Titelseite traegt dagegen immer etwas - Logo des Herausgebers, Titel,
+    oft eine Abbildung.
+
+    Genommen wird das obere Stueck, nicht die ganze Seite: Eine A4-Seite
+    ergibt ein Hochformat, und das wird in der Newsliste beschnitten. Die
+    oberen 45 Prozent haben etwa das Verhaeltnis 3:2.
+    """
+    try:
+        import pymupdf
+    except ImportError:
+        return None
+    try:
+        with pymupdf.open(str(pfad)) as dokument:
+            if not len(dokument):
+                return None
+            seite = dokument[0]
+            kasten = seite.rect
+            oben = pymupdf.Rect(kasten.x0, kasten.y0, kasten.x1,
+                                kasten.y0 + kasten.height * 0.45)
+            # Dreifache Aufloesung: verkleinern() bringt es danach auf 300.
+            bild = seite.get_pixmap(matrix=pymupdf.Matrix(3, 3), clip=oben)
+            return bild.tobytes("png")
+    except Exception:
+        return None
+
+
 def bilder_sammeln(pdfs: list[pathlib.Path], daten: dict, jahr: str = "",
                    hoechstens: int = 3) -> list:
     """Abbildungen aus den Dokumenten, jede mit ihrer Quellenangabe.
@@ -968,6 +994,22 @@ def bilder_sammeln(pdfs: list[pathlib.Path], daten: dict, jahr: str = "",
             # Reihenfolge im Dokument - mehr gibt das PDF nicht her.
             gefunden.append((kennung or name, rohdaten,
                              f"{quelle}, Abb. {lfd}"))
+
+    # Kein brauchbares Bild im Dokument? Dann die Titelseite - sie traegt
+    # Logo und Titel und ist allemal besser als ein leeres Feld.
+    if not gefunden and pdfs:
+        pfad = pdfs[0]
+        titel = titelbild_aus_pdf(pfad)
+        if titel:
+            sicht = daten.get(pfad.name, {})
+            herausgeber = sicht.get("absender", "")
+            werk = sicht.get("titel", pfad.stem)
+            kennung = re.sub(r"[^\wäöüß -]", "",
+                             f"{herausgeber} Titelseite")[:80]
+            quelle = ", ".join(t for t in (herausgeber, werk, jahr) if t)
+            gefunden.append((f"{kennung}.png", titel,
+                             f"{quelle}, Titelseite"))
+            print("  kein Bild im Dokument - Titelseite genommen")
     return gefunden
 
 
