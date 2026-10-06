@@ -1478,6 +1478,24 @@ def masse(rohdaten: bytes) -> tuple[int, int]:
         return 0, 0
 
 
+def format_faktor(breite: int, hoehe: int) -> float:
+    """Wie gut passt das Seitenverhaeltnis in die Newsliste?
+
+    Die Liste zeigt die Bilder rund 300 x 150. Ein Hochformat wird dort zum
+    schlecht beschnittenen Streifen - der WIdO-Gesundheitsatlas lieferte am
+    06.10.2026 ein 300 x 428 grosses Bild als Vorschlag. Querformat wiegt
+    deshalb schwerer als blosse Flaeche.
+    """
+    if not breite or not hoehe:
+        return 0.6
+    verhaeltnis = breite / hoehe
+    if verhaeltnis >= 1.2:
+        return 1.0
+    if verhaeltnis >= 0.9:
+        return 0.8
+    return 0.4
+
+
 def bestes_bild(bilder: list[tuple[str, bytes]]) -> int:
     """Welches Bild traegt die Meldung am ehesten? -1, wenn keines taugt.
 
@@ -1493,14 +1511,17 @@ def bestes_bild(bilder: list[tuple[str, bytes]]) -> int:
     Taugt keines, bleibt der Vorschlag aus: Danach kommt ohnehin das
     Absenderlogo zum Zug, und das ist besser als ein Textstreifen.
     """
-    beste, bester_wert = -1, -1
-    for nummer, (_, rohdaten) in enumerate(bilder):
+    beste, bester_wert = -1, -1.0
+    for nummer, eintrag in enumerate(bilder):
+        rohdaten = eintrag[1]
         breite, hoehe = masse(rohdaten)
         if not (breite and hoehe):
             continue                    # ohne Pillow keine Masse, kein Urteil
         if taugt_als_bild(breite, hoehe, len(rohdaten)):
             continue
-        wert = breite * hoehe
+        # Flaeche, gewichtet mit dem Seitenverhaeltnis: Querformat passt in
+        # die Newsliste, Hochformat wird dort beschnitten.
+        wert = breite * hoehe * format_faktor(breite, hoehe)
         if wert > bester_wert:
             beste, bester_wert = nummer, wert
     return beste
@@ -1572,14 +1593,17 @@ def kopfbilder_dazu(bilder: list[tuple[str, bytes]]) -> list[tuple[str, bytes]]:
     if not geht:
         print(f"  kein Kopfbild-Zuschnitt: {auskunft}")
         return bilder
-    heraus: list[tuple[str, bytes]] = []
-    for name, rohdaten in bilder:
-        heraus.append((name, rohdaten))
+    heraus: list[tuple] = []
+    for eintrag in bilder:
+        name, rohdaten = eintrag[0], eintrag[1]
+        rest = tuple(eintrag[2:])       # die Quellenangabe, falls es eine gibt
+        heraus.append(eintrag)
         zuschnitt, wie = kopfbild.zuschneiden(rohdaten)
         if zuschnitt is None:
             print(f"  {name}: kein Kopfbild - {wie}")
             continue
-        heraus.append((pathlib.Path(name).stem + "-kopf.jpg", zuschnitt))
+        heraus.append((pathlib.Path(name).stem + "-kopf.jpg", zuschnitt)
+                      + rest)
         print(f"  {name}: Kopfbild dazu - {wie}")
     return heraus
 
@@ -1593,7 +1617,12 @@ def bilder_anhaengen(bilder: list[tuple[str, bytes]], beitrag: int,
     Hand - welches Bild eine Meldung traegt, entscheidet die Redaktion.
     """
     neue = []
-    for name, rohdaten in kopfbilder_dazu(bilder):
+    for eintrag in kopfbilder_dazu(bilder):
+        # Ein dritter Eintrag ist die Quellenangabe: "WIdO, Gesundheitsatlas
+        # Deutschland Herzinsuffizienz, 2026". Sie wird zur Bildunterschrift -
+        # bei fremden Abbildungen ist sie Pflicht, nicht Zierde.
+        name, rohdaten = eintrag[0], eintrag[1]
+        quelle = eintrag[2] if len(eintrag) > 2 else ""
         vorher = len(rohdaten)
         name, rohdaten = verkleinern(name, rohdaten)
         if len(rohdaten) < vorher:
@@ -1609,10 +1638,13 @@ def bilder_anhaengen(bilder: list[tuple[str, bytes]], beitrag: int,
         try:
             with urllib.request.urlopen(req, timeout=180) as r:
                 d = json.load(r)
+            felder = {"post": beitrag, "alt_text": titel,
+                      "title": f"Aus der Pressemitteilung: {titel}"}
+            if quelle:
+                felder["caption"] = f"Quelle: {quelle}"
+                felder["title"] = quelle
             wp_ruf(f"/media/{d['id']}", kopf,
-                   json.dumps({"post": beitrag, "alt_text": titel,
-                               "title": f"Aus der Pressemitteilung: {titel}"}
-                              ).encode("utf-8"), methode="POST")
+                   json.dumps(felder).encode("utf-8"), methode="POST")
             neue.append(d["id"])
             print(f"  Bild aus der Mitteilung angehaengt: {d.get('source_url','')}")
         except urllib.error.HTTPError as e:
@@ -2354,6 +2386,10 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
             # Anzeigename, hinter dem oft nur der Pressesprecher steht.
             quelle = (meldung.get("absender_institution") or "").strip() \
                 or absender_name(mail)
+            # Dieselbe Angabe wandert als Bildunterschrift in die Mediathek -
+            # bisher stand sie nur im Beitrag. Wer das Bild spaeter aus der
+            # Mediathek zieht, sieht dann immer noch, woher es stammt.
+            bilder = [(n, d, quelle) for n, d in bilder]
             inhalt = baue_html(meldung, adressen(text), bool(bilder), quelle)
             print(f"  {meldung['titel']}")
             if trocken:

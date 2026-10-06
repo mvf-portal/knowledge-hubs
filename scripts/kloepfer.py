@@ -861,7 +861,7 @@ def schreiben(hoechstens: int, trocken: bool, nur_woche: str = "") -> int:
                     gemacht += 1
                     continue
 
-                bilder = bilder_sammeln(pdfs, daten)
+                bilder = bilder_sammeln(pdfs, daten, woche.name[:4])
                 try:
                     angelegt = pm.entwurf(meldung, inhalt, None, False,
                                           None, bilder, "")
@@ -903,12 +903,14 @@ def baue_beitrag(meldung: dict, stuecke: list) -> tuple[str, int]:
     return "\n".join(teile), laenge
 
 
-def bilder_sammeln(pdfs: list[pathlib.Path], daten: dict,
+def bilder_sammeln(pdfs: list[pathlib.Path], daten: dict, jahr: str = "",
                    hoechstens: int = 3) -> list:
-    """Abbildungen aus den Dokumenten - mit dem Herausgeber im Dateinamen.
+    """Abbildungen aus den Dokumenten, jede mit ihrer Quellenangabe.
 
-    Der Name wandert in die Mediathek und traegt damit die Quelle mit; die
-    Bildunterschrift im Beitrag setzt die Redaktion.
+    Zurueck kommen Dreiergespanne (Name, Daten, Quelle). Die Quelle wird in
+    der Mediathek zur Bildunterschrift - bei fremden Abbildungen ist das
+    Pflicht, nicht Zierde. Welches Dokument das Bild geliefert hat, weiss nur
+    diese Stelle; spaeter laesst es sich nicht mehr zuordnen.
     """
     gefunden = []
     for pfad in pdfs:
@@ -918,10 +920,18 @@ def bilder_sammeln(pdfs: list[pathlib.Path], daten: dict,
             bilder = pm.bilder_aus_pdf(pfad)
         except Exception:
             continue
-        herausgeber = daten.get(pfad.name, {}).get("absender", "")
-        for name, rohdaten in bilder[:hoechstens - len(gefunden)]:
+        sicht = daten.get(pfad.name, {})
+        herausgeber = sicht.get("absender", "")
+        werk = sicht.get("titel", pfad.stem)
+        quelle = ", ".join(t for t in (herausgeber, werk, jahr) if t)
+        for lfd, (name, rohdaten) in enumerate(
+                bilder[:hoechstens - len(gefunden)], 1):
             kennung = re.sub(r"[^\wäöüß -]", "", f"{herausgeber} {name}")[:80]
-            gefunden.append((kennung or name, rohdaten))
+            # Die Abbildungsnummer macht die Angabe nachpruefbar: Wer das PDF
+            # aufschlaegt, findet genau dieses Bild wieder. Gezaehlt wird die
+            # Reihenfolge im Dokument - mehr gibt das PDF nicht her.
+            gefunden.append((kennung or name, rohdaten,
+                             f"{quelle}, Abb. {lfd}"))
     return gefunden
 
 
