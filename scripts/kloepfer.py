@@ -802,6 +802,21 @@ def schreiben(hoechstens: int, trocken: bool, nur_woche: str = "") -> int:
                 art = "Bündel" if eintrag.is_dir() else "Einzelstück"
                 print(f"\n--- {fach} / {art}: {eintrag.name[:62]}")
                 print(f"    {len(stuecke)} Dokument(e), Ziel {zeichen} Zeichen")
+
+                # Noch vor dem Modellaufruf: Gibt es das Thema schon? Die
+                # Pruefung in entwurf() kaeme zu spaet - da ist der teure
+                # Teil bereits bezahlt.
+                sicht = daten.get(pdfs[0].name, {})
+                wert, nahe = schon_auf_dem_portal(
+                    sicht.get("titel", eintrag.stem),
+                    f"{sicht.get('titel','')} {sicht.get('worum','')}")
+                if nahe is not None and wert >= pm.VERGLEICH_GRENZE:
+                    print(f"    Steht schon auf dem Portal ({wert:.2f}, "
+                          f"{nahe['status']}, Nr. {nahe['id']}): "
+                          f"{nahe['title']['rendered'][:60]}")
+                    print("    uebersprungen - nichts geschrieben, nichts "
+                          "bezahlt.")
+                    continue
                 auftrag = schreib_auftrag(
                     stuecke, zeichen,
                     eintrag.name if eintrag.is_dir() else "")
@@ -977,6 +992,23 @@ def freigabe_setzen(woche: pathlib.Path, name: str, wert: str) -> None:
         encoding="utf-8")
 
 
+def schon_auf_dem_portal(titel: str, text: str) -> tuple[float, dict | None]:
+    """Steht das Thema schon als Entwurf oder Beitrag auf der Seite?
+
+    Dieselbe Messung wie in der Pressestrecke - Schnittmenge der seltenen
+    Begriffe gegen alles, was in den letzten drei Wochen erschienen oder
+    angelegt wurde. Hier zaehlt sie doppelt: Sie laeuft VOR der Entscheidung
+    und damit vor dem Geld.
+    """
+    kopf = pm.zugang()
+    if kopf is None:
+        return 0.0, None
+    try:
+        return pm.inhaltlich_schon_da(titel, text, kopf)
+    except Exception:
+        return 0.0, None
+
+
 def eingeordnete_posten() -> list:
     """Was in den Laengen-Ordnern liegt und auf die Freigabe wartet."""
     posten = []
@@ -1015,14 +1047,25 @@ def eingeordnete_posten() -> list:
                     anzahl = 1
                 else:
                     continue
-                posten.append({
+                eintragsdaten = {
                     "woche": woche.name, "name": eintrag.name, "fach": fach,
                     "titel": titel, "absender": absender, "seiten": seiten,
                     "worum": worum, "anzahl": anzahl,
                     "zeichen": LAENGEN[fach],
                     "kosten": KOSTEN.get(fach, 0.25),
                     "stand": ("geschrieben" if eintrag.name in fertig
-                              else stand.get(eintrag.name, "offen"))})
+                              else stand.get(eintrag.name, "offen"))}
+                # Vor der Entscheidung nachsehen, ob es das Thema schon gibt.
+                if eintragsdaten["stand"] != "geschrieben":
+                    wert, nahe = schon_auf_dem_portal(
+                        titel, f"{titel} {worum}")
+                    if nahe is not None and wert >= pm.VERGLEICH_MELDEN:
+                        eintragsdaten["doppelt"] = {
+                            "wert": round(wert, 2), "id": nahe["id"],
+                            "titel": nahe["title"]["rendered"],
+                            "status": nahe.get("status", ""),
+                            "link": nahe.get("link", "")}
+                posten.append(eintragsdaten)
     return posten
 
 
@@ -1076,6 +1119,9 @@ def offene_posten() -> list:
 
 
 def seite_bauen() -> str:
+    # Der Dienst laeuft stundenlang; der Bestand der Seite darf nicht von
+    # heute Morgen sein. Vor jedem Aufbau neu holen.
+    pm._bestand = None
     posten = offene_posten()
     zeilen = []
     for nummer, p in enumerate(posten):
@@ -1132,6 +1178,13 @@ def seite_bauen() -> str:
             f"{p['seiten']} S. · {html.escape(p['woche'])} · "
             f"ca. {p['kosten']:.2f} €</div>".replace(".", ",", 1)
             + f"<p class='worum'>{html.escape(p['worum'][:240])}</p>"
+            + ((f"<p class='doppelt'>Achtung: steht möglicherweise schon auf "
+                f"dem Portal ({p['doppelt']['wert']:.2f}) – "
+                f"<a href='{html.escape(p['doppelt']['link'])}' "
+                f"target='_blank'>{html.escape(p['doppelt']['titel'][:70])}</a>"
+                f" ({'Entwurf' if p['doppelt']['status'] == 'draft' else 'veröffentlicht'}, "
+                f"Nr. {p['doppelt']['id']})</p>")
+               if p.get("doppelt") else "")
             + ("<div class='knoepfe'>"
                "<button data-wert='schreiben' class='k schreiben'>"
                "wirklich schreiben</button>"
@@ -1187,6 +1240,9 @@ def seite_bauen() -> str:
  .stand{{font-weight:600;color:#1a7f37;margin:.2em 0 0}}
  .summe{{background:#eef1f4;border-radius:8px;padding:.7em 1em;
   margin:.6em 0 1.4em;font-size:14px}}
+ .doppelt{{background:#fff8c5;border:1px solid #d4a72c;border-radius:6px;
+  padding:.5em .8em;font-size:13px;color:#7d4e00;margin:.4em 0}}
+ .doppelt a{{color:#7d4e00}}
 </style>
 <h1>Kloepfer einsortieren</h1>
 <p class="hinweis">{len(posten)} Dokumente noch ohne Entscheidung. Ein Klick
