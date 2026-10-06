@@ -532,6 +532,8 @@ def ernten(hoechstens: int, trocken: bool) -> int:
             except Exception as fehler:
                 print(f"  Mail nicht verschoben: {str(fehler)[:60]}")
 
+    global NEUE_PDFS
+    NEUE_PDFS = neu
     print(f"\n{neu} neue PDFs, {gesichtet} gesichtet, "
           f"{uebersprungen} schon bekannt")
     for woche_name in sorted(beruehrte_wochen):
@@ -919,21 +921,268 @@ def bilder_sammeln(pdfs: list[pathlib.Path], daten: dict,
     return gefunden
 
 
+# ----------------------------------------------------------- Entscheiden
+# Die Uebersicht war zum Lesen gebaut; entschieden wurde im Explorer. Das
+# Verschieben von Hand ist aber genau der Handgriff, den niemand macht.
+# Deshalb eine Seite mit Knoepfen: Ein kleiner Dienst auf dem eigenen Rechner
+# nimmt den Klick entgegen und verschiebt die Datei. Kein fremder Server,
+# nichts verlaesst den Rechner.
+DIENST_PORT = int(os.environ.get("KLOEPFER_PORT", "8808"))
+NEUE_PDFS = 0                   # wie viele PDFs der letzte Lauf geholt hat
+KNOEPFE = [("wichtig-ausfuehrlich", "ausführlich", "15.000"),
+           ("wichtig-lang", "lang", "10.000"),
+           ("wichtig-mittel", "mittel", "5.000"),
+           ("wichtig-kurz", "kurz", "2.000"),
+           ("sichern", "sichern", ""),
+           ("papierkorb", "weg", "")]
+
+
+def offene_posten() -> list:
+    """Was noch in 00-neu liegt - Einzelstuecke und Buendel."""
+    posten = []
+    for woche in sorted(stammordner().glob("*-KW*"), reverse=True):
+        daten = sichtung_laden(woche)
+        neu = woche / "00-neu"
+        if not neu.exists():
+            continue
+        for eintrag in sorted(neu.iterdir()):
+            if eintrag.is_dir():
+                teile = sorted(eintrag.glob("*.pdf"))
+                if not teile:
+                    continue
+                stuecke = [daten.get(t.name, {}) for t in teile]
+                stuecke.sort(key=lambda e: e.get("platz", 99))
+                erstes = stuecke[0] if stuecke else {}
+                posten.append({
+                    "woche": woche.name, "name": eintrag.name, "buendel": True,
+                    "platz": erstes.get("platz", 99),
+                    "titel": eintrag.name.replace("Thema - ", ""),
+                    "worum": erstes.get("buendel_warum", ""),
+                    "teile": [e.get("titel", "") for e in stuecke],
+                    "absender": ", ".join(
+                        dict.fromkeys(e.get("absender", "") for e in stuecke)),
+                    "art": f"{len(teile)} Dokumente",
+                    "seiten": sum(e.get("seiten", 0) for e in stuecke),
+                    "lohnt": any(e.get("lohnt") for e in stuecke),
+                    "relevanz": erstes.get("relevanz", ""),
+                    "laenge": erstes.get("empfohlene_laenge", ""),
+                    "rechte": erstes.get("bildrechte", "unklar")})
+            elif eintrag.suffix.lower() == ".pdf":
+                e = daten.get(eintrag.name, {})
+                posten.append({
+                    "woche": woche.name, "name": eintrag.name,
+                    "buendel": False, "platz": e.get("platz", 99),
+                    "titel": e.get("titel", eintrag.stem),
+                    "worum": e.get("worum", ""), "teile": [],
+                    "absender": e.get("absender", ""),
+                    "art": e.get("art", ""), "seiten": e.get("seiten", 0),
+                    "lohnt": bool(e.get("lohnt")),
+                    "relevanz": e.get("relevanz", ""),
+                    "laenge": e.get("empfohlene_laenge", ""),
+                    "rechte": e.get("bildrechte", "unklar")})
+    # Innerhalb der Woche nach Platz, die neueste Woche zuerst.
+    posten.sort(key=lambda p: p["platz"])
+    posten.sort(key=lambda p: p["woche"], reverse=True)
+    return posten
+
+
+def seite_bauen() -> str:
+    posten = offene_posten()
+    zeilen = []
+    for nummer, p in enumerate(posten):
+        knoepfe = "".join(
+            f"<button data-fach='{fach}' class='k {fach}'>{beschriftung}"
+            + (f"<small>{zeichen}</small>" if zeichen else "")
+            + "</button>" for fach, beschriftung, zeichen in KNOEPFE)
+        teile = ("<ul class='teile'>"
+                 + "".join(f"<li>{html.escape(t)}</li>" for t in p["teile"])
+                 + "</ul>") if p["teile"] else ""
+        vorschlag = (f"<span class='vorschlag'>Vorschlag: {p['laenge']}</span>"
+                     if p["laenge"] and p["laenge"] != "keine" else "")
+        zeilen.append(
+            f"<article id='p{nummer}' data-woche='{html.escape(p['woche'])}' "
+            f"data-name=\"{html.escape(p['name'])}\" "
+            f"class='{'empfohlen' if p['lohnt'] else ''}'>"
+            f"<div class='kopf'>"
+            f"<span class='platz'>{p['platz'] if p['platz'] < 99 else '·'}</span>"
+            + ("<span class='stern'>schreiben</span>" if p["lohnt"] else "")
+            + ("<span class='buendelmarke'>Bündel</span>" if p["buendel"] else "")
+            + f"<h2>{html.escape(p['titel'])}</h2></div>"
+            f"<div class='meta'>{html.escape(p['absender'][:70])} · "
+            f"{html.escape(p['art'])} · {p['seiten']} S. · "
+            f"{html.escape(p['woche'])} {vorschlag}"
+            + (" · <span class='unklar'>Bildrechte unklar</span>"
+               if p["rechte"] == "unklar" else "")
+            + "</div>"
+            f"<p class='worum'>{html.escape(p['worum'][:400])}</p>"
+            f"{teile}"
+            f"<div class='knoepfe'>{knoepfe}</div>"
+            "</article>")
+
+    return f"""<!doctype html><meta charset="utf-8">
+<title>Kloepfer einsortieren</title>
+<style>
+ body{{font:15px/1.5 system-ui,sans-serif;max-width:64em;margin:0 auto;
+  padding:1em;color:#1f2328;background:#fff}}
+ h1{{font-size:22px;margin:.4em 0}}
+ .hinweis{{color:#57606a;margin-bottom:1.5em}}
+ article{{border:1px solid #d8dee4;border-radius:8px;padding:.8em 1em;
+  margin-bottom:.9em}}
+ article.empfohlen{{border-left:4px solid #1a7f37;background:#f6fbf7}}
+ article.erledigt{{opacity:.42}}
+ .kopf{{display:flex;gap:.6em;align-items:baseline;flex-wrap:wrap}}
+ h2{{font-size:17px;margin:0;font-weight:600}}
+ .platz{{font-weight:600;color:#57606a;min-width:1.4em}}
+ .stern{{background:#1a7f37;color:#fff;border-radius:10px;padding:.05em .55em;
+  font-size:11px;font-weight:600;text-transform:uppercase}}
+ .buendelmarke{{background:#0969da;color:#fff;border-radius:10px;
+  padding:.05em .55em;font-size:11px;font-weight:600}}
+ .meta{{color:#57606a;font-size:13px;margin:.3em 0 .5em}}
+ .vorschlag{{background:#eef1f4;border-radius:8px;padding:.05em .5em}}
+ .unklar{{background:#fff8c5;color:#7d4e00;border-radius:8px;padding:0 .4em}}
+ .worum{{margin:.2em 0 .6em}}
+ .teile{{margin:.2em 0 .6em 1.2em;color:#57606a;font-size:13px}}
+ .knoepfe{{display:flex;gap:.4em;flex-wrap:wrap}}
+ button.k{{border:1px solid #d0d7de;background:#f6f8fa;border-radius:6px;
+  padding:.35em .8em;font:600 13px system-ui;cursor:pointer;display:flex;
+  gap:.4em;align-items:baseline}}
+ button.k small{{font-weight:400;color:#57606a}}
+ button.k:hover{{background:#eaeef2}}
+ .wichtig-ausfuehrlich,.wichtig-lang,.wichtig-mittel,.wichtig-kurz{{
+  border-color:#1a7f37;color:#1a7f37}}
+ .papierkorb{{border-color:#cf222e;color:#cf222e}}
+ .fertig{{color:#1a7f37;font-weight:600}}
+</style>
+<h1>Kloepfer einsortieren</h1>
+<p class="hinweis">{len(posten)} offene Dokumente. Ein Klick verschiebt die
+Datei – grün heißt: daraus wird eine Meldung in dieser Länge.
+Bündel werden zu <em>einer</em> Meldung.</p>
+{"".join(zeilen) or "<p>Nichts offen.</p>"}
+<p><button class="k" onclick="fetch('/fertig').then(()=>document.body.innerHTML=
+ '<h1>Fertig.</h1><p>Das Fenster kann zu.</p>')">Fertig – Dienst beenden</button>
+ <span class="hinweis">Beendet sich auch von selbst, wenn zwei Stunden nichts
+ geschieht.</span></p>
+<script>
+document.querySelectorAll('button.k').forEach(k => {{
+  k.addEventListener('click', async () => {{
+    const a = k.closest('article');
+    const antwort = await fetch('/entscheiden', {{
+      method:'POST', headers:{{'Content-Type':'application/json'}},
+      body: JSON.stringify({{woche:a.dataset.woche, name:a.dataset.name,
+                            fach:k.dataset.fach}})}});
+    const d = await antwort.json();
+    a.classList.add('erledigt');
+    a.querySelector('.knoepfe').innerHTML =
+      d.ok ? '<span class="fertig">→ ' + d.fach + '</span>'
+           : '<span style="color:#cf222e">' + d.fehler + '</span>';
+  }});
+}});
+</script>
+"""
+
+
+def dienst(oeffnen: bool = True) -> int:
+    """Die Entscheidungsseite auf dem eigenen Rechner anbieten."""
+    import http.server
+    import threading
+    import webbrowser
+
+    import time
+
+    class Griff(http.server.BaseHTTPRequestHandler):
+        zuletzt = time.time()                # fuer den Waechter unten
+
+        def log_message(self, *_):           # kein Protokollrauschen
+            pass
+
+        def handle_one_request(self):
+            Griff.zuletzt = time.time()
+            super().handle_one_request()
+
+        def _sende(self, inhalt: bytes, art: str = "text/html") -> None:
+            self.send_response(200)
+            self.send_header("Content-Type", f"{art}; charset=utf-8")
+            self.send_header("Content-Length", str(len(inhalt)))
+            self.end_headers()
+            self.wfile.write(inhalt)
+
+        def do_GET(self):
+            if self.path.startswith("/fertig"):
+                self._sende("<p>Fertig. Das Fenster kann zu.</p>"
+                            .encode("utf-8"))
+                threading.Thread(target=self.server.shutdown).start()
+                return
+            self._sende(seite_bauen().encode("utf-8"))
+
+        def do_POST(self):
+            laenge = int(self.headers.get("Content-Length", "0"))
+            wunsch = json.loads(self.rfile.read(laenge) or b"{}")
+            woche = stammordner() / str(wunsch.get("woche", ""))
+            name = str(wunsch.get("name", ""))
+            fach = str(wunsch.get("fach", ""))
+            antwort = {"ok": False, "fehler": "unbekannt", "fach": fach}
+            if fach in FAECHER and (woche / "00-neu" / name).exists():
+                quelle = woche / "00-neu" / name
+                ziel = woche / fach / name
+                try:
+                    quelle.replace(ziel)
+                    antwort = {"ok": True, "fach": fach, "fehler": ""}
+                except Exception as fehler:
+                    antwort["fehler"] = str(fehler)[:90]
+            else:
+                antwort["fehler"] = "nicht gefunden"
+            self._sende(json.dumps(antwort).encode("utf-8"),
+                        "application/json")
+
+    adresse = f"http://127.0.0.1:{DIENST_PORT}/"
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", DIENST_PORT), Griff)
+    print(f"Entscheidungsseite: {adresse}   (Strg+C beendet)")
+    if oeffnen:
+        webbrowser.open(adresse)
+
+    # Ohne Fenster gestartet (Zeitplan) gaebe es kein Strg+C: Nach zwei
+    # Stunden ohne Zugriff macht der Dienst von selbst Schluss.
+    def waechter() -> None:
+        import time
+        while True:
+            time.sleep(60)
+            if time.time() - Griff.zuletzt > 7200:
+                server.shutdown()
+                return
+
+    threading.Thread(target=waechter, daemon=True).start()
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nbeendet")
+    return 0
+
+
 def main() -> int:
     p = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("was", choices=["ernten", "uebersicht", "ordnen",
-                                   "buendeln", "schreiben"])
+                                   "buendeln", "schreiben", "entscheiden"])
     p.add_argument("--hoechstens", type=int, default=60,
                    help="wie viele PDFs je Lauf gesichtet werden")
     p.add_argument("--trocken", action="store_true",
                    help="nur zeigen, nichts speichern und nichts verschieben")
     p.add_argument("--woche", help="bei 'uebersicht': welche, etwa 2026-KW40")
+    p.add_argument("--zeigen", action="store_true",
+                   help="nach dem Ernten die Entscheidungsseite oeffnen")
     a = p.parse_args()
 
+    if a.was == "entscheiden":
+        return dienst()
+
     if a.was == "ernten":
-        return ernten(a.hoechstens, a.trocken)
+        ergebnis = ernten(a.hoechstens, a.trocken)
+        # Nach einer frischen Lieferung gleich die Entscheidungsseite zeigen -
+        # sonst bleibt die Arbeit liegen.
+        if not a.trocken and a.zeigen and NEUE_PDFS and offene_posten():
+            return dienst()
+        return ergebnis
 
     if a.was == "schreiben":
         return schreiben(a.hoechstens if a.hoechstens != 60 else 2,

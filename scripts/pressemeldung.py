@@ -1885,6 +1885,158 @@ class Zweifach:
                 pass
 
 
+# ------------------------------------------------------------- Lernlauf
+# Die laufende Lernerei sieht immer nur den naechsten Entwurf. Einmal im
+# Monat lohnt der Blick auf das Ganze: Welche Bilder hat die Redaktion in den
+# letzten Wochen mehrfach gesetzt? Ein Bild, das unter mehreren Meldungen
+# desselben Absenders steht, ist sein Logo - das ist ein viel festerer Boden
+# als die Einzelbeobachtung.
+LERNLAUF_DATEI = pathlib.Path(__file__).with_name("lernlauf-zuletzt.json")
+LERNLAUF_TAGE = 28
+LERNLAUF_FENSTER = 60           # so weit zurueck wird ausgewertet
+
+
+def lernlauf() -> int:
+    """Aus der Praxis der Redaktion lernen, nicht aus dem Einzelfall."""
+    import collections
+    import datetime
+    import urllib.parse as parse
+
+    kopf = zugang()
+    if kopf is None:
+        print("WPUSER oder WPPASSWORT fehlt - kein Lernlauf.")
+        return 1
+
+    nach = (datetime.date.today()
+            - datetime.timedelta(days=LERNLAUF_FENSTER)).isoformat() \
+        + "T00:00:00"
+    beitraege = []
+    for seite in range(1, 8):
+        frage = parse.urlencode({
+            "status": "publish", "after": nach, "categories": WP_KATEGORIE,
+            "per_page": 100, "page": seite, "orderby": "date", "order": "desc",
+            "_fields": "id,date,featured_media,author"})
+        try:
+            teil = wp_ruf(f"/posts?{frage}", kopf)
+        except Exception:
+            break
+        if not teil:
+            break
+        beitraege.extend(teil)
+        if len(teil) < 100:
+            break
+
+    unsere = [b for b in beitraege if b.get("author") == 79]
+    ohne = [b for b in unsere if not b.get("featured_media")]
+    print(f"Lernlauf: {len(beitraege)} Newsbeitraege der letzten "
+          f"{LERNLAUF_FENSTER} Tage, {len(unsere)} aus dieser Pipeline, "
+          f"{len(ohne)} davon ohne Bild")
+
+    benutzt = collections.Counter(b["featured_media"] for b in beitraege
+                                  if b.get("featured_media"))
+    mehrfach = {n: a for n, a in benutzt.items() if a >= 2}
+    slugs = {}
+    nummern = sorted(mehrfach)
+    for i in range(0, len(nummern), 80):
+        frage = parse.urlencode({
+            "include": ",".join(str(n) for n in nummern[i:i + 80]),
+            "per_page": 100, "_fields": "id,slug"})
+        try:
+            for m in wp_ruf(f"/media?{frage}", kopf):
+                slugs[m["id"]] = m["slug"]
+        except Exception:
+            continue
+
+    # Bekannte Absender: die Logoliste und alles, was je vorgemerkt wurde.
+    logos = logos_laden()
+    domains = set(logos)
+    try:
+        domains.update(json.loads(
+            KANDIDATEN_DATEI.read_text(encoding="utf-8")))
+    except Exception:
+        pass
+    domains = {d for d in domains if not gesperrt(d)}
+
+    # Je Domain alle in Frage kommenden Bilder sammeln, dann waehlen: ein
+    # Dateiname mit "logo" schlaegt ein Portraet, sonst entscheidet, wie oft
+    # die Redaktion das Bild gesetzt hat. So gewinnt bvmed_logo gegen ein
+    # Foto der Jahrespressekonferenz und bpi_logo gegen ein Portraet.
+    je_domain: dict[str, list] = {}
+    for nummer, anzahl in mehrfach.items():
+        slug = slugs.get(nummer, "")
+        if not slug:
+            continue
+        passend = [d for d in domains if logo_passt(d, slug)]
+        if len(passend) != 1:
+            continue
+        je_domain.setdefault(passend[0], []).append((nummer, slug, anzahl))
+
+    gelernt, geaendert, zeilen = 0, 0, []
+    for domain, kandidaten in sorted(je_domain.items()):
+        kandidaten.sort(key=lambda k: ("logo" not in k[1].lower(), -k[2]))
+        nummer, slug, anzahl = kandidaten[0]
+        alt = logos.get(domain)
+        if alt == nummer:
+            continue
+        # Ein Logo wird nicht durch ein Portraet ersetzt, auch wenn das
+        # Portraet in diesen Wochen oefter vorkam: Beim ersten Lauf haette
+        # "joachimsen_kai_bpi" das "bpi_logo" verdraengt, weil das Logo
+        # zufaellig in keinem der 60 Tage zweimal gesetzt wurde.
+        if alt and "logo" not in slug.lower():
+            try:
+                altes = wp_ruf(f"/media/{alt}?_fields=slug", kopf)
+                if "logo" in str(altes.get("slug", "")).lower():
+                    print(f"  behalten: {domain} bleibt bei {alt} "
+                          f"(Logo schlaegt {slug})")
+                    continue
+            except Exception:
+                continue                # altes Bild nicht lesbar: nichts tun
+        logos[domain] = nummer
+        if alt:
+            geaendert += 1
+            zeilen.append(f"- geändert: {domain}: {alt} → {nummer} "
+                          f"({slug}, {anzahl}× gesetzt)")
+            print(f"  geaendert: {domain} {alt} -> {nummer} ({slug}, {anzahl}x)")
+        else:
+            gelernt += 1
+            zeilen.append(f"- neu: {domain} → {nummer} ({slug}, "
+                          f"{anzahl}× gesetzt)")
+            print(f"  neu: {domain} -> {nummer} ({slug}, {anzahl}x)")
+    logos_schreiben(logos)
+
+    heute = dt_heute()
+    bericht = [f"# Lernlauf {heute}", "",
+               f"{len(beitraege)} Newsbeiträge der letzten "
+               f"{LERNLAUF_FENSTER} Tage ausgewertet, {len(unsere)} davon aus "
+               f"dieser Pipeline, {len(ohne)} ohne Beitragsbild.", "",
+               f"{len(mehrfach)} Bilder wurden mehrfach verwendet - das sind "
+               "die Logos.", "",
+               f"{gelernt} neue Zuordnungen, {geaendert} geändert, "
+               f"{len(logos)} insgesamt.", ""] + zeilen
+    try:
+        ziel = ablageordner() / f"lernlauf-{heute}.md"
+        ziel.parent.mkdir(parents=True, exist_ok=True)
+        ziel.write_text("\n".join(bericht) + "\n", encoding="utf-8")
+        print(f"  Bericht: {ziel}")
+    except Exception as fehler:
+        print(f"  Bericht nicht geschrieben: {str(fehler)[:90]}")
+    LERNLAUF_DATEI.write_text(json.dumps({"zuletzt": heute}),
+                              encoding="utf-8")
+    return 0
+
+
+def lernlauf_faellig() -> bool:
+    import datetime
+
+    try:
+        zuletzt = json.loads(
+            LERNLAUF_DATEI.read_text(encoding="utf-8"))["zuletzt"]
+        return (datetime.date.today()
+                - datetime.date.fromisoformat(zuletzt)).days >= LERNLAUF_TAGE
+    except Exception:
+        return True
+
+
 # ----------------------------------------------------------- Aufraeumen
 # Der Abgleich beim Anlegen sieht nur, was es in dem Augenblick schon gab.
 # Veroeffentlicht die Redaktion ihre eigene Fassung erst Tage spaeter, bleibt
@@ -2104,6 +2256,14 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
         except Exception as fehler:
             print(f"Aufraeum-Lauf fehlgeschlagen: {str(fehler)[:120]}")
 
+    # Alle vier Wochen der grosse Blick: Was hat die Redaktion wirklich
+    # gesetzt? Das korrigiert, was die Einzelbeobachtung falsch gelernt hat.
+    if lernlauf_faellig():
+        try:
+            lernlauf()
+        except Exception as fehler:
+            print(f"Lernlauf fehlgeschlagen: {str(fehler)[:120]}")
+
     raum = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
     posteingang = raum.GetDefaultFolder(6)                  # olFolderInbox
     ziel = unterordner(posteingang, PM_ORDNER)
@@ -2251,6 +2411,9 @@ def main() -> int:
 
     if a.quelle.lower() in ("aufraeumen", "aufräumen"):
         return aufraeumen()
+
+    if a.quelle.lower() == "lernlauf":
+        return lernlauf()
 
     if a.quelle.lower() == "postfach":
         # Der Zeitplan startet das Skript ohne Fenster - was dabei geschieht,
