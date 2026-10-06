@@ -1167,7 +1167,7 @@ ALLERWELT = set("""der die das und oder aber auch noch nur schon sehr mehr
  über dass sie ihre ihr man sowie dabei damit dazu durch gegen ohne unter
  zwischen vor seit bis als wie wenn weil dann dort hier""".split())
 
-_bestand: list | None = None            # einmal je Lauf geholt
+_bestand: dict[int, list] = {}          # je Zeitfenster einmal geholt
 
 
 def begriffe(text: str) -> set:
@@ -1183,9 +1183,8 @@ def bestand(kopf: str, tage: int = VERGLEICH_TAGE) -> list:
     Einmal je Lauf geholt: Bei fuenf Meldungen hintereinander waeren es sonst
     fuenf gleiche Abfragen.
     """
-    global _bestand
-    if _bestand is not None:
-        return _bestand
+    if tage in _bestand:
+        return _bestand[tage]
     import datetime
 
     nach = (datetime.date.today()
@@ -1206,14 +1205,16 @@ def bestand(kopf: str, tage: int = VERGLEICH_TAGE) -> list:
             gesammelt.extend(teil)
             if len(teil) < 100:
                 break
-    _bestand = [(e, begriffe(e["title"]["rendered"])
-                 | begriffe(e["content"].get("rendered", "")[:1500]))
-                for e in gesammelt]
-    return _bestand
+    _bestand[tage] = [(e, begriffe(e["title"]["rendered"])
+                       | begriffe(e["content"].get("rendered", "")[:1500]))
+                      for e in gesammelt]
+    return _bestand[tage]
 
 
 def inhaltlich_schon_da(titel: str, inhalt: str, kopf: str,
-                        ausser: int = 0) -> tuple[float, dict | None]:
+                        ausser: int = 0,
+                        tage: int = VERGLEICH_TAGE
+                        ) -> tuple[float, dict | None]:
     """Der naechstliegende Beitrag im Bestand und wie nah er ist.
 
     Zurueck kommt immer der beste Treffer, auch ein schwacher - ueber die
@@ -1222,7 +1223,7 @@ def inhaltlich_schon_da(titel: str, inhalt: str, kopf: str,
     import collections
     import math
 
-    liste = bestand(kopf)
+    liste = bestand(kopf, tage)
     if not liste:
         return 0.0, None
     haeufig = collections.Counter()

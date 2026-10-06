@@ -738,7 +738,8 @@ def schreib_auftrag(stuecke: list[tuple[str, dict, str]], zeichen: int,
     return kopf + "".join(teile)
 
 
-def schreiben(hoechstens: int, trocken: bool, nur_woche: str = "") -> int:
+def schreiben(hoechstens: int, trocken: bool, nur_woche: str = "",
+              trotzdem: bool = False) -> int:
     """Was in den Laengen-Ordnern liegt, zu Entwuerfen machen."""
     import anthropic
 
@@ -810,13 +811,27 @@ def schreiben(hoechstens: int, trocken: bool, nur_woche: str = "") -> int:
                 wert, nahe = schon_auf_dem_portal(
                     sicht.get("titel", eintrag.stem),
                     f"{sicht.get('titel','')} {sicht.get('worum','')}")
-                if nahe is not None and wert >= pm.VERGLEICH_GRENZE:
-                    print(f"    Steht schon auf dem Portal ({wert:.2f}, "
-                          f"{nahe['status']}, Nr. {nahe['id']}): "
-                          f"{nahe['title']['rendered'][:60]}")
-                    print("    uebersprungen - nichts geschrieben, nichts "
-                          "bezahlt.")
-                    continue
+                if nahe is not None and wert >= pm.VERGLEICH_MELDEN:
+                    urteil = dublette_pruefen(
+                        woche, eintrag.name, sicht.get("titel", ""),
+                        sicht.get("worum", ""),
+                        {"id": nahe["id"], "titel": nahe["title"]["rendered"],
+                         "status": nahe.get("status", ""),
+                         "datum": nahe.get("date", "")[:10],
+                         "inhalt": nahe.get("content", {})
+                         .get("rendered", "")})
+                    # Das Urteil entscheidet, nicht die Zahl: Eine zweite
+                    # Quelle zum selben Thema ist keine Dublette.
+                    if urteil and urteil.get("abgedeckt") and not trotzdem:
+                        print(f"    Schon erschienen ({nahe['status']}, "
+                              f"Nr. {nahe['id']}): "
+                              f"{urteil.get('begruendung','')[:80]}")
+                        print("    uebersprungen - nichts geschrieben, nichts "
+                              "bezahlt.")
+                        continue
+                    if urteil:
+                        print(f"    verwandt zu Nr. {nahe['id']}, aber nicht "
+                              f"dasselbe: {urteil.get('begruendung','')[:70]}")
                 auftrag = schreib_auftrag(
                     stuecke, zeichen,
                     eintrag.name if eintrag.is_dir() else "")
@@ -970,6 +985,7 @@ KNOEPFE = [("wichtig-ausfuehrlich", "ausführlich", "15.000"),
 # die Freigabe loest den teuren Modellaufruf aus - ein zurueckgestelltes
 # Thema kostet nichts und bleibt trotzdem auffindbar.
 FREIGABE_DATEI = "freigabe.json"
+PORTAL_TAGE = 60                # so weit zurueck wird auf Doppelung geprueft
 # Grobe Hausnummern je Laenge, damit auf der Seite steht, was ein Lauf kostet.
 # Gemessen am 06.10.2026: eine Meldung aus einem 40-Seiten-Gutachten lag bei
 # etwa 25 Cent.
@@ -1004,9 +1020,89 @@ def schon_auf_dem_portal(titel: str, text: str) -> tuple[float, dict | None]:
     if kopf is None:
         return 0.0, None
     try:
-        return pm.inhaltlich_schon_da(titel, text, kopf)
+        # Weiter zurueck als bei den Pressemitteilungen: Ein Gesetzentwurf
+        # oder ein Gutachten kommt bei Kloepfer auch Wochen nach der
+        # Pressemitteilung dazu - die drei Treffer vom 06.10.2026 lagen
+        # zwischen 6 und 20 Tagen zurueck, der naechste kann aelter sein.
+        return pm.inhaltlich_schon_da(titel, text, kopf, tage=PORTAL_TAGE)
     except Exception:
         return 0.0, None
+
+
+# Die Zahl aus dem Begriffsvergleich sagt "aehnlich", nicht "dasselbe". Ob
+# ein Dokument wirklich erledigt ist oder etwas Neues bringt, kann nur jemand
+# entscheiden, der beide Texte liest. Das kostet einen halben Cent und macht
+# aus "moeglicherweise" ein Ja oder Nein.
+DUBLETTEN_DATEI = "dubletten.json"
+DUBLETTEN_SYSTEM = (
+    "Du prüfst für die Redaktion von Monitor Versorgungsforschung, ob ein "
+    "neues Dokument bereits durch einen vorhandenen Beitrag abgedeckt ist.\n"
+    "Abgedeckt heißt: Der Beitrag berichtet über denselben Vorgang und nennt "
+    "im Kern dasselbe. Eine zweite Quelle zum selben Thema, die neue Zahlen, "
+    "eine andere Position oder einen anderen Aspekt beiträgt, ist NICHT "
+    "abgedeckt - daraus wird eine eigene Meldung.\n"
+    "Im Zweifel gilt: nicht abgedeckt. Eine ausgelassene Meldung ist ein "
+    "größerer Verlust als eine, die sich als Dublette erweist.\n"
+    "Schreibe mit Umlauten, nie in Ersatzschreibung."
+)
+DUBLETTEN_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["abgedeckt", "begruendung"],
+    "properties": {
+        "abgedeckt": {"type": "boolean"},
+        "begruendung": {"type": "string"},
+    },
+}
+
+
+def dublette_pruefen(woche: pathlib.Path, name: str, titel: str, worum: str,
+                     beitrag: dict) -> dict | None:
+    """Ist das Thema durch den vorhandenen Beitrag wirklich erledigt?
+
+    Das Urteil wird gemerkt - der Dienst baut die Seite bei jedem Aufruf neu,
+    und dreimal dieselbe Frage ist dreimal derselbe Preis.
+    """
+    datei = woche / DUBLETTEN_DATEI
+    try:
+        gemerkt = json.loads(datei.read_text(encoding="utf-8"))
+    except Exception:
+        gemerkt = {}
+    schluessel = f"{name}|{beitrag['id']}"
+    if schluessel in gemerkt:
+        return gemerkt[schluessel]
+
+    schluessel_api = os.environ.get("KNOWLEDGEHUBS", "").strip()
+    if not schluessel_api:
+        return None
+    import re as regex
+
+    import anthropic
+    vorhanden = regex.sub(r"<[^>]+>", " ",
+                          beitrag.get("inhalt", ""))[:2500]
+    auftrag = (
+        f"VORHANDENER BEITRAG ({beitrag.get('status','')}, "
+        f"{beitrag.get('datum','')})\n"
+        f"Titel: {beitrag.get('titel','')}\n{vorhanden}\n\n"
+        f"NEUES DOKUMENT\nTitel: {titel}\n{worum}\n\n"
+        "Ist das neue Dokument durch den vorhandenen Beitrag abgedeckt?\n"
+        "- abgedeckt: true nur, wenn eine weitere Meldung nichts hinzufügt.\n"
+        "- begruendung: ein Satz. Bei false: was das neue Dokument bringt, "
+        "das im Beitrag fehlt.")
+    try:
+        antwort = anthropic.Anthropic(api_key=schluessel_api).messages.create(
+            model=SICHT_MODELL, max_tokens=400, system=DUBLETTEN_SYSTEM,
+            output_config={"format": {"type": "json_schema",
+                                      "schema": DUBLETTEN_SCHEMA}},
+            messages=[{"role": "user", "content": auftrag}])
+        urteil = json.loads(next(b.text for b in antwort.content
+                                 if b.type == "text"))
+    except Exception:
+        return None
+    gemerkt[schluessel] = urteil
+    datei.write_text(json.dumps(gemerkt, ensure_ascii=False, indent=1),
+                     encoding="utf-8")
+    return urteil
 
 
 def eingeordnete_posten() -> list:
@@ -1037,6 +1133,14 @@ def eingeordnete_posten() -> list:
                     seiten = sum(e.get("seiten", 0) for e in stuecke)
                     worum = (stuecke[0].get("buendel_warum")
                              or stuecke[0].get("worum", "")) if stuecke else ""
+                    # Fuer die Dublettenpruefung zaehlt der ganze Inhalt des
+                    # Buendels: Das zweite Dokument ist oft gerade das, was
+                    # im vorhandenen Beitrag fehlt - beim Thema Community
+                    # Health Nurses etwa das Rechtsgutachten neben dem
+                    # Positionspapier.
+                    pruef_text = " ".join(
+                        f"{e.get('titel','')}: {e.get('worum','')[:260]}"
+                        for e in stuecke)
                     anzahl = len(teile)
                 elif eintrag.suffix.lower() == ".pdf":
                     e = daten.get(eintrag.name, {})
@@ -1044,6 +1148,7 @@ def eingeordnete_posten() -> list:
                     absender = e.get("absender", "")
                     seiten = e.get("seiten", 0)
                     worum = e.get("worum", "")
+                    pruef_text = worum
                     anzahl = 1
                 else:
                     continue
@@ -1058,13 +1163,24 @@ def eingeordnete_posten() -> list:
                 # Vor der Entscheidung nachsehen, ob es das Thema schon gibt.
                 if eintragsdaten["stand"] != "geschrieben":
                     wert, nahe = schon_auf_dem_portal(
-                        titel, f"{titel} {worum}")
+                        titel, f"{titel} {pruef_text}")
                     if nahe is not None and wert >= pm.VERGLEICH_MELDEN:
-                        eintragsdaten["doppelt"] = {
+                        doppelt = {
                             "wert": round(wert, 2), "id": nahe["id"],
                             "titel": nahe["title"]["rendered"],
                             "status": nahe.get("status", ""),
-                            "link": nahe.get("link", "")}
+                            "datum": nahe.get("date", "")[:10],
+                            "link": nahe.get("link", ""),
+                            "inhalt": nahe.get("content", {})
+                            .get("rendered", "")}
+                        urteil = dublette_pruefen(woche, eintrag.name, titel,
+                                                  pruef_text, doppelt)
+                        if urteil:
+                            doppelt["abgedeckt"] = bool(urteil["abgedeckt"])
+                            doppelt["warum"] = str(
+                                urteil.get("begruendung", ""))[:220]
+                        doppelt.pop("inhalt", None)
+                        eintragsdaten["doppelt"] = doppelt
                 posten.append(eintragsdaten)
     return posten
 
@@ -1118,10 +1234,29 @@ def offene_posten() -> list:
     return posten
 
 
+def dublettenzeile(d: dict) -> str:
+    """Der Hinweis auf einen vorhandenen Beitrag - mit klarem Urteil."""
+    wo = (f"<a href='{html.escape(d.get('link',''))}' target='_blank'>"
+          f"{html.escape(d.get('titel','')[:72])}</a> "
+          f"({'Entwurf' if d.get('status') == 'draft' else 'veröffentlicht'}"
+          f" am {d.get('datum','')}, Nr. {d.get('id')})")
+    if d.get("abgedeckt") is True:
+        return (f"<p class='doppelt ja'><strong>Schon erschienen – nicht "
+                f"schreiben.</strong> {wo}<br>"
+                f"{html.escape(d.get('warum',''))}</p>")
+    if d.get("abgedeckt") is False:
+        return (f"<p class='doppelt nein'><strong>Verwandt, aber nicht "
+                f"dasselbe.</strong> {wo}<br>"
+                f"{html.escape(d.get('warum',''))}</p>")
+    # Ohne Urteil bleibt nur die Messung - und die sagt "aehnlich".
+    return (f"<p class='doppelt'>Ähnlich zu einem vorhandenen Beitrag "
+            f"({d.get('wert', 0):.2f}), nicht geprüft: {wo}</p>")
+
+
 def seite_bauen() -> str:
     # Der Dienst laeuft stundenlang; der Bestand der Seite darf nicht von
     # heute Morgen sein. Vor jedem Aufbau neu holen.
-    pm._bestand = None
+    pm._bestand.clear()
     posten = offene_posten()
     zeilen = []
     for nummer, p in enumerate(posten):
@@ -1178,13 +1313,7 @@ def seite_bauen() -> str:
             f"{p['seiten']} S. · {html.escape(p['woche'])} · "
             f"ca. {p['kosten']:.2f} €</div>".replace(".", ",", 1)
             + f"<p class='worum'>{html.escape(p['worum'][:240])}</p>"
-            + ((f"<p class='doppelt'>Achtung: steht möglicherweise schon auf "
-                f"dem Portal ({p['doppelt']['wert']:.2f}) – "
-                f"<a href='{html.escape(p['doppelt']['link'])}' "
-                f"target='_blank'>{html.escape(p['doppelt']['titel'][:70])}</a>"
-                f" ({'Entwurf' if p['doppelt']['status'] == 'draft' else 'veröffentlicht'}, "
-                f"Nr. {p['doppelt']['id']})</p>")
-               if p.get("doppelt") else "")
+            + (dublettenzeile(p["doppelt"]) if p.get("doppelt") else "")
             + ("<div class='knoepfe'>"
                "<button data-wert='schreiben' class='k schreiben'>"
                "wirklich schreiben</button>"
@@ -1243,6 +1372,10 @@ def seite_bauen() -> str:
  .doppelt{{background:#fff8c5;border:1px solid #d4a72c;border-radius:6px;
   padding:.5em .8em;font-size:13px;color:#7d4e00;margin:.4em 0}}
  .doppelt a{{color:#7d4e00}}
+ .doppelt.ja{{background:#ffebe9;border-color:#cf222e;color:#82071e}}
+ .doppelt.ja a{{color:#82071e}}
+ .doppelt.nein{{background:#eef6ff;border-color:#8bb9f0;color:#0a3069}}
+ .doppelt.nein a{{color:#0a3069}}
 </style>
 <h1>Kloepfer einsortieren</h1>
 <p class="hinweis">{len(posten)} Dokumente noch ohne Entscheidung. Ein Klick
@@ -1403,6 +1536,8 @@ def main() -> int:
     p.add_argument("--trocken", action="store_true",
                    help="nur zeigen, nichts speichern und nichts verschieben")
     p.add_argument("--woche", help="bei 'uebersicht': welche, etwa 2026-KW40")
+    p.add_argument("--trotzdem", action="store_true",
+                   help="auch schreiben, was als schon erschienen gilt")
     p.add_argument("--zeigen", action="store_true",
                    help="nach dem Ernten die Entscheidungsseite oeffnen")
     a = p.parse_args()
@@ -1420,7 +1555,7 @@ def main() -> int:
 
     if a.was == "schreiben":
         return schreiben(a.hoechstens if a.hoechstens != 60 else 2,
-                         a.trocken, a.woche or "")
+                         a.trocken, a.woche or "", a.trotzdem)
 
     stamm = stammordner()
     wochen = ([stamm / a.woche] if a.woche
