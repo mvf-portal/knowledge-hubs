@@ -87,6 +87,55 @@ WP_MEDIENORDNER = 2117
 # Volltextsuche in der Mediathek traf zu oft daneben (kvsachsen -> AOK
 # Niedersachsen, gehe.de -> "geheimpreise").
 LOGO_DATEI = pathlib.Path(__file__).with_name("logos.json")
+# Agenturen, Presseverteiler und Dienstleister verschicken fuer viele
+# Auftraggeber von derselben Adresse. Ein Logo je Domain ist dort immer das
+# Logo irgendeines Kunden - und bei der naechsten Mitteilung falsch. Genau so
+# kam Lillys Logo unter eine Boehringer-Meldung (gemeldet von Anke Heiser am
+# 06.10.2026). Diese Domains lernen nie ein Logo und bekommen auch keins.
+LOGO_SPERRE = ("prnewswire", "cision", "burson", "webershandwick",
+               "wecommunications", "medizinkommunikation", "spapress",
+               "fleishman", "teamlewis", "fullstoppr", "digitineers",
+               "art-tempi", "m-werk", "looping.group", "corpnewsmedia",
+               "pressmailing", "presseportal", "newsaktuell", "openpr",
+               "wiso-consulting", "xsel", "mailchimp", "sendgrid")
+
+
+def gesperrt(domain: str) -> bool:
+    return any(a in (domain or "").lower() for a in LOGO_SPERRE)
+
+
+def logo_passt(domain: str, name: str) -> bool:
+    """Traegt der Dateiname den Namen des Absenders?
+
+    Grobe, aber wirksame Probe: "dnvf-logo" zu dnvf.de ja, "lilly_logo" zu
+    webershandwick.de nein. Fuer Abkuerzungen (afi_logo zu
+    alzheimer-forschung.de) versagt sie - die muessen sich ueber die
+    Wiederholung bestaetigen.
+    """
+    # Woerter, die fast jeder Verband im Namen fuehrt. Ohne diese Liste traf
+    # "bdp-verband.de" auf "bkk_dachverband_logo" zu - beide enthalten
+    # "verband", und schon haengt das Logo des BKK-Dachverbands unter einer
+    # Meldung des Berufsverbands Deutscher Psychologen.
+    NICHTSSAGEND = {"verband", "bundesverband", "dachverband", "logo",
+                    "deutsch", "deutsche", "deutscher", "deutsches",
+                    "deutschland", "bundes", "gesundheit", "medizin",
+                    "institut", "gesellschaft", "verein", "ev", "stiftung",
+                    "news", "presse", "neu", "neues", "gmbh"}
+    kern = "".join(t for t in re.split(r"[^a-z0-9]+", (domain or "").lower())
+                   if t not in ("de", "com", "org", "eu", "net", "info",
+                                "news", "www"))
+    flach = re.sub(r"[^a-z0-9]+", "", (name or "").lower())
+    if not kern or not flach:
+        return False
+    for stueck in re.split(r"[^a-z0-9]+", (name or "").lower()):
+        if len(stueck) < 3 or stueck in NICHTSSAGEND:
+            continue
+        if stueck in kern or kern in stueck:
+            return True
+    for teil in re.split(r"[^a-z0-9]+", (domain or "").lower()):
+        if len(teil) >= 3 and teil not in NICHTSSAGEND and teil in flach:
+            return True
+    return False
 # Zwischenspeicher: welcher Entwurf zu welchem Absender gehoert, solange die
 # Redaktion das Bild noch nicht gesetzt hat.
 WARTE_DATEI = pathlib.Path(__file__).with_name("logos-offen.json")
@@ -977,17 +1026,27 @@ def lernen() -> int:
         bild = d.get("featured_media") or 0
         if bild and bild != eintrag.get("gesetzt"):
             domain = eintrag["domain"]
+            if gesperrt(domain):
+                # Agentur oder Verteiler: Was die Redaktion hier waehlt, ist
+                # das Logo eines Kunden und beim naechsten Mal falsch.
+                print(f"  nicht gelernt (Agentur/Verteiler): {domain}")
+                continue
             zaehler = kandidaten.setdefault(domain, {})
             zaehler[str(bild)] = zaehler.get(str(bild), 0) + 1
             try:
                 m = wp_ruf(f"/media/{bild}?_fields=slug", kopf)
-                heisst_logo = "logo" in str(m.get("slug", "")).lower()
+                slug = str(m.get("slug", ""))
             except Exception:
-                heisst_logo = False
+                slug = ""
+            # Sofort gilt nur, was den Namen des Absenders traegt. Der blosse
+            # Wortbestandteil "logo" genuegte frueher - so kam "lilly_logo"
+            # unter eine Meldung aus dem Postfach einer Agentur.
+            heisst_logo = bool(slug) and logo_passt(domain, slug)
             if zaehler[str(bild)] >= 2 or heisst_logo:
                 logos[domain] = bild
                 gelernt += 1
-                grund = "Dateiname" if heisst_logo else "zweite Wahl"
+                grund = ("Dateiname nennt den Absender" if heisst_logo
+                         else "zweite Wahl")
                 print(f"  gelernt: {domain} -> Bild {bild} ({grund})")
             else:
                 vorgemerkt += 1
@@ -1705,7 +1764,9 @@ def entwurf(meldung: dict, inhalt: str, bild: pathlib.Path | None,
     # Enthaelt die Mitteilung kein Bild, kommt das Logo des Absenders zum
     # Zug - sofern eines bekannt ist.
     if not nummer and domain:
-        aus_liste = logos_laden().get(domain)
+        # Agenturen und Verteiler bekommen nie ein Logo aus der Liste - lieber
+        # kein Bild als das Logo eines fremden Auftraggebers.
+        aus_liste = None if gesperrt(domain) else logos_laden().get(domain)
         if aus_liste:
             try:
                 wp_ruf(f"/posts/{d['id']}", kopf,
