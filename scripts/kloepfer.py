@@ -52,6 +52,10 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 OUTLOOK_ORDNER = "KloepfersInput"
+# Kloepfers eigener Wochenrueckblick ("iX-Highlights 39. KW 2026.pdf") liegt
+# der Lieferung bei. Er ist seine redaktionelle Leistung, nicht unsere Quelle -
+# die Servicedateien tragen eine fuehrende Nummer, der Rueckblick nicht.
+NICHT_ERNTEN = re.compile(r"(?i)^\s*ix[- ]highlights")
 FAECHER = ["00-neu", "wichtig-ausfuehrlich", "wichtig-lang", "wichtig-mittel",
            "wichtig-kurz", "sichern", "papierkorb"]
 # Die Laengen, die Stufe 2 aus dem Ordnernamen liest. Obergrenzen, keine
@@ -356,6 +360,9 @@ def ernten(hoechstens: int, trocken: bool) -> int:
         for anhang in mail.Attachments:
             name = str(anhang.FileName)
             if not name.lower().endswith(".pdf"):
+                continue
+            if NICHT_ERNTEN.match(name):
+                print(f"  uebersprungen (Kloepfers Wochenrueckblick): {name}")
                 continue
             if gesichtet >= hoechstens:
                 print("  Obergrenze erreicht - der Rest beim naechsten Lauf.")
