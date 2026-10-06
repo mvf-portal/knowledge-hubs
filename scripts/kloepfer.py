@@ -305,6 +305,121 @@ def rangfolge(woche: pathlib.Path) -> int:
     return 0
 
 
+# ---------------------------------------------------------------- Buendeln
+# Oft gehoeren mehrere Dokumente einer Woche zum selben Vorgang: der
+# Barmer-Arzneimittelreport und die Pressemappe dazu, das ALM-Gutachten zur
+# GOAE und die Stellungnahme desselben Hauses, zwei Antworten der
+# Bundesregierung zur Cannabisgesetzgebung. Wer daraus einzelne Meldungen
+# macht, stellt sie unverbunden nebeneinander.
+#
+# Ueber Wortueberschneidung ist das nicht zu finden - gemessen am 06.10.2026:
+# von vier Buendeln fand das Verfahren eines und dazu einen Fehltreffer. Also
+# entscheidet das Modell, das den Sinn sieht.
+BUENDEL_SYSTEM = (
+    "Du ordnest die Wochenlieferung eines Fachmagazins für "
+    "Versorgungsforschung. Deine Aufgabe: erkennen, welche Dokumente zum "
+    "selben Vorgang gehören und deshalb in einer Meldung zusammengehören.\n"
+    "Derselbe Vorgang heißt: dasselbe Gesetz, derselbe Bericht samt "
+    "Pressemappe, dieselbe Auseinandersetzung, dieselbe Entscheidung. "
+    "NICHT dasselbe Themenfeld - zwei Papiere über Pflege sind kein Bündel, "
+    "solange sie verschiedene Vorgänge behandeln. Im Zweifel nicht bündeln: "
+    "Eine zu Unrecht getrennte Meldung ist ein kleiner Schaden, eine zu "
+    "Unrecht verschmolzene ein großer.\n"
+    "Schreibe mit Umlauten (ä, ö, ü, ß), nie in Ersatzschreibung."
+)
+BUENDEL_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["buendel"],
+    "properties": {
+        "buendel": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["name", "nummern", "warum"],
+                "properties": {
+                    "name": {"type": "string"},
+                    "nummern": {"type": "array", "items": {"type": "integer"}},
+                    "warum": {"type": "string"},
+                },
+            },
+        },
+    },
+}
+
+
+def ordnername(name: str) -> str:
+    sauber = re.sub(r'[\\/:*?"<>|]', " ", name).strip()
+    sauber = re.sub(r"\s+", " ", sauber)[:60].strip(" .")
+    return f"Thema - {sauber}" if sauber else "Thema"
+
+
+def buendeln(woche: pathlib.Path) -> int:
+    """Dokumente desselben Vorgangs in einen Themenordner legen.
+
+    Verschoben wird nur, was noch in 00-neu liegt - was schon entschieden
+    ist, bleibt unberuehrt.
+    """
+    import anthropic
+
+    daten = sichtung_laden(woche)
+    offen = [(datei, e) for datei, e in sorted(daten.items())
+             if not e.get("fehler") and (woche / "00-neu" / datei).exists()]
+    if len(offen) < 2:
+        return 0
+    schluessel = os.environ.get("KNOWLEDGEHUBS", "").strip()
+    if not schluessel:
+        raise SystemExit("KNOWLEDGEHUBS ist nicht gesetzt.")
+
+    liste = []
+    for nummer, (datei, e) in enumerate(offen, 1):
+        liste.append(f"{nummer}. [{e.get('art','')}, {e.get('absender','')}] "
+                     f"{e.get('titel','')}\n   {e.get('worum','')[:220]}")
+    auftrag = (
+        f"Hier sind {len(offen)} Dokumente einer Wochenlieferung.\n\n"
+        + "\n".join(liste) +
+        "\n\nWelche gehören zum selben Vorgang?\n"
+        "- name: wie der Vorgang heißt, zwei bis fünf Wörter.\n"
+        "- nummern: mindestens zwei Nummern aus der Liste. Jede Nummer "
+        "höchstens einmal in der ganzen Antwort.\n"
+        "- warum: ein Satz, was die Dokumente verbindet.\n"
+        "Gibt es keine Bündel, antworte mit einer leeren Liste. Dokumente "
+        "ohne Partner tauchen nicht auf."
+    )
+    antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+        model=SICHT_MODELL, max_tokens=2000, system=BUENDEL_SYSTEM,
+        output_config={"format": {"type": "json_schema",
+                                  "schema": BUENDEL_SCHEMA}},
+        messages=[{"role": "user", "content": auftrag}])
+    urteil = json.loads(next(b.text for b in antwort.content
+                             if b.type == "text"))
+
+    vergeben: set[int] = set()
+    gebaut = 0
+    for buendel in urteil.get("buendel", []):
+        nummern = [n for n in buendel.get("nummern", [])
+                   if 1 <= n <= len(offen) and n not in vergeben]
+        if len(nummern) < 2:
+            continue
+        vergeben.update(nummern)
+        ordner = woche / "00-neu" / ordnername(buendel.get("name", ""))
+        ordner.mkdir(exist_ok=True)
+        for n in nummern:
+            datei, _ = offen[n - 1]
+            quelle = woche / "00-neu" / datei
+            if quelle.exists():
+                quelle.replace(ordner / datei)
+            daten[datei]["buendel"] = ordner.name
+            daten[datei]["buendel_warum"] = str(buendel.get("warum", ""))[:200]
+        gebaut += 1
+        print(f"  Bündel: {ordner.name} ({len(nummern)} Dokumente)")
+    sichtung_schreiben(woche, daten)
+    if not gebaut:
+        print("  kein Bündel gefunden")
+    return 0
+
+
 def seitenzahl(pfad: pathlib.Path) -> int:
     try:
         from pypdf import PdfReader
@@ -427,6 +542,10 @@ def ernten(hoechstens: int, trocken: bool) -> int:
             rangfolge(woche)
         except Exception as fehler:
             print(f"  Reihenfolge gescheitert: {str(fehler)[:90]}")
+        try:
+            buendeln(woche)
+        except Exception as fehler:
+            print(f"  Buendeln gescheitert: {str(fehler)[:90]}")
         uebersicht(woche)
     return 0
 
@@ -435,10 +554,13 @@ def ernten(hoechstens: int, trocken: bool) -> int:
 def uebersicht(woche: pathlib.Path) -> pathlib.Path:
     """Die Liste zum Lesen - sortiert nach Relevanz."""
     daten = sichtung_laden(woche)
+    # Auch eine Ebene tiefer nachsehen: Buendel liegen in Themenordnern.
     wo = {}
-    for fach in FAECHER:
-        for datei in (woche / fach).glob("*.pdf"):
-            wo[datei.name] = fach
+    for fach in FAECHER + ["geschrieben"]:
+        for datei in (woche / fach).rglob("*.pdf"):
+            eltern = datei.parent
+            wo[datei.name] = (fach if eltern.name == fach
+                              else f"{fach} / {eltern.name}")
 
     # Sortiert wird nach dem Platz aus dem Vergleich; die Einzelrelevanz ist
     # nur noch Beiwerk, weil sie fast immer "hoch" sagt.
@@ -527,11 +649,282 @@ def uebersicht(woche: pathlib.Path) -> pathlib.Path:
     return ziel
 
 
+# ------------------------------------------------------------- Schreiben
+SCHREIB_SYSTEM = (
+    "Du schreibst für die Nachrichtenseite von Monitor Versorgungsforschung, "
+    "einem Fachmagazin für Versorgungsforschung. Die Leserschaft arbeitet im "
+    "deutschen Gesundheitswesen: Kliniken, Praxen, Kostenträger, "
+    "Selbstverwaltung, Politik. Sie ist fachkundig und hat wenig Zeit.\n"
+    "Du referierst die Dokumente, du übernimmst sie nicht. Jede Wertung "
+    "gehört dem, der sie geäußert hat, und wird ihm zugeschrieben "
+    "('nach Einschätzung des Verbands', 'das Gutachten kommt zu dem "
+    "Schluss'). Wir selbst werten nicht.\n"
+    "Zahlen, Daten und Fristen bleiben exakt so, wie sie in der Quelle "
+    "stehen - nichts hinzufügen, nichts runden, nichts schätzen. Was nicht "
+    "in den Dokumenten steht, steht auch nicht in der Meldung: kein "
+    "Hintergrundwissen, keine geläufige Formel anstelle einer knapperen "
+    "Aussage.\n"
+    "Liegen mehrere Dokumente zum selben Vorgang vor, wird daraus EINE "
+    "Meldung: Das wichtigste führt, die übrigen liefern Gegenpositionen und "
+    "Zahlen. Wer was sagt, muss erkennbar bleiben.\n"
+    "Siezen. Keine Superlative, keine Werbesprache, keine leeren Wendungen. "
+    "Schreibe durchgehend korrekte deutsche Rechtschreibung mit Umlauten "
+    "(ä, ö, ü, ß) - niemals die Ersatzschreibung ae, oe, ue, ss."
+)
+SCHREIB_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["titel", "textauszug", "abschnitte", "schlagwort"],
+    "properties": {
+        "titel": {"type": "string"},
+        "textauszug": {"type": "string"},
+        "abschnitte": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["absaetze"],
+                "properties": {
+                    "ueberschrift": {"type": "string"},
+                    "absaetze": {"type": "array", "items": {"type": "string"}},
+                },
+            },
+        },
+        "quellen": {"type": "array", "items": {"type": "string"}},
+        "schlagwort": {"type": "string", "enum": sorted(SCHLAGWOERTER)},
+    },
+}
+# Wie viel Quelltext je Dokument ins Modell geht. Das fuehrende Dokument
+# ausfuehrlich, die uebrigen knapper - sie liefern Positionen, nicht Substanz.
+QUELLE_FUEHREND = 90000
+QUELLE_WEITERE = 25000
+
+
+def schreib_auftrag(stuecke: list[tuple[str, dict, str]], zeichen: int,
+                    buendel: str = "") -> str:
+    teile = []
+    for nummer, (datei, sicht, text) in enumerate(stuecke, 1):
+        grenze = QUELLE_FUEHREND if nummer == 1 else QUELLE_WEITERE
+        rolle = "FÜHRENDES DOKUMENT" if nummer == 1 else "weiteres Dokument"
+        teile.append(
+            f"\n\n===== {rolle} {nummer}: {sicht.get('titel', datei)} =====\n"
+            f"Gattung: {sicht.get('art','')}   "
+            f"Herausgeber: {sicht.get('absender','')}   "
+            f"Umfang: {sicht.get('seiten',0)} Seiten\n\n{text[:grenze]}")
+    kopf = (
+        f"Schreibe eine Meldung von höchstens {zeichen} Zeichen "
+        f"(Fließtext ohne Überschriften gerechnet).\n\n"
+        "**Die Zahl ist eine Obergrenze, keine Vorgabe.** Gibt das Material "
+        "weniger her, schreibe weniger - lieber 4.000 belastbare Zeichen als "
+        f"{zeichen} gestreckte. Strecken heißt erfinden.\n\n"
+        "- titel: eine Zeile, höchstens 75 Zeichen. Die Sache steht vorn, "
+        "der Absender dahinter, getrennt durch einen Doppelpunkt.\n"
+        "- textauszug: zwei Sätze, höchstens 300 Zeichen. Sie stehen als "
+        "Vorspann in Listen und bei Suchmaschinen und kommen im Fließtext "
+        "NICHT noch einmal vor.\n"
+        "- abschnitte: der Text. Je Abschnitt eine 'ueberschrift' und "
+        "'absaetze'. Unter 4.000 Zeichen genügt ein Abschnitt ohne "
+        "Überschrift; darüber gliedere nach Sachfragen, nicht nach "
+        "Dokumenten.\n"
+        "- quellen: je Dokument eine Zeile - Herausgeber, Titel, Jahr. "
+        "Sie steht am Ende der Meldung.\n"
+        "- schlagwort: eines aus der Hausliste.\n")
+    if buendel:
+        kopf += (f"\nDie Dokumente gehören zum selben Vorgang "
+                 f"('{buendel}'). Daraus wird EINE Meldung, die die "
+                 "Positionen gegeneinanderstellt.\n")
+    return kopf + "".join(teile)
+
+
+def schreiben(hoechstens: int, trocken: bool, nur_woche: str = "") -> int:
+    """Was in den Laengen-Ordnern liegt, zu Entwuerfen machen."""
+    import anthropic
+
+    stamm = stammordner()
+    wochen = ([stamm / nur_woche] if nur_woche
+              else sorted(w for w in stamm.glob("*-KW*") if w.is_dir()))
+    schluessel = os.environ.get("KNOWLEDGEHUBS", "").strip()
+    if not schluessel:
+        raise SystemExit("KNOWLEDGEHUBS ist nicht gesetzt.")
+    modell = os.environ.get("MODEL", "claude-opus-5")
+    gemacht = 0
+
+    for woche in wochen:
+        daten = sichtung_laden(woche)
+        fertig_datei = woche / "geschrieben.json"
+        try:
+            fertig = json.loads(fertig_datei.read_text(encoding="utf-8"))
+        except Exception:
+            fertig = {}
+        (woche / "geschrieben").mkdir(exist_ok=True)
+
+        for fach, zeichen in LAENGEN.items():
+            ordner = woche / fach
+            if not ordner.exists():
+                continue
+            posten = sorted(list(ordner.glob("*.pdf"))
+                            + [p for p in ordner.iterdir() if p.is_dir()])
+            for eintrag in posten:
+                if gemacht >= hoechstens:
+                    print("  Obergrenze erreicht - der Rest beim naechsten Lauf.")
+                    return 0
+                if eintrag.name in fertig:
+                    continue
+                pdfs = ([eintrag] if eintrag.is_file()
+                        else sorted(eintrag.glob("*.pdf")))
+                if not pdfs:
+                    continue
+
+                # Das bestplatzierte Dokument fuehrt.
+                def platz(p: pathlib.Path) -> int:
+                    return daten.get(p.name, {}).get("platz", 99)
+                pdfs.sort(key=platz)
+
+                stuecke = []
+                for pfad in pdfs:
+                    sicht = daten.get(pfad.name, {"titel": pfad.stem})
+                    try:
+                        text = pm.text_aus_pdf(pfad)
+                    except Exception as fehler:
+                        print(f"  {pfad.name}: nicht lesbar "
+                              f"({str(fehler)[:50]})")
+                        continue
+                    stuecke.append((pfad.name, sicht, text))
+                if not stuecke:
+                    continue
+
+                art = "Bündel" if eintrag.is_dir() else "Einzelstück"
+                print(f"\n--- {fach} / {art}: {eintrag.name[:62]}")
+                print(f"    {len(stuecke)} Dokument(e), Ziel {zeichen} Zeichen")
+                auftrag = schreib_auftrag(
+                    stuecke, zeichen,
+                    eintrag.name if eintrag.is_dir() else "")
+                try:
+                    antwort = anthropic.Anthropic(
+                        api_key=schluessel).messages.create(
+                        model=modell, max_tokens=16000, system=SCHREIB_SYSTEM,
+                        output_config={"format": {"type": "json_schema",
+                                                  "schema": SCHREIB_SCHEMA}},
+                        messages=[{"role": "user", "content": auftrag}])
+                    meldung = json.loads(next(b.text for b in antwort.content
+                                              if b.type == "text"))
+                except Exception as fehler:
+                    print(f"    Schreiben gescheitert: {str(fehler)[:110]}")
+                    continue
+
+                inhalt, laenge = baue_beitrag(meldung, stuecke)
+                # Die Obergrenze muss halten: Der erste Durchgang lag bei der
+                # Probe am 06.10.2026 um ein Drittel darueber (6.614 statt
+                # 5.000). Einmal kuerzen lassen, mit der Auflage, keine Zahl
+                # zu opfern.
+                if laenge > zeichen * 1.1:
+                    print(f"    {laenge} Zeichen - zu lang, wird gekuerzt")
+                    try:
+                        antwort = anthropic.Anthropic(
+                            api_key=schluessel).messages.create(
+                            model=modell, max_tokens=16000,
+                            system=SCHREIB_SYSTEM,
+                            output_config={"format": {"type": "json_schema",
+                                                      "schema": SCHREIB_SCHEMA}},
+                            messages=[
+                                {"role": "user", "content": auftrag},
+                                {"role": "assistant",
+                                 "content": json.dumps(meldung,
+                                                       ensure_ascii=False)},
+                                {"role": "user", "content":
+                                 f"Der Fließtext hat {laenge} Zeichen, erlaubt "
+                                 f"sind {zeichen}. Kürze auf höchstens "
+                                 f"{zeichen} Zeichen. Streiche Einordnendes "
+                                 "und Wiederholungen, niemals eine Zahl, eine "
+                                 "Frist oder eine Zuschreibung. Gleiches "
+                                 "Format."}])
+                        gekuerzt = json.loads(next(b.text for b in antwort.content
+                                                   if b.type == "text"))
+                        inhalt2, laenge2 = baue_beitrag(gekuerzt, stuecke)
+                        if laenge2 and laenge2 <= laenge:
+                            meldung, inhalt, laenge = gekuerzt, inhalt2, laenge2
+                    except Exception as fehler:
+                        print(f"    Kuerzen gescheitert: {str(fehler)[:80]}")
+                print(f"    {meldung['titel'][:66]}")
+                print(f"    {laenge} Zeichen Fließtext, Schlagwort "
+                      f"{meldung.get('schlagwort','?')}")
+                if trocken:
+                    vorschau = woche / "geschrieben" / f"{eintrag.stem}.html"
+                    vorschau.write_text(inhalt, encoding="utf-8")
+                    print(f"    [trocken] Vorschau: {vorschau.name}")
+                    gemacht += 1
+                    continue
+
+                bilder = bilder_sammeln(pdfs, daten)
+                try:
+                    angelegt = pm.entwurf(meldung, inhalt, None, False,
+                                          None, bilder, "")
+                except Exception as fehler:
+                    print(f"    WordPress: {str(fehler)[:110]}")
+                    continue
+                if angelegt:
+                    fertig[eintrag.name] = {"datum": dt_heute(),
+                                            "titel": meldung["titel"],
+                                            "zeichen": laenge}
+                    ziel = woche / "geschrieben" / eintrag.name
+                    try:
+                        eintrag.replace(ziel)
+                    except Exception:
+                        pass
+                    gemacht += 1
+        fertig_datei.write_text(
+            json.dumps(fertig, ensure_ascii=False, indent=1, sort_keys=True),
+            encoding="utf-8")
+    print(f"\n{gemacht} Meldung(en) geschrieben.")
+    return 0
+
+
+def baue_beitrag(meldung: dict, stuecke: list) -> tuple[str, int]:
+    """Die Meldung als HTML, dazu die Zahl der Zeichen im Fliesstext."""
+    teile, laenge = [], 0
+    for abschnitt in meldung.get("abschnitte", []):
+        ueberschrift = (abschnitt.get("ueberschrift") or "").strip()
+        if ueberschrift:
+            teile.append(f"<h3>{html.escape(ueberschrift)}</h3>")
+        for absatz in abschnitt.get("absaetze", []):
+            if absatz.strip():
+                teile.append(f"<p>{html.escape(absatz.strip())}</p>")
+                laenge += len(absatz.strip())
+    quellen = [q for q in meldung.get("quellen", []) if q.strip()]
+    if quellen:
+        teile.append("<p><strong>Quellen</strong><br>"
+                     + "<br>".join(html.escape(q) for q in quellen) + "</p>")
+    return "\n".join(teile), laenge
+
+
+def bilder_sammeln(pdfs: list[pathlib.Path], daten: dict,
+                   hoechstens: int = 3) -> list:
+    """Abbildungen aus den Dokumenten - mit dem Herausgeber im Dateinamen.
+
+    Der Name wandert in die Mediathek und traegt damit die Quelle mit; die
+    Bildunterschrift im Beitrag setzt die Redaktion.
+    """
+    gefunden = []
+    for pfad in pdfs:
+        if len(gefunden) >= hoechstens:
+            break
+        try:
+            bilder = pm.bilder_aus_pdf(pfad)
+        except Exception:
+            continue
+        herausgeber = daten.get(pfad.name, {}).get("absender", "")
+        for name, rohdaten in bilder[:hoechstens - len(gefunden)]:
+            kennung = re.sub(r"[^\wäöüß -]", "", f"{herausgeber} {name}")[:80]
+            gefunden.append((kennung or name, rohdaten))
+    return gefunden
+
+
 def main() -> int:
     p = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("was", choices=["ernten", "uebersicht", "ordnen"])
+    p.add_argument("was", choices=["ernten", "uebersicht", "ordnen",
+                                   "buendeln", "schreiben"])
     p.add_argument("--hoechstens", type=int, default=60,
                    help="wie viele PDFs je Lauf gesichtet werden")
     p.add_argument("--trocken", action="store_true",
@@ -542,6 +935,10 @@ def main() -> int:
     if a.was == "ernten":
         return ernten(a.hoechstens, a.trocken)
 
+    if a.was == "schreiben":
+        return schreiben(a.hoechstens if a.hoechstens != 60 else 2,
+                         a.trocken, a.woche or "")
+
     stamm = stammordner()
     wochen = ([stamm / a.woche] if a.woche
               else sorted(w for w in stamm.glob("*-KW*") if w.is_dir()))
@@ -551,6 +948,8 @@ def main() -> int:
     for woche in wochen:
         if a.was == "ordnen":
             rangfolge(woche)
+        if a.was == "buendeln":
+            buendeln(woche)
         uebersicht(woche)
     return 0
 
