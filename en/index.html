@@ -2,827 +2,1077 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="The Knowledge Hubs of Monitor Versorgungsforschung: 15 research portals on Digitalisation, AI & health, Sex, gender & health, Healthy ageing & longevity, Health literacy, Heat, climate & health, Vaccination & immunisation, Noncommunicable diseases, Patient safety, Nursing & long-term care, Mental health, Health services research, Obesity, Diabetes, Cardiology and Oncology. Bundled live searches across 1189 databases and a fresh selection of studies every morning. The hubs are in German.">
-<title>The Knowledge Hubs of Monitor Versorgungsforschung</title>
+<meta name="description" content="15 Knowledge Hubs of Monitor Versorgungsforschung: one search term opens every database of a topic, and each morning brings new studies summarised in German. The hubs are in German.">
+<title>Knowledge Hubs – Current research for the German healthcare system</title>
 <link rel="canonical" href="https://knowledge-hubs.m-vf.de/en/">
-<!-- Beide Sprachfassungen verweisen aufeinander. Ohne diese drei Zeilen
-     behandelt eine Suchmaschine sie als zwei Seiten, die dasselbe sagen -
-     und zeigt die falsche. x-default ist die deutsche: Die Hubs sind
-     deutsch, wer nichts anderes verlangt, soll dort landen. -->
 <link rel="alternate" hreflang="de" href="https://knowledge-hubs.m-vf.de/">
 <link rel="alternate" hreflang="en" href="https://knowledge-hubs.m-vf.de/en/">
 <link rel="alternate" hreflang="x-default" href="https://knowledge-hubs.m-vf.de/">
-<!-- Ohne Icon zeigen Tableiste und Schnellwahl nur den Anfangsbuchstaben des
-     Titels - bei Firefox stand dort ein goldenes "D". Das SVG gilt ueberall,
-     wo es geht; die PNG-Fassungen sind fuer Safari und die Kachelansichten,
-     die favicon.ico fuer alles Aeltere. Gebaut mit scripts/icon_bauen.py. -->
-<link rel="icon" href="/logo/hub-icon.svg" type="image/svg+xml">
-<link rel="icon" href="/logo/hub-icon-32.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="/logo/hub-icon-180.png">
-<meta name="theme-color" content="#0051A1">
+<link rel="icon" href="../logo/hub-icon.svg" type="image/svg+xml">
+<link rel="icon" href="../logo/hub-icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../logo/hub-icon-180.png">
+<meta name="theme-color" content="#14202E">
 <style>
+@font-face{ font-family:"Lato"; font-style:normal; font-weight:300; font-display:swap; src:url("../fonts/lato-300.woff2") format("woff2"); }
+@font-face{ font-family:"Lato"; font-style:normal; font-weight:400; font-display:swap; src:url("../fonts/lato-400.woff2") format("woff2"); }
+@font-face{ font-family:"Lato"; font-style:normal; font-weight:700; font-display:swap; src:url("../fonts/lato-700.woff2") format("woff2"); }
 
-  /* Schrift, Farben und Gerüst wie in den Hubs - die Seite gehört sichtbar dazu. */
-  @font-face{ font-family:"Lato"; font-style:normal; font-weight:300;
-    src:url("/fonts/lato-300.woff2") format("woff2"); font-display:swap; }
-  @font-face{ font-family:"Lato"; font-style:normal; font-weight:400;
-    src:url("/fonts/lato-400.woff2") format("woff2"); font-display:swap; }
-  @font-face{ font-family:"Lato"; font-style:normal; font-weight:700;
-    src:url("/fonts/lato-700.woff2") format("woff2"); font-display:swap; }
-
-  :root{
-    --paper:#EDF2FA; --card:#FFFFFF; --card-2:#F7FAFD;
-    --ink:#111111; --ink-soft:#444A50; --ink-faint:#545C63;
-    --line:#D0D8E4; --line-soft:#E3EAF3;
-    --brand:#0051A1; --brand-deep:#003B77; --brand-tint:#E1EAF6;
-    --action:#BE9E53; --on-action:#2A2207;
-    --shadow:0 1px 2px rgba(16,40,38,.05), 0 8px 24px -16px rgba(16,40,38,.28);
-    --shadow-hover:0 2px 4px rgba(16,40,38,.06), 0 18px 40px -20px rgba(16,40,38,.40);
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
-      --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
-      --line:#22314A; --line-soft:#1A2639;
-      --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
-      --action:#D4B878; --on-action:#221A08;
-      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
-      --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
-    }
-  }
-  :root[data-theme="dark"]{
+/* Dieselben Farben wie die Hubs (vorlage/index.html), damit Netzleiste und
+   Seite zusammenpassen. Petrol kennzeichnet die Krankheitsgebiete, Gold die
+   weiteren Angebote, Blau die Versorgungsthemen. */
+:root{
+  --paper:#EDF2FA; --card:#FFFFFF; --card-2:#F7FAFD;
+  --ink:#111111; --ink-soft:#444A50; --ink-faint:#545C63;
+  --line:#D0D8E4; --line-soft:#E3EAF3;
+  --brand:#0051A1; --brand-deep:#003B77; --brand-tint:#E1EAF6;
+  --petrol:#0E6E71; --petrol-tint:#DDF0EF;
+  --gold-text:#8A6E28; --gold-tint:#F6EEDB;
+  --action:#BE9E53; --action-deep:#A5873F; --on-action:#2A2207;
+  --held:#0A3F7E; --held-2:#0051A1;
+  --shadow:0 1px 2px rgba(16,40,38,.05), 0 8px 24px -16px rgba(16,40,38,.28);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
     --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
     --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
     --line:#22314A; --line-soft:#1A2639;
     --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
-    --action:#D4B878; --on-action:#221A08;
+    --petrol:#4FC2C4; --petrol-tint:#10302F;
+    --gold-text:#D9BE82; --gold-tint:#2A2414;
+    --action:#D4B878; --action-deep:#E3CB94; --on-action:#221A08;
+    --held:#0B2547; --held-2:#123A6B;
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
-    --shadow-hover:0 2px 6px rgba(0,0,0,.4), 0 22px 46px -22px rgba(0,0,0,.8);
   }
+}
+:root[data-theme="dark"]{
+  --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+  --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+  --line:#22314A; --line-soft:#1A2639;
+  --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+  --petrol:#4FC2C4; --petrol-tint:#10302F;
+  --gold-text:#D9BE82; --gold-tint:#2A2414;
+  --action:#D4B878; --action-deep:#E3CB94; --on-action:#221A08;
+  --held:#0B2547; --held-2:#123A6B;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+}
 
-  *{ box-sizing:border-box; }
-  html{ -webkit-text-size-adjust:100%; }
-  body{
-    margin:0; background:var(--paper); color:var(--ink);
-    font-family:"Lato", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-    font-size:16px; line-height:1.6;
-  }
-  .wrap{ width:min(1280px, 94vw); margin:0 auto; }
-  a{ color:var(--brand); text-underline-offset:2px; }
-  a:focus-visible{ outline:2px solid var(--brand); outline-offset:3px; border-radius:3px; }
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; scroll-padding-top:72px; scroll-behavior:smooth; }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+body{ margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Lato", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+a{ color:var(--brand); }
+.wrap{ max-width:1180px; margin:0 auto; padding:0 22px; }
+.sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
 
-  header.top{ background:var(--card); border-bottom:1px solid var(--line); padding:30px 0 34px; }
-  .kopf-oben{ display:flex; justify-content:space-between; align-items:flex-start; gap:24px; }
-  .eyebrow{
-    margin:0 0 8px; font-size:11.5px; font-weight:700; letter-spacing:.12em;
-    text-transform:uppercase; color:var(--ink-faint);
-  }
-  h1{ margin:0 0 12px; font-size:clamp(26px,4.2vw,40px); line-height:1.15; font-weight:700; }
-  .standfirst{ margin:0; max-width:64ch; font-size:clamp(16px,1.9vw,18.5px); color:var(--ink-soft); }
-  .marke img{ display:block; width:200px; height:auto; }
-  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .marke{ background:#fff; padding:9px 12px; border-radius:4px; } }
-  :root[data-theme="dark"] .marke{ background:#fff; padding:9px 12px; border-radius:4px; }
-  @media (max-width:760px){
-    .kopf-oben{ flex-direction:column-reverse; align-items:flex-start; gap:16px; }
-    .marke img{ width:150px; max-width:52vw; }
-  }
+/* 1 Aktionsleiste: schmal, befristet, schliessbar. */
+.aktion{ background:var(--gold-tint); border-bottom:1px solid color-mix(in srgb, var(--action) 45%, transparent); font-size:13.5px; }
+.aktion .wrap{ display:flex; align-items:center; gap:14px; min-height:38px; }
+.aktion p{ margin:0; flex:1; }
+.aktion b{ color:var(--ink); }
+.aktion a{ color:var(--ink); font-weight:700; text-decoration:none; white-space:nowrap; }
+.aktion a:hover{ text-decoration:underline; }
+.aktion button{ background:none; border:0; font:inherit; font-size:18px; line-height:1; padding:6px 8px; cursor:pointer; color:var(--ink-soft); border-radius:5px; }
+.aktion button:hover{ background:color-mix(in srgb, var(--action) 25%, transparent); }
 
-  main{ padding:34px 0 60px; }
-  h2{
-    font-size:clamp(19px,2.6vw,24px); font-weight:700; line-height:1.25;
-    margin:0 0 6px; padding-bottom:9px; border-bottom:2px solid var(--brand);
-  }
-  .vor{ margin:0 0 20px; max-width:70ch; color:var(--ink-soft); font-size:16px; }
+/* 3 Sprunglinks der Startseite (statt der Hub-Leiste). */
+.ortsleiste .ort-links a{ padding:13px 11px 12px; font-size:13.5px; }
+.ortsleiste.start .ortsleiste-innen{ min-height:48px; }
+.ortsleiste.start .ort-nl{ padding:7px 14px; font-size:13px; }
 
-  /* Ueberschrift der beiden Abschnitte. Bewusst schwaecher als h2: Die
-     Trennung ordnet die Kacheln, sie stellt keinen zweiten Seitenteil daneben.
-     Deshalb duenne Linie statt der goldenen Marke und kein Rahmen. */
-  h3.teil{
-    font-size:clamp(17px,2.2vw,21px); font-weight:700; line-height:1.25;
-    margin:34px 0 6px; padding-bottom:7px;
-    border-bottom:1px solid var(--linie, #d5dfee);
-    display:flex; align-items:baseline; gap:10px;
-  }
-  h3.teil:first-of-type{ margin-top:8px; }
-  .teil-zahl{
-    font-size:13px; font-weight:400; color:var(--ink-soft);
-    border:1px solid var(--linie, #d5dfee); border-radius:11px; padding:1px 9px;
-  }
+/* 2/4 Einstieg */
+.held{ background:radial-gradient(110% 150% at 85% -30%, var(--held-2) 0%, transparent 60%), var(--held); color:#fff; }
+.held .wrap{ padding-top:46px; padding-bottom:40px; }
+.held-eyebrow{ margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:.14em; color:#C9D8EC; }
+.held h1{ margin:0; font-size:clamp(28px, 4.2vw, 42px); line-height:1.15; font-weight:700; max-width:21em; letter-spacing:-.01em; }
+.held-lede{ margin:14px 0 24px; font-size:17.5px; color:#E2EBF6; max-width:40em; }
+.suche{ position:relative; max-width:760px; }
+.suche-zeile{ display:flex; background:#fff; border-radius:10px; padding:6px; box-shadow:0 18px 40px -20px rgba(0,0,0,.6); }
+.suche-zeile svg{ width:20px; height:20px; color:#6A7480; margin:0 4px 0 10px; align-self:center; flex:0 0 20px; }
+.suche input{ flex:1; min-width:0; border:0; outline:0; background:none; font:inherit; font-size:17px; padding:11px 8px; color:#111; }
+.suche input::placeholder{ color:#6A7480; }
+.suche-zeile:focus-within{ box-shadow:0 0 0 3px var(--action), 0 18px 40px -20px rgba(0,0,0,.6); }
+.suche-knopf{ background:var(--action); color:#2A2207; border:0; border-radius:7px; font:inherit; font-weight:700; font-size:15px; padding:0 22px; cursor:pointer; }
+.suche-knopf:hover{ background:var(--action-deep); }
+.vorschlag{ position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:30; background:#fff; color:#111; border-radius:10px;
+  box-shadow:0 24px 50px -18px rgba(0,0,0,.55); overflow:hidden; }
+.vorschlag[hidden]{ display:none; }
+.vorschlag h2{ margin:0; padding:12px 18px 4px; font-size:11px; letter-spacing:.12em; color:#545C63; font-weight:700; }
+.vorschlag ul{ list-style:none; margin:0; padding:0 0 6px; }
+.vorschlag li a{ display:flex; align-items:center; gap:12px; padding:9px 18px; text-decoration:none; color:#111; font-size:15px; }
+.vorschlag li a .ic{ width:22px; height:22px; color:#0051A1; flex:0 0 22px; }
+.vorschlag li a.krank .ic{ color:#0E6E71; }
+.vorschlag li a b{ font-weight:700; }
+.vorschlag li a small{ margin-left:auto; color:#545C63; font-size:13px; white-space:nowrap; }
+.vorschlag li a:hover, .vorschlag li a.aktiv{ background:#E1EAF6; }
+.vorschlag .vs-grund{ display:block; font-size:12.5px; color:#545C63; font-weight:400; }
+.vorschlag .vs-leer{ padding:10px 18px 12px; margin:0; font-size:14px; color:#444A50; }
+.vorschlag .vs-studien{ border-top:1px solid #E3EAF3; }
+.direkt{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; margin:20px 0 0; font-size:14px; color:#C9D8EC; }
+.direkt a{ color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.45); border-radius:999px; padding:6px 14px; font-weight:700; font-size:13.5px; }
+.direkt a:hover{ background:rgba(255,255,255,.12); border-color:#fff; }
+.haken{ display:flex; flex-wrap:wrap; gap:6px 22px; list-style:none; padding:0; margin:18px 0 0; font-size:13.5px; color:#DCE6F3; }
+.haken li::before{ content:"✓"; margin-right:7px; color:var(--action); font-weight:700; }
 
-  /* Nebeneinander ist der Regelfall. Untereinander nur auf Handy und Tablet:
-     Unter 1000px werden vier Spalten zu schmalen Saeulen, in denen jede
-     Ueberschrift dreizeilig umbricht. Beide Gitter tragen dieselbe Spaltenzahl,
-     damit die angekuendigten Kacheln so breit sind wie die der laufenden Hubs. */
-  .gitter{ display:grid; gap:16px; grid-template-columns:1fr; margin:0 0 42px; }
+/* Abschnitte */
+.abschnitt{ padding:46px 0 10px; }
+.abschnitt > .wrap > h2, .abschnitt h2.titel{ margin:0 0 6px; font-size:clamp(23px, 2.6vw, 29px); line-height:1.2; letter-spacing:-.005em; }
+.vor{ margin:0 0 20px; color:var(--ink-soft); max-width:46em; }
 
-  /* ---------- Studien aller Hubs ---------- */
-  .studien{ margin:0 0 42px; }
-  .st-laedt{ color:var(--ink-faint); font-size:14px; margin:0 0 16px; }
+/* 3 Themenwahl */
+.filter{ display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px; }
+.filter button{ font:inherit; font-size:14px; font-weight:700; padding:7px 14px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--line); background:var(--card); color:var(--ink-soft); }
+.filter button span{ font-weight:400; margin-left:4px; color:var(--ink-faint); }
+.filter button[aria-pressed="true"]{ background:var(--brand); border-color:var(--brand); color:#fff; }
+.filter button[aria-pressed="true"] span{ color:#DCE6F3; }
+:root[data-theme="dark"] .filter button[aria-pressed="true"]{ color:#081726; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .filter button[aria-pressed="true"]{ color:#081726; } }
+.gruppe-titel{ margin:22px 0 10px; font-size:12px; letter-spacing:.12em; font-weight:700; color:var(--ink-soft); }
+.gruppe-titel.krank{ color:var(--petrol); }
+.kacheln{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:12px; }
+.kachel{ position:relative; display:flex; flex-direction:column; gap:4px; background:var(--card); border:1px solid var(--line);
+  border-radius:10px; padding:15px 16px 14px; text-decoration:none; color:var(--ink); transition:border-color .14s, box-shadow .14s, transform .14s; }
+.kachel:hover{ border-color:var(--brand); box-shadow:var(--shadow); transform:translateY(-1px); }
+.kachel .ic{ width:26px; height:26px; color:var(--brand); margin-bottom:4px; }
+.kachel b{ font-size:15.5px; line-height:1.25; }
+.kachel span.satz{ font-size:13.5px; color:var(--ink-soft); line-height:1.35; }
+.kachel span.zahl{ margin-top:auto; padding-top:8px; font-size:13px; font-weight:700; color:var(--brand); font-variant-numeric:tabular-nums; }
+.kachel.krank .ic, .kachel.krank span.zahl{ color:var(--petrol); }
+.kachel.krank:hover{ border-color:var(--petrol); }
+.kachel.ausgang{ grid-column:span 2; flex-direction:row; align-items:center; gap:16px; background:linear-gradient(120deg, var(--brand-tint), var(--card) 70%); }
+.kachel.ausgang .ic{ width:40px; height:40px; flex:0 0 40px; margin:0; }
+.kachel.ausgang .txt{ display:flex; flex-direction:column; gap:3px; }
+.kachel.ausgang small{ font-size:11.5px; letter-spacing:.1em; font-weight:700; color:var(--ink-soft); }
+.kachel.ausgang span.zahl{ margin-top:4px; padding-top:0; }
+.kachel[hidden], .gruppe[hidden]{ display:none; }
 
-  /* Suche ueber die Studien aller Hubs */
-  .st-suche{
-    background:var(--card); border:1px solid var(--line); border-radius:8px;
-    padding:16px 18px 14px; margin:0 0 20px;
-  }
-  .st-suche-label{
-    display:block; font-size:11.5px; font-weight:700; letter-spacing:.04em;
-    text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px;
-  }
-  .st-suche-zeile{ display:flex; gap:8px; flex-wrap:wrap; }
-  .st-suche-feld{
-    flex:1 1 220px; min-width:0; font:inherit; font-size:15px;
-    padding:10px 13px; border:1px solid var(--line); border-radius:6px;
-    background:var(--card-2); color:var(--ink);
-  }
-  .st-suche-feld:focus{
-    outline:2px solid var(--brand); outline-offset:1px; border-color:var(--brand);
-  }
-  .st-suche-knopf{
-    flex:0 0 auto; font:inherit; font-size:15px; font-weight:700; cursor:pointer;
-    padding:10px 22px; border:0; border-radius:6px;
-    background:var(--brand); color:#fff; transition:filter .14s;
-  }
-  .st-suche-knopf:hover{ filter:brightness(1.1); }
-  .st-suche-fuss{
-    font-size:13px; line-height:1.5; color:var(--ink-faint); margin:10px 0 0;
-  }
-  /* Eine Karte je Hub - mehr wuerde die Uebersicht zur Liste machen. */
-  .st-gitter{ display:grid; gap:12px; grid-template-columns:1fr; }
-  @media (min-width:900px){ .st-gitter{ grid-template-columns:1fr 1fr; } }
-  .st-karte{
-    background:var(--card); border:1px solid var(--line); border-radius:6px;
-    padding:15px 17px; display:flex; flex-direction:column;
-  }
-  .st-kopf{ display:flex; flex-wrap:wrap; align-items:baseline; gap:9px; margin:0 0 6px; }
-  .st-hub{
-    font-size:11.5px; font-weight:700; letter-spacing:.04em;
-    background:var(--brand-tint); color:var(--brand);
-    border-radius:4px; padding:2px 8px; text-decoration:none; white-space:nowrap;
-  }
-  .st-hub:hover{ text-decoration:underline; }
-  .st-quelle{ font-size:12.5px; color:var(--ink-faint); }
-  .st-titel{ font-weight:700; line-height:1.35; margin:0 0 6px; }
-  .st-text{ font-size:14.5px; line-height:1.55; margin:0 0 5px; color:var(--ink-soft); }
-  .st-text b{ color:var(--ink); }
-  .st-mehr{
-    display:inline-block; margin:auto 0 0; padding-top:12px;
-    font-size:13px; font-weight:700;
-    color:var(--brand); text-decoration:none;
-  }
-  .st-mehr:hover{ text-decoration:underline; }
-  .st-leer{ color:var(--ink-faint); font-size:14px; }
-  @media (min-width:1000px){ .gitter{ grid-template-columns:repeat(4, 1fr); } }
-  @media (min-width:1000px){
-    /* Zwei Spalten statt vier: breiter als eine Hub-Kachel, aber in
-       der Flucht des Vorspanns darueber, der bei 70 Zeichen endet. */
-    .gitter--eins{ grid-template-columns:minmax(0, 880px); }
-    .hub--breit .hub-texte{ grid-template-columns:repeat(2, 1fr); }
-    .hub--breit .zahlen{ grid-template-columns:repeat(4, auto); gap:2px 28px;
-      justify-content:start; }
-    .hub--breit .zahlen > div{ display:block; }
-    .hub--breit .zahlen dd{ text-align:left; font-size:17px; }
-    .hub--breit .hub-fuss{ grid-template-columns:1fr auto; }
-  }
+/* 4 So funktioniert's */
+.schritte{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px; list-style:none; padding:0; margin:0; counter-reset:s; }
+.schritte li{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px 20px; }
+.schritte li::before{ counter-increment:s; content:counter(s); display:grid; place-items:center; width:30px; height:30px; border-radius:50%;
+  background:var(--brand); color:#fff; font-weight:700; font-size:14px; margin-bottom:10px; }
+:root[data-theme="dark"] .schritte li::before{ color:#081726; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .schritte li::before{ color:#081726; } }
+.schritte b{ display:block; font-size:16px; margin-bottom:4px; }
+.schritte p{ margin:0; font-size:14.5px; color:var(--ink-soft); }
+.mehr-link{ display:inline-block; margin-top:16px; font-weight:700; text-decoration:none; }
+.mehr-link:hover{ text-decoration:underline; }
 
-  .hub{
-    display:flex; flex-direction:column; background:var(--card);
-    border:1px solid var(--line); border-radius:8px; padding:20px 20px 18px;
-    box-shadow:var(--shadow); transition:box-shadow .16s, border-color .16s;
-  }
-  .hub:hover{ box-shadow:var(--shadow-hover); border-color:var(--brand); }
-  .hub-thema{
-    margin:0 0 6px; font-size:11.5px; font-weight:700; letter-spacing:.09em;
-    text-transform:uppercase; color:var(--brand-deep);
-  }
-  .hub h3{ margin:0 0 9px; font-size:clamp(17px,1.5vw,19px); line-height:1.28; font-weight:700; }
-  .hub h3 a{ color:inherit; text-decoration:none; }
-  .hub h3 a:hover{ color:var(--brand); text-decoration:underline; }
-  .hub-satz{ margin:0 0 16px; font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
+/* 5 Weitere Angebote */
+.angebote{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px; }
+.angebot{ display:flex; flex-direction:column; gap:6px; background:var(--card); border:1px solid var(--line); border-top:3px solid var(--action);
+  border-radius:10px; padding:18px 20px; text-decoration:none; color:var(--ink); transition:box-shadow .14s; }
+.angebot:hover{ box-shadow:var(--shadow); }
+.angebot .ic{ width:28px; height:28px; color:var(--gold-text); }
+.angebot b{ font-size:16.5px; }
+.angebot span.satz{ font-size:14px; color:var(--ink-soft); }
+.angebot span.los{ margin-top:auto; padding-top:6px; font-size:14px; font-weight:700; color:var(--brand); }
 
-  .zahlen{
-    display:grid; grid-template-columns:1fr auto; gap:2px 12px;
-    margin:0 0 18px; padding:12px 14px;
-    background:var(--card-2); border:1px solid var(--line-soft); border-radius:6px;
-    font-size:13.5px;
-  }
-  .zahlen > div{ display:contents; }
-  .zahlen dt{ color:var(--ink-faint); }
-  .zahlen dd{ margin:0; text-align:right; font-weight:700; font-variant-numeric:tabular-nums; }
+/* 6 Neue Studien */
+.st-liste{ list-style:none; margin:0; padding:0; background:var(--card); border:1px solid var(--line); border-radius:10px; }
+.st-liste li{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 18px; padding:14px 18px; border-top:1px solid var(--line-soft); }
+.st-liste li:first-child{ border-top:0; }
+.st-liste li[hidden]{ display:none; }
+.st-zeile1{ display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 8px; }
+.st-hub{ font-size:12.5px; font-weight:700; text-decoration:none; color:var(--brand); background:var(--brand-tint); padding:2px 8px; border-radius:4px; white-space:nowrap; }
+.st-hub.krank{ color:var(--petrol); background:var(--petrol-tint); }
+.st-titel{ font-weight:700; color:var(--ink); text-decoration:none; font-size:15.5px; line-height:1.35; }
+.st-titel:hover{ color:var(--brand); text-decoration:underline; }
+.st-erg{ grid-column:1; margin:2px 0 0; font-size:14px; color:var(--ink-soft); }
+.st-erg a{ font-weight:700; text-decoration:none; white-space:nowrap; }
+.st-erg a:hover{ text-decoration:underline; }
+.st-datum{ grid-column:2; grid-row:1; font-size:12.5px; color:var(--ink-faint); white-space:nowrap; }
+.st-unten{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; margin-top:14px; font-size:14.5px; }
+.st-unten button{ font:inherit; font-weight:700; color:var(--brand); background:var(--card); border:1px solid var(--line); border-radius:7px; padding:8px 14px; cursor:pointer; }
+.st-unten a{ font-weight:700; text-decoration:none; align-self:center; }
+.st-unten a:hover{ text-decoration:underline; }
 
-  /* Ein Abschnitt mit einer einzigen Kachel: sie nimmt die ganze
-     Breite, und ihre drei Absaetze stehen nebeneinander statt
-     untereinander. */
-  .hub--breit .hub-texte{ display:grid; gap:0 26px; }
-  .hub--breit .hub-satz{ margin-bottom:14px; }
-  .hub--breit .hub-fuss{ display:grid; gap:14px 26px; align-items:center; }
-  .hub--breit .zahlen{ margin:0; }
-  .hub--breit .hub-wege{ margin:0; }
+/* 7 Newsletter: einer je Hub - mit Absicht. */
+.nl-kasten{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2fr); gap:28px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:26px 28px; }
+.nl-kasten h2{ margin:0 0 8px; font-size:24px; line-height:1.2; }
+.nl-kasten p{ margin:0 0 10px; color:var(--ink-soft); font-size:15px; }
+.nl-kasten .klein{ font-size:13.5px; }
+.nl-gruppe{ margin:0 0 14px; }
+.nl-gruppe h3{ margin:0 0 8px; font-size:11.5px; letter-spacing:.12em; color:var(--ink-soft); }
+.nl-gruppe.krank h3{ color:var(--petrol); }
+.nl-gruppe ul{ list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:7px; }
+.nl-gruppe a{ display:inline-flex; align-items:center; gap:7px; font-size:13.5px; font-weight:700; text-decoration:none; color:var(--ink);
+  border:1px solid var(--line); border-radius:999px; padding:6px 12px 6px 9px; background:var(--card-2); }
+.nl-gruppe a .ic{ width:16px; height:16px; color:var(--brand); }
+.nl-gruppe.krank a .ic{ color:var(--petrol); }
+.nl-gruppe a:hover{ border-color:var(--action); background:var(--gold-tint); }
+.nl-mvf{ border-top:1px solid var(--line-soft); padding-top:12px; font-size:14px; color:var(--ink-soft); }
 
-  .hub-wege{ display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin:auto 0 8px; }
-  .btn{
-    display:inline-flex; align-items:center; min-height:40px; padding:0 18px;
-    background:var(--action); color:var(--on-action);
-    font-weight:700; font-size:14.5px; text-decoration:none; border-radius:6px;
-    transition:filter .14s;
-  }
-  .btn:hover{ filter:brightness(1.08); }
-  .dazu{ font-size:13.5px; font-weight:700; }
-  .hub-adresse{ margin:0; font-size:12.5px; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+/* 8 Ueber die Hubs */
+.ueber-hinweis{ display:flex; align-items:center; justify-content:space-between; gap:18px; background:var(--brand-tint); border-radius:12px; padding:20px 26px; margin:34px 0 0; }
+.ueber-hinweis h2{ margin:0 0 3px; font-size:19px; }
+.ueber-hinweis p{ margin:0; color:var(--ink-soft); font-size:14.5px; }
+.knopf{ display:inline-block; background:var(--brand); color:#fff; font-weight:700; text-decoration:none; padding:10px 18px; border-radius:7px; white-space:nowrap; }
+:root[data-theme="dark"] .knopf{ color:#081726; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .knopf{ color:#081726; } }
 
-  .hub.kommt{ background:var(--card-2); border-style:dashed; box-shadow:none; }
-  .hub.kommt:hover{ border-color:var(--line); box-shadow:none; }
-  .hub.kommt h3{ color:var(--ink-soft); }
-  .bald{
-    margin:auto 0 0; display:inline-block; align-self:flex-start;
-    font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
-    color:var(--brand-deep); background:var(--brand-tint);
-    border-radius:4px; padding:3px 9px;
-  }
+/* 9 Footer */
+footer.fuss{ margin-top:56px; background:#14202E; color:#C3CFDD; font-size:14px; }
+footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:18px; padding-top:26px; padding-bottom:28px; }
+.absender{ display:flex; align-items:center; gap:14px; text-decoration:none; }
+.absender:hover small{ text-decoration:underline; }
+.absender img{ width:150px; height:auto; display:block; }
+.absender span{ font-size:12px; letter-spacing:.06em; color:#9FB0C4; }
+.absender small{ color:#9FB0C4; font-size:13px; }
+.fuss-links{ display:flex; gap:20px; }
+.fuss-links a{ color:#E3EAF3; text-decoration:none; font-weight:700; }
+.fuss-links a:hover{ text-decoration:underline; }
+.stand{ width:100%; margin:0; font-size:12.5px; color:#8698AE; }
 
-  /* Das Band zu CuratioHub. Waagerecht, damit es nicht als dreizehnte
-     Hub-Kachel gelesen wird - es fuehrt auf etwas anderes als die zwoelf. */
-  .karriere-band{
-    display:flex; align-items:center; gap:16px;
-    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--action);
-    border-radius:8px; padding:18px 22px; margin:0 0 34px;
-    text-decoration:none; color:inherit; box-shadow:var(--shadow);
-    transition:box-shadow .16s, border-color .16s;
-  }
-  .karriere-band:hover{ box-shadow:var(--shadow-hover); border-color:var(--brand); }
-  .kb-marke{
-    flex:0 0 auto; font-size:11.5px; font-weight:700; letter-spacing:.08em;
-    text-transform:uppercase; color:var(--on-action); background:var(--action);
-    border-radius:4px; padding:3px 9px;
-  }
-  .kb-text{ flex:1 1 auto; font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
-  .kb-text b{ display:block; color:var(--ink); font-size:16px; margin-bottom:2px; }
-  .kb-pfeil{ flex:0 0 auto; font-size:22px; color:var(--brand); }
-  @media (max-width:620px){
-    .karriere-band{ flex-wrap:wrap; gap:10px; }
-    .kb-pfeil{ display:none; }
-  }
+/* Unterseiten (Ueber die Hubs, Impressum, Datenschutz) */
+.unterseite{ max-width:860px; padding-top:38px; }
+.unterseite h1{ font-size:clamp(28px, 3.6vw, 38px); line-height:1.15; margin:0 0 10px; }
+.unterseite h2{ font-size:22px; margin:34px 0 10px; }
+.unterseite h4{ margin:22px 0 6px; }
+.unterseite p, .unterseite li{ color:var(--ink-soft); }
+.unterseite .punkte{ padding-left:0; list-style:none; }
+.unterseite .punkte li{ margin:0 0 12px; padding-left:16px; border-left:3px solid var(--brand-tint); }
+.unterseite .punkte b{ display:block; color:var(--ink); }
+.zahlentafel{ width:100%; border-collapse:collapse; font-size:14px; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+.zahlentafel th, .zahlentafel td{ text-align:right; padding:8px 12px; border-top:1px solid var(--line-soft); font-variant-numeric:tabular-nums; }
+.zahlentafel th:first-child, .zahlentafel td:first-child{ text-align:left; }
+.zahlentafel thead th{ background:var(--card-2); border-top:0; font-size:12px; letter-spacing:.06em; color:var(--ink-soft); }
+.zahlentafel tfoot td{ font-weight:700; color:var(--ink); }
+.tafel-rahmen{ overflow-x:auto; }
+.wer{ display:flex; gap:22px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; }
+.wer img{ width:190px; height:auto; flex:0 0 auto; }
+:root[data-theme="dark"] .wer img{ background:#fff; padding:8px 10px; border-radius:6px; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .wer img{ background:#fff; padding:8px 10px; border-radius:6px; } }
 
-  .gemeinsam{
-    background:var(--card); border:1px solid var(--line); border-radius:8px;
-    padding:22px 24px; margin:0 0 34px;
-  }
-  .gemeinsam h2{ margin-bottom:14px; }
-  .punkte{ display:grid; gap:16px; grid-template-columns:1fr; margin:0; padding:0; list-style:none; }
-  @media (min-width:760px){ .punkte{ grid-template-columns:1fr 1fr; } }
-  .punkte li{ font-size:14.5px; line-height:1.55; color:var(--ink-soft); }
-  .punkte b{ display:block; color:var(--ink); font-size:15px; margin-bottom:2px; }
+@media (max-width:980px){
+  .kacheln{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+  .nl-kasten{ grid-template-columns:1fr; gap:16px; }
+}
+@media (max-width:760px){
+  .kacheln{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .schritte, .angebote{ grid-template-columns:1fr; }
+  .ueber-hinweis{ flex-direction:column; align-items:flex-start; }
+  .wer{ flex-direction:column; align-items:flex-start; }
+}
+@media (max-width:560px){
+  .wrap{ padding:0 16px; }
+  .held .wrap{ padding-top:32px; padding-bottom:30px; }
+  .held-lede{ font-size:16px; }
+  .suche-knopf{ padding:0 14px; }
+  .suche-zeile svg{ display:none; }
+  .kacheln{ grid-template-columns:1fr; gap:8px; }
+  .kachel{ flex-direction:row; flex-wrap:wrap; align-items:center; column-gap:12px; padding:12px 14px; }
+  .kachel .ic{ margin:0; width:24px; height:24px; }
+  .kachel b{ flex:1; }
+  .kachel span.satz{ flex-basis:100%; padding-left:36px; }
+  .kachel span.zahl{ flex-basis:100%; padding:2px 0 0 36px; }
+  .kachel.ausgang{ grid-column:auto; flex-wrap:nowrap; }
+  .kachel.ausgang .ic{ width:30px; height:30px; flex-basis:30px; }
+  .st-liste li{ grid-template-columns:1fr; padding:13px 14px; }
+  .st-datum{ grid-column:1; grid-row:auto; }
+  .nl-kasten{ padding:20px 18px; }
+  .aktion .wrap{ font-size:13px; }
+}
+@media print{ .aktion, .held .suche, .filter{ display:none; } }
 
-  footer{
-    border-top:1px solid var(--line); background:var(--card);
-    padding:26px 0 40px; font-size:14px; color:var(--ink-faint);
-  }
-  footer p{ margin:0 0 8px; max-width:74ch; }
-  footer a{ color:var(--ink-soft); }
-  details{ margin:14px 0 0; }
-  summary{ cursor:pointer; font-weight:700; color:var(--ink-soft); }
-  .legal-body{ padding:10px 0 4px; max-width:74ch; }
-  .legal-body h4{ margin:14px 0 4px; font-size:13.5px; }
-  .legal-body p{ margin:0 0 8px; }
-  .stand{ margin-top:16px; font-size:12.5px; }
+/* Englische Seite: Hinweis, dass die Hubs deutsch sind - gleich unter dem
+   Einstieg, bevor jemand auf eine Kachel klickt. */
+.notiz-rahmen{ padding-top:26px; }
+.sprachnotiz{ margin:0; background:var(--gold-tint); border-left:4px solid var(--action); border-radius:8px;
+  padding:14px 18px; font-size:15px; color:var(--ink-soft); max-width:60em; }
+.sprachnotiz b{ display:block; color:var(--ink); font-size:16px; margin-bottom:3px; }
+.sprachnotiz a{ color:var(--brand); font-weight:700; }
+</style>
+<style>
+  .netz{ --nz-grund:#14202E; --nz-text:#D3DCE8; --nz-leise:#9FB0C4; --nz-gold:#BE9E53;
+         --nz-petrol:#0E6E71; --nz-blau:var(--brand,#0051A1);
+         --nz-karte:var(--card,#FFFFFF); --nz-ink:var(--ink,#111); --nz-soft:var(--ink-soft,#444A50);
+         --nz-linie:var(--line,#D0D8E4); --nz-tint:var(--brand-tint,#E1EAF6);
+         position:relative; z-index:60; background:var(--nz-grund); color:var(--nz-text);
+         font-size:13px; line-height:1.3; }
+  :root[data-theme="dark"] .netz{ --nz-petrol:#4FC2C4; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .netz{ --nz-petrol:#4FC2C4; } }
+  .netz *{ box-sizing:border-box; }
+  /* Breite und Seitenrand kommen von .wrap der jeweiligen Seite - Hubs und
+     Uebersicht setzen den Rand verschieden, die Leiste soll buendig mit dem
+     Inhalt darunter stehen. */
+  .netz-innen{ display:flex; align-items:center; gap:4px; min-height:44px; }
+  .netz a, .netz button{ font:inherit; color:inherit; }
+  .netz a:focus-visible, .netz button:focus-visible{ outline:2px solid var(--nz-gold); outline-offset:2px; border-radius:4px; }
+  .netz-marke{ display:flex; align-items:center; gap:9px; text-decoration:none; padding:8px 14px 8px 0;
+               margin-right:6px; border-right:1px solid #2E3D52; font-weight:700; letter-spacing:.09em; font-size:12.5px; color:#FFF; white-space:nowrap; }
+  .netz-marke img{ width:20px; height:20px; display:block; }
+  .netz-marke b{ color:var(--nz-gold); font-weight:700; }
+  .netz-knopf, .netz-link{ background:none; border:0; cursor:pointer; padding:13px 11px; text-decoration:none;
+               white-space:nowrap; font-weight:700; color:var(--nz-text); }
+  .netz-knopf:hover, .netz-link:hover{ color:#FFF; }
+  .netz-knopf[aria-expanded="true"]{ background:var(--nz-karte); color:var(--nz-ink); border-radius:6px 6px 0 0; }
+  .netz-knopf .pfeil{ display:inline-block; margin-left:5px; font-size:10px; transition:transform .15s; }
+  .netz-knopf[aria-expanded="true"] .pfeil{ transform:rotate(180deg); }
+  .netz-rechts{ margin-left:auto; display:flex; align-items:center; gap:14px; }
+  .netz-sprache{ display:flex; border:1px solid #3A4A60; border-radius:5px; overflow:hidden; font-size:11.5px; font-weight:700; }
+  .netz-sprache a, .netz-sprache span{ padding:3px 8px; text-decoration:none; }
+  .netz-sprache [aria-current]{ background:var(--nz-blau); color:#FFF; }
+  :root[data-theme="dark"] .netz-sprache [aria-current]{ background:#2C5C93; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .netz-sprache [aria-current]{ background:#2C5C93; } }
+  .netz-mvf{ color:var(--nz-leise); text-decoration:none; white-space:nowrap; font-size:12px; }
+  .netz-mvf b{ color:var(--nz-text); }
+  .netz-mvf:hover b{ color:#FFF; text-decoration:underline; }
 
-  /* Der DE/EN-Umschalter. Er sitzt ueber dem Logo statt neben der
-     Ueberschrift: Oben rechts sucht ihn jeder, und im Textblock wuerde er
-     den Vorspann zerteilen. Auf schmalen Schirmen dreht .kopf-oben die
-     Reihenfolge um; .kopf-rechts dreht deshalb mit, sonst stuende der
-     Umschalter unter dem Logo statt darueber. */
-  .kopf-rechts{ display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
-  .sprache{
-    display:flex; margin:0; border:1px solid var(--line); border-radius:6px;
-    overflow:hidden; font-size:12.5px; font-weight:700; letter-spacing:.06em;
-  }
-  .sprache a, .sprache span{ display:block; padding:4px 11px; text-decoration:none; color:var(--ink-soft); }
-  .sprache a:hover{ background:var(--brand-tint); color:var(--brand); }
-  .sprache [aria-current]{ background:var(--brand); color:#fff; }
-  @media (max-width:760px){
-    .kopf-rechts{ align-items:flex-start; flex-direction:column-reverse; }
-  }
+  /* Mega-Menue: eine Ebene, drei Gruppen. Oeffnet per Klick, nie per Hover. */
+  .netz-mega{ position:absolute; left:0; right:0; top:100%; }
+  .netz-mega[hidden]{ display:none; }
+  .netz-mega-karte{ background:var(--nz-karte); color:var(--nz-ink);
+               border:1px solid var(--nz-linie); border-radius:0 0 12px 12px;
+               box-shadow:0 22px 50px -18px rgba(10,20,40,.45); padding:22px 26px 0; }
+  .netz-spalten{ display:grid; grid-template-columns:1.25fr 1fr 1.15fr; gap:30px; }
+  .netz-gruppe h3{ margin:0 0 9px; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:var(--nz-soft); font-weight:700; }
+  .netz-gruppe ul{ list-style:none; margin:0; padding:0; }
+  .netz-gruppe li a{ display:flex; align-items:center; gap:9px; padding:5px 8px; margin:0 -8px; border-radius:6px;
+               text-decoration:none; color:var(--nz-ink); font-size:14px; line-height:1.3; }
+  .netz-gruppe li a::before{ content:""; flex:0 0 7px; height:7px; border-radius:50%; background:var(--nz-blau); opacity:.55; }
+  .netz-gruppe.krank li a::before{ background:var(--nz-petrol); }
+  .netz-gruppe li a:hover{ background:var(--nz-tint); }
+  .netz-gruppe li a[aria-current]{ background:var(--nz-tint); color:var(--nz-blau); font-weight:700; }
+  .netz-gruppe li a[aria-current]::before{ opacity:1; }
+  .netz-gruppe.krank li a[aria-current]{ color:var(--nz-petrol); }
+  .netz-angebote li a{ align-items:flex-start; padding:7px 8px; }
+  .netz-angebote li a::before{ display:none; }
+  .netz-angebote svg{ flex:0 0 22px; width:22px; height:22px; color:#8A6E28; margin-top:1px; }
+  :root[data-theme="dark"] .netz-angebote svg{ color:var(--nz-gold); }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .netz-angebote svg{ color:var(--nz-gold); } }
+  .netz-angebote b{ display:block; font-size:14px; }
+  .netz-angebote small{ display:block; font-size:12.5px; color:var(--nz-soft); margin-top:2px; }
+  .netz-fuss{ display:flex; justify-content:space-between; gap:16px; margin-top:16px; padding:13px 0 15px;
+               border-top:1px solid var(--nz-linie); font-size:13.5px; font-weight:700; }
+  .netz-fuss a{ color:var(--nz-blau); text-decoration:none; }
+  .netz-fuss a:hover{ text-decoration:underline; }
 
-  /* Nur auf der englischen Seite: der Hinweis, dass die Hubs deutsch sind.
-     Er steht ganz oben und nicht im Fuss - wer ihn erst unten liest, hat
-     vorher fuenfzehn Kacheln angesehen, die er nicht lesen kann. */
-  .sprachnotiz{
-    background:var(--card); border:1px solid var(--line);
-    border-left:4px solid var(--brand); border-radius:8px;
-    padding:16px 20px; margin:0 0 30px;
-    font-size:14.5px; line-height:1.55; color:var(--ink-soft);
+  /* Die weisse Leiste des Hubs (bzw. die Sprunglinks der Uebersicht).
+     Klebt oben, verschwindet beim Herunterscrollen und kommt beim
+     Hochscrollen wieder. */
+  .ortsleiste{ position:sticky; top:0; z-index:50; background:var(--nz-karte,var(--card,#fff));
+               border-bottom:1px solid var(--line,#D0D8E4); transition:transform .22s ease; }
+  .ortsleiste.weg{ transform:translateY(-102%); }
+  @media (prefers-reduced-motion:reduce){ .ortsleiste{ transition:none; } }
+  .ortsleiste-innen{ display:flex; align-items:center; gap:6px; min-height:58px; }
+  .ort-name{ display:flex; align-items:center; gap:11px; text-decoration:none; color:var(--ink,#111); margin-right:18px; min-width:0; }
+  .ort-name img{ width:34px; height:34px; flex:0 0 34px; display:block; }
+  .ort-name small{ display:block; font-size:10.5px; letter-spacing:.12em; font-weight:700; color:var(--ink-soft,#444A50); }
+  .ort-name b{ display:block; font-size:14.5px; color:var(--brand,#0051A1); line-height:1.2; }
+  .ort-links{ display:flex; gap:2px; }
+  .ort-links a{ padding:18px 11px 17px; font-size:13.5px; font-weight:700; color:var(--ink-soft,#444A50);
+               text-decoration:none; border-bottom:2px solid transparent; white-space:nowrap; }
+  .ort-links a:hover, .ort-links a[aria-current]{ color:var(--brand,#0051A1); border-bottom-color:var(--brand,#0051A1); }
+  .ort-nl{ margin-left:auto; background:var(--action,#BE9E53); color:var(--on-action,#2A2207); font-weight:700;
+               font-size:13.5px; padding:9px 16px; border-radius:7px; text-decoration:none; white-space:nowrap; }
+  .ort-nl:hover{ background:var(--action-deep,#A5873F); }
+  .ort-menue{ display:none; margin-left:8px; align-items:center; gap:7px; background:none; cursor:pointer;
+               border:1px solid var(--line,#D0D8E4); border-radius:7px; padding:8px 12px;
+               font:inherit; font-size:13.5px; font-weight:700; color:var(--ink,#111); }
+  .ort-menue svg{ width:18px; height:18px; }
+  .netz a:focus-visible, .ortsleiste a:focus-visible, .ort-menue:focus-visible{ outline:2px solid var(--brand,#0051A1); outline-offset:2px; }
+
+  /* Smartphone-Menue: alles untereinander, nichts weiter aufzuklappen. */
+  .netz-handy{ --nz-petrol:#0E6E71; --nz-blau:var(--brand,#0051A1); --nz-ink:var(--ink,#111); --nz-soft:var(--ink-soft,#444A50);
+               --nz-tint:var(--brand-tint,#E1EAF6); --nz-gold:#BE9E53; }
+  :root[data-theme="dark"] .netz-handy{ --nz-petrol:#4FC2C4; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .netz-handy{ --nz-petrol:#4FC2C4; } }
+  .netz-handy{ position:fixed; inset:0; z-index:90; background:var(--nz-karte,#fff); color:var(--ink,#111);
+               overflow-y:auto; padding:0 0 30px; }
+  .netz-handy[hidden]{ display:none; }
+  .netz-handy-kopf{ position:sticky; top:0; display:flex; justify-content:space-between; align-items:center;
+               padding:12px 18px; background:var(--nz-karte,#fff); border-bottom:1px solid var(--line,#D0D8E4); font-weight:700; }
+  .netz-handy-kopf button{ font:inherit; font-size:14px; font-weight:700; background:none; border:1px solid var(--line,#D0D8E4);
+               border-radius:7px; padding:7px 12px; cursor:pointer; color:inherit; }
+  .netz-handy section{ padding:14px 18px 6px; border-bottom:1px solid var(--line-soft,#E3EAF3); }
+  .netz-handy h3{ margin:0 0 6px; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:var(--ink-soft,#444A50); }
+  .netz-handy .netz-gruppe h3{ margin-top:10px; font-size:10.5px; }
+  .netz-handy ul{ list-style:none; margin:0; padding:0; }
+  .netz-handy li a, .netz-handy .handy-zeile{ display:flex; justify-content:space-between; align-items:center;
+               padding:10px 0; min-height:44px; text-decoration:none; color:var(--ink,#111); font-size:15px; }
+  /* Die Hubliste ist aus dem Mega-Menue geklont; dort stehen Punkt und Name
+     linksbuendig nebeneinander, nicht auf Abstand wie die Zeilen oben. */
+  .netz-handy .netz-gruppe li a{ margin:0; padding:9px 6px; justify-content:flex-start; gap:10px; min-height:42px; }
+  .netz-handy .netz-angebote li a{ align-items:flex-start; }
+  .netz-handy .netz-gruppe li a[aria-current]::after{ content:"✓"; margin-left:auto; color:var(--brand,#0051A1); }
+  .netz-handy .netz-sprache span[aria-current]{ background:var(--brand,#0051A1); color:#FFF; }
+  .netz-handy .netz-sprache a{ color:var(--ink,#111); }
+  .netz-handy .handy-nl{ display:block; text-align:center; margin:16px 18px; background:var(--action,#BE9E53);
+               color:var(--on-action,#2A2207); font-weight:700; padding:13px; border-radius:8px; text-decoration:none; }
+  .netz-handy .handy-unten{ display:flex; flex-wrap:wrap; gap:14px 22px; align-items:center; padding:16px 18px; font-size:13.5px; }
+  .netz-handy .handy-unten a{ color:var(--ink-soft,#444A50); }
+  .netz-handy .netz-sprache{ border-color:var(--line,#D0D8E4); }
+
+  @media (max-width:980px){ .netz-mvf .lang{ display:none; } }
+  @media (max-width:860px){
+    .netz-rechts, .netz-link{ display:none; }
+    .netz-spalten{ grid-template-columns:1fr 1fr; }
+    .netz-angebote{ grid-column:1 / -1; }
+    .ort-links, .ort-nl{ display:none; }
+    .ort-menue{ display:inline-flex; margin-left:auto; }
+    .ortsleiste-innen{ min-height:56px; }
   }
-  .sprachnotiz b{ display:block; color:var(--ink); font-size:16px; margin-bottom:3px; }
+  @media (max-width:560px){
+    .netz-mega-karte{ border-radius:0 0 10px 10px; padding:16px 16px 0; max-height:calc(100vh - 60px); overflow-y:auto; }
+    .netz-spalten{ grid-template-columns:1fr; gap:14px; }
+    .netz-marke{ border-right:0; padding-right:4px; letter-spacing:.06em; }
+    .ort-name b{ font-size:13.5px; }
+  }
+  @media print{ .netz, .ortsleiste, .netz-handy{ display:none !important; } }
 </style>
 
-<header class="top">
-  <div class="wrap kopf-oben">
-    <div>
-      <p class="eyebrow">Monitor Versorgungsforschung</p>
-      <h1>The Knowledge Hubs</h1>
-      <p class="standfirst">Research portals for the German healthcare system: one search term opens the
-      live search in every relevant database — and each morning brings a new selection of
-      studies. This page explains what the hubs do; the hubs themselves are in German.</p>
+<nav class="netz" aria-label="All Knowledge Hubs" data-hier="knowledge-hubs.m-vf.de">
+  <div class="netz-innen wrap">
+    <a class="netz-marke" href="https://knowledge-hubs.m-vf.de/" title="Overview of all Knowledge Hubs">
+      <img src="../logo/hub-icon.svg" alt="" width="20" height="20">
+      <span>KNOWLEDGE<b>-HUBS</b></span>
+    </a>
+    <button class="netz-knopf" type="button" id="netzKnopf" aria-expanded="false" aria-controls="netzMega">All hubs<span class="pfeil" aria-hidden="true">▼</span></button>
+    <a class="netz-link" href="about-the-hubs.html">About the hubs</a>
+    <div class="netz-rechts">
+      <div class="netz-sprache" role="group" aria-label="Language">
+        <a href="../" lang="de" hreflang="de" aria-label="Deutsch" title="Diese Seite auf Deutsch">DE</a>
+        <span aria-current="true" lang="en" title="English" aria-label="English">EN</span>
+      </div>
+      <a class="netz-mvf" href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=netzleiste" target="_blank" rel="noopener"><span class="lang">a service of </span><b>Monitor Versorgungsforschung</b> ↗</a>
     </div>
-    <div class="kopf-rechts">
-      <p class="sprache"><a href="/" hreflang="de" lang="de" title="Diese Seite auf Deutsch">DE</a><span aria-current="true">EN</span></p>
-      <a class="marke" href="https://www.monitor-versorgungsforschung.de/" target="_blank" rel="noopener" title="Monitor Versorgungsforschung — publisher of these portals">
-        <img src="/logo/mvf-logo.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
-      </a>
+  </div>
+
+  <div class="netz-mega" id="netzMega" hidden>
+    <div class="wrap"><div class="netz-mega-karte">
+      <div class="netz-spalten">
+        <div class="netz-gruppe">
+          <h3>Topics in care · 11</h3>
+          <ul>
+            <li><a data-domain="wissen.m-vf.de" href="https://wissen.m-vf.de/">Health Services Research</a></li>
+            <li><a data-domain="ncd.m-vf.de" href="https://ncd.m-vf.de/">Chronic Conditions</a></li>
+            <li><a data-domain="ki.m-vf.de" href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></li>
+            <li><a data-domain="gender.m-vf.de" href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></li>
+            <li><a data-domain="longevity.m-vf.de" href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></li>
+            <li><a data-domain="healthliteracy.m-vf.de" href="https://healthliteracy.m-vf.de/">Health Literacy</a></li>
+            <li><a data-domain="klima.m-vf.de" href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></li>
+            <li><a data-domain="impfen.m-vf.de" href="https://impfen.m-vf.de/">Vaccination</a></li>
+            <li><a data-domain="safety.m-vf.de" href="https://safety.m-vf.de/">Patient Safety</a></li>
+            <li><a data-domain="pflege.m-vf.de" href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></li>
+            <li><a data-domain="mental.m-vf.de" href="https://mental.m-vf.de/">Mental Health</a></li>
+          </ul>
+        </div>
+        <div class="netz-gruppe krank">
+          <h3>Disease areas · 4</h3>
+          <ul>
+            <li><a data-domain="adipositas.m-vf.de" href="https://adipositas.m-vf.de/">Obesity</a></li>
+            <li><a data-domain="diabetes.m-vf.de" href="https://diabetes.m-vf.de/">Diabetes</a></li>
+            <li><a data-domain="kardio.m-vf.de" href="https://kardio.m-vf.de/">Cardiology</a></li>
+            <li><a data-domain="onkologie.m-vf.de" href="https://onkologie.m-vf.de/">Oncology</a></li>
+          </ul>
+        </div>
+        <div class="netz-gruppe netz-angebote">
+          <h3>More from MVF</h3>
+          <ul>
+            <li><a href="https://innofonds.m-vf.de/">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10 12 4l9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 20h18"/></svg>
+              <span><b>Innovationsfonds-Wissen</b><small>Projects and decisions of the German Innovation Fund</small></span></a></li>
+            <li><a href="https://wissen.m-vf.de/ausschreibungen.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><path d="M12 12l6-6"/></svg>
+              <span><b>Funding radar</b><small>Open calls for research funding, updated twice a week</small></span></a></li>
+            <li><a href="https://knowledge-hubs.m-vf.de/curatiohub.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7.5" width="18" height="12.5" rx="2"/><path d="M9 7.5V5.5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5.5v2"/><path d="M3 13h18"/></svg>
+              <span><b>CuratioHub</b><small>Jobs in health services research, public health and medicine</small></span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="netz-fuss">
+        <a href="./#newsletter" data-netz-nl>Newsletters of the hubs ›</a>
+        <a href="https://knowledge-hubs.m-vf.de/">Overview of all hubs →</a>
+      </div>
+    </div></div>
+  </div>
+</nav>
+<script>
+// Laeuft erst, wenn das Dokument steht: Die weisse Leiste und das
+// Smartphone-Menue folgen erst NACH diesem Baustein.
+(function (los) {
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', los);
+  else los();
+})(function () {
+  var netz = document.querySelector('.netz');
+  if (!netz) return;
+  var hier = netz.getAttribute('data-hier');
+  var knopf = document.getElementById('netzKnopf');
+  var mega = document.getElementById('netzMega');
+
+  // „Hier bin ich": der eigene Hub im Menue.
+  Array.prototype.forEach.call(netz.querySelectorAll('a[data-domain]'), function (a) {
+    if (a.getAttribute('data-domain') === hier) a.setAttribute('aria-current', 'page');
+  });
+
+  function zu(fokus) {
+    mega.hidden = true; knopf.setAttribute('aria-expanded', 'false');
+    if (fokus) knopf.focus();
+  }
+  knopf.addEventListener('click', function () {
+    var auf = knopf.getAttribute('aria-expanded') === 'true';
+    if (auf) { zu(false); return; }
+    mega.hidden = false; knopf.setAttribute('aria-expanded', 'true');
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !mega.hidden) zu(true);
+  });
+  document.addEventListener('click', function (e) {
+    if (!mega.hidden && !netz.contains(e.target)) zu(false);
+  });
+
+  // Die weisse Leiste: weg beim Herunterscrollen, zurueck beim Hochscrollen.
+  // Die Sprungleiste darunter rueckt mit (--ort-h), sonst klebte sie unter
+  // einer Leiste, die gerade nicht da ist.
+  var ort = document.querySelector('.ortsleiste');
+  if (ort) {
+    var zuletzt = window.scrollY, hoehe = ort.offsetHeight;
+    var setze = function (weg) {
+      ort.classList.toggle('weg', weg);
+      document.documentElement.style.setProperty('--ort-h', weg ? '0px' : hoehe + 'px');
+    };
+    setze(false);
+    window.addEventListener('resize', function () { hoehe = ort.offsetHeight; setze(ort.classList.contains('weg')); });
+    window.addEventListener('scroll', function () {
+      var y = window.scrollY;
+      if (Math.abs(y - zuletzt) < 6) return;
+      setze(y > zuletzt && y > 240);
+      zuletzt = y;
+    }, { passive: true });
+  }
+
+  // Smartphone: „Menue" oeffnet eine Seite mit allem. Die Hubliste wird aus
+  // dem Mega-Menue uebernommen, damit sie nur an einer Stelle steht.
+  var menueKnopf = document.getElementById('ortMenue');
+  var handy = document.getElementById('netzHandy');
+  if (menueKnopf && handy) {
+    var platz = handy.querySelector('[data-netz-hubs]');
+    if (platz) Array.prototype.forEach.call(mega.querySelectorAll('.netz-gruppe'), function (g) {
+      platz.appendChild(g.cloneNode(true));
+    });
+    var schliessen = handy.querySelector('[data-netz-zu]');
+    var oeffne = function () { handy.hidden = false; menueKnopf.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; schliessen.focus(); };
+    var schliesse = function () { handy.hidden = true; menueKnopf.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; menueKnopf.focus(); };
+    menueKnopf.addEventListener('click', oeffne);
+    schliessen.addEventListener('click', schliesse);
+    handy.addEventListener('click', function (e) { if (e.target.closest('a')) schliesse(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !handy.hidden) schliesse(); });
+  }
+});
+</script>
+<nav class="ortsleiste start" aria-label="On this page">
+  <div class="ortsleiste-innen wrap">
+    <div class="ort-links">
+      <a href="#themen">Topics</a>
+      <a href="#so-funktionierts">How it works</a>
+      <a href="#angebote">More from MVF</a>
+      <a href="#studien">New studies</a>
     </div>
+    <a class="ort-nl" href="#newsletter">Newsletters</a>
+    <button class="ort-menue" id="ortMenue" type="button" aria-expanded="false" aria-controls="netzHandy">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Menu</button>
+  </div>
+</nav>
+
+<div class="netz-handy" id="netzHandy" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+  <div class="netz-handy-kopf"><span>Menu</span><button type="button" data-netz-zu>Close ✕</button></div>
+  <section>
+    <h3>On this page</h3>
+    <ul>
+      <li><a href="#themen">Topics <span aria-hidden="true">›</span></a></li>
+      <li><a href="#so-funktionierts">How it works <span aria-hidden="true">›</span></a></li>
+      <li><a href="#angebote">More from MVF <span aria-hidden="true">›</span></a></li>
+      <li><a href="#studien">New studies <span aria-hidden="true">›</span></a></li>
+      <li><a href="about-the-hubs.html">About the hubs <span aria-hidden="true">›</span></a></li>
+    </ul>
+  </section>
+  <section data-netz-hubs><h3>All hubs</h3></section>
+  <a class="handy-nl" href="#newsletter">Newsletters of the hubs</a>
+  <div class="handy-unten">
+    <div class="netz-sprache" role="group" aria-label="Language"><a href="../" lang="de" hreflang="de" aria-label="Deutsch">DE</a><span aria-current="true" lang="en" aria-label="English">EN</span></div>
+    <a href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=netzleiste" target="_blank" rel="noopener">a service of Monitor Versorgungsforschung ↗</a>
+    <a href="legal-notice.html">Legal notice</a>
+    <a href="privacy.html">Privacy</a>
+  </div>
+</div>
+
+<header class="held">
+  <div class="wrap">
+    <p class="held-eyebrow">KNOWLEDGE HUBS</p>
+    <h1>Current research for the German healthcare system</h1>
+    <p class="held-lede">One search term, every database. New studies are added each morning, summarised in German.</p>
+    <form class="suche" id="suchform" role="search" action="https://wissen.m-vf.de/" method="get">
+      <div class="suche-zeile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <label class="sr" for="suchfeld">Search term</label>
+        <input id="suchfeld" name="q" type="search" autocomplete="off" spellcheck="false"
+               placeholder="Enter a term, e.g. sepsis, telemedicine, heat …"
+               role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="vorschlag">
+        <button class="suche-knopf" type="submit">Search</button>
+      </div>
+      <div class="vorschlag" id="vorschlag" hidden></div>
+    </form>
+    <p class="direkt">Or go straight to:
+      <a href="#themen" data-setzt-filter="thema">Topics in care ↓</a>
+      <a href="#themen" data-setzt-filter="indikation">Disease areas ↓</a>
+      <a href="#studien">New studies ↓</a></p>
+    <ul class="haken">
+      <li>15 topic hubs</li><li>updated daily</li><li>free, no registration</li><li>no cookies</li>
+    </ul>
   </div>
 </header>
 
-<main class="wrap">
-  <p class="sprachnotiz"><b>A note on language</b>
+<div class="wrap notiz-rahmen">  <p class="sprachnotiz"><b>A note on language</b>
   The hubs are written in German: the interface, the search glossary and the daily study
   summaries. The literature behind them is international and English-language — what the hubs
   add is the bridge into German. If you read German, everything here is open to you at no cost
   and without registration. If you do not, our English-language journal
   <a href="https://www.monitor-healthcare-research.com/" target="_blank" rel="noopener">Monitor
   Healthcare Research</a> is the better starting point.</p>
+</div>
 
-  <h2>15 hubs are online</h2>
-  <p class="vor">Together 1189 databases, 563 of them with a genuine live search;
-  2325 search terms in the German–English glossary. Each hub stands on its own and
-  has its own daily newsletter. The search spaces do touch — depending on the hub, 3 to 28
-  per cent of the works found also fall within the field of another (checked 08/2026);
-  the upper figure concerns health literacy and AI alone, and without the AI hub the range
-  reaches only 13 per cent.
-  In the daily selection this barely shows: of 3692 studies delivered so far,
-  133 have appeared in more than one hub.</p>
-
-
-  <h3 class="teil">Topics in care <span class="teil-zahl">11</span></h3>
-  <p class="vor">These hubs follow a topic in health care across all conditions — how care is
-  given, how people are vaccinated, how services are digitalised and how decisions are
-  made. What gets selected is what changes care delivery.</p>
-
-  <div class="gitter">
-      <article class="hub">
-        <p class="hub-thema">Digitalisation, AI & health</p>
-        <h3><a href="https://ki.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Digitalisation, AI & Health</a></h3>
-        <p class="hub-satz">Digital applications and artificial intelligence in care. Searches two research cultures at once: medical journals and the conference literature of computer science.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>106</dd></div>
-          <div><dt>of them live search</dt><dd>49</dd></div>
-          <div><dt>Categories</dt><dd>10</dd></div>
-          <div><dt>Glossary terms</dt><dd>253</dd></div>
-          <div><dt>Studies in the archive</dt><dd>283</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://ki.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://ki.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">ki.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Sex, gender & health</p>
-        <h3><a href="http://gender.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Sex- and Gender-Sensitive Medicine</a></h3>
-        <p class="hub-satz">Sex and gender as factors in care: diagnosis, dosing and access — and whether a difference stems from biology or from the path to treatment.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>93</dd></div>
-          <div><dt>of them live search</dt><dd>45</dd></div>
-          <div><dt>Categories</dt><dd>10</dd></div>
-          <div><dt>Glossary terms</dt><dd>173</dd></div>
-          <div><dt>Studies in the archive</dt><dd>258</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="http://gender.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="http://gender.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">gender.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Healthy ageing & longevity</p>
-        <h3><a href="https://longevity.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Healthy Ageing & Longevity</a></h3>
-        <p class="hub-satz">Lifespan and healthy life years: prevention, geriatrics and ageing cohorts — and the biology of ageing, which gets a category of its own here.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>100</dd></div>
-          <div><dt>of them live search</dt><dd>51</dd></div>
-          <div><dt>Categories</dt><dd>11</dd></div>
-          <div><dt>Glossary terms</dt><dd>222</dd></div>
-          <div><dt>Studies in the archive</dt><dd>268</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://longevity.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://longevity.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">longevity.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Health literacy</p>
-        <h3><a href="https://healthliteracy.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Health Literacy</a></h3>
-        <p class="hub-satz">Understandable health information, decision aids and patient involvement — and the question of who is not reached by any of it.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>76</dd></div>
-          <div><dt>of them live search</dt><dd>36</dd></div>
-          <div><dt>Categories</dt><dd>10</dd></div>
-          <div><dt>Glossary terms</dt><dd>165</dd></div>
-          <div><dt>Studies in the archive</dt><dd>272</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://healthliteracy.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://healthliteracy.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">healthliteracy.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Heat, climate & health</p>
-        <h3><a href="https://klima.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Heat, Climate & Health</a></h3>
-        <p class="hub-satz">Heat, extreme weather and climate change, and what they mean for care delivery, practice and population health. With a category of its own for climate and environmental measurement data rather than publications.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>90</dd></div>
-          <div><dt>of them live search</dt><dd>40</dd></div>
-          <div><dt>Categories</dt><dd>9</dd></div>
-          <div><dt>Glossary terms</dt><dd>240</dd></div>
-          <div><dt>Studies in the archive</dt><dd>268</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://klima.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://klima.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">klima.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Vaccination & immunisation</p>
-        <h3><a href="https://impfen.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Vaccination</a></h3>
-        <p class="hub-satz">Vaccination as a question of care delivery: coverage, willingness to vaccinate and what raises uptake — with categories of their own for notifiable-disease data and for the safety registers of PEI, EMA and CDC.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>97</dd></div>
-          <div><dt>of them live search</dt><dd>50</dd></div>
-          <div><dt>Categories</dt><dd>10</dd></div>
-          <div><dt>Glossary terms</dt><dd>167</dd></div>
-          <div><dt>Studies in the archive</dt><dd>263</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://impfen.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://impfen.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">impfen.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Noncommunicable diseases</p>
-        <h3><a href="https://ncd.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Chronic Conditions</a></h3>
-        <p class="hub-satz">Care for the chronically ill: diabetes, cardiovascular disease, cancer and multimorbidity — programmes, guidelines and the question of how much of it reaches everyday practice.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>102</dd></div>
-          <div><dt>of them live search</dt><dd>41</dd></div>
-          <div><dt>Categories</dt><dd>11</dd></div>
-          <div><dt>Glossary terms</dt><dd>158</dd></div>
-          <div><dt>Studies in the archive</dt><dd>263</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://ncd.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://ncd.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">ncd.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Patient safety</p>
-        <h3><a href="https://safety.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Patient Safety</a></h3>
-        <p class="hub-satz">Preventable harm in health care: treatment and medication errors, hospital-acquired infections and sepsis — and who reports, when reporting becomes a question of liability.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>75</dd></div>
-          <div><dt>of them live search</dt><dd>34</dd></div>
-          <div><dt>Categories</dt><dd>11</dd></div>
-          <div><dt>Glossary terms</dt><dd>95</dd></div>
-          <div><dt>Studies in the archive</dt><dd>257</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://safety.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://safety.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">safety.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Nursing & long-term care</p>
-        <h3><a href="https://pflege.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Nursing & Long-Term Care</a></h3>
-        <p class="hub-satz">Nursing care, long-term care and the situation of those who provide it — staffing, quality, family carers, plus expert standards and facility comparisons.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>88</dd></div>
-          <div><dt>of them live search</dt><dd>42</dd></div>
-          <div><dt>Categories</dt><dd>11</dd></div>
-          <div><dt>Glossary terms</dt><dd>156</dd></div>
-          <div><dt>Studies in the archive</dt><dd>264</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://pflege.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://pflege.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">pflege.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Mental health</p>
-        <h3><a href="https://mental.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Mental Health</a></h3>
-        <p class="hub-satz">Care for people with mental illness: access, waiting times, community-based services and crisis care — not whether treatment works, but who reaches it in time.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>72</dd></div>
-          <div><dt>of them live search</dt><dd>34</dd></div>
-          <div><dt>Categories</dt><dd>9</dd></div>
-          <div><dt>Glossary terms</dt><dd>96</dd></div>
-          <div><dt>Studies in the archive</dt><dd>252</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://mental.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://mental.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">mental.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Health services research</p>
-        <h3><a href="https://wissen.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Health Services Research</a></h3>
-        <p class="hub-satz">The first hub of the series: health services research in its full breadth — models of care, quality, governance and benefit assessment.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>57</dd></div>
-          <div><dt>of them live search</dt><dd>29</dd></div>
-          <div><dt>Categories</dt><dd>8</dd></div>
-          <div><dt>Glossary terms</dt><dd>170</dd></div>
-          <div><dt>Studies in the archive</dt><dd>310</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://wissen.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://wissen.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">wissen.m-vf.de</p>
-      </article>
+<main>
+<section class="abschnitt" id="themen" aria-labelledby="themenTitel">
+  <div class="wrap">
+    <h2 id="themenTitel">Choose your topic</h2>
+    <p class="vor">Each hub has its own databases, its own search and its own daily newsletter.</p>
+    <div class="filter" id="themenFilter" role="group" aria-label="Filter hubs">
+      <button type="button" data-teil="alle" aria-pressed="true">All<span>15</span></button>
+      <button type="button" data-teil="thema" aria-pressed="false">Topics in care<span>11</span></button>
+      <button type="button" data-teil="indikation" aria-pressed="false">Disease areas<span>4</span></button>
+    </div>
+    <p class="gruppe-titel" data-teil="thema">TOPICS IN CARE</p>
+    <div class="kacheln gruppe" data-teil="thema">
+      <a class="kachel ausgang" href="https://wissen.m-vf.de/" data-teil="thema">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="18.5" r="2.2"/><circle cx="19" cy="18.5" r="2.2"/><path d="M12 7.2v4.3M12 11.5l-5.6 5M12 11.5l5.6 5"/></svg>
+        <span class="txt"><small>THE FIRST HUB OF THE SERIES</small><b>Health Services Research</b>
+        <span class="satz">Health services research in full breadth: models of care, quality, governance, benefit assessment</span>
+        <span class="zahl">57 databases</span></span>
+      </a>
+      <a class="kachel" href="https://ncd.m-vf.de/" data-teil="thema">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 2"/></svg><b>Chronic Conditions</b>
+        <span class="satz">Programmes and guidelines for people with chronic conditions</span>
+        <span class="zahl">102 databases</span>
+      </a>
+      <a class="kachel" href="https://ki.m-vf.de/" data-teil="thema">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.6"/><rect x="10" y="10" width="4" height="4" rx=".6"/><path d="M9.5 3.5V7M14.5 3.5V7M9.5 17v3.5M14.5 17v3.5M3.5 9.5H7M3.5 14.5H7M17 9.5h3.5M17 14.5h3.5"/></svg><b>Digitalisation, AI &amp; Health</b>
+        <span class="satz">Digital applications and AI in health care</span>
+        <span class="zahl">106 databases</span>
+      </a>
+      <a class="kachel" href="https://healthliteracy.m-vf.de/" data-teil="thema">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5c3-1 6-.8 9 1 3-1.8 6-2 9-1v13c-3-1-6-.8-9 1-3-1.8-6-2-9-1z"/><path d="M12 6.5v13"/></svg><b>Health Literacy</b>
+        <span class="satz">Understandable information, decision aids</span>
+        <span class="zahl">76 databases</span>
+      </a>
+      <a class="kachel" href="https://longevity.m-vf.de/" data-teil="thema">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h11M6.5 20.5h11"/><path d="M8 3.5c0 4.6 8 4.4 8 8.5s-8 3.9-8 8.5M16 3.5c0 4.6-8 4.4-8 8.5s8 3.9 8 8.5"/></svg><b>Healthy Ageing &amp; Longevity</b>
+        <span class="satz">Prevention, geriatrics, biology of ageing</span>
+        <span class="zahl">100 databases</span>
+      </a>
+      <a class="kachel" href="https://klima.m-vf.de/" data-teil="thema">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.3V5a2 2 0 0 1 4 0v9.3a3.6 3.6 0 1 1-4 0z"/><path d="M10.5 10v6.6"/><path d="M17.5 3v1.6M21 7h-1.6M20 4.4l-1.1 1.1M17.5 9.4a2.4 2.4 0 0 0 0-4.8"/></svg><b>Heat, Climate &amp; Health</b>
+        <span class="satz">Climate change and care, with measurement data</span>
+        <span class="zahl">90 databases</span>
+      </a>
+      <a class="kachel" href="https://mental.m-vf.de/" data-teil="thema">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21v-3.2A7 7 0 1 1 18.8 11l1.7 3.3-1.8.6V17a2 2 0 0 1-2 2H15v2"/><path d="M11.4 8.6a2 2 0 0 1 3.1 1.9 2 2 0 0 1-1.6 2"/></svg><b>Mental Health</b>
+        <span class="satz">Access, waiting times, crisis care</span>
+        <span class="zahl">72 databases</span>
+      </a>
+      <a class="kachel" href="https://pflege.m-vf.de/" data-teil="thema">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 11s-3.6-2.2-3.6-4.6A2.1 2.1 0 0 1 12.5 5a2.1 2.1 0 0 1 3.6 1.4c0 2.4-3.6 4.6-3.6 4.6z"/><path d="M3 14h2.8l3.4 2.6h4.2a1.5 1.5 0 0 0 0-3H10"/><path d="M5.8 20.5 8 18.8h6.2l5.9-4.8a1.6 1.6 0 0 0-2.1-2.4l-3.6 2.4"/></svg><b>Nursing &amp; Long-Term Care</b>
+        <span class="satz">Staffing, quality, family carers</span>
+        <span class="zahl">88 databases</span>
+      </a>
+      <a class="kachel" href="https://safety.m-vf.de/" data-teil="thema">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5.6c0 4.4 3 8 7 9.4 4-1.4 7-5 7-9.4V6z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg><b>Patient Safety</b>
+        <span class="satz">Medical errors, infections, sepsis</span>
+        <span class="zahl">75 databases</span>
+      </a>
+      <a class="kachel" href="http://gender.m-vf.de/" data-teil="thema">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="4.2"/><path d="M9 13.2V21M6.2 18h5.6"/><circle cx="15.5" cy="13.5" r="4.2"/><path d="M18.5 10.5 21.5 7.5M18 7.5h3.5V11"/></svg><b>Sex- and Gender-Sensitive Medicine</b>
+        <span class="satz">Sex and gender in diagnosis, dosing, access</span>
+        <span class="zahl">93 databases</span>
+      </a>
+      <a class="kachel" href="https://impfen.m-vf.de/" data-teil="thema">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17.5 3 3.5 3.5M19.2 4.8 15.8 8.2M14 5.5l4.5 4.5M16.2 7.8 8 16H5v-3l8.2-8.2M8.2 10.8l1.6 1.6M10.6 8.4l1.6 1.6M5 16l-2 2"/></svg><b>Vaccination</b>
+        <span class="satz">Coverage, willingness to vaccinate, safety registers</span>
+        <span class="zahl">97 databases</span>
+      </a>
+    </div>
+    <p class="gruppe-titel krank" data-teil="indikation">DISEASE AREAS</p>
+    <div class="kacheln gruppe" data-teil="indikation">
+      <a class="kachel krank" href="https://kardio.m-vf.de/" data-teil="indikation">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/><path d="M6.6 12.4h3l1.4-2.4 2 4 1.4-1.6h3"/></svg><b>Cardiology</b>
+        <span class="satz">Heart and circulation, strong European focus</span>
+        <span class="zahl">53 databases</span>
+      </a>
+      <a class="kachel krank" href="https://diabetes.m-vf.de/" data-teil="indikation">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z"/><path d="M9.4 15.2A2.6 2.6 0 0 0 12 17.8"/></svg><b>Diabetes</b>
+        <span class="satz">Type 1 and 2, complications, technology</span>
+        <span class="zahl">61 databases</span>
+      </a>
+      <a class="kachel krank" href="https://adipositas.m-vf.de/" data-teil="indikation">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/><path d="M7.8 9.6a6 6 0 0 1 8.4 0"/><path d="m12 11 1.6-2.2"/></svg><b>Obesity</b>
+        <span class="satz">Weight management, therapy, surgery</span>
+        <span class="zahl">65 databases</span>
+      </a>
+      <a class="kachel krank" href="https://onkologie.m-vf.de/" data-teil="indikation">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4c-2 0-3.1 1.5-3.1 3.2 0 2.3 2.1 4.6 3.1 5.9 1-1.3 3.1-3.6 3.1-5.9C15.1 5.5 14 4 12 4z"/><path d="M10.2 11 6 20.2l2.6-.8 1.2 2.3 3.4-7.2M13.8 11 18 20.2l-2.6-.8-1.2 2.3-2.6-5.4"/></svg><b>Oncology</b>
+        <span class="satz">Cancer research and cancer care</span>
+        <span class="zahl">54 databases</span>
+      </a>
+    </div>
   </div>
+</section>
 
-  <h3 class="teil">Disease areas <span class="teil-zahl">4</span></h3>
-  <p class="vor">These hubs follow a disease area. They are built differently: they read the
-  core journals of the field and show clinical <em>and</em> basic research — health
-  services research is one category within them, not the yardstick. If you want to know
-  what is moving in a field, this is the place.</p>
-
-  <div class="gitter">
-      <article class="hub">
-        <p class="hub-thema">Obesity</p>
-        <h3><a href="https://adipositas.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Obesity</a></h3>
-        <p class="hub-satz">Obesity as a question of care delivery: weight management, drug therapy and surgery — and who pays for treatment when Section 34 of the German Social Code Book V rules it out.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>65</dd></div>
-          <div><dt>of them live search</dt><dd>31</dd></div>
-          <div><dt>Categories</dt><dd>10</dd></div>
-          <div><dt>Glossary terms</dt><dd>166</dd></div>
-          <div><dt>Studies in the archive</dt><dd>263</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://adipositas.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://adipositas.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">adipositas.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Diabetes</p>
-        <h3><a href="https://diabetes.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Diabetes</a></h3>
-        <p class="hub-satz">Diabetes from some thirty core journals: type 1 and type 2, complications of the eye, kidney, nerve and foot, glucose technology and disease management programmes. Weight and bariatric surgery are covered by the sister portal adipositas.m-vf.de.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>61</dd></div>
-          <div><dt>of them live search</dt><dd>28</dd></div>
-          <div><dt>Categories</dt><dd>9</dd></div>
-          <div><dt>Glossary terms</dt><dd>87</dd></div>
-          <div><dt>Studies in the archive</dt><dd>159</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://diabetes.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://diabetes.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">diabetes.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Cardiology</p>
-        <h3><a href="https://kardio.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Cardiology</a></h3>
-        <p class="hub-satz">Heart and circulation from some 35 core journals, from Circulation to Clinical Research in Cardiology. Of all the hubs in the series the one with the strongest European focus — European cardiology publishes in European titles.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>53</dd></div>
-          <div><dt>of them live search</dt><dd>28</dd></div>
-          <div><dt>Categories</dt><dd>9</dd></div>
-          <div><dt>Glossary terms</dt><dd>88</dd></div>
-          <div><dt>Studies in the archive</dt><dd>148</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://kardio.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://kardio.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">kardio.m-vf.de</p>
-      </article>
-      <article class="hub">
-        <p class="hub-thema">Oncology</p>
-        <h3><a href="https://onkologie.m-vf.de/" target="_blank" rel="noopener">Knowledge Hub Oncology</a></h3>
-        <p class="hub-satz">Cancer research and cancer care from some thirty core journals — from Lancet Oncology to Nature. The first portal of the series built around a disease area rather than a topic in care: clinical and basic research, with health services research as one category within it.</p>
-        <dl class="zahlen">
-          <div><dt>Databases</dt><dd>54</dd></div>
-          <div><dt>of them live search</dt><dd>25</dd></div>
-          <div><dt>Categories</dt><dd>9</dd></div>
-          <div><dt>Glossary terms</dt><dd>89</dd></div>
-          <div><dt>Studies in the archive</dt><dd>164</dd></div>
-        </dl>
-        <p class="hub-wege">
-          <a class="btn" href="https://onkologie.m-vf.de/" target="_blank" rel="noopener">Open the hub</a>
-          <a class="dazu" href="https://onkologie.m-vf.de/newsletter.html" target="_blank" rel="noopener">Subscribe to the newsletter</a>
-        </p>
-        <p class="hub-adresse">onkologie.m-vf.de</p>
-      </article>
+<section class="abschnitt" id="so-funktionierts" aria-labelledby="sfTitel">
+  <div class="wrap">
+    <h2 id="sfTitel">How it works</h2>
+    <p class="vor">The same in every hub, free and without registration.</p>
+    <ol class="schritte">
+      <li><b>Enter a term</b><p>In German or English. The glossary translates German terms for the international databases.</p></li>
+      <li><b>Search every database</b><p>Each tile opens the live search in its source. Where a source does not allow that, the tile leads to its start page and says so.</p></li>
+      <li><b>New studies every morning</b><p>Selected by the editors with AI support and summarised in German. By e-mail every day on request.</p></li>
+    </ol>
+    <a class="mehr-link" href="about-the-hubs.html">More about the hubs →</a>
   </div>
+</section>
 
-  <!-- Verweis auf CuratioHub. Steht bewusst unter den Hub-Kacheln und nicht im
-       Kopf: Wer hier ankommt, sucht zuerst ein Thema, nicht eine Stelle. -->
-  <a class="karriere-band" href="/curatiohub.html">
-    <span class="kb-marke">New</span>
-    <span class="kb-text"><b>CuratioHub — the careers and jobs portal (in German)</b>
-    Positions in health services research, public health and medicine: one term, and the
-    search runs across the relevant job markets, German-language and international.</span>
-    <span class="kb-pfeil" aria-hidden="true">→</span>
-  </a>
+<section class="abschnitt" id="angebote" aria-labelledby="agTitel">
+  <div class="wrap">
+    <h2 id="agTitel">More from Monitor Versorgungsforschung</h2>
+    <div class="angebote" style="margin-top:16px">
+      <a class="angebot" href="https://innofonds.m-vf.de/"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10 12 4l9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 20h18"/></svg><b>Innovationsfonds-Wissen</b>
+        <span class="satz">Every project and decision of the German Innovation Fund, analysed and searchable (in German)</span><span class="los">Open →</span></a>
+      <a class="angebot" href="https://wissen.m-vf.de/ausschreibungen.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><path d="M12 12l6-6"/></svg><b>Funding radar</b>
+        <span class="satz">Open calls for research funding, updated twice a week (in German)</span><span class="los">Open →</span></a>
+      <a class="angebot" href="../curatiohub.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7.5" width="18" height="12.5" rx="2"/><path d="M9 7.5V5.5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5.5v2"/><path d="M3 13h18"/></svg><b>CuratioHub</b>
+        <span class="satz">Jobs in health services research, public health and medicine</span><span class="los">Open →</span></a>
+    </div>
+  </div>
+</section>
 
-  <!-- Verweis aufs Gewinnspiel zum 25. DKVF. BEFRISTET, und zwar doppelt
-       abgesichert: Der Block wird gar nicht erst erzeugt, wenn zur Bauzeit
-       schon der 25.09.2026 18:00 vorbei ist, und was einmal gebaut wurde,
-       raeumt sich unten per Skript selbst weg. Ohne das eine oder das
-       andere stuende hier im Dezember noch eine Einladung zu einer
-       Verlosung, die im September endete - und niemand faende den Grund. -->
-
-
-
-
-  <!-- Die Studien aller Hubs. Die Datei wird taeglich von
-       scripts/studien_sammeln.py gebaut; geladen wird sie erst, wenn der
-       Abschnitt ins Bild kommt - sie ist bei vollem Fenster gut ein halbes
-       Megabyte gross und darf den Seitenaufbau nicht aufhalten. -->
-  <section class="gemeinsam">
-    <h2>What all hubs have in common</h2>
-    <ul class="punkte">
-      <li><b>One search, every database</b>One term is enough: each tile opens the matching
-      live search in a new tab. Where a source does not allow that, the tile leads to the start
-      page — and says so.</li>
-      <li><b>Search in German, find in English</b>A curated search glossary translates the German
-      technical term for the international databases; German-language sources keep it.</li>
-      <li><b>New studies every morning</b>An AI selects from the new entries in PubMed what
-      matters for the German healthcare system and summarises it in German — with the result
-      figures and an assessment of how far it transfers.</li>
-      <li><b>Newsletter and downloads</b>The daily selection comes by e-mail on request, plus as
-      a Word and an Excel file. Every newsletter page also lets you subscribe to the newsletters
-      of the other hubs.</li>
-      <li><b>No cookies, no third-party services</b>Static pages without third-party analytics.
-      Fonts and images sit on our own server. How often the pages are opened we count ourselves —
-      without cookies and without storing IP addresses.</li>
-      <li><b>Free and open</b>No account, no registration, no paywall. Where a database itself
-      requires a licence, the tile is marked as licence-restricted.</li>
+<section class="abschnitt" id="studien" aria-labelledby="stTitel">
+  <div class="wrap">
+    <h2 id="stTitel">New studies</h2>
+    <p class="vor">The latest work from the hubs. Titles and summaries are in German; the title leads to the summary in the hub.</p>
+    <div class="filter" id="stFilter" role="group" aria-label="Filter studies">
+      <button type="button" data-teil="alle" aria-pressed="true">All hubs</button>
+      <button type="button" data-teil="thema" aria-pressed="false">Topics in care</button>
+      <button type="button" data-teil="indikation" aria-pressed="false">Disease areas</button>
+    </div>
+    <ul class="st-liste" id="stListe">
+        <li data-teil="thema"><div class="st-zeile1"><a class="st-hub" href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health ›</a><a class="st-titel" href="https://ki.m-vf.de/#studie-42843886" lang="de">KI-gestützte Prognosevorhersage im Schlaganfall: Echtzeit-Validierung in Klinikroutine</a></div><p class="st-erg"><span lang="de">Studienprotokoll (Rekrutierung läuft); primäre Ergebnisse zu Machbarkeit, Usability und Vorhersagegüte waren zum Zeitpunkt der Publikation noch ausstehend. Sekundäre Endpunkte: …</span> · <a href="https://ki.m-vf.de/#studie-42843886">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="thema"><div class="st-zeile1"><a class="st-hub" href="https://healthliteracy.m-vf.de/">Health Literacy ›</a><a class="st-titel" href="https://healthliteracy.m-vf.de/#studie-42842248" lang="de">Chatbot verbessert Krebsrisiko-Verständnis bei jungen Patienten mit genetischer Disposition</a></div><p class="st-erg"><span lang="de">Nach der Intervention hatten 78% (42/54) der Chatbot-Gruppe gegenüber 37% (19/52) der Kontrollgruppe genaue Kenntnisse über Krebsrisiko bis Alter 30 (OR 3,50, p=0,005). Verbessertes …</span> · <a href="https://healthliteracy.m-vf.de/#studie-42842248">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="thema"><div class="st-zeile1"><a class="st-hub" href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity ›</a><a class="st-titel" href="https://longevity.m-vf.de/#studie-42842818" lang="de">Hitzewellen gefährden geriatrische Versorgungspfade – Stresstest zeigt Systemfragmentierung</a></div><p class="st-erg"><span lang="de">45,5 % der Stationen meldeten zunächst unerträgliche Patientenzimmertemperaturen, 88,4 % Personalermüdung. Eine Woche später besserten sich die Akutsymptome (tolerable Temperaturen 53,6 % → …</span> · <a href="https://longevity.m-vf.de/#studie-42842818">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="thema"><div class="st-zeile1"><a class="st-hub" href="https://klima.m-vf.de/">Heat, Climate &amp; Health ›</a><a class="st-titel" href="https://klima.m-vf.de/#studie-42843930" lang="de">Gesundheitswesen als Klimaverschärfer: Emissionen und Maßnahmen zur Reduktion</a></div><p class="st-erg"><span lang="de">Der Gesundheitssektor verursacht ca. 4,6 % globaler Nettoemissionen und trägt damit zu Hitzewellen, Luftverschmutzung, Trockenheit, Extremwetterereignissen und verstärkten …</span> · <a href="https://klima.m-vf.de/#studie-42843930">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://mental.m-vf.de/">Mental Health ›</a><a class="st-titel" href="https://mental.m-vf.de/#studie-42841763" lang="de">Kontingenz-Management bei Heroinabhängigkeit wirkt selektiv auf zwei Subgruppen</a></div><p class="st-erg"><span lang="de">Vier Klassen identifiziert: (1) weniger komplex/niedriger Alkohol/hohe Quitabsicht (n=115), (2) komplexer/niedriger Alkohol/hohe Absicht (n=287), (3) komplexer/hoher Alkohol/hohe Absicht …</span> · <a href="https://mental.m-vf.de/#studie-42841763">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care ›</a><a class="st-titel" href="https://pflege.m-vf.de/#studie-42843928" lang="de">Nurse-led Collaborative Care versus psychologisch geleitete Selbsthilfe bei stressbedingten psychischen Störungen in der Primärversorgung</a></div><p class="st-erg"><span lang="de">Beide Gruppen zeigten große signifikante Verbesserungen (PSS-10, Erschöpfung, Schlaf, Depression, Angst, Lebensqualität). GSH-CBT war kleine Effektstärke überlegen (d=0,22), aber Nurse-led …</span> · <a href="https://pflege.m-vf.de/#studie-42843928">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="indikation" hidden data-mehr><div class="st-zeile1"><a class="st-hub krank" href="https://adipositas.m-vf.de/">Obesity ›</a><a class="st-titel" href="https://adipositas.m-vf.de/#studie-42842171" lang="de">GLP-1-Rezeptoragonisten und SGLT2-Inhibitoren: Disparitäten beim Zugang bleiben</a></div><p class="st-erg"><span lang="de">Persistent verringerte Verordnungsraten für Black und Hispanic patients, Medicaid-Versicherte, niedrigere Einkommensgruppen und ältere Erwachsene trotig gestiegener Verordnungen nach …</span> · <a href="https://adipositas.m-vf.de/#studie-42842171">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="indikation" hidden data-mehr><div class="st-zeile1"><a class="st-hub krank" href="https://onkologie.m-vf.de/">Oncology ›</a><a class="st-titel" href="https://onkologie.m-vf.de/#studie-42843562" lang="de">ctDNA-Dynamik nach Resektion bestimmt Therapie-Strategien beim Kolorektalkarzinom</a></div><p class="st-erg"><span lang="de">Postoperative ctDNA-Muster bei 402 Patienten erfasst; Details zu ctDNA-Clearance, Persistenz und Zusammenhang mit TOMR-Eligibilität für adaptive Therapiesteuerung angekündigt. Studie …</span> · <a href="https://onkologie.m-vf.de/#studie-42843562">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://safety.m-vf.de/">Patient Safety ›</a><a class="st-titel" href="https://safety.m-vf.de/#studie-42841341" lang="de">Dosierungsfehler bei Antibiotika in Brasilien: Watch- und Reserve-Klassen besonders betroffen</a></div><p class="st-erg"><span lang="de">Dosierungsfehler (Auslassungen, falsche Frequenz) machten 31,7% aller Medikationsfehler aus; Neugeborene, Säuglinge und ältere Erwachsene waren überrepräsentiert (OR 3,90 / 1,78 / 1,70). …</span> · <a href="https://safety.m-vf.de/#studie-42841341">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="http://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine ›</a><a class="st-titel" href="http://gender.m-vf.de/#studie-42841432" lang="de">Sexualhormone bessern Screening für hepatische Steatose bei Diabetes Typ 2</a></div><p class="st-erg"><span lang="de">Bei Männern: höheres Testosteron, T/E2-Ratio, FSH und LH invers assoziiert mit MASLD; höheres DHEA positiv assoziiert. Bei Frauen: höheres DHEA positiv mit MASLD, Prolactin moderat invers. …</span> · <a href="http://gender.m-vf.de/#studie-42841432">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://impfen.m-vf.de/">Vaccination ›</a><a class="st-titel" href="https://impfen.m-vf.de/#studie-42842944" lang="de">Impfskepsis gegen COVID-19-Booster clustert in Haushalten und Gemeinden – China</a></div><p class="st-erg"><span lang="de">27,0 % zeigten gleichzeitige Hesitancy bei aktuellen und zukünftigen Booster-Absichten; 77,73 % der Varianz waren auf Haushalts- und Gemeinde-Ebene zurückzuführen; Selbstwirksamkeit und …</span> · <a href="https://impfen.m-vf.de/#studie-42842944">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://wissen.m-vf.de/">Health Services Research ›</a><a class="st-titel" href="https://wissen.m-vf.de/#studie-42842596" lang="de">Ärztevariabilität dominiert Schicht-Effekte in der ED</a></div><p class="st-erg"><span lang="de">Laborquoten 9,5% (p=0,997), Bildgebung 12,6–13,5% (p=0,485) zeigen keine signifikante Schicht-Variation. Arzt-Level-Variation deutlich größer: Labor 3,5–21,5%, Bildgebung 6,3–28,7%. …</span> · <a href="https://wissen.m-vf.de/#studie-42842596">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="indikation" hidden data-mehr><div class="st-zeile1"><a class="st-hub krank" href="https://kardio.m-vf.de/">Cardiology ›</a><a class="st-titel" href="https://kardio.m-vf.de/#studie-42844166" lang="de">Rivaroxaban bei HCM ohne Vorhofflimmern, aber mit gestörtem links-atrialem Reservoir-Strain: LA-HCM-Studie</a></div><p class="st-erg"><span lang="de">Primärer Endpunkt: Composite aus Gesamtsterblichkeit, Myokardinfarkt, ischämischem Schlaganfall (einschließlich stiller zerebraler Infarkte in MRT) und systemischer Embolie über 24 Monate. …</span> · <a href="https://kardio.m-vf.de/#studie-42844166">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://ncd.m-vf.de/">Chronic Conditions ›</a><a class="st-titel" href="https://ncd.m-vf.de/#studie-42843878" lang="de">Präoperative Versorgungspfade für Patienten mit Mehrfacherkrankungen: kaum spezialisierte Programme vorhanden</a></div><p class="st-erg"><span lang="de">Von 138 Studien mit Mehrfacherkrankungskohorten wurden 34 eingeschlossen: nur 6 (18 %) diskutierten Interventionen für gemischte Kohorten, nur 3 (9 %) berichteten über allgemeine …</span> · <a href="https://ncd.m-vf.de/#studie-42843878">Summary (German)</a></p><span class="st-datum">today</span></li>
+        <li data-teil="indikation" hidden data-mehr><div class="st-zeile1"><a class="st-hub krank" href="https://diabetes.m-vf.de/">Diabetes ›</a><a class="st-titel" href="https://diabetes.m-vf.de/#studie-42844027" lang="de">Automatische Insulinabgabe bei Typ-2-Diabetes: HbA1c um 0,7% gesenkt in 13 Wochen</a></div><p class="st-erg"><span lang="de">HbA1c fiel von 8,1% auf 7,4% (Reduktion 0,7%, 95%-KI –0,9 bis –0,6; p&lt;0,001). Time-in-Range 70–180 mg/dL stieg von 57% auf 73% (Differenz 16%, p&lt;0,001). Hypoglykämie blieb niedrig, ein Fall …</span> · <a href="https://diabetes.m-vf.de/#studie-42844027">Summary (German)</a></p><span class="st-datum">today</span></li>
     </ul>
-  </section>
+    <div class="st-unten">
+      <button type="button" id="stMehr" aria-expanded="false" aria-controls="stListe">Show more studies ▾</button>
+      <a href="https://www.monitor-versorgungsforschung.de/?typ=studie" target="_blank" rel="noopener">Search all summaries (German) ↗</a>
+    </div>
+  </div>
+</section>
 
-  <section class="studien" id="studien">
-    <h2 id="stTitel">The latest studies</h2>
-    <p class="vor" id="stVor">The most recent work from each hub — summary, result and context are in the
-    hub itself, in German.</p>
-
-    <!-- Suche ueber die Studien ALLER Hubs.
-         Sie laeuft bewusst nicht hier: Diese Seite ist statisch, sie muesste
-         den gesamten Suchbestand in den Browser laden. Heute waeren das rund
-         440 KB, bei etwa 85 neuen Studien am Tag in einem Jahr aber ein
-         Vielfaches - das truege kein Jahr. Monitor Versorgungsforschung haelt
-         die Studien ohnehin durchsuchbar vor; dort sucht eine Datenbank, nicht
-         der Browser, und die Trefferliste blaettert und filtert nach Zeitraum.
-         Ein reines GET-Formular, damit es auch ohne JavaScript funktioniert. -->
-    <form class="st-suche" method="get" target="_blank" rel="noopener"
-          action="https://www.monitor-versorgungsforschung.de/">
-      <input type="hidden" name="typ" value="studie">
-      <label class="st-suche-label" for="stSuchfeld">Search the studies of all hubs</label>
-      <div class="st-suche-zeile">
-        <input type="search" id="stSuchfeld" name="s" class="st-suche-feld" required
-               autocomplete="off" placeholder="Term, journal or author …">
-        <button type="submit" class="st-suche-knopf">Search</button>
+<section class="abschnitt" id="newsletter" aria-labelledby="nlTitel">
+  <div class="wrap">
+    <div class="nl-kasten">
+      <div>
+        <h2 id="nlTitel">New studies every morning by e-mail</h2>
+        <p>Each hub has its own study newsletter, in German. Subscribe to exactly the topics you follow – one or several.</p>
+        <p class="klein">Free, with a Word and an Excel file for the day. Confirmation by e-mail, unsubscribe at any time.</p>
       </div>
-      <p class="st-suche-fuss">Searches the German summaries of all 15 hubs, so please search in German. Results open at Monitor Versorgungsforschung in a new tab, where they can also be narrowed by period. To search a single topic, each hub has its own search box.</p>
-    </form>
+      <div>
+        <div class="nl-gruppe"><h3>TOPICS IN CARE</h3><ul><li><a href="https://wissen.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="18.5" r="2.2"/><circle cx="19" cy="18.5" r="2.2"/><path d="M12 7.2v4.3M12 11.5l-5.6 5M12 11.5l5.6 5"/></svg>Health Services Research</a></li><li><a href="https://ncd.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 2"/></svg>Chronic Conditions</a></li><li><a href="https://ki.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.6"/><rect x="10" y="10" width="4" height="4" rx=".6"/><path d="M9.5 3.5V7M14.5 3.5V7M9.5 17v3.5M14.5 17v3.5M3.5 9.5H7M3.5 14.5H7M17 9.5h3.5M17 14.5h3.5"/></svg>Digitalisation, AI &amp; Health</a></li><li><a href="https://healthliteracy.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5c3-1 6-.8 9 1 3-1.8 6-2 9-1v13c-3-1-6-.8-9 1-3-1.8-6-2-9-1z"/><path d="M12 6.5v13"/></svg>Health Literacy</a></li><li><a href="https://longevity.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h11M6.5 20.5h11"/><path d="M8 3.5c0 4.6 8 4.4 8 8.5s-8 3.9-8 8.5M16 3.5c0 4.6-8 4.4-8 8.5s8 3.9 8 8.5"/></svg>Healthy Ageing &amp; Longevity</a></li><li><a href="https://klima.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.3V5a2 2 0 0 1 4 0v9.3a3.6 3.6 0 1 1-4 0z"/><path d="M10.5 10v6.6"/><path d="M17.5 3v1.6M21 7h-1.6M20 4.4l-1.1 1.1M17.5 9.4a2.4 2.4 0 0 0 0-4.8"/></svg>Heat, Climate &amp; Health</a></li><li><a href="https://mental.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21v-3.2A7 7 0 1 1 18.8 11l1.7 3.3-1.8.6V17a2 2 0 0 1-2 2H15v2"/><path d="M11.4 8.6a2 2 0 0 1 3.1 1.9 2 2 0 0 1-1.6 2"/></svg>Mental Health</a></li><li><a href="https://pflege.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 11s-3.6-2.2-3.6-4.6A2.1 2.1 0 0 1 12.5 5a2.1 2.1 0 0 1 3.6 1.4c0 2.4-3.6 4.6-3.6 4.6z"/><path d="M3 14h2.8l3.4 2.6h4.2a1.5 1.5 0 0 0 0-3H10"/><path d="M5.8 20.5 8 18.8h6.2l5.9-4.8a1.6 1.6 0 0 0-2.1-2.4l-3.6 2.4"/></svg>Nursing &amp; Long-Term Care</a></li><li><a href="https://safety.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5.6c0 4.4 3 8 7 9.4 4-1.4 7-5 7-9.4V6z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg>Patient Safety</a></li><li><a href="http://gender.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="4.2"/><path d="M9 13.2V21M6.2 18h5.6"/><circle cx="15.5" cy="13.5" r="4.2"/><path d="M18.5 10.5 21.5 7.5M18 7.5h3.5V11"/></svg>Sex- and Gender-Sensitive Medicine</a></li><li><a href="https://impfen.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17.5 3 3.5 3.5M19.2 4.8 15.8 8.2M14 5.5l4.5 4.5M16.2 7.8 8 16H5v-3l8.2-8.2M8.2 10.8l1.6 1.6M10.6 8.4l1.6 1.6M5 16l-2 2"/></svg>Vaccination</a></li></ul></div>
+        <div class="nl-gruppe krank"><h3>DISEASE AREAS</h3><ul><li><a href="https://kardio.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/><path d="M6.6 12.4h3l1.4-2.4 2 4 1.4-1.6h3"/></svg>Cardiology</a></li><li><a href="https://diabetes.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z"/><path d="M9.4 15.2A2.6 2.6 0 0 0 12 17.8"/></svg>Diabetes</a></li><li><a href="https://adipositas.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/><path d="M7.8 9.6a6 6 0 0 1 8.4 0"/><path d="m12 11 1.6-2.2"/></svg>Obesity</a></li><li><a href="https://onkologie.m-vf.de/newsletter.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4c-2 0-3.1 1.5-3.1 3.2 0 2.3 2.1 4.6 3.1 5.9 1-1.3 3.1-3.6 3.1-5.9C15.1 5.5 14 4 12 4z"/><path d="M10.2 11 6 20.2l2.6-.8 1.2 2.3 3.4-7.2M13.8 11 18 20.2l-2.6-.8-1.2 2.3-2.6-5.4"/></svg>Oncology</a></li></ul></div>
+        <p class="nl-mvf">Each of these pages also offers the editorial MVF newsletter: news, articles, events.</p>
+      </div>
+    </div>
 
-    <p class="st-laedt" id="stLaedt">Loading …</p>
-    <div id="stListe"></div>
-    <noscript><p class="st-laedt">This overview needs JavaScript. The studies are available in each hub
-    individually.</p></noscript>
-  </section>
-
+    <div class="ueber-hinweis">
+      <div>
+        <h2>About the Knowledge Hubs</h2>
+        <p>How the search works, how studies are selected, who is behind it.</p>
+      </div>
+      <a class="knopf" href="about-the-hubs.html">Learn more</a>
+    </div>
+  </div>
+</section>
 </main>
 
+<script type="application/json" id="hubDaten">{"studiensuche":"https://www.monitor-versorgungsforschung.de/?typ=studie&s=","studienDatei":"../studien.json","t":{"passend":"MATCHING HUBS","ueber":"via","oeffnen":"Open hub →","leer":"No hub lists this term in its glossary. “Search” opens the first hub, Health Services Research, with your term.","studien":"STUDIES","inAllen":"– search all German summaries","alleHubs":"All hubs ↗","heute":"today","gestern":"yesterday","locale":"en-GB","zusammenfassung":"Summary (German)","mehr":"Show more studies ▾","weniger":"Show fewer ▴"},"hubs":[{"domain":"wissen.m-vf.de","url":"https://wissen.m-vf.de/","name":"Health Services Research","teil":"thema","ordnung":0,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"5\" r=\"2.2\"/><circle cx=\"5\" cy=\"18.5\" r=\"2.2\"/><circle cx=\"19\" cy=\"18.5\" r=\"2.2\"/><path d=\"M12 7.2v4.3M12 11.5l-5.6 5M12 11.5l5.6 5\"/><\/svg>","kern":["Health Services Research","Health services research","Health services research in full breadth","Primärversorgung","Versorgungsforschung","benefit assessment","claims data","general practice","governance","health care research","health services","health services research","health technology assessment","hospital","integrierte Versorgung","models of care","patient-reported outcomes","primary care","quality","quality of care","sektorenübergreifende Versorgung"],"begriffe":["Delphi study","access to care","accidental falls","accreditation","acute care","administrative claims data","adverse event","aftercare","aged","ambulatory care","artificial intelligence","asthma","back pain","breast cancer","burden of disease","cancer","care management","care pathway","case management","case-control study","child health","chronic disease","claims data","clinical decision support","clinical pathway","clinical practice guideline","cluster randomized trial","co-payment","cohort study","colorectal cancer","cost-benefit analysis","cost-effectiveness","cross-sectional study","cross-sectoral care","data protection","dementia","depression","diabetes mellitus","diagnosis related group","digital health application","discharge management","disease management program","early benefit assessment","effectiveness","electronic health record","electronic prescribing","emergency care","emergency medical services","endometriosis","evidence-based medicine","family caregivers","feasibility study","focus group","gender medicine","general practice","general practice centred care","general practitioner","guideline adherence","health care innovation fund","health care utilization","health economics","health expenditure","health inequalities","health insurance fund","health literacy","health policy","health promotion","health research","health services research","health system","health technology assessment","health workforce planning","health workforce shortage","healthcare-associated infection","heart failure","home care","hospice care","hospital","hospital readmission","hypertension","implementation research","inappropriate care","inpatient care","integrated care","interoperability","intervention study","kidney disease","length of stay","long-term care","long-term care needs","longitudinal study","machine learning","medical error","medical practice","medical specialist","medication adherence","medication safety","mental disorder","meta-analysis","midwife","migrant health","minimum volume standard","mixed methods","mobile health application","mortality","multimorbidity","myocardial infarction","nurse","nursing","nursing home","nursing staff","obesity","observational study","outpatient care centre","overuse of health care","pain","palliative care","patient navigator","patient participation","patient reported outcome measures","patient safety","patient satisfaction","pharmacy","physiotherapy","pilot study","polypharmacy","pressure ulcer","prevention","primary care","priority setting","private health insurance","process evaluation","provider payment","qualitative study","quality assurance","quality of care","quality of life","quality of nursing care","randomized controlled trial","rare disease","rationing","registry study","rehabilitation","reimbursement","remote patient monitoring","rural health","scoping review","screening","secondary data analysis","selective contracting","self-help group","sepsis","shared decision making","socioeconomic status","statutory health insurance","stroke","substance use disorder","survey","systematic review","telemedicine","transitional care","underuse of health care","university hospital","usual care","vaccination","video consultation","waiting time","women's health"]},{"domain":"kardio.m-vf.de","url":"https://kardio.m-vf.de/","name":"Cardiology","teil":"indikation","ordnung":1,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z\"/><path d=\"M6.6 12.4h3l1.4-2.4 2 4 1.4-1.6h3\"/><\/svg>","kern":["Bluthochdruck","Cardiology","Heart","Herzinfarkt","Herzinsuffizienz","Herzrhythmusstoerungen","Kardiologische Reha","TAVI","Vorhofflimmern","atrial fibrillation","cardiovascular","circulation","heart","heart failure","hypertension","myocardial infarction","stroke","strong European focus"],"begriffe":["acute coronary syndrome","administrative claims data","aged","anticoagulants","aortic aneurysm","aortic valve stenosis","arrhythmias, cardiac","atrial fibrillation","cardiac catheterization","cardiac rehabilitation","cardiomyopathies","cardiopulmonary resuscitation","catheter ablation","child","cholesterol","chronic disease","claims data","cohort study","coronary artery bypass","coronary artery disease","cost-effectiveness","cross-sectional study","data protection","defibrillators, implantable","echocardiography","emergency department","epidemiology","exercise test","feasibility study","general practitioner","health economics","health expenditure","health literacy","health personnel","health policy","health promotion","health services research","health system","health technology assessment","health workforce shortage","heart arrest","heart failure","heart transplantation","heart valve diseases","heart valve prosthesis implantation","heart-assist devices","hospital","hypertension","implementation research","interoperability","lipids","long-term care needs","machine learning","medical error","medication safety","mental health","meta-analysis","modelling","multimorbidity","myocardial infarction","myocarditis","nurse","nursing","observational study","pacemaker, artificial","patient participation","patient safety","percutaneous coronary intervention","peripheral arterial disease","platelet aggregation inhibitors","prevention","primary prevention","public health services","quality of care","quality of nursing care","randomized controlled trial","rare disease","reimbursement","risk factors","scoping review","stroke","survey","systematic review","telemedicine","telemetry","video consultation"]},{"domain":"ncd.m-vf.de","url":"https://ncd.m-vf.de/","name":"Chronic Conditions","teil":"thema","ordnung":2,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 7v5l3.2 2\"/><\/svg>","kern":["COPD","Chronic Conditions","Diabetes","Disease-Management-Programm","Herzinsuffizienz","Long COVID","Multimorbidität","Noncommunicable diseases","Programmes","chronic","chronic care","chronic disease","disease management","guidelines for people with chronic conditions","long COVID","multimorbidity","noncommunicable"],"begriffe":["Alzheimer disease","Parkinson disease","administrative claims data","aftercare","aged","alcohol drinking","asthma","atrial fibrillation","back pain","behavior change","blood glucose","blood pressure","body mass index","breast cancer","burden of disease","cancer","cancer registry","cancer screening","cardiovascular disease","care gap","care pathway","child","cholesterol","chronic care","chronic care model","chronic disease","chronic kidney disease","chronic obstructive pulmonary disease","chronic pain","claims data","clinical pathway","cohort study","colorectal cancer","comorbidity","coronary artery disease","cost of illness","cost-effectiveness","cross-sectional study","cross-sectoral care","data protection","dementia","depressive disorder","diabetes mellitus","diabetic foot","dialysis","diet","disease management program","dyslipidemia","early detection","emergency department","epidemiology","epilepsy","excess mortality","fatty liver","feasibility study","general practitioner","glycated hemoglobin","health economics","health expenditure","health inequities","health literacy","health personnel","health policy","health promotion","health services research","health system","health technology assessment","health workforce shortage","heart failure","hospital","hypertension","implementation research","incidence","insulin","integrated care","interoperability","life style","liver cirrhosis","long-term care needs","lung cancer","machine learning","major chronic disease","medical error","medication adherence","medication safety","mental disorder","mental health","meta-analysis","metabolic syndrome","modelling","morbidity","mortality","multimorbidity","multiple sclerosis","myocardial infarction","national clinical guideline","neoplasms","noncommunicable disease","nurse","nursing","obesity","observational study","oncology","osteoarthritis","osteoporosis","overweight","patient education","patient participation","patient safety","patient-reported outcome measures","peripheral arterial disease","physical activity","polypharmacy","practice guideline","prevalence","prevention","primary health care","prostate cancer","public health services","pulmonary function","quality of care","quality of life","quality of nursing care","randomized controlled trial","rare disease","registries","rehabilitation","reimbursement","renal insufficiency","rheumatoid arthritis","risk factor","scoping review","secondary prevention","sedentary behavior","self-management","smoking","smoking cessation","socioeconomic factors","sodium intake","stroke","survey","systematic review","telemedicine","tertiary prevention","tobacco use","treatment adherence","type 1 diabetes","type 2 diabetes","underuse of health services","video consultation","years of life lost"]},{"domain":"diabetes.m-vf.de","url":"https://diabetes.m-vf.de/","name":"Diabetes","teil":"indikation","ordnung":3,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3.5s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z\"/><path d=\"M9.4 15.2A2.6 2.6 0 0 0 12 17.8\"/><\/svg>","kern":["Diabetes","Diabetische Retinopathie","Diabetisches Fusssyndrom","Gestationsdiabetes","HbA1c","Insulinpumpe","SGLT2","Typ-1-Diabetes","Typ-2-Diabetes","Type 1","blood glucose","complications","diabetes","glycaemic control","insulin","technology","type 2 diabetes"],"begriffe":["administrative claims data","aged","amputation","blood glucose","blood glucose self-monitoring","child","chronic disease","claims data","cohort study","continuous glucose monitoring","cost of illness","cost-effectiveness","cross-sectional study","data protection","diabetes complications","diabetes distress","diabetes mellitus","diabetes mellitus type 1","diabetes mellitus type 2","diabetic foot","diabetic ketoacidosis","diabetic nephropathies","diabetic neuropathies","diabetic retinopathy","disease management","emergency department","epidemiology","feasibility study","general practitioner","gestational diabetes","glucose intolerance","glycated hemoglobin","glycemic control","health economics","health expenditure","health literacy","health personnel","health policy","health promotion","health services research","health system","health technology assessment","health workforce shortage","hospital","hyperglycemia","hypoglycemia","hypoglycemic agents","implementation research","insulin infusion systems","insulin resistance","insulin-secreting cells","interoperability","islets of langerhans transplantation","long-term care needs","machine learning","mass screening","medical error","medication adherence","medication safety","mental health","meta-analysis","modelling","multimorbidity","nurse","nursing","observational study","pancreas","patient education as topic","patient participation","patient safety","prediabetic state","prevention","public health services","quality of care","quality of health care","quality of life","quality of nursing care","randomized controlled trial","rare disease","reimbursement","scoping review","survey","systematic review","telemedicine","video consultation"]},{"domain":"ki.m-vf.de","url":"https://ki.m-vf.de/","name":"Digitalisation, AI & Health","teil":"thema","ordnung":4,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"7\" y=\"7\" width=\"10\" height=\"10\" rx=\"1.6\"/><rect x=\"10\" y=\"10\" width=\"4\" height=\"4\" rx=\".6\"/><path d=\"M9.5 3.5V7M14.5 3.5V7M9.5 17v3.5M14.5 17v3.5M3.5 9.5H7M3.5 14.5H7M17 9.5h3.5M17 14.5h3.5\"/><\/svg>","kern":["AI","AI in health care","Digital applications","Digitale Gesundheitsanwendung","Digitalisation, AI & Health","Digitalisation, AI & health","Elektronische Patientenakte","Interoperabilität FHIR","Klinische Entscheidungsunterstützung","Telemedizin","algorithmic bias health","app","artificial intelligence","digital","digital health","electronic health record","large language model clinical","machine learning","telemedicine"],"begriffe":["Artificial Intelligence Act","CE marking","accessibility","accountability","activity tracker","administrative claims data","aged","algorithm","algorithmic bias","algorithmic fairness","ambient assisted living","anonymization","application programming interface","artificial intelligence","assistive technology","automation bias","benchmark","bias","biobank","black box model","blockchain","broad consent","burnout","calibration","care robot","certification","change management","chatbot","child","chronic disease","claims data","classification","clinical coding","clinical data warehouse","clinical decision support","clinical decision support system","clinical documentation","clinical note generation","clinical terminology","clinical workflow","cloud computing","cohort study","computer-aided diagnosis","computer-assisted coding","conformity assessment","core data set","cost-effectiveness","cross-sectional study","cybersecurity","data access","data breach","data centre","data donation","data integration centre","data protection","data quality","data security","data sovereignty","data trustee","deep learning","dermatology","diagnostic accuracy","digital biomarkers","digital care application","digital divide","digital health","digital health application","digital health literacy","digital inclusion","digital maturity","digital pathology","digital platform","digital strategy","digital therapeutics","digital transformation","digital twin","discharge letter","documentation burden","drug discovery","early warning score","edge computing","electronic health record","electronic prescribing","electronic prescription","emergency department","endoscopy","epidemiology","ethics","evaluation","evidence requirements","explainable artificial intelligence","external validation","feasibility study","federated learning","foundation model","general practitioner","generative artificial intelligence","genomic data","hallucination","health app","health data","health data space","health economics","health expenditure","health informatics","health information exchange","health information portal","health literacy","health personnel","health policy","health promotion","health services research","health system","health technology assessment","health telematics","health telematics infrastructure","health workforce shortage","high-risk artificial intelligence","hospital","hospital digitalization","hospital information system","human-computer interaction","human-in-the-loop","image recognition","implementation","implementation research","information extraction","information security","informed consent","intensive care","internet of things","interoperability","interpretability","language model","large language model","liability","long-term care needs","mHealth","machine learning","maturity model","medical device","medical error","medical image analysis","medical informatics","medication plan","medication safety","mental health","meta-analysis","metadata","model drift","model performance","modelling","multimorbidity","natural language processing","neural network","nurse","nursing","observational study","open source software","overfitting","oversight","patient participation","patient portal","patient safety","patient summary","patient-centred care","pattern recognition","personal health record","personalized medicine","pilot project","post-market surveillance","practice management system","precision medicine","prediction model","predictive accuracy","prevention","proof of effectiveness","pseudonymization","public health services","qualitative research","quality of care","quality of nursing care","radiology","randomized controlled trial","ransomware","rare disease","real-world data","record linkage","reference architecture","registry data","regulation","regulatory approval","reimbursement","reinforcement learning","remote consultation","remote patient monitoring","reporting guideline","reproducibility","risk prediction","risk stratification","robotics","robustness","routine care data","rural health care","scaling up","scoping review","screening","secondary use of health data","self-tracking","semantic interoperability","sensitivity","sepsis prediction","shared decision making","simulation study","smartwatch","software as a medical device","specificity","speech recognition","standardization","supervised learning","surgical robotics","survey","symptom checker","synthetic data","systematic review","technology acceptance","teleconsultation","telehealth","telemedicine","telemonitoring","telenursing","telepsychiatry","teleradiology","telerehabilitation","test set","text classification","training","training data","transfer learning","transparency","triage","trust","unsupervised learning","usability","user-centred design","vendor lock-in","video consultation","virtual assistant","wearable device","workload"]},{"domain":"healthliteracy.m-vf.de","url":"https://healthliteracy.m-vf.de/","name":"Health Literacy","teil":"thema","ordnung":5,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 5.5c3-1 6-.8 9 1 3-1.8 6-2 9-1v13c-3-1-6-.8-9 1-3-1.8-6-2-9-1z\"/><path d=\"M12 6.5v13\"/><\/svg>","kern":["Gesundheitskompetenz","Health Literacy","Health literacy","Patienteninformation","Risikokommunikation","Understandable information","Verständlichkeit","decision aid","decision aids","gemeinsame Entscheidungsfindung","health literacy","patient information","risk communication","shared decision making","teach-back"],"begriffe":["administrative claims data","adolescent","aged","basic education","child","chronic disease","claims data","cluster randomized trial","cohort study","communication barriers","communication skills","complaint management","comprehensibility","consumer health information","cost-effectiveness","counseling","crisis communication","critical health literacy","cross-sectional study","culturally competent care","data protection","decision aid","decisional conflict","digital health literacy","disabled persons","disinformation","eHealth literacy","easy language","educational status","effectiveness","emergency department","epidemiology","evidence-based patient information","fact checking","feasibility study","focus groups","functional illiteracy","general practitioner","health behavior","health communication","health economics","health education","health equity","health expenditure","health inequalities","health literacy","health myth","health navigator","health personnel","health policy","health portal","health promotion","health services accessibility","health services research","health surveys","health system","health technology assessment","health workforce shortage","hospital","hospitalization","immigrants","implementation research","implementation science","information literacy","information seeking behavior","informed choice","informed consent","internet use","interoperability","intervention study","interviews as topic","life style","long-term care needs","machine learning","media literacy","medical error","medical terminology","medication adherence","medication safety","mental health","meta-analysis","misinformation","mixed methods","modelling","multimorbidity","numeracy","nurse","nursing","observational study","office visit","organizational health literacy","package insert","parents","patient advocacy","patient compliance","patient discharge","patient education","patient education as topic","patient education handout","patient empowerment","patient guideline","patient information","patient navigation","patient participation","patient preference","patient reported outcome measures","patient rights","patient safety","patient-centered care","pharmacy","physician-patient relations","plain language","poverty","prevalence","prevention","process evaluation","public awareness campaign","public health services","qualitative research","quality of care","quality of health information","quality of life","quality of nursing care","questionnaires","randomized controlled trial","rare disease","readability","readability formula","reading literacy","reimbursement","reproducibility of results","risk communication","science communication","scoping review","second opinion","self efficacy","self-help group","self-management","shared decision making","social media","socioeconomic status","survey","surveys and questionnaires","systematic review","teach-back method","telemedicine","translating","treatment adherence","trust","vaccine hesitancy","validation study","video consultation","vulnerable populations","waiting time"]},{"domain":"longevity.m-vf.de","url":"https://longevity.m-vf.de/","name":"Healthy Ageing & Longevity","teil":"thema","ordnung":6,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6.5 3.5h11M6.5 20.5h11\"/><path d=\"M8 3.5c0 4.6 8 4.4 8 8.5s-8 3.9-8 8.5M16 3.5c0 4.6-8 4.4-8 8.5s8 3.9 8 8.5\"/><\/svg>","kern":["Gebrechlichkeit","Healthy Ageing & Longevity","Healthy ageing & longevity","Lebenserwartung","Polypharmazie","Prevention","Sturzprävention","ageing","aging","biological age","biology of ageing","dementia","falls","frailty","geriatrics","gesunde Lebensjahre","healthspan","life expectancy","longevity","older adults"],"begriffe":["Alzheimer disease","Beers criteria","DNA methylation","Mendelian randomization","NAD","TOR signaling pathway","accidental falls","active aging","activities of daily living","acute geriatric care","administrative claims data","advance directive","age cohort","age stereotype","age structure","age-friendly city","age-friendly housing","aged","ageism","aging","alcohol drinking","assisted living","autophagy","biogerontology","biological age","biomarkers of aging","birth cohort","bone density","burden of disease","caloric restriction","cellular senescence","centenarians","child","cholinergic antagonists","chronic disease","chronic low-grade inflammation","chronological age","claims data","cognitive decline","cognitive reserve","cohort","cohort study","comprehensive geriatric assessment","compression of morbidity","cost-effectiveness","cross-sectional study","data protection","dehydration","delirium","delirium prevention","dementia","demographic change","deprescribing","depression","dietary supplements","digital technology","drug interactions","early rehabilitation","emergency department","end of life care","endurance training","epidemiology","epigenetic clock","excess mortality","exercise promotion","fall prevention","fall risk","family caregivers","feasibility study","frailty","frailty index","functional capacity","functional status","gait speed","general practitioner","genome-wide association study","geriatric assessment","geriatric rehabilitation","geriatrics","gerontology","geroprotector","geroscience","hallmarks of aging","handgrip strength","health economics","health expenditure","health literacy","health personnel","health policy","health promotion","health screening","health services research","health system","health technology assessment","health workforce shortage","health-adjusted life expectancy","health-related quality of life","healthspan","healthy aging","healthy life expectancy","healthy life years","hearing loss","hip fracture","home care","hospital","hospitalization","implementation research","independent living","inflammaging","influenza vaccination","intergenerational equity","intermittent fasting","interoperability","intrinsic capacity","length of stay","life expectancy","life style","life table","lifespan","loneliness","long-term care","longevity","longitudinal study","machine learning","malnutrition","maximum lifespan","medical error","medication safety","mental health","meta-analysis","metformin","mild cognitive impairment","mitochondrial dysfunction","mobility","model organism","modelling","mortality","mortality rate","multimorbidity","muscle wasting","need for long-term care","neighbourhood","nurse","nursing","nursing home","nutrition","observational study","old-age poverty","oldest old","oral health","osteoporosis","oxidative stress","palliative care","patient participation","patient readmission","patient safety","personal emergency response system","physical activity","polypharmacy","population ageing","potentially inappropriate medication","prefrailty","prescribing cascade","pressure ulcer","prevention","primary health care","primary prevention","protein intake","proteostasis","public health services","quality of care","quality of life","quality of nursing care","quality-adjusted life year","randomized controlled trial","rare disease","reduced earning capacity","registry","reimbursement","resistance training","retirement","retirement age","risk factor","sarcopenia","scoping review","secondary data analysis","secondary prevention","self-help devices","senescent cells","senolytics","shared decision making","sirolimus","sirtuins","sleep disorder","smoking cessation","social isolation","social participation","stem cell exhaustion","successful aging","survey","systematic review","telemedicine","telomere","telomere length","transitional care","underweight","urinary incontinence","vaccination","video consultation","visual impairment","vitamin D","well-being"]},{"domain":"klima.m-vf.de","url":"https://klima.m-vf.de/","name":"Heat, Climate & Health","teil":"thema","ordnung":7,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8.5 14.3V5a2 2 0 0 1 4 0v9.3a3.6 3.6 0 1 1-4 0z\"/><path d=\"M10.5 10v6.6\"/><path d=\"M17.5 3v1.6M21 7h-1.6M20 4.4l-1.1 1.1M17.5 9.4a2.4 2.4 0 0 0 0-4.8\"/><\/svg>","kern":["Climate change","Heat, Climate & Health","Heat, climate & health","Hitzeaktionsplan","Hitzewelle","Klimawandel Gesundheit","air pollution","care","climate","climate change","climate change adaptation health","extreme weather","heat","heat-related mortality","heatwave","urban heat island","vector-borne disease","with measurement data"],"begriffe":["Aedes albopictus","Lyme disease","One Health","Vibrio","West Nile virus","active travel","acute kidney injury","adaptation strategy","aged","aggression","agricultural workers","agriculture","air conditioning","air pollution","air quality","allergic rhinitis","allergy","asthma","athletes","attributable deaths","bathing water","behaviour change","birth weight","blue infrastructure","building cooling","burden of disease","carbon dioxide","carbon footprint","carbon neutrality","cardiovascular disease","case-crossover study","child","chronic disease","chronic obstructive pulmonary disease","claims data","climate anxiety","climate change","climate change adaptation","climate change mitigation","climate crisis","climate justice","climate migration","climate model","climate projection","climate resilience","climate scenario","co-benefits","cohort study","cold exposure","cold spell","communicable disease","construction workers","cooling centre","cost-effectiveness","crop failure","cross-sectional study","cycling","decarbonization","dehydration","dementia","dengue","depression","desealing","diabetes mellitus","dietary transition","disaster risk reduction","disease outbreak","disease vector","displacement","diuretics","drinking water fountain","drinking water quality","drought","drug effects","drug storage","early warning system","electrolyte imbalance","emergency department","emergency medical services","emergency preparedness","emissions","environmental justice","epidemiology","excess mortality","exposure-response relationship","extreme event attribution","extreme heat","extreme weather","flood","flooding","food safety","food security","general practitioner","geographic information system","global warming","green infrastructure","green space","greenhouse gas","ground-level ozone","hantavirus","health care carbon footprint","health care sector","health expenditure","health impact assessment","health inequalities","health literacy","health personnel","health policy","health promotion","health services research","health system","heart failure","heat","heat cramps","heat exhaustion","heat exposure","heat health action plan","heat health warning system","heat mortality","heat protection","heat protection plan","heat stress","heat stroke","heat warning","heat wave","heat-related illness","heat-related mortality","heavy precipitation","homeless persons","homelessness","hospital","hospital admission","hot day","hypertension","indicator","indoor air quality","infants","invasive plant species","kidney disease","land use","leishmaniasis","local health authority","loneliness","malaria","malnutrition","medical practice","medication safety","mental health","meta-analysis","migration","modelling","monitoring","monitoring station","mortality","mosquito","multimorbidity","municipality","myocardial infarction","natural disaster","need for long-term care","neighbourhood","nitrogen dioxide","noise pollution","nurse","nursing","nursing home","observational study","occupational health","occupational injury","occupational safety","oldest old","outdoor workers","ozone","particulate matter","perceived temperature","pharmacy","planetary health","plant-based diet","pollen exposure","pollen season","pollutant exposure","polypharmacy","poverty","pregnancy","pregnant women","preterm birth","prevention","public awareness campaign","public health services","public health surveillance","quality of nursing care","ragweed","reanalysis","registry","remote sensing","respiratory disease","risk assessment","risk communication","satellite data","scoping review","sea level rise","secondary data analysis","shading","skin cancer","sleep quality","socioeconomic status","sponge city","storm","stroke","suicide","sun protection","sunstroke","sustainable hospital","systematic review","temperature extremes","thermal comfort","thermal stress","threshold temperature","tick","tick-borne encephalitis","time series analysis","tropical night","ultraviolet radiation","urban climate","urban greening","urban heat island","urban planning","urban tree canopy","vector-borne disease","vulnerability","vulnerable population","walking","wildfire","wildfire smoke","work productivity","zoonosis"]},{"domain":"mental.m-vf.de","url":"https://mental.m-vf.de/","name":"Mental Health","teil":"thema","ordnung":8,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9 21v-3.2A7 7 0 1 1 18.8 11l1.7 3.3-1.8.6V17a2 2 0 0 1-2 2H15v2\"/><path d=\"M11.4 8.6a2 2 0 0 1 3.1 1.9 2 2 0 0 1-1.6 2\"/><\/svg>","kern":["Access","Krisendienst","Mental Health","Mental health","Psychotherapie","Suizidprävention","Wartezeit","Zwangsbehandlung","addiction","anxiety","community mental health","crisis care","depression","mental health","mental health services","mental illness","psychotherapy","schizophrenia","suicide","waiting times"],"begriffe":["administrative claims data","aged","ambulatory care","anxiety disorders","attention deficit disorder with hyperactivity","autism spectrum disorder","bipolar disorder","child","child psychiatry","chronic disease","claims data","coercion","cognitive behavioral therapy","cohort study","commitment of mentally ill","community mental health centers","community mental health services","community psychiatry","cost-effectiveness","crisis intervention","crisis resolution team","cross-sectional study","data protection","day care, medical","depressive disorder","disability evaluation","early medical intervention","emergency department","epidemiology","feasibility study","feeding and eating disorders","general practitioner","health economics","health expenditure","health literacy","health personnel","health policy","health promotion","health services accessibility","health services needs and demand","health services research","health system","health technology assessment","health workforce shortage","home care services","hospital","implementation research","interoperability","legal guardians","long-term care needs","machine learning","medical error","medication safety","mental disorders","mental health","mental health recovery","mental well-being","meta-analysis","modelling","multimorbidity","nurse","nursing","observational study","patient dropouts","patient participation","patient readmission","patient safety","peer support","personality disorders","physical restraint","prevention","psychoeducation","psychotherapy","public health services","quality of care","quality of nursing care","randomized controlled trial","rare disease","reimbursement","return to work","schizophrenia","scoping review","self-injurious behavior","sick leave","social stigma","stress disorders, post-traumatic","suicidal ideation","suicide","suicide prevention","survey","systematic review","telemedicine","treatment adherence","treatment gap","video consultation","waiting lists"]},{"domain":"pflege.m-vf.de","url":"https://pflege.m-vf.de/","name":"Nursing & Long-Term Care","teil":"thema","ordnung":9,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12.5 11s-3.6-2.2-3.6-4.6A2.1 2.1 0 0 1 12.5 5a2.1 2.1 0 0 1 3.6 1.4c0 2.4-3.6 4.6-3.6 4.6z\"/><path d=\"M3 14h2.8l3.4 2.6h4.2a1.5 1.5 0 0 0 0-3H10\"/><path d=\"M5.8 20.5 8 18.8h6.2l5.9-4.8a1.6 1.6 0 0 0-2.1-2.4l-3.6 2.4\"/><\/svg>","kern":["Dekubitusprophylaxe","Nursing & Long-Term Care","Nursing & long-term care","Personalbemessung","Pflegebedürftigkeit","Pflegende Angehörige","Staffing","caregivers","family carers","long-term care","long-term care financing","nurse","nursing","nursing home","nursing home quality","quality","skill mix nursing"],"begriffe":["Alzheimer disease","accidental falls prevention","administrative claims data","adult day care","advance care planning","advance directives","advanced nursing practice","age-friendly neighbourhood","aged","ambient assisted living","assisted living facilities","assistive technology","baccalaureate nursing education","behavioral symptoms of dementia","care arrangement","care counselling","care dependency","care dependent persons","care level","care neglect","care robot","caregiver burden","case management","child","chronic disease","claims data","cohort study","cost-effectiveness","cross-sectional study","data protection","delirium","dementia","digital care application","discharge planning","elder abuse","emergency department","end of life care","environmental design dementia","epidemiology","fall risk","family caregivers","feasibility study","frailty","general practitioner","geriatric assessment","geriatric medicine","geriatric rehabilitation","geriatrics","health economics","health expenditure","health literacy","health personnel","health policy","health promotion","health services research","health system","health technology assessment","home care services","home nursing","homes for the aged","hospice care","hospital","hospital readmission","hospital transfer","hydration","implementation research","informal care","integrated care","interoperability","job satisfaction","live-in care","local care planning","long-term care","long-term care costs","long-term care facility","long-term care financing","long-term care insurance","machine learning","malnutrition","medical error","medication safety","mental health","meta-analysis","migrant care workers","missed nursing care","mobility promotion","modelling","multimorbidity","needs assessment","nurse administrators","nurse retention","nurse staffing","nurse turnover","nurse-to-patient ratio","nursing assistants","nursing care","nursing competence","nursing diagnosis","nursing education","nursing education research","nursing home","nursing home residents","nursing practice guideline","nursing process","nursing records","nursing regulatory body","nursing research","nursing science","nursing shortage","nursing staff","nursing workload","observational study","oral health","out-of-pocket payment","outcome quality","pain management","palliative care","patient participation","patient safety","person-centred care","physical restraints","polypharmacy","pressure ulcer","pressure ulcer prevention","prevention","public health services","quality indicators","quality inspection","quality of care","quality of nursing care","randomized controlled trial","rare disease","registered nurse","rehabilitation","reimbursement","residential care","respite care","respite services","restraint use","scope of nursing practice","scoping review","shared housing arrangement","short-term care","sickness absence","skill mix","survey","systematic review","telemedicine","telenursing","transitional care","urinary incontinence management","video consultation","working carers","wound care"]},{"domain":"adipositas.m-vf.de","url":"https://adipositas.m-vf.de/","name":"Obesity","teil":"indikation","ordnung":10,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3.5\" y=\"3.5\" width=\"17\" height=\"17\" rx=\"3.5\"/><path d=\"M7.8 9.6a6 6 0 0 1 8.4 0\"/><path d=\"m12 11 1.6-2.2\"/><\/svg>","kern":["Abnehmpille","Adipositas","Adipositaschirurgie","BMI","GLP-1","Gewichtsmanagement","Obesity","Verhältnisprävention","Weight management","bariatric surgery","obesity","overweight","surgery","therapy","weight loss","weight management"],"begriffe":["added sugars","adipose tissue","administrative claims data","advertising restriction","aftercare","aged","anti-obesity agents","appetite depressants","appetite regulation","bariatric surgery","basal metabolism","behavior therapy","behavioral prevention","benefit exclusion","binge-eating disorder","body composition","body fat distribution","body fat percentage","body mass index","caloric restriction","cancer risk","cardiovascular diseases","child","child health","chronic disease","claims data","cohort study","comorbidity","cost of illness","cost-effectiveness","critical pathways","cross-sectional study","data protection","diet modification","dietary fiber","discrimination","disease management","disease recognition","drug therapy","dyslipidemia","early detection","educational status","emergency department","emotional eating","endurance training","energy balance","energy expenditure","energy intake","epidemiology","exercise promotion","fatty liver","feasibility study","feeding and eating disorders","feeding behavior","food environment","food labeling","food taxation","formula diet","gastric balloon","gastric bypass","gastroplasty","general practice","general practitioner","gestational diabetes","health economics","health expenditure","health inequities","health literacy","health personnel","health policy","health promotion","health services research","health survey","health system","health technology assessment","health workforce shortage","hospital","hunger","hypertension","implementation research","incretin mimetic","infertility","insulin resistance","interoperability","intra-abdominal fat","knee osteoarthritis","lifestyle drug","lifestyle intervention","long-term care needs","machine learning","malnutrition","mass screening","medical error","medication safety","mediterranean diet","mental health","meta-analysis","metabolic surgery","metabolic syndrome","migrant background","modelling","morbid obesity","multidisciplinary program","multimorbidity","nurse","nursing","nutrition counseling","nutrition labeling","obesity","obesity center","observational study","out-of-pocket payment","overweight","patient compliance","patient dropouts","patient education","patient participation","patient reported outcome measures","patient safety","pediatric obesity","physical activity","prediabetes","prevalence","prevention","public health services","quality of care","quality of life","quality of nursing care","randomized controlled trial","rare disease","rehabilitation","reimbursement","reoperation","resistance training","satiation","satiety","school meals","scoping review","sedentary behavior","self efficacy","sleep apnea","sleeve gastrectomy","social stigma","socioeconomic factors","structural prevention","sugar-sweetened beverages","survey","systematic review","telemedicine","trend analysis","type 2 diabetes","ultra-processed foods","video consultation","waist circumference","waist-hip ratio","weight cycling","weight gain","weight loss","weight maintenance","weight management","weight regain","weight stigma","weight trajectory"]},{"domain":"onkologie.m-vf.de","url":"https://onkologie.m-vf.de/","name":"Oncology","teil":"indikation","ordnung":11,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 4c-2 0-3.1 1.5-3.1 3.2 0 2.3 2.1 4.6 3.1 5.9 1-1.3 3.1-3.6 3.1-5.9C15.1 5.5 14 4 12 4z\"/><path d=\"M10.2 11 6 20.2l2.6-.8 1.2 2.3 3.4-7.2M13.8 11 18 20.2l-2.6-.8-1.2 2.3-2.6-5.4\"/><\/svg>","kern":["CAR-T","Cancer research","Frueherkennung","Immuntherapie","Oncology","Palliativversorgung","Strahlentherapie","Tumorboard","Zielgerichtete Therapie","breast cancer","cancer","cancer care","cancer screening","carcinoma","chemotherapy","lung cancer","oncology","real-world evidence","tumor","tumour"],"begriffe":["administrative claims data","aftercare","aged","antibodies, monoclonal","biomarkers, tumor","brain neoplasms","breast neoplasms","cell- and tissue-based therapy","child","chronic disease","claims data","cohort study","colorectal neoplasms","cost of illness","cost-effectiveness","cross-sectional study","data protection","drug therapy","drug-related side effects and adverse reactions","early detection of cancer","emergency department","epidemiology","fatigue","feasibility study","general practitioner","genetic predisposition to disease","health economics","health expenditure","health literacy","health personnel","health policy","health promotion","health services research","health system","health technology assessment","health workforce shortage","hematopoietic stem cell transplantation","hospital","immunotherapy","implementation research","interoperability","leukemia","liquid biopsy","long-term care needs","lung neoplasms","lymphoma","machine learning","mass screening","medical error","medication safety","melanoma","mental health","meta-analysis","modelling","molecular targeted therapy","multimorbidity","multiple myeloma","neoplasm metastasis","neoplasm recurrence, local","neoplasms","nurse","nursing","observational study","pain management","palliative care","pancreatic neoplasms","patient care team","patient participation","patient safety","prevention","prostatic neoplasms","public health services","quality of care","quality of life","quality of nursing care","radiotherapy","randomized controlled trial","rare disease","registries","reimbursement","scoping review","skin neoplasms","survey","survival rate","systematic review","telemedicine","uterine cervical neoplasms","video consultation"]},{"domain":"safety.m-vf.de","url":"https://safety.m-vf.de/","name":"Patient Safety","teil":"thema","ordnung":12,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3 5 6v5.6c0 4.4 3 8 7 9.4 4-1.4 7-5 7-9.4V6z\"/><path d=\"m9 12 2.2 2.2L15.4 10\"/><\/svg>","kern":["Behandlungsfehler","Fehlermeldesystem","Medical errors","Medikationsfehler","Nosokomiale Infektion","Patient Safety","Patient safety","Sepsis","adverse event","antimicrobial stewardship","hygiene","infection","infections","medical error","medication error","patient safety","sepsis"],"begriffe":["accidental falls","administrative claims data","adverse drug reaction","adverse event","aged","antimicrobial resistance","antimicrobial stewardship","bloodstream infection","burden of proof","catheter-related infection","child","chronic disease","claims data","clinical risk management","cohort study","cost-effectiveness","cross-sectional study","data protection","delirium","diagnostic error","disease outbreak","emergency department","epidemiology","feasibility study","general practitioner","hand hygiene","health economics","health expenditure","health literacy","health personnel","health policy","health promotion","health services research","health system","health technology assessment","health workforce shortage","healthcare-associated infection","hospital","implementation research","incident reporting system","informed consent","interoperability","long-term care needs","machine learning","malpractice","medical error","medical liability","medical overuse","medication error","medication review","medication safety","mental health","meta-analysis","modelling","morbidity and mortality conference","multidrug-resistant organisms","multimorbidity","near miss","never event","no-fault compensation","nosocomial infection","nurse","nursing","observational study","patient handoff","patient participation","patient rights","patient safety","physical restraint","pressure ulcer","preventable harm","prevention","public health services","quality indicator","quality of care","quality of nursing care","randomized controlled trial","rare disease","reimbursement","safety culture","scoping review","second opinion","sepsis","sepsis recognition","septic shock","surgical safety checklist","surgical site infection","survey","systematic review","telemedicine","underuse","ventilator-associated pneumonia","video consultation","volume-outcome relationship","wrong-site surgery"]},{"domain":"gender.m-vf.de","url":"http://gender.m-vf.de/","name":"Sex- and Gender-Sensitive Medicine","teil":"thema","ordnung":13,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"9\" cy=\"9\" r=\"4.2\"/><path d=\"M9 13.2V21M6.2 18h5.6\"/><circle cx=\"15.5\" cy=\"13.5\" r=\"4.2\"/><path d=\"M18.5 10.5 21.5 7.5M18 7.5h3.5V11\"/><\/svg>","kern":["Arzneimittelsicherheit","Frauengesundheit","Geschlechterunterschiede","Herzinfarkt","Männergesundheit","Sex, gender & health","Sex- and Gender-Sensitive Medicine","access","dosing","gender","gender in diagnosis","gender medicine","men","pregnancy","sex","sex differences","women","women's health"],"begriffe":["abortion, induced","administrative claims data","adverse effects","aged","alcohol drinking","anorexia nervosa","atrial fibrillation","autoimmune diseases","breast cancer screening","breast feeding","breast neoplasms","cardiovascular diseases","caregivers","cesarean section","chest pain","child","chronic disease","claims data","clinical trial","cohort study","contraception","coronary artery disease","cost-effectiveness","critical pathways","cross-sectional study","cultural diversity","data gap","data protection","delayed diagnosis","depression, postpartum","diabetes, gestational","diagnosis","diagnostic errors","disorders of sex development","domestic violence","drug approval","drug dosage","drug safety","drug-related side effects","dysmenorrhea","education, medical, continuing","education, medical, undergraduate","eligibility criteria","emergency department","emigration and immigration","endometriosis","epidemiology","erectile dysfunction","family caregivers","fatigue syndrome, chronic","feasibility study","feeding and eating disorders","gender","gender dysphoria","gender equality","gender equity","gender identity","gender medicine","gender role","gender studies","gender-affirming care","gender-sensitive","general practitioner","gynecology","health economics","health equity","health expenditure","health inequities","health literacy","health personnel","health policy","health promotion","health services research","health system","health technology assessment","health workforce shortage","healthcare disparities","heart failure","hormone replacement therapy","hospital","hypertension","hypogonadism","implementation research","infertility","interoperability","intersectional framework","intimate partner violence","irritable bowel syndrome","long-term care needs","machine learning","maternal mortality","medical error","medication safety","men's health","menopause","menstruation","mental health","meta-analysis","midwifery","migraine disorders","modelling","multimorbidity","multiple sclerosis","myocardial infarction","nurse","nursing","observational study","obstetrics","osteoporosis","ovarian neoplasms","pain management","patient participation","patient safety","polycystic ovary syndrome","polypharmacy","postpartum period","pre-eclampsia","pregnancy","pregnancy complications","prejudice","premature birth","prescriptions","prevention","prostatic neoplasms","public health services","quality indicators, health care","quality of care","quality of nursing care","randomized controlled trial","rare disease","reimbursement","representation","reproductive techniques, assisted","rheumatic diseases","scoping review","sex","sex and gender medicine","sex characteristics","sex distribution","sex factors","sex-disaggregated analysis","sex-disaggregated data","sex-specific","sex-specific medicine","sexual behavior","sexual harassment","signs and symptoms","smoking","social discrimination","socioeconomic factors","stereotyping","stroke","subgroup analysis","substance-related disorders","suicide","survey","systematic review","teaching","telemedicine","testicular neoplasms","transgender persons","uterine cervical neoplasms","video consultation","violence against women","vulnerable populations","women physicians","women's health","work-life balance"]},{"domain":"impfen.m-vf.de","url":"https://impfen.m-vf.de/","name":"Vaccination","teil":"thema","ordnung":14,"icon":"<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m17.5 3 3.5 3.5M19.2 4.8 15.8 8.2M14 5.5l4.5 4.5M16.2 7.8 8 16H5v-3l8.2-8.2M8.2 10.8l1.6 1.6M10.6 8.4l1.6 1.6M5 16l-2 2\"/><\/svg>","kern":["Coverage","HPV","HPV-Impfung","Impfquote","Impfskepsis","Impfstoffsicherheit","Masern","Vaccination","Vaccination & immunisation","immunisation","immunization","influenza","measles","safety registers","vaccination","vaccination coverage","vaccine","vaccine hesitancy","willingness to vaccinate"],"begriffe":["COVID-19","COVID-19 vaccination","HPV vaccination","adjuvant","administrative claims data","adverse event following immunization","aged","antibody","antibody titre","behavioural prevention","booster vaccination","breakthrough infection","cancer screening","catch-up vaccination","cervical cancer","child","cholera","chronic disease","claims data","cohort study","cold chain","conjugate vaccine","contact tracing","coronavirus","cost-effectiveness","cross-sectional study","data protection","diphtheria","early detection","effectiveness","elimination","emergency department","epidemiology","eradication","feasibility study","general practitioner","health economics","health expenditure","health inequality","health literacy","health personnel","health policy","health promotion","health services research","health system","health technology assessment","health workforce shortage","hepatitis","herd immunity","herpes zoster","hospital","human papillomavirus","immunity gap","immunization coverage","immunization registry","immunization schedule","implementation research","inactivated vaccine","infection control","influenza","influenza vaccination","interoperability","invitation system","live attenuated vaccine","long COVID","long-term care needs","low-threshold","mRNA vaccine","machine learning","mandatory vaccination","mass screening","measles","medical error","medication safety","meningitis","meningococcal","mental health","meta-analysis","modelling","multimorbidity","mumps","notifiable disease","nurse","nursing","observational study","outbreak","outbreak investigation","outreach vaccination","pandemic","pandemic preparedness","patient participation","patient safety","pertussis","pneumococcal","poliomyelitis","post-COVID condition","prevention","primary immunization","primary prevention","public health services","quality of care","quality of nursing care","rabies","randomized controlled trial","rare disease","reimbursement","reminder recall","respiratory syncytial virus","respiratory tract infection","risk group vaccination","rotavirus","routine vaccination","rubella","scoping review","screening","screening programme","secondary prevention","seroprevalence","setting","settings approach","structural prevention","survey","systematic review","telemedicine","tertiary prevention","tetanus","tick-borne encephalitis","tick-borne encephalitis vaccination","travel vaccination","tuberculosis","typhoid","uptake","vaccination","vaccination campaign","vaccination centre","vaccination certificate","vaccination counselling","vaccination coverage","vaccination recommendation","vaccination record","vaccination status","vaccine","vaccine acceptance","vaccine adverse event","vaccine counselling","vaccine development","vaccine effectiveness","vaccine efficacy","vaccine failure","vaccine hesitancy","vaccine preventable","vaccine reaction","vaccine refusal","vaccine safety","vaccine shortage","vaccine-preventable disease","varicella","video consultation","viral vector vaccine","yellow fever"]}]}</script>
 <script>
-// ---------------------------------------------------------------- Studien
-// Aus jedem Hub die juengste Arbeit - eine Karte je Hub, nicht eine Liste. Die
-// Sammeldatei baut scripts/studien_sammeln.py jede Nacht; geladen wird sie
-// erst, wenn der Abschnitt ins Bild kommt.
+// Startseite knowledge-hubs.m-vf.de - Verhalten.
+// Alles, was diese Datei tut, ist Zugabe: Ohne JavaScript stehen Kacheln,
+// Studien und Newsletter trotzdem vollstaendig in der Seite.
 (function () {
-  var abschnitt = document.getElementById('studien');
-  var listeEl   = document.getElementById('stListe');
-  var laedtEl   = document.getElementById('stLaedt');
-  var vorEl     = document.getElementById('stVor');
-  if (!abschnitt || !listeEl) return;
-  var geholt = false;
+  'use strict';
+  var DATEN = {};
+  try { DATEN = JSON.parse(document.getElementById('hubDaten').textContent); } catch (e) { return; }
+  var HUBS = DATEN.hubs || [];
+  var NACH_DOMAIN = {};
+  HUBS.forEach(function (h) { NACH_DOMAIN[h.domain] = h; });
+  // Alle Texte, die das Skript selbst schreibt, kommen aus der Seite
+  // (startseite_neu.py, TEXT[lang]["js"]) - so gibt es eine deutsche und
+  // eine englische Fassung ohne zweites Skript.
+  var T = DATEN.t || {};
 
-  // Ohne Maskierung stuende ein spitzes Zeichen aus einem Studientitel als
-  // Markup in der Seite. Die Portale duerfen ohne arbeiten, weil ihre Inhalte
-  // von Hand gepflegt sind - hier kommen sie aus den Archiven aller Hubs.
   function sicher(t) {
-    return String(t == null ? '' : t)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function karte(e, hub, uebrig) {
-    var quelle = [e.journal, e.year].filter(Boolean).join(' · ');
-    var h = '<article class="st-karte">'
-      + '<div class="st-kopf">'
-      + '<a class="st-hub" href="https://' + sicher(hub.domain) + '/" target="_blank"'
-      + ' rel="noopener">' + sicher(hub.name) + '</a>'
-      + '<span class="st-quelle">' + sicher(quelle) + '</span></div>'
-      + '<p class="st-titel">' + sicher(e.title) + '</p>';
-    // Bewusst ohne Ergebnis und ohne PubMed-Link: Die Karte soll neugierig
-    // machen und in den Hub fuehren, nicht aus der Reihe heraus.
-    var text = uebrig > 0
-      ? 'This and ' + uebrig + ' more studies in the hub'
-      : 'To the study in the hub';
-    h += '<a class="st-mehr" href="https://' + sicher(hub.domain) + '/" target="_blank"'
-      + ' rel="noopener">' + text + ' ' + sicher(hub.name) + ' &rarr;</a>';
-    return h + '</article>';
+  // ---------------------------------------------------------- Aktionsleiste
+  // Befristet doppelt: beim Bau (startseite_neu.py) und hier im Browser.
+  // Schliessen gilt nur fuer diesen Seitenaufruf. Bewusst nichts im Speicher
+  // des Browsers: Die Seite verspricht „keine Cookies" und die
+  // Datenschutzhinweise, dass auf dem Geraet nichts abgelegt wird.
+  var aktion = document.getElementById('aktion');
+  if (aktion) {
+    if (new Date() > new Date(aktion.getAttribute('data-ende'))) aktion.remove();
+    else aktion.querySelector('button').addEventListener('click', function () { aktion.remove(); });
   }
 
-  function zeichne(d) {
-    var teile = [], gesamt = 0;
-    d.hubs.forEach(function (hub) {
-      var seine = d.studien.filter(function (e) { return e.hub === hub.name; });
-      gesamt += seine.length;
-      if (!seine.length) return;
-      teile.push(karte(seine[0], hub, seine.length - 1));
+  // ---------------------------------------------------------- Themenwahl
+  function filterLeiste(leiste, anwenden) {
+    if (!leiste) return;
+    var knoepfe = leiste.querySelectorAll('button[data-teil]');
+    Array.prototype.forEach.call(knoepfe, function (b) {
+      b.addEventListener('click', function () {
+        Array.prototype.forEach.call(knoepfe, function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        anwenden(b.getAttribute('data-teil'));
+      });
     });
-    listeEl.innerHTML = '<div class="st-gitter">' + teile.join('') + '</div>';
-    if (vorEl) {
-      vorEl.textContent = 'The most recent work from each hub. Over the past '
-        + d.fenster_tage + ' days the series found and published ' + gesamt
-        + ' studies — summary, result and context are in the respective hub, in German.';
+  }
+  filterLeiste(document.getElementById('themenFilter'), function (teil) {
+    Array.prototype.forEach.call(document.querySelectorAll('#themen [data-teil]'), function (el) {
+      if (el.tagName === 'BUTTON') return;
+      el.hidden = teil !== 'alle' && el.getAttribute('data-teil') !== teil;
+    });
+  });
+  // „Versorgungsthemen ↓" und „Krankheitsgebiete ↓" im Einstieg setzen den Filter mit.
+  Array.prototype.forEach.call(document.querySelectorAll('a[data-setzt-filter]'), function (a) {
+    a.addEventListener('click', function () {
+      var b = document.querySelector('#themenFilter button[data-teil="' + a.getAttribute('data-setzt-filter') + '"]');
+      if (b) b.click();
+    });
+  });
+
+  // ---------------------------------------------------------- Suche mit Hub-Vorschlag
+  // Grundlage sind die Glossare der Hubs, ihre Schnellwahl-Begriffe und ihre
+  // Namen. Ein Begriff, der in mehreren Glossaren steht, schlaegt mehrere
+  // Hubs vor; gereiht wird nach der Guete des Treffers, nicht nach dem Hub.
+  var feld = document.getElementById('suchfeld');
+  var form = document.getElementById('suchform');
+  var box = document.getElementById('vorschlag');
+  var aktiv = -1, treffer = [];
+
+  function norm(t) {
+    return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+  // Gewichtung: Kernbegriffe (Schnellwahl, Name, Kernthemen) zaehlen
+  // dreifach; ein Glossarbegriff zaehlt umso weniger, in je mehr Glossaren
+  // er steht. „Sepsis" steht in drei Glossaren, aber nur bei der
+  // Patientensicherheit im Kern - dort gehoert es hin.
+  var haeufig = {};
+  HUBS.forEach(function (h) {
+    h._name = norm(h.name);
+    h._kern = (h.kern || []).map(function (b) { return [norm(b), b]; });
+    h._begriffe = (h.begriffe || []).map(function (b) { return [norm(b), b]; });
+    h._begriffe.forEach(function (p) { haeufig[p[0]] = (haeufig[p[0]] || 0) + 1; });
+  });
+
+  function guete(b, nq) {
+    if (b === nq) return 1;
+    if (b.indexOf(nq) === 0) return 0.8 - Math.min(0.2, (b.length - nq.length) / 60);
+    if ((' ' + b).indexOf(' ' + nq) >= 0) return 0.65;
+    if (b.length >= 3 && (' ' + nq + ' ').indexOf(' ' + b + ' ') >= 0) return 0.6;
+    if (nq.length >= 4 && b.indexOf(nq) >= 0) return 0.4;
+    return 0;
+  }
+
+  function bewerte(q) {
+    var nq = norm(q);
+    if (nq.length < 2) return [];
+    var liste = [];
+    HUBS.forEach(function (h) {
+      var best = 0, grund = '';
+      var teste = function (p, gewicht) {
+        var s = guete(p[0], nq) * gewicht;
+        if (s > best) { best = s; grund = p[1]; }
+      };
+      teste([h._name, h.name], 4);
+      h._kern.forEach(function (p) { teste(p, 3); });
+      h._begriffe.forEach(function (p) { teste(p, 1.5 / Math.sqrt(haeufig[p[0]] || 1)); });
+      if (best >= 0.3) liste.push({ hub: h, wert: best, grund: grund });
+    });
+    liste.sort(function (a, b) { return b.wert - a.wert || a.hub.ordnung - b.hub.ordnung; });
+    // Nur, was nahe am besten Treffer liegt - sonst haengen an „Krebs"
+    // vier Hubs, von denen drei den Begriff nur im Glossar fuehren.
+    var spitze = liste.length ? liste[0].wert : 0;
+    return liste.filter(function (t) { return t.wert >= spitze * 0.35; }).slice(0, 4);
+  }
+
+  function zielAdresse(h, q) { return h.url + '?q=' + encodeURIComponent(q); }
+
+  function zeige() {
+    var q = feld.value.trim();
+    treffer = bewerte(q);
+    aktiv = -1;
+    if (q.length < 2) { box.hidden = true; feld.setAttribute('aria-expanded', 'false'); return; }
+    var h = '<h2>' + T.passend + '</h2>';
+    if (treffer.length) {
+      h += '<ul id="vorschlagListe">' + treffer.map(function (t, i) {
+        var grund = t.grund && norm(t.grund) !== norm(q) ? '<span class="vs-grund">' + T.ueber + ' „' + sicher(t.grund) + '“</span>' : '';
+        return '<li><a id="vs' + i + '" class="' + (t.hub.teil === 'indikation' ? 'krank' : '') + '" href="' + sicher(zielAdresse(t.hub, q)) + '">'
+          + t.hub.icon + '<span><b>' + sicher(t.hub.name) + '</b>' + grund + '</span><small>' + T.oeffnen + '</small></a></li>';
+      }).join('') + '</ul>';
+    } else {
+      h += '<p class="vs-leer">' + T.leer + '</p>';
+    }
+    h += '<div class="vs-studien"><h2>' + T.studien + '</h2><ul><li><a href="' + sicher(DATEN.studiensuche + encodeURIComponent(q))
+      + '" target="_blank" rel="noopener"><span>„' + sicher(q) + '“ ' + T.inAllen + '</span><small>' + T.alleHubs + '</small></a></li></ul></div>';
+    box.innerHTML = h;
+    box.hidden = false;
+    feld.setAttribute('aria-expanded', 'true');
+  }
+
+  function markiere(i) {
+    var links = box.querySelectorAll('#vorschlagListe a');
+    Array.prototype.forEach.call(links, function (a, k) { a.classList.toggle('aktiv', k === i); });
+    aktiv = i;
+    if (i >= 0 && links[i]) feld.setAttribute('aria-activedescendant', links[i].id);
+    else feld.removeAttribute('aria-activedescendant');
+  }
+
+  if (feld && form && box) {
+    var warte;
+    feld.addEventListener('input', function () { clearTimeout(warte); warte = setTimeout(zeige, 90); });
+    feld.addEventListener('focus', function () { if (feld.value.trim().length >= 2) zeige(); });
+    feld.addEventListener('keydown', function (e) {
+      if (box.hidden) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); markiere(Math.min(treffer.length - 1, aktiv + 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); markiere(Math.max(-1, aktiv - 1)); }
+      else if (e.key === 'Escape') { box.hidden = true; feld.setAttribute('aria-expanded', 'false'); }
+    });
+    document.addEventListener('click', function (e) {
+      if (!form.contains(e.target)) { box.hidden = true; feld.setAttribute('aria-expanded', 'false'); }
+    });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var q = feld.value.trim();
+      if (!q) { feld.focus(); return; }
+      var t = bewerte(q);
+      var wahl = aktiv >= 0 && treffer[aktiv] ? treffer[aktiv].hub : (t[0] ? t[0].hub : NACH_DOMAIN['wissen.m-vf.de']);
+      location.href = zielAdresse(wahl, q);
+    });
+  }
+
+  // ---------------------------------------------------------- Neue Studien
+  // Beim Bau steht die Liste schon fertig in der Seite. Hier wird sie aus
+  // der nachts erneuerten studien.json neu gezeichnet - die Seite selbst wird
+  // nicht jeden Tag gebaut. Das Markup muss dem von studien_html() in
+  // startseite_neu.py entsprechen.
+  var liste = document.getElementById('stListe');
+  var mehrKnopf = document.getElementById('stMehr');
+  var stTeil = 'alle', aufgeklappt = false;
+
+  function datumText(tag) {
+    var heute = new Date(); heute.setHours(12, 0, 0, 0);
+    var d = new Date(tag + 'T12:00:00');
+    var diff = Math.round((heute - d) / 864e5);
+    if (diff === 0) return T.heute;
+    if (diff === 1) return T.gestern;
+    return d.toLocaleDateString(T.locale || 'de-DE', { day: '2-digit', month: '2-digit' });
+  }
+  function kuerze(t, n) {
+    t = String(t || '');
+    if (t.length <= n) return t;
+    var s = t.slice(0, n), p = s.lastIndexOf(' ');
+    return s.slice(0, p > n * 0.6 ? p : n) + ' …';
+  }
+  function eintrag(e, sichtbar) {
+    var h = NACH_DOMAIN[e.domain];
+    if (!h) return '';
+    var ziel = h.url + '#studie-' + encodeURIComponent(e.pmid);
+    return '<li data-teil="' + h.teil + '"' + (sichtbar ? '' : ' hidden data-mehr') + '>'
+      + '<div class="st-zeile1"><a class="st-hub' + (h.teil === 'indikation' ? ' krank' : '') + '" href="' + sicher(h.url) + '">' + sicher(h.name) + ' ›</a>'
+      + '<a class="st-titel" href="' + sicher(ziel) + '">' + sicher(e.title) + '</a></div>'
+      + '<p class="st-erg">' + sicher(kuerze(e.result, 190)) + ' · <a href="' + sicher(ziel) + '">' + T.zusammenfassung + '</a></p>'
+      + '<span class="st-datum">' + datumText(e.aufgenommen) + '</span></li>';
+  }
+  function anzeigen() {
+    if (!liste) return;
+    Array.prototype.forEach.call(liste.children, function (li) {
+      var passt = stTeil === 'alle' || li.getAttribute('data-teil') === stTeil;
+      li.hidden = !passt || (!aufgeklappt && stTeil === 'alle' && li.hasAttribute('data-mehr'));
+    });
+    if (mehrKnopf) {
+      mehrKnopf.hidden = stTeil !== 'alle';
+      mehrKnopf.setAttribute('aria-expanded', aufgeklappt ? 'true' : 'false');
+      mehrKnopf.textContent = aufgeklappt ? T.weniger : T.mehr;
     }
   }
+  if (mehrKnopf) mehrKnopf.addEventListener('click', function () { aufgeklappt = !aufgeklappt; anzeigen(); });
+  filterLeiste(document.getElementById('stFilter'), function (teil) { stTeil = teil; anzeigen(); });
 
-  function laden() {
-    if (geholt) return;
-    geholt = true;
-    fetch('/studien.json', { cache: 'no-cache' })
+  if (liste && window.fetch) {
+    fetch(DATEN.studienDatei || 'studien.json', { cache: 'no-cache' })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (d) { laedtEl.hidden = true; zeichne(d); })
-      .catch(function () {
-        laedtEl.textContent = 'This overview could not be loaded. The studies are available in each hub individually.';
-      });
-  }
-
-  if ('IntersectionObserver' in window) {
-    var beobachter = new IntersectionObserver(function (eintraege) {
-      if (eintraege.some(function (x) { return x.isIntersecting; })) {
-        beobachter.disconnect();
-        laden();
-      }
-    }, { rootMargin: '400px' });
-    beobachter.observe(abschnitt);
-  } else {
-    laden();
+      .then(function (d) {
+        // Je Hub die juengste Studie, die ersten vier sichtbar. Gleicher Tag:
+        // gedreht nach dem Tag des Jahres - wie studien_html() in Python.
+        var jetzt = new Date(), anfang = new Date(jetzt.getFullYear(), 0, 0);
+        var dreh = Math.floor((jetzt - anfang) / 864e5);
+        var rang = function (e) { var h = NACH_DOMAIN[e.domain]; return h ? (h.ordnung + dreh) % 15 : 99; };
+        var alle = (d.studien || []).filter(function (e) { return NACH_DOMAIN[e.domain]; }).sort(function (a, b) {
+          if (a.aufgenommen !== b.aufgenommen) return a.aufgenommen < b.aufgenommen ? 1 : -1;
+          return rang(a) - rang(b);
+        });
+        var da = {}, jeHub = [];
+        alle.forEach(function (e) { if (!da[e.domain]) { da[e.domain] = true; jeHub.push(e); } });
+        var erste = jeHub.slice(0, 4), rest = jeHub.slice(4);
+        var html = erste.map(function (e) { return eintrag(e, true); }).join('')
+                 + rest.map(function (e) { return eintrag(e, false); }).join('');
+        if (html) { liste.innerHTML = html; anzeigen(); }
+      })
+      .catch(function () { /* die beim Bau eingesetzte Liste bleibt stehen */ });
   }
 })();
 </script>
-
-<footer>
+<footer class="fuss">
   <div class="wrap">
-    <p>Published by „Monitor Versorgungsforschung" · eRelation AG – Content in Health</p>
-
-    <details id="impressum">
-      <summary>Legal notice (Impressum)</summary>
-      <div class="legal-body">
-        <h4>Information pursuant to § 5 DDG and § 18 (2) MStV</h4>
-        <p>eRelation AG – Content in Health<br>Johannes-von-Hanstein-Str. 2<br>53115 Bonn, Germany</p>
-        <p>Represented by the Executive Board: Peter Stegmaier (Chairman)</p>
-        <p>Phone: +49 228 76 36 80-30<br>Fax: +49 228 76 36 80-01<br>E-mail: info@m-vf.de</p>
-        <p>Register court: Amtsgericht Bonn · Registration number: HRB 9392</p>
-        <p>Responsible for content pursuant to § 18 (2) MStV: Peter Stegmaier (address as above, stegmaier@m-vf.de)</p>
-        <p>Publisher: Prof. Dr. Reinhold Roski · Editor-in-chief: Peter Stegmaier</p>
-        <p>This is a translation for convenience. The <a href="/#impressum">German version</a> is the legally binding one.</p>
-      </div>
-    </details>
-
-    <details id="datenschutz">
-      <summary>Privacy notice</summary>
-      <div class="legal-body">
-        <h4>1. Controller</h4>
-        <p>eRelation AG – Content in Health, represented by Peter Stegmaier, Johannes-von-Hanstein-Str. 2, 53115 Bonn, Germany. Contact details in the legal notice above.</p>
-        <h4>2. Nature of this page</h4>
-        <p>This overview is a static page. It sets <strong>no cookies</strong> and embeds <strong>no third-party analytics or tracking services</strong>. Fonts and images are served from the same server; no third-party content is loaded. There is no form on this page.</p><p>How often the page is opened we count on a server of our own at <i>Monitor Versorgungsforschung</i>. Nothing is stored on or read from your device, and your IP address is not stored: it enters, together with a secret random number, into a non-reversible hash value that makes repeated visits on the same day countable as one person. The random number is replaced every night; recognition beyond the day does not take place. The legal basis is Art. 6 (1) (f) GDPR. Visits sending <i>Do Not Track</i> are not counted.</p>
-        <h4>3. Server logs</h4>
-        <p>This page is hosted by GitHub Pages (GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA). On retrieval the provider processes technically necessary connection data such as your IP address. The legal basis is our legitimate interest in secure operation (Art. 6 (1) (f) GDPR).</p>
-        <h4>4. Links to other pages</h4>
-        <p>The tiles lead to the individual Knowledge Hubs and to monitor-versorgungsforschung.de. For their content and data processing, the privacy notices published there apply; newsletter subscription takes place there only.</p>
-        <h4>5. Your rights</h4>
-        <p>You have the right to information, rectification, erasure, restriction of processing, data portability and objection, as well as the right to lodge a complaint with a supervisory authority. The competent authority is the State Commissioner for Data Protection and Freedom of Information of North Rhine-Westphalia.</p>
-        <p>This is a translation for convenience. The <a href="/#datenschutz">German version</a> is the legally binding one.</p>
-      </div>
-    </details>
-
-    <p class="stand">Figures as of 5 October 2026. They are counted from the portals themselves on every build.</p>
+    <a class="absender" href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=fuss" target="_blank" rel="noopener">
+      <span>A service of</span>
+      <img src="../logo/mvf-logo-negativ.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
+      <small>· eRelation AG – Content in Health</small>
+    </a>
+    <nav class="fuss-links" aria-label="Legal">
+      <a href="legal-notice.html">Legal notice</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="mailto:info@m-vf.de">Contact</a>
+    </nav>
+    <p class="stand">Figures as of 8 October 2026. They are counted from the portals themselves on every build.</p>
   </div>
 </footer>
-
 <!-- ZAEHLER-START --------------------------------------------------------
      Zaehlt den Aufruf auf dem eigenen Server von Monitor Versorgungsforschung.
      Kein Cookie, keine Kennung auf dem Geraet, keine fremde Firma. Wer Do Not

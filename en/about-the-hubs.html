@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="How the Knowledge Hubs search, how studies are selected and who is behind them.">
+<title>About the hubs – Knowledge Hubs</title>
+<link rel="canonical" href="https://knowledge-hubs.m-vf.de/en/about-the-hubs.html">
+<link rel="alternate" hreflang="de" href="https://knowledge-hubs.m-vf.de/">
+<link rel="alternate" hreflang="en" href="https://knowledge-hubs.m-vf.de/en/">
+<link rel="alternate" hreflang="x-default" href="https://knowledge-hubs.m-vf.de/">
+<link rel="icon" href="../logo/hub-icon.svg" type="image/svg+xml">
+<link rel="icon" href="../logo/hub-icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../logo/hub-icon-180.png">
+<meta name="theme-color" content="#14202E">
+<style>
+@font-face{ font-family:"Lato"; font-style:normal; font-weight:300; font-display:swap; src:url("../fonts/lato-300.woff2") format("woff2"); }
+@font-face{ font-family:"Lato"; font-style:normal; font-weight:400; font-display:swap; src:url("../fonts/lato-400.woff2") format("woff2"); }
+@font-face{ font-family:"Lato"; font-style:normal; font-weight:700; font-display:swap; src:url("../fonts/lato-700.woff2") format("woff2"); }
+
+/* Dieselben Farben wie die Hubs (vorlage/index.html), damit Netzleiste und
+   Seite zusammenpassen. Petrol kennzeichnet die Krankheitsgebiete, Gold die
+   weiteren Angebote, Blau die Versorgungsthemen. */
+:root{
+  --paper:#EDF2FA; --card:#FFFFFF; --card-2:#F7FAFD;
+  --ink:#111111; --ink-soft:#444A50; --ink-faint:#545C63;
+  --line:#D0D8E4; --line-soft:#E3EAF3;
+  --brand:#0051A1; --brand-deep:#003B77; --brand-tint:#E1EAF6;
+  --petrol:#0E6E71; --petrol-tint:#DDF0EF;
+  --gold-text:#8A6E28; --gold-tint:#F6EEDB;
+  --action:#BE9E53; --action-deep:#A5873F; --on-action:#2A2207;
+  --held:#0A3F7E; --held-2:#0051A1;
+  --shadow:0 1px 2px rgba(16,40,38,.05), 0 8px 24px -16px rgba(16,40,38,.28);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+    --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+    --line:#22314A; --line-soft:#1A2639;
+    --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+    --petrol:#4FC2C4; --petrol-tint:#10302F;
+    --gold-text:#D9BE82; --gold-tint:#2A2414;
+    --action:#D4B878; --action-deep:#E3CB94; --on-action:#221A08;
+    --held:#0B2547; --held-2:#123A6B;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0A1120; --card:#111B2E; --card-2:#0E1728;
+  --ink:#E9EEF6; --ink-soft:#A9B7CA; --ink-faint:#8FA0B7;
+  --line:#22314A; --line-soft:#1A2639;
+  --brand:#6FA8E8; --brand-deep:#9CC6F4; --brand-tint:#152742;
+  --petrol:#4FC2C4; --petrol-tint:#10302F;
+  --gold-text:#D9BE82; --gold-tint:#2A2414;
+  --action:#D4B878; --action-deep:#E3CB94; --on-action:#221A08;
+  --held:#0B2547; --held-2:#123A6B;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -18px rgba(0,0,0,.7);
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; scroll-padding-top:72px; scroll-behavior:smooth; }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+body{ margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Lato", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+a{ color:var(--brand); }
+.wrap{ max-width:1180px; margin:0 auto; padding:0 22px; }
+.sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
+
+/* 1 Aktionsleiste: schmal, befristet, schliessbar. */
+.aktion{ background:var(--gold-tint); border-bottom:1px solid color-mix(in srgb, var(--action) 45%, transparent); font-size:13.5px; }
+.aktion .wrap{ display:flex; align-items:center; gap:14px; min-height:38px; }
+.aktion p{ margin:0; flex:1; }
+.aktion b{ color:var(--ink); }
+.aktion a{ color:var(--ink); font-weight:700; text-decoration:none; white-space:nowrap; }
+.aktion a:hover{ text-decoration:underline; }
+.aktion button{ background:none; border:0; font:inherit; font-size:18px; line-height:1; padding:6px 8px; cursor:pointer; color:var(--ink-soft); border-radius:5px; }
+.aktion button:hover{ background:color-mix(in srgb, var(--action) 25%, transparent); }
+
+/* 3 Sprunglinks der Startseite (statt der Hub-Leiste). */
+.ortsleiste .ort-links a{ padding:13px 11px 12px; font-size:13.5px; }
+.ortsleiste.start .ortsleiste-innen{ min-height:48px; }
+.ortsleiste.start .ort-nl{ padding:7px 14px; font-size:13px; }
+
+/* 2/4 Einstieg */
+.held{ background:radial-gradient(110% 150% at 85% -30%, var(--held-2) 0%, transparent 60%), var(--held); color:#fff; }
+.held .wrap{ padding-top:46px; padding-bottom:40px; }
+.held-eyebrow{ margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:.14em; color:#C9D8EC; }
+.held h1{ margin:0; font-size:clamp(28px, 4.2vw, 42px); line-height:1.15; font-weight:700; max-width:21em; letter-spacing:-.01em; }
+.held-lede{ margin:14px 0 24px; font-size:17.5px; color:#E2EBF6; max-width:40em; }
+.suche{ position:relative; max-width:760px; }
+.suche-zeile{ display:flex; background:#fff; border-radius:10px; padding:6px; box-shadow:0 18px 40px -20px rgba(0,0,0,.6); }
+.suche-zeile svg{ width:20px; height:20px; color:#6A7480; margin:0 4px 0 10px; align-self:center; flex:0 0 20px; }
+.suche input{ flex:1; min-width:0; border:0; outline:0; background:none; font:inherit; font-size:17px; padding:11px 8px; color:#111; }
+.suche input::placeholder{ color:#6A7480; }
+.suche-zeile:focus-within{ box-shadow:0 0 0 3px var(--action), 0 18px 40px -20px rgba(0,0,0,.6); }
+.suche-knopf{ background:var(--action); color:#2A2207; border:0; border-radius:7px; font:inherit; font-weight:700; font-size:15px; padding:0 22px; cursor:pointer; }
+.suche-knopf:hover{ background:var(--action-deep); }
+.vorschlag{ position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:30; background:#fff; color:#111; border-radius:10px;
+  box-shadow:0 24px 50px -18px rgba(0,0,0,.55); overflow:hidden; }
+.vorschlag[hidden]{ display:none; }
+.vorschlag h2{ margin:0; padding:12px 18px 4px; font-size:11px; letter-spacing:.12em; color:#545C63; font-weight:700; }
+.vorschlag ul{ list-style:none; margin:0; padding:0 0 6px; }
+.vorschlag li a{ display:flex; align-items:center; gap:12px; padding:9px 18px; text-decoration:none; color:#111; font-size:15px; }
+.vorschlag li a .ic{ width:22px; height:22px; color:#0051A1; flex:0 0 22px; }
+.vorschlag li a.krank .ic{ color:#0E6E71; }
+.vorschlag li a b{ font-weight:700; }
+.vorschlag li a small{ margin-left:auto; color:#545C63; font-size:13px; white-space:nowrap; }
+.vorschlag li a:hover, .vorschlag li a.aktiv{ background:#E1EAF6; }
+.vorschlag .vs-grund{ display:block; font-size:12.5px; color:#545C63; font-weight:400; }
+.vorschlag .vs-leer{ padding:10px 18px 12px; margin:0; font-size:14px; color:#444A50; }
+.vorschlag .vs-studien{ border-top:1px solid #E3EAF3; }
+.direkt{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; margin:20px 0 0; font-size:14px; color:#C9D8EC; }
+.direkt a{ color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.45); border-radius:999px; padding:6px 14px; font-weight:700; font-size:13.5px; }
+.direkt a:hover{ background:rgba(255,255,255,.12); border-color:#fff; }
+.haken{ display:flex; flex-wrap:wrap; gap:6px 22px; list-style:none; padding:0; margin:18px 0 0; font-size:13.5px; color:#DCE6F3; }
+.haken li::before{ content:"✓"; margin-right:7px; color:var(--action); font-weight:700; }
+
+/* Abschnitte */
+.abschnitt{ padding:46px 0 10px; }
+.abschnitt > .wrap > h2, .abschnitt h2.titel{ margin:0 0 6px; font-size:clamp(23px, 2.6vw, 29px); line-height:1.2; letter-spacing:-.005em; }
+.vor{ margin:0 0 20px; color:var(--ink-soft); max-width:46em; }
+
+/* 3 Themenwahl */
+.filter{ display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px; }
+.filter button{ font:inherit; font-size:14px; font-weight:700; padding:7px 14px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--line); background:var(--card); color:var(--ink-soft); }
+.filter button span{ font-weight:400; margin-left:4px; color:var(--ink-faint); }
+.filter button[aria-pressed="true"]{ background:var(--brand); border-color:var(--brand); color:#fff; }
+.filter button[aria-pressed="true"] span{ color:#DCE6F3; }
+:root[data-theme="dark"] .filter button[aria-pressed="true"]{ color:#081726; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .filter button[aria-pressed="true"]{ color:#081726; } }
+.gruppe-titel{ margin:22px 0 10px; font-size:12px; letter-spacing:.12em; font-weight:700; color:var(--ink-soft); }
+.gruppe-titel.krank{ color:var(--petrol); }
+.kacheln{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:12px; }
+.kachel{ position:relative; display:flex; flex-direction:column; gap:4px; background:var(--card); border:1px solid var(--line);
+  border-radius:10px; padding:15px 16px 14px; text-decoration:none; color:var(--ink); transition:border-color .14s, box-shadow .14s, transform .14s; }
+.kachel:hover{ border-color:var(--brand); box-shadow:var(--shadow); transform:translateY(-1px); }
+.kachel .ic{ width:26px; height:26px; color:var(--brand); margin-bottom:4px; }
+.kachel b{ font-size:15.5px; line-height:1.25; }
+.kachel span.satz{ font-size:13.5px; color:var(--ink-soft); line-height:1.35; }
+.kachel span.zahl{ margin-top:auto; padding-top:8px; font-size:13px; font-weight:700; color:var(--brand); font-variant-numeric:tabular-nums; }
+.kachel.krank .ic, .kachel.krank span.zahl{ color:var(--petrol); }
+.kachel.krank:hover{ border-color:var(--petrol); }
+.kachel.ausgang{ grid-column:span 2; flex-direction:row; align-items:center; gap:16px; background:linear-gradient(120deg, var(--brand-tint), var(--card) 70%); }
+.kachel.ausgang .ic{ width:40px; height:40px; flex:0 0 40px; margin:0; }
+.kachel.ausgang .txt{ display:flex; flex-direction:column; gap:3px; }
+.kachel.ausgang small{ font-size:11.5px; letter-spacing:.1em; font-weight:700; color:var(--ink-soft); }
+.kachel.ausgang span.zahl{ margin-top:4px; padding-top:0; }
+.kachel[hidden], .gruppe[hidden]{ display:none; }
+
+/* 4 So funktioniert's */
+.schritte{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px; list-style:none; padding:0; margin:0; counter-reset:s; }
+.schritte li{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px 20px; }
+.schritte li::before{ counter-increment:s; content:counter(s); display:grid; place-items:center; width:30px; height:30px; border-radius:50%;
+  background:var(--brand); color:#fff; font-weight:700; font-size:14px; margin-bottom:10px; }
+:root[data-theme="dark"] .schritte li::before{ color:#081726; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .schritte li::before{ color:#081726; } }
+.schritte b{ display:block; font-size:16px; margin-bottom:4px; }
+.schritte p{ margin:0; font-size:14.5px; color:var(--ink-soft); }
+.mehr-link{ display:inline-block; margin-top:16px; font-weight:700; text-decoration:none; }
+.mehr-link:hover{ text-decoration:underline; }
+
+/* 5 Weitere Angebote */
+.angebote{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px; }
+.angebot{ display:flex; flex-direction:column; gap:6px; background:var(--card); border:1px solid var(--line); border-top:3px solid var(--action);
+  border-radius:10px; padding:18px 20px; text-decoration:none; color:var(--ink); transition:box-shadow .14s; }
+.angebot:hover{ box-shadow:var(--shadow); }
+.angebot .ic{ width:28px; height:28px; color:var(--gold-text); }
+.angebot b{ font-size:16.5px; }
+.angebot span.satz{ font-size:14px; color:var(--ink-soft); }
+.angebot span.los{ margin-top:auto; padding-top:6px; font-size:14px; font-weight:700; color:var(--brand); }
+
+/* 6 Neue Studien */
+.st-liste{ list-style:none; margin:0; padding:0; background:var(--card); border:1px solid var(--line); border-radius:10px; }
+.st-liste li{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 18px; padding:14px 18px; border-top:1px solid var(--line-soft); }
+.st-liste li:first-child{ border-top:0; }
+.st-liste li[hidden]{ display:none; }
+.st-zeile1{ display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 8px; }
+.st-hub{ font-size:12.5px; font-weight:700; text-decoration:none; color:var(--brand); background:var(--brand-tint); padding:2px 8px; border-radius:4px; white-space:nowrap; }
+.st-hub.krank{ color:var(--petrol); background:var(--petrol-tint); }
+.st-titel{ font-weight:700; color:var(--ink); text-decoration:none; font-size:15.5px; line-height:1.35; }
+.st-titel:hover{ color:var(--brand); text-decoration:underline; }
+.st-erg{ grid-column:1; margin:2px 0 0; font-size:14px; color:var(--ink-soft); }
+.st-erg a{ font-weight:700; text-decoration:none; white-space:nowrap; }
+.st-erg a:hover{ text-decoration:underline; }
+.st-datum{ grid-column:2; grid-row:1; font-size:12.5px; color:var(--ink-faint); white-space:nowrap; }
+.st-unten{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; margin-top:14px; font-size:14.5px; }
+.st-unten button{ font:inherit; font-weight:700; color:var(--brand); background:var(--card); border:1px solid var(--line); border-radius:7px; padding:8px 14px; cursor:pointer; }
+.st-unten a{ font-weight:700; text-decoration:none; align-self:center; }
+.st-unten a:hover{ text-decoration:underline; }
+
+/* 7 Newsletter: einer je Hub - mit Absicht. */
+.nl-kasten{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2fr); gap:28px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:26px 28px; }
+.nl-kasten h2{ margin:0 0 8px; font-size:24px; line-height:1.2; }
+.nl-kasten p{ margin:0 0 10px; color:var(--ink-soft); font-size:15px; }
+.nl-kasten .klein{ font-size:13.5px; }
+.nl-gruppe{ margin:0 0 14px; }
+.nl-gruppe h3{ margin:0 0 8px; font-size:11.5px; letter-spacing:.12em; color:var(--ink-soft); }
+.nl-gruppe.krank h3{ color:var(--petrol); }
+.nl-gruppe ul{ list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:7px; }
+.nl-gruppe a{ display:inline-flex; align-items:center; gap:7px; font-size:13.5px; font-weight:700; text-decoration:none; color:var(--ink);
+  border:1px solid var(--line); border-radius:999px; padding:6px 12px 6px 9px; background:var(--card-2); }
+.nl-gruppe a .ic{ width:16px; height:16px; color:var(--brand); }
+.nl-gruppe.krank a .ic{ color:var(--petrol); }
+.nl-gruppe a:hover{ border-color:var(--action); background:var(--gold-tint); }
+.nl-mvf{ border-top:1px solid var(--line-soft); padding-top:12px; font-size:14px; color:var(--ink-soft); }
+
+/* 8 Ueber die Hubs */
+.ueber-hinweis{ display:flex; align-items:center; justify-content:space-between; gap:18px; background:var(--brand-tint); border-radius:12px; padding:20px 26px; margin:34px 0 0; }
+.ueber-hinweis h2{ margin:0 0 3px; font-size:19px; }
+.ueber-hinweis p{ margin:0; color:var(--ink-soft); font-size:14.5px; }
+.knopf{ display:inline-block; background:var(--brand); color:#fff; font-weight:700; text-decoration:none; padding:10px 18px; border-radius:7px; white-space:nowrap; }
+:root[data-theme="dark"] .knopf{ color:#081726; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .knopf{ color:#081726; } }
+
+/* 9 Footer */
+footer.fuss{ margin-top:56px; background:#14202E; color:#C3CFDD; font-size:14px; }
+footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:18px; padding-top:26px; padding-bottom:28px; }
+.absender{ display:flex; align-items:center; gap:14px; text-decoration:none; }
+.absender:hover small{ text-decoration:underline; }
+.absender img{ width:150px; height:auto; display:block; }
+.absender span{ font-size:12px; letter-spacing:.06em; color:#9FB0C4; }
+.absender small{ color:#9FB0C4; font-size:13px; }
+.fuss-links{ display:flex; gap:20px; }
+.fuss-links a{ color:#E3EAF3; text-decoration:none; font-weight:700; }
+.fuss-links a:hover{ text-decoration:underline; }
+.stand{ width:100%; margin:0; font-size:12.5px; color:#8698AE; }
+
+/* Unterseiten (Ueber die Hubs, Impressum, Datenschutz) */
+.unterseite{ max-width:860px; padding-top:38px; }
+.unterseite h1{ font-size:clamp(28px, 3.6vw, 38px); line-height:1.15; margin:0 0 10px; }
+.unterseite h2{ font-size:22px; margin:34px 0 10px; }
+.unterseite h4{ margin:22px 0 6px; }
+.unterseite p, .unterseite li{ color:var(--ink-soft); }
+.unterseite .punkte{ padding-left:0; list-style:none; }
+.unterseite .punkte li{ margin:0 0 12px; padding-left:16px; border-left:3px solid var(--brand-tint); }
+.unterseite .punkte b{ display:block; color:var(--ink); }
+.zahlentafel{ width:100%; border-collapse:collapse; font-size:14px; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+.zahlentafel th, .zahlentafel td{ text-align:right; padding:8px 12px; border-top:1px solid var(--line-soft); font-variant-numeric:tabular-nums; }
+.zahlentafel th:first-child, .zahlentafel td:first-child{ text-align:left; }
+.zahlentafel thead th{ background:var(--card-2); border-top:0; font-size:12px; letter-spacing:.06em; color:var(--ink-soft); }
+.zahlentafel tfoot td{ font-weight:700; color:var(--ink); }
+.tafel-rahmen{ overflow-x:auto; }
+.wer{ display:flex; gap:22px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; }
+.wer img{ width:190px; height:auto; flex:0 0 auto; }
+:root[data-theme="dark"] .wer img{ background:#fff; padding:8px 10px; border-radius:6px; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .wer img{ background:#fff; padding:8px 10px; border-radius:6px; } }
+
+@media (max-width:980px){
+  .kacheln{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+  .nl-kasten{ grid-template-columns:1fr; gap:16px; }
+}
+@media (max-width:760px){
+  .kacheln{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .schritte, .angebote{ grid-template-columns:1fr; }
+  .ueber-hinweis{ flex-direction:column; align-items:flex-start; }
+  .wer{ flex-direction:column; align-items:flex-start; }
+}
+@media (max-width:560px){
+  .wrap{ padding:0 16px; }
+  .held .wrap{ padding-top:32px; padding-bottom:30px; }
+  .held-lede{ font-size:16px; }
+  .suche-knopf{ padding:0 14px; }
+  .suche-zeile svg{ display:none; }
+  .kacheln{ grid-template-columns:1fr; gap:8px; }
+  .kachel{ flex-direction:row; flex-wrap:wrap; align-items:center; column-gap:12px; padding:12px 14px; }
+  .kachel .ic{ margin:0; width:24px; height:24px; }
+  .kachel b{ flex:1; }
+  .kachel span.satz{ flex-basis:100%; padding-left:36px; }
+  .kachel span.zahl{ flex-basis:100%; padding:2px 0 0 36px; }
+  .kachel.ausgang{ grid-column:auto; flex-wrap:nowrap; }
+  .kachel.ausgang .ic{ width:30px; height:30px; flex-basis:30px; }
+  .st-liste li{ grid-template-columns:1fr; padding:13px 14px; }
+  .st-datum{ grid-column:1; grid-row:auto; }
+  .nl-kasten{ padding:20px 18px; }
+  .aktion .wrap{ font-size:13px; }
+}
+@media print{ .aktion, .held .suche, .filter{ display:none; } }
+
+/* Englische Seite: Hinweis, dass die Hubs deutsch sind - gleich unter dem
+   Einstieg, bevor jemand auf eine Kachel klickt. */
+.notiz-rahmen{ padding-top:26px; }
+.sprachnotiz{ margin:0; background:var(--gold-tint); border-left:4px solid var(--action); border-radius:8px;
+  padding:14px 18px; font-size:15px; color:var(--ink-soft); max-width:60em; }
+.sprachnotiz b{ display:block; color:var(--ink); font-size:16px; margin-bottom:3px; }
+.sprachnotiz a{ color:var(--brand); font-weight:700; }
+</style>
+<style>
+  .netz{ --nz-grund:#14202E; --nz-text:#D3DCE8; --nz-leise:#9FB0C4; --nz-gold:#BE9E53;
+         --nz-petrol:#0E6E71; --nz-blau:var(--brand,#0051A1);
+         --nz-karte:var(--card,#FFFFFF); --nz-ink:var(--ink,#111); --nz-soft:var(--ink-soft,#444A50);
+         --nz-linie:var(--line,#D0D8E4); --nz-tint:var(--brand-tint,#E1EAF6);
+         position:relative; z-index:60; background:var(--nz-grund); color:var(--nz-text);
+         font-size:13px; line-height:1.3; }
+  :root[data-theme="dark"] .netz{ --nz-petrol:#4FC2C4; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .netz{ --nz-petrol:#4FC2C4; } }
+  .netz *{ box-sizing:border-box; }
+  /* Breite und Seitenrand kommen von .wrap der jeweiligen Seite - Hubs und
+     Uebersicht setzen den Rand verschieden, die Leiste soll buendig mit dem
+     Inhalt darunter stehen. */
+  .netz-innen{ display:flex; align-items:center; gap:4px; min-height:44px; }
+  .netz a, .netz button{ font:inherit; color:inherit; }
+  .netz a:focus-visible, .netz button:focus-visible{ outline:2px solid var(--nz-gold); outline-offset:2px; border-radius:4px; }
+  .netz-marke{ display:flex; align-items:center; gap:9px; text-decoration:none; padding:8px 14px 8px 0;
+               margin-right:6px; border-right:1px solid #2E3D52; font-weight:700; letter-spacing:.09em; font-size:12.5px; color:#FFF; white-space:nowrap; }
+  .netz-marke img{ width:20px; height:20px; display:block; }
+  .netz-marke b{ color:var(--nz-gold); font-weight:700; }
+  .netz-knopf, .netz-link{ background:none; border:0; cursor:pointer; padding:13px 11px; text-decoration:none;
+               white-space:nowrap; font-weight:700; color:var(--nz-text); }
+  .netz-knopf:hover, .netz-link:hover{ color:#FFF; }
+  .netz-knopf[aria-expanded="true"]{ background:var(--nz-karte); color:var(--nz-ink); border-radius:6px 6px 0 0; }
+  .netz-knopf .pfeil{ display:inline-block; margin-left:5px; font-size:10px; transition:transform .15s; }
+  .netz-knopf[aria-expanded="true"] .pfeil{ transform:rotate(180deg); }
+  .netz-rechts{ margin-left:auto; display:flex; align-items:center; gap:14px; }
+  .netz-sprache{ display:flex; border:1px solid #3A4A60; border-radius:5px; overflow:hidden; font-size:11.5px; font-weight:700; }
+  .netz-sprache a, .netz-sprache span{ padding:3px 8px; text-decoration:none; }
+  .netz-sprache [aria-current]{ background:var(--nz-blau); color:#FFF; }
+  :root[data-theme="dark"] .netz-sprache [aria-current]{ background:#2C5C93; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .netz-sprache [aria-current]{ background:#2C5C93; } }
+  .netz-mvf{ color:var(--nz-leise); text-decoration:none; white-space:nowrap; font-size:12px; }
+  .netz-mvf b{ color:var(--nz-text); }
+  .netz-mvf:hover b{ color:#FFF; text-decoration:underline; }
+
+  /* Mega-Menue: eine Ebene, drei Gruppen. Oeffnet per Klick, nie per Hover. */
+  .netz-mega{ position:absolute; left:0; right:0; top:100%; }
+  .netz-mega[hidden]{ display:none; }
+  .netz-mega-karte{ background:var(--nz-karte); color:var(--nz-ink);
+               border:1px solid var(--nz-linie); border-radius:0 0 12px 12px;
+               box-shadow:0 22px 50px -18px rgba(10,20,40,.45); padding:22px 26px 0; }
+  .netz-spalten{ display:grid; grid-template-columns:1.25fr 1fr 1.15fr; gap:30px; }
+  .netz-gruppe h3{ margin:0 0 9px; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:var(--nz-soft); font-weight:700; }
+  .netz-gruppe ul{ list-style:none; margin:0; padding:0; }
+  .netz-gruppe li a{ display:flex; align-items:center; gap:9px; padding:5px 8px; margin:0 -8px; border-radius:6px;
+               text-decoration:none; color:var(--nz-ink); font-size:14px; line-height:1.3; }
+  .netz-gruppe li a::before{ content:""; flex:0 0 7px; height:7px; border-radius:50%; background:var(--nz-blau); opacity:.55; }
+  .netz-gruppe.krank li a::before{ background:var(--nz-petrol); }
+  .netz-gruppe li a:hover{ background:var(--nz-tint); }
+  .netz-gruppe li a[aria-current]{ background:var(--nz-tint); color:var(--nz-blau); font-weight:700; }
+  .netz-gruppe li a[aria-current]::before{ opacity:1; }
+  .netz-gruppe.krank li a[aria-current]{ color:var(--nz-petrol); }
+  .netz-angebote li a{ align-items:flex-start; padding:7px 8px; }
+  .netz-angebote li a::before{ display:none; }
+  .netz-angebote svg{ flex:0 0 22px; width:22px; height:22px; color:#8A6E28; margin-top:1px; }
+  :root[data-theme="dark"] .netz-angebote svg{ color:var(--nz-gold); }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .netz-angebote svg{ color:var(--nz-gold); } }
+  .netz-angebote b{ display:block; font-size:14px; }
+  .netz-angebote small{ display:block; font-size:12.5px; color:var(--nz-soft); margin-top:2px; }
+  .netz-fuss{ display:flex; justify-content:space-between; gap:16px; margin-top:16px; padding:13px 0 15px;
+               border-top:1px solid var(--nz-linie); font-size:13.5px; font-weight:700; }
+  .netz-fuss a{ color:var(--nz-blau); text-decoration:none; }
+  .netz-fuss a:hover{ text-decoration:underline; }
+
+  /* Die weisse Leiste des Hubs (bzw. die Sprunglinks der Uebersicht).
+     Klebt oben, verschwindet beim Herunterscrollen und kommt beim
+     Hochscrollen wieder. */
+  .ortsleiste{ position:sticky; top:0; z-index:50; background:var(--nz-karte,var(--card,#fff));
+               border-bottom:1px solid var(--line,#D0D8E4); transition:transform .22s ease; }
+  .ortsleiste.weg{ transform:translateY(-102%); }
+  @media (prefers-reduced-motion:reduce){ .ortsleiste{ transition:none; } }
+  .ortsleiste-innen{ display:flex; align-items:center; gap:6px; min-height:58px; }
+  .ort-name{ display:flex; align-items:center; gap:11px; text-decoration:none; color:var(--ink,#111); margin-right:18px; min-width:0; }
+  .ort-name img{ width:34px; height:34px; flex:0 0 34px; display:block; }
+  .ort-name small{ display:block; font-size:10.5px; letter-spacing:.12em; font-weight:700; color:var(--ink-soft,#444A50); }
+  .ort-name b{ display:block; font-size:14.5px; color:var(--brand,#0051A1); line-height:1.2; }
+  .ort-links{ display:flex; gap:2px; }
+  .ort-links a{ padding:18px 11px 17px; font-size:13.5px; font-weight:700; color:var(--ink-soft,#444A50);
+               text-decoration:none; border-bottom:2px solid transparent; white-space:nowrap; }
+  .ort-links a:hover, .ort-links a[aria-current]{ color:var(--brand,#0051A1); border-bottom-color:var(--brand,#0051A1); }
+  .ort-nl{ margin-left:auto; background:var(--action,#BE9E53); color:var(--on-action,#2A2207); font-weight:700;
+               font-size:13.5px; padding:9px 16px; border-radius:7px; text-decoration:none; white-space:nowrap; }
+  .ort-nl:hover{ background:var(--action-deep,#A5873F); }
+  .ort-menue{ display:none; margin-left:8px; align-items:center; gap:7px; background:none; cursor:pointer;
+               border:1px solid var(--line,#D0D8E4); border-radius:7px; padding:8px 12px;
+               font:inherit; font-size:13.5px; font-weight:700; color:var(--ink,#111); }
+  .ort-menue svg{ width:18px; height:18px; }
+  .netz a:focus-visible, .ortsleiste a:focus-visible, .ort-menue:focus-visible{ outline:2px solid var(--brand,#0051A1); outline-offset:2px; }
+
+  /* Smartphone-Menue: alles untereinander, nichts weiter aufzuklappen. */
+  .netz-handy{ --nz-petrol:#0E6E71; --nz-blau:var(--brand,#0051A1); --nz-ink:var(--ink,#111); --nz-soft:var(--ink-soft,#444A50);
+               --nz-tint:var(--brand-tint,#E1EAF6); --nz-gold:#BE9E53; }
+  :root[data-theme="dark"] .netz-handy{ --nz-petrol:#4FC2C4; }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .netz-handy{ --nz-petrol:#4FC2C4; } }
+  .netz-handy{ position:fixed; inset:0; z-index:90; background:var(--nz-karte,#fff); color:var(--ink,#111);
+               overflow-y:auto; padding:0 0 30px; }
+  .netz-handy[hidden]{ display:none; }
+  .netz-handy-kopf{ position:sticky; top:0; display:flex; justify-content:space-between; align-items:center;
+               padding:12px 18px; background:var(--nz-karte,#fff); border-bottom:1px solid var(--line,#D0D8E4); font-weight:700; }
+  .netz-handy-kopf button{ font:inherit; font-size:14px; font-weight:700; background:none; border:1px solid var(--line,#D0D8E4);
+               border-radius:7px; padding:7px 12px; cursor:pointer; color:inherit; }
+  .netz-handy section{ padding:14px 18px 6px; border-bottom:1px solid var(--line-soft,#E3EAF3); }
+  .netz-handy h3{ margin:0 0 6px; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:var(--ink-soft,#444A50); }
+  .netz-handy .netz-gruppe h3{ margin-top:10px; font-size:10.5px; }
+  .netz-handy ul{ list-style:none; margin:0; padding:0; }
+  .netz-handy li a, .netz-handy .handy-zeile{ display:flex; justify-content:space-between; align-items:center;
+               padding:10px 0; min-height:44px; text-decoration:none; color:var(--ink,#111); font-size:15px; }
+  /* Die Hubliste ist aus dem Mega-Menue geklont; dort stehen Punkt und Name
+     linksbuendig nebeneinander, nicht auf Abstand wie die Zeilen oben. */
+  .netz-handy .netz-gruppe li a{ margin:0; padding:9px 6px; justify-content:flex-start; gap:10px; min-height:42px; }
+  .netz-handy .netz-angebote li a{ align-items:flex-start; }
+  .netz-handy .netz-gruppe li a[aria-current]::after{ content:"✓"; margin-left:auto; color:var(--brand,#0051A1); }
+  .netz-handy .netz-sprache span[aria-current]{ background:var(--brand,#0051A1); color:#FFF; }
+  .netz-handy .netz-sprache a{ color:var(--ink,#111); }
+  .netz-handy .handy-nl{ display:block; text-align:center; margin:16px 18px; background:var(--action,#BE9E53);
+               color:var(--on-action,#2A2207); font-weight:700; padding:13px; border-radius:8px; text-decoration:none; }
+  .netz-handy .handy-unten{ display:flex; flex-wrap:wrap; gap:14px 22px; align-items:center; padding:16px 18px; font-size:13.5px; }
+  .netz-handy .handy-unten a{ color:var(--ink-soft,#444A50); }
+  .netz-handy .netz-sprache{ border-color:var(--line,#D0D8E4); }
+
+  @media (max-width:980px){ .netz-mvf .lang{ display:none; } }
+  @media (max-width:860px){
+    .netz-rechts, .netz-link{ display:none; }
+    .netz-spalten{ grid-template-columns:1fr 1fr; }
+    .netz-angebote{ grid-column:1 / -1; }
+    .ort-links, .ort-nl{ display:none; }
+    .ort-menue{ display:inline-flex; margin-left:auto; }
+    .ortsleiste-innen{ min-height:56px; }
+  }
+  @media (max-width:560px){
+    .netz-mega-karte{ border-radius:0 0 10px 10px; padding:16px 16px 0; max-height:calc(100vh - 60px); overflow-y:auto; }
+    .netz-spalten{ grid-template-columns:1fr; gap:14px; }
+    .netz-marke{ border-right:0; padding-right:4px; letter-spacing:.06em; }
+    .ort-name b{ font-size:13.5px; }
+  }
+  @media print{ .netz, .ortsleiste, .netz-handy{ display:none !important; } }
+</style>
+
+<nav class="netz" aria-label="All Knowledge Hubs" data-hier="knowledge-hubs.m-vf.de">
+  <div class="netz-innen wrap">
+    <a class="netz-marke" href="https://knowledge-hubs.m-vf.de/" title="Overview of all Knowledge Hubs">
+      <img src="../logo/hub-icon.svg" alt="" width="20" height="20">
+      <span>KNOWLEDGE<b>-HUBS</b></span>
+    </a>
+    <button class="netz-knopf" type="button" id="netzKnopf" aria-expanded="false" aria-controls="netzMega">All hubs<span class="pfeil" aria-hidden="true">▼</span></button>
+    <a class="netz-link" href="about-the-hubs.html">About the hubs</a>
+    <div class="netz-rechts">
+      <div class="netz-sprache" role="group" aria-label="Language">
+        <a href="../" lang="de" hreflang="de" aria-label="Deutsch" title="Diese Seite auf Deutsch">DE</a>
+        <span aria-current="true" lang="en" title="English" aria-label="English">EN</span>
+      </div>
+      <a class="netz-mvf" href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=netzleiste" target="_blank" rel="noopener"><span class="lang">a service of </span><b>Monitor Versorgungsforschung</b> ↗</a>
+    </div>
+  </div>
+
+  <div class="netz-mega" id="netzMega" hidden>
+    <div class="wrap"><div class="netz-mega-karte">
+      <div class="netz-spalten">
+        <div class="netz-gruppe">
+          <h3>Topics in care · 11</h3>
+          <ul>
+            <li><a data-domain="wissen.m-vf.de" href="https://wissen.m-vf.de/">Health Services Research</a></li>
+            <li><a data-domain="ncd.m-vf.de" href="https://ncd.m-vf.de/">Chronic Conditions</a></li>
+            <li><a data-domain="ki.m-vf.de" href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></li>
+            <li><a data-domain="gender.m-vf.de" href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></li>
+            <li><a data-domain="longevity.m-vf.de" href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></li>
+            <li><a data-domain="healthliteracy.m-vf.de" href="https://healthliteracy.m-vf.de/">Health Literacy</a></li>
+            <li><a data-domain="klima.m-vf.de" href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></li>
+            <li><a data-domain="impfen.m-vf.de" href="https://impfen.m-vf.de/">Vaccination</a></li>
+            <li><a data-domain="safety.m-vf.de" href="https://safety.m-vf.de/">Patient Safety</a></li>
+            <li><a data-domain="pflege.m-vf.de" href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></li>
+            <li><a data-domain="mental.m-vf.de" href="https://mental.m-vf.de/">Mental Health</a></li>
+          </ul>
+        </div>
+        <div class="netz-gruppe krank">
+          <h3>Disease areas · 4</h3>
+          <ul>
+            <li><a data-domain="adipositas.m-vf.de" href="https://adipositas.m-vf.de/">Obesity</a></li>
+            <li><a data-domain="diabetes.m-vf.de" href="https://diabetes.m-vf.de/">Diabetes</a></li>
+            <li><a data-domain="kardio.m-vf.de" href="https://kardio.m-vf.de/">Cardiology</a></li>
+            <li><a data-domain="onkologie.m-vf.de" href="https://onkologie.m-vf.de/">Oncology</a></li>
+          </ul>
+        </div>
+        <div class="netz-gruppe netz-angebote">
+          <h3>More from MVF</h3>
+          <ul>
+            <li><a href="https://innofonds.m-vf.de/">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10 12 4l9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 20h18"/></svg>
+              <span><b>Innovationsfonds-Wissen</b><small>Projects and decisions of the German Innovation Fund</small></span></a></li>
+            <li><a href="https://wissen.m-vf.de/ausschreibungen.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><path d="M12 12l6-6"/></svg>
+              <span><b>Funding radar</b><small>Open calls for research funding, updated twice a week</small></span></a></li>
+            <li><a href="https://knowledge-hubs.m-vf.de/curatiohub.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7.5" width="18" height="12.5" rx="2"/><path d="M9 7.5V5.5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5.5v2"/><path d="M3 13h18"/></svg>
+              <span><b>CuratioHub</b><small>Jobs in health services research, public health and medicine</small></span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="netz-fuss">
+        <a href="./#newsletter" data-netz-nl>Newsletters of the hubs ›</a>
+        <a href="https://knowledge-hubs.m-vf.de/">Overview of all hubs →</a>
+      </div>
+    </div></div>
+  </div>
+</nav>
+<script>
+// Laeuft erst, wenn das Dokument steht: Die weisse Leiste und das
+// Smartphone-Menue folgen erst NACH diesem Baustein.
+(function (los) {
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', los);
+  else los();
+})(function () {
+  var netz = document.querySelector('.netz');
+  if (!netz) return;
+  var hier = netz.getAttribute('data-hier');
+  var knopf = document.getElementById('netzKnopf');
+  var mega = document.getElementById('netzMega');
+
+  // „Hier bin ich": der eigene Hub im Menue.
+  Array.prototype.forEach.call(netz.querySelectorAll('a[data-domain]'), function (a) {
+    if (a.getAttribute('data-domain') === hier) a.setAttribute('aria-current', 'page');
+  });
+
+  function zu(fokus) {
+    mega.hidden = true; knopf.setAttribute('aria-expanded', 'false');
+    if (fokus) knopf.focus();
+  }
+  knopf.addEventListener('click', function () {
+    var auf = knopf.getAttribute('aria-expanded') === 'true';
+    if (auf) { zu(false); return; }
+    mega.hidden = false; knopf.setAttribute('aria-expanded', 'true');
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !mega.hidden) zu(true);
+  });
+  document.addEventListener('click', function (e) {
+    if (!mega.hidden && !netz.contains(e.target)) zu(false);
+  });
+
+  // Die weisse Leiste: weg beim Herunterscrollen, zurueck beim Hochscrollen.
+  // Die Sprungleiste darunter rueckt mit (--ort-h), sonst klebte sie unter
+  // einer Leiste, die gerade nicht da ist.
+  var ort = document.querySelector('.ortsleiste');
+  if (ort) {
+    var zuletzt = window.scrollY, hoehe = ort.offsetHeight;
+    var setze = function (weg) {
+      ort.classList.toggle('weg', weg);
+      document.documentElement.style.setProperty('--ort-h', weg ? '0px' : hoehe + 'px');
+    };
+    setze(false);
+    window.addEventListener('resize', function () { hoehe = ort.offsetHeight; setze(ort.classList.contains('weg')); });
+    window.addEventListener('scroll', function () {
+      var y = window.scrollY;
+      if (Math.abs(y - zuletzt) < 6) return;
+      setze(y > zuletzt && y > 240);
+      zuletzt = y;
+    }, { passive: true });
+  }
+
+  // Smartphone: „Menue" oeffnet eine Seite mit allem. Die Hubliste wird aus
+  // dem Mega-Menue uebernommen, damit sie nur an einer Stelle steht.
+  var menueKnopf = document.getElementById('ortMenue');
+  var handy = document.getElementById('netzHandy');
+  if (menueKnopf && handy) {
+    var platz = handy.querySelector('[data-netz-hubs]');
+    if (platz) Array.prototype.forEach.call(mega.querySelectorAll('.netz-gruppe'), function (g) {
+      platz.appendChild(g.cloneNode(true));
+    });
+    var schliessen = handy.querySelector('[data-netz-zu]');
+    var oeffne = function () { handy.hidden = false; menueKnopf.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; schliessen.focus(); };
+    var schliesse = function () { handy.hidden = true; menueKnopf.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; menueKnopf.focus(); };
+    menueKnopf.addEventListener('click', oeffne);
+    schliessen.addEventListener('click', schliesse);
+    handy.addEventListener('click', function (e) { if (e.target.closest('a')) schliesse(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !handy.hidden) schliesse(); });
+  }
+});
+</script>
+<nav class="ortsleiste start" aria-label="On this page">
+  <div class="ortsleiste-innen wrap">
+    <div class="ort-links">
+      <a href="./#themen">Topics</a>
+      <a href="./#so-funktionierts">How it works</a>
+      <a href="./#angebote">More from MVF</a>
+      <a href="./#studien">New studies</a>
+    </div>
+    <a class="ort-nl" href="./#newsletter">Newsletters</a>
+    <button class="ort-menue" id="ortMenue" type="button" aria-expanded="false" aria-controls="netzHandy">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Menu</button>
+  </div>
+</nav>
+
+<div class="netz-handy" id="netzHandy" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+  <div class="netz-handy-kopf"><span>Menu</span><button type="button" data-netz-zu>Close ✕</button></div>
+  <section>
+    <h3>On this page</h3>
+    <ul>
+      <li><a href="./#themen">Topics <span aria-hidden="true">›</span></a></li>
+      <li><a href="./#so-funktionierts">How it works <span aria-hidden="true">›</span></a></li>
+      <li><a href="./#angebote">More from MVF <span aria-hidden="true">›</span></a></li>
+      <li><a href="./#studien">New studies <span aria-hidden="true">›</span></a></li>
+      <li><a href="about-the-hubs.html">About the hubs <span aria-hidden="true">›</span></a></li>
+    </ul>
+  </section>
+  <section data-netz-hubs><h3>All hubs</h3></section>
+  <a class="handy-nl" href="./#newsletter">Newsletters of the hubs</a>
+  <div class="handy-unten">
+    <div class="netz-sprache" role="group" aria-label="Language"><a href="../" lang="de" hreflang="de" aria-label="Deutsch">DE</a><span aria-current="true" lang="en" aria-label="English">EN</span></div>
+    <a href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=netzleiste" target="_blank" rel="noopener">a service of Monitor Versorgungsforschung ↗</a>
+    <a href="legal-notice.html">Legal notice</a>
+    <a href="privacy.html">Privacy</a>
+  </div>
+</div>
+
+<main class="wrap unterseite">
+<h1>About the Knowledge Hubs</h1>
+<p>Together 1189 databases, 563 of them with a genuine live search;
+  2325 search terms in the German–English glossary. Each hub stands on its own and
+  has its own daily newsletter. The search spaces do touch — depending on the hub, 3 to 28
+  per cent of the works found also fall within the field of another (checked 08/2026);
+  the upper figure concerns health literacy and AI alone, and without the AI hub the range
+  reaches only 13 per cent.
+  In the daily selection this barely shows: of 3721 studies delivered so far,
+  133 have appeared in more than one hub.</p>
+
+<h2>What all hubs have in common</h2>
+<ul class="punkte"><li><b>One search, every database</b>One term is enough: each tile opens the matching
+      live search in a new tab. Where a source does not allow that, the tile leads to the start
+      page — and says so.</li><li><b>Search in German, find in English</b>A curated search glossary translates the German
+      technical term for the international databases; German-language sources keep it.</li><li><b>New studies every morning</b>An AI selects from the new entries in PubMed what
+      matters for the German healthcare system and summarises it in German — with the result
+      figures and an assessment of how far it transfers.</li><li><b>Newsletter and downloads</b>The daily selection comes by e-mail on request, plus as
+      a Word and an Excel file. Every newsletter page also lets you subscribe to the newsletters
+      of the other hubs.</li><li><b>No cookies, no third-party services</b>Static pages without third-party analytics.
+      Fonts and images sit on our own server. How often the pages are opened we count ourselves —
+      without cookies and without storing IP addresses.</li><li><b>Free and open</b>No account, no registration, no paywall. Where a database itself
+      requires a licence, the tile is marked as licence-restricted.</li></ul>
+
+<h2>Topics in care and disease areas</h2>
+<p><b>Topics in care.</b> These hubs follow a topic in health care across all conditions — how care is
+  given, how people are vaccinated, how services are digitalised and how decisions are
+  made. What gets selected is what changes care delivery.</p>
+<p><b>Disease areas.</b> These hubs follow a disease area. They are built differently: they read the
+  core journals of the field and show clinical <em>and</em> basic research — health
+  services research is one category within them, not the yardstick. If you want to know
+  what is moving in a field, this is the place.</p>
+
+<h2>The hubs in figures</h2>
+<div class="tafel-rahmen"><table class="zahlentafel">
+<thead><tr><th>Hub</th><th>Databases</th><th>Live search</th><th>Categories</th><th>Glossary</th><th>Studies</th></tr></thead>
+<tbody><tr><td><a href="https://wissen.m-vf.de/">Health Services Research</a></td><td>57</td><td>29</td><td>8</td><td>170</td><td>310</td></tr><tr><td><a href="https://kardio.m-vf.de/">Cardiology</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td>148</td></tr><tr><td><a href="https://ncd.m-vf.de/">Chronic Conditions</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td>263</td></tr><tr><td><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td>164</td></tr><tr><td><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td>301</td></tr><tr><td><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></td><td>76</td><td>36</td><td>10</td><td>165</td><td>272</td></tr><tr><td><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td>268</td></tr><tr><td><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td>268</td></tr><tr><td><a href="https://mental.m-vf.de/">Mental Health</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td>252</td></tr><tr><td><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></td><td>88</td><td>42</td><td>11</td><td>156</td><td>264</td></tr><tr><td><a href="https://adipositas.m-vf.de/">Obesity</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td>263</td></tr><tr><td><a href="https://onkologie.m-vf.de/">Oncology</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td>170</td></tr><tr><td><a href="https://safety.m-vf.de/">Patient Safety</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td>257</td></tr><tr><td><a href="http://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td>258</td></tr><tr><td><a href="https://impfen.m-vf.de/">Vaccination</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td>263</td></tr></tbody>
+<tfoot><tr><td>Total</td><td>1189</td><td>563</td><td>147</td><td>2325</td><td>3721</td></tr></tfoot>
+</table></div>
+<p style="font-size:14px">The glossaries overlap: without duplicates there are 1,349 distinct terms.</p>
+
+<h2>Who is behind it</h2>
+<div class="wer">
+  <img src="../logo/mvf-logo.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
+  <p>The Knowledge Hubs are a service of <i>Monitor Versorgungsforschung</i>, the German journal for health services research and health economics, published by eRelation AG – Content in Health in Bonn. Our English-language journal is <a href="https://www.monitor-healthcare-research.com/" target="_blank" rel="noopener">Monitor Healthcare Research</a>. <a href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=ueber" target="_blank" rel="noopener">monitor-versorgungsforschung.de ↗</a></p>
+</div>
+</main>
+<script type="application/json" id="hubDaten">{"hubs":[],"t":{"passend":"MATCHING HUBS","ueber":"via","oeffnen":"Open hub →","leer":"No hub lists this term in its glossary. “Search” opens the first hub, Health Services Research, with your term.","studien":"STUDIES","inAllen":"– search all German summaries","alleHubs":"All hubs ↗","heute":"today","gestern":"yesterday","locale":"en-GB","zusammenfassung":"Summary (German)","mehr":"Show more studies ▾","weniger":"Show fewer ▴"}}</script>
+<script>
+// Startseite knowledge-hubs.m-vf.de - Verhalten.
+// Alles, was diese Datei tut, ist Zugabe: Ohne JavaScript stehen Kacheln,
+// Studien und Newsletter trotzdem vollstaendig in der Seite.
+(function () {
+  'use strict';
+  var DATEN = {};
+  try { DATEN = JSON.parse(document.getElementById('hubDaten').textContent); } catch (e) { return; }
+  var HUBS = DATEN.hubs || [];
+  var NACH_DOMAIN = {};
+  HUBS.forEach(function (h) { NACH_DOMAIN[h.domain] = h; });
+  // Alle Texte, die das Skript selbst schreibt, kommen aus der Seite
+  // (startseite_neu.py, TEXT[lang]["js"]) - so gibt es eine deutsche und
+  // eine englische Fassung ohne zweites Skript.
+  var T = DATEN.t || {};
+
+  function sicher(t) {
+    return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ---------------------------------------------------------- Aktionsleiste
+  // Befristet doppelt: beim Bau (startseite_neu.py) und hier im Browser.
+  // Schliessen gilt nur fuer diesen Seitenaufruf. Bewusst nichts im Speicher
+  // des Browsers: Die Seite verspricht „keine Cookies" und die
+  // Datenschutzhinweise, dass auf dem Geraet nichts abgelegt wird.
+  var aktion = document.getElementById('aktion');
+  if (aktion) {
+    if (new Date() > new Date(aktion.getAttribute('data-ende'))) aktion.remove();
+    else aktion.querySelector('button').addEventListener('click', function () { aktion.remove(); });
+  }
+
+  // ---------------------------------------------------------- Themenwahl
+  function filterLeiste(leiste, anwenden) {
+    if (!leiste) return;
+    var knoepfe = leiste.querySelectorAll('button[data-teil]');
+    Array.prototype.forEach.call(knoepfe, function (b) {
+      b.addEventListener('click', function () {
+        Array.prototype.forEach.call(knoepfe, function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        anwenden(b.getAttribute('data-teil'));
+      });
+    });
+  }
+  filterLeiste(document.getElementById('themenFilter'), function (teil) {
+    Array.prototype.forEach.call(document.querySelectorAll('#themen [data-teil]'), function (el) {
+      if (el.tagName === 'BUTTON') return;
+      el.hidden = teil !== 'alle' && el.getAttribute('data-teil') !== teil;
+    });
+  });
+  // „Versorgungsthemen ↓" und „Krankheitsgebiete ↓" im Einstieg setzen den Filter mit.
+  Array.prototype.forEach.call(document.querySelectorAll('a[data-setzt-filter]'), function (a) {
+    a.addEventListener('click', function () {
+      var b = document.querySelector('#themenFilter button[data-teil="' + a.getAttribute('data-setzt-filter') + '"]');
+      if (b) b.click();
+    });
+  });
+
+  // ---------------------------------------------------------- Suche mit Hub-Vorschlag
+  // Grundlage sind die Glossare der Hubs, ihre Schnellwahl-Begriffe und ihre
+  // Namen. Ein Begriff, der in mehreren Glossaren steht, schlaegt mehrere
+  // Hubs vor; gereiht wird nach der Guete des Treffers, nicht nach dem Hub.
+  var feld = document.getElementById('suchfeld');
+  var form = document.getElementById('suchform');
+  var box = document.getElementById('vorschlag');
+  var aktiv = -1, treffer = [];
+
+  function norm(t) {
+    return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+  // Gewichtung: Kernbegriffe (Schnellwahl, Name, Kernthemen) zaehlen
+  // dreifach; ein Glossarbegriff zaehlt umso weniger, in je mehr Glossaren
+  // er steht. „Sepsis" steht in drei Glossaren, aber nur bei der
+  // Patientensicherheit im Kern - dort gehoert es hin.
+  var haeufig = {};
+  HUBS.forEach(function (h) {
+    h._name = norm(h.name);
+    h._kern = (h.kern || []).map(function (b) { return [norm(b), b]; });
+    h._begriffe = (h.begriffe || []).map(function (b) { return [norm(b), b]; });
+    h._begriffe.forEach(function (p) { haeufig[p[0]] = (haeufig[p[0]] || 0) + 1; });
+  });
+
+  function guete(b, nq) {
+    if (b === nq) return 1;
+    if (b.indexOf(nq) === 0) return 0.8 - Math.min(0.2, (b.length - nq.length) / 60);
+    if ((' ' + b).indexOf(' ' + nq) >= 0) return 0.65;
+    if (b.length >= 3 && (' ' + nq + ' ').indexOf(' ' + b + ' ') >= 0) return 0.6;
+    if (nq.length >= 4 && b.indexOf(nq) >= 0) return 0.4;
+    return 0;
+  }
+
+  function bewerte(q) {
+    var nq = norm(q);
+    if (nq.length < 2) return [];
+    var liste = [];
+    HUBS.forEach(function (h) {
+      var best = 0, grund = '';
+      var teste = function (p, gewicht) {
+        var s = guete(p[0], nq) * gewicht;
+        if (s > best) { best = s; grund = p[1]; }
+      };
+      teste([h._name, h.name], 4);
+      h._kern.forEach(function (p) { teste(p, 3); });
+      h._begriffe.forEach(function (p) { teste(p, 1.5 / Math.sqrt(haeufig[p[0]] || 1)); });
+      if (best >= 0.3) liste.push({ hub: h, wert: best, grund: grund });
+    });
+    liste.sort(function (a, b) { return b.wert - a.wert || a.hub.ordnung - b.hub.ordnung; });
+    // Nur, was nahe am besten Treffer liegt - sonst haengen an „Krebs"
+    // vier Hubs, von denen drei den Begriff nur im Glossar fuehren.
+    var spitze = liste.length ? liste[0].wert : 0;
+    return liste.filter(function (t) { return t.wert >= spitze * 0.35; }).slice(0, 4);
+  }
+
+  function zielAdresse(h, q) { return h.url + '?q=' + encodeURIComponent(q); }
+
+  function zeige() {
+    var q = feld.value.trim();
+    treffer = bewerte(q);
+    aktiv = -1;
+    if (q.length < 2) { box.hidden = true; feld.setAttribute('aria-expanded', 'false'); return; }
+    var h = '<h2>' + T.passend + '</h2>';
+    if (treffer.length) {
+      h += '<ul id="vorschlagListe">' + treffer.map(function (t, i) {
+        var grund = t.grund && norm(t.grund) !== norm(q) ? '<span class="vs-grund">' + T.ueber + ' „' + sicher(t.grund) + '“</span>' : '';
+        return '<li><a id="vs' + i + '" class="' + (t.hub.teil === 'indikation' ? 'krank' : '') + '" href="' + sicher(zielAdresse(t.hub, q)) + '">'
+          + t.hub.icon + '<span><b>' + sicher(t.hub.name) + '</b>' + grund + '</span><small>' + T.oeffnen + '</small></a></li>';
+      }).join('') + '</ul>';
+    } else {
+      h += '<p class="vs-leer">' + T.leer + '</p>';
+    }
+    h += '<div class="vs-studien"><h2>' + T.studien + '</h2><ul><li><a href="' + sicher(DATEN.studiensuche + encodeURIComponent(q))
+      + '" target="_blank" rel="noopener"><span>„' + sicher(q) + '“ ' + T.inAllen + '</span><small>' + T.alleHubs + '</small></a></li></ul></div>';
+    box.innerHTML = h;
+    box.hidden = false;
+    feld.setAttribute('aria-expanded', 'true');
+  }
+
+  function markiere(i) {
+    var links = box.querySelectorAll('#vorschlagListe a');
+    Array.prototype.forEach.call(links, function (a, k) { a.classList.toggle('aktiv', k === i); });
+    aktiv = i;
+    if (i >= 0 && links[i]) feld.setAttribute('aria-activedescendant', links[i].id);
+    else feld.removeAttribute('aria-activedescendant');
+  }
+
+  if (feld && form && box) {
+    var warte;
+    feld.addEventListener('input', function () { clearTimeout(warte); warte = setTimeout(zeige, 90); });
+    feld.addEventListener('focus', function () { if (feld.value.trim().length >= 2) zeige(); });
+    feld.addEventListener('keydown', function (e) {
+      if (box.hidden) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); markiere(Math.min(treffer.length - 1, aktiv + 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); markiere(Math.max(-1, aktiv - 1)); }
+      else if (e.key === 'Escape') { box.hidden = true; feld.setAttribute('aria-expanded', 'false'); }
+    });
+    document.addEventListener('click', function (e) {
+      if (!form.contains(e.target)) { box.hidden = true; feld.setAttribute('aria-expanded', 'false'); }
+    });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var q = feld.value.trim();
+      if (!q) { feld.focus(); return; }
+      var t = bewerte(q);
+      var wahl = aktiv >= 0 && treffer[aktiv] ? treffer[aktiv].hub : (t[0] ? t[0].hub : NACH_DOMAIN['wissen.m-vf.de']);
+      location.href = zielAdresse(wahl, q);
+    });
+  }
+
+  // ---------------------------------------------------------- Neue Studien
+  // Beim Bau steht die Liste schon fertig in der Seite. Hier wird sie aus
+  // der nachts erneuerten studien.json neu gezeichnet - die Seite selbst wird
+  // nicht jeden Tag gebaut. Das Markup muss dem von studien_html() in
+  // startseite_neu.py entsprechen.
+  var liste = document.getElementById('stListe');
+  var mehrKnopf = document.getElementById('stMehr');
+  var stTeil = 'alle', aufgeklappt = false;
+
+  function datumText(tag) {
+    var heute = new Date(); heute.setHours(12, 0, 0, 0);
+    var d = new Date(tag + 'T12:00:00');
+    var diff = Math.round((heute - d) / 864e5);
+    if (diff === 0) return T.heute;
+    if (diff === 1) return T.gestern;
+    return d.toLocaleDateString(T.locale || 'de-DE', { day: '2-digit', month: '2-digit' });
+  }
+  function kuerze(t, n) {
+    t = String(t || '');
+    if (t.length <= n) return t;
+    var s = t.slice(0, n), p = s.lastIndexOf(' ');
+    return s.slice(0, p > n * 0.6 ? p : n) + ' …';
+  }
+  function eintrag(e, sichtbar) {
+    var h = NACH_DOMAIN[e.domain];
+    if (!h) return '';
+    var ziel = h.url + '#studie-' + encodeURIComponent(e.pmid);
+    return '<li data-teil="' + h.teil + '"' + (sichtbar ? '' : ' hidden data-mehr') + '>'
+      + '<div class="st-zeile1"><a class="st-hub' + (h.teil === 'indikation' ? ' krank' : '') + '" href="' + sicher(h.url) + '">' + sicher(h.name) + ' ›</a>'
+      + '<a class="st-titel" href="' + sicher(ziel) + '">' + sicher(e.title) + '</a></div>'
+      + '<p class="st-erg">' + sicher(kuerze(e.result, 190)) + ' · <a href="' + sicher(ziel) + '">' + T.zusammenfassung + '</a></p>'
+      + '<span class="st-datum">' + datumText(e.aufgenommen) + '</span></li>';
+  }
+  function anzeigen() {
+    if (!liste) return;
+    Array.prototype.forEach.call(liste.children, function (li) {
+      var passt = stTeil === 'alle' || li.getAttribute('data-teil') === stTeil;
+      li.hidden = !passt || (!aufgeklappt && stTeil === 'alle' && li.hasAttribute('data-mehr'));
+    });
+    if (mehrKnopf) {
+      mehrKnopf.hidden = stTeil !== 'alle';
+      mehrKnopf.setAttribute('aria-expanded', aufgeklappt ? 'true' : 'false');
+      mehrKnopf.textContent = aufgeklappt ? T.weniger : T.mehr;
+    }
+  }
+  if (mehrKnopf) mehrKnopf.addEventListener('click', function () { aufgeklappt = !aufgeklappt; anzeigen(); });
+  filterLeiste(document.getElementById('stFilter'), function (teil) { stTeil = teil; anzeigen(); });
+
+  if (liste && window.fetch) {
+    fetch(DATEN.studienDatei || 'studien.json', { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (d) {
+        // Je Hub die juengste Studie, die ersten vier sichtbar. Gleicher Tag:
+        // gedreht nach dem Tag des Jahres - wie studien_html() in Python.
+        var jetzt = new Date(), anfang = new Date(jetzt.getFullYear(), 0, 0);
+        var dreh = Math.floor((jetzt - anfang) / 864e5);
+        var rang = function (e) { var h = NACH_DOMAIN[e.domain]; return h ? (h.ordnung + dreh) % 15 : 99; };
+        var alle = (d.studien || []).filter(function (e) { return NACH_DOMAIN[e.domain]; }).sort(function (a, b) {
+          if (a.aufgenommen !== b.aufgenommen) return a.aufgenommen < b.aufgenommen ? 1 : -1;
+          return rang(a) - rang(b);
+        });
+        var da = {}, jeHub = [];
+        alle.forEach(function (e) { if (!da[e.domain]) { da[e.domain] = true; jeHub.push(e); } });
+        var erste = jeHub.slice(0, 4), rest = jeHub.slice(4);
+        var html = erste.map(function (e) { return eintrag(e, true); }).join('')
+                 + rest.map(function (e) { return eintrag(e, false); }).join('');
+        if (html) { liste.innerHTML = html; anzeigen(); }
+      })
+      .catch(function () { /* die beim Bau eingesetzte Liste bleibt stehen */ });
+  }
+})();
+</script>
+<footer class="fuss">
+  <div class="wrap">
+    <a class="absender" href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=fuss" target="_blank" rel="noopener">
+      <span>A service of</span>
+      <img src="../logo/mvf-logo-negativ.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
+      <small>· eRelation AG – Content in Health</small>
+    </a>
+    <nav class="fuss-links" aria-label="Legal">
+      <a href="legal-notice.html">Legal notice</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="mailto:info@m-vf.de">Contact</a>
+    </nav>
+    <p class="stand">Figures as of 8 October 2026. They are counted from the portals themselves on every build.</p>
+  </div>
+</footer>
+<!-- ZAEHLER-START --------------------------------------------------------
+     Zaehlt den Aufruf auf dem eigenen Server von Monitor Versorgungsforschung.
+     Kein Cookie, keine Kennung auf dem Geraet, keine fremde Firma. Wer Do Not
+     Track gesetzt hat, wird gar nicht erst gezaehlt. Schlaegt der Abruf fehl,
+     merkt die Seite es nicht - ein Bild, das nicht laedt, ist folgenlos.
+     Gegenstueck: /zaehler/z.php auf monitor-versorgungsforschung.de -->
+<script>
+(function () {
+  // Die Seite meldet Suchen ueber window.mvfZ. Die Funktion steht ab sofort
+  // immer bereit und tut im Zweifel nichts - sonst muesste jede Aufrufstelle
+  // pruefen, ob es sie ueberhaupt gibt, und eine vergessene Pruefung waere
+  // ein Skriptfehler mitten in der Suche.
+  window.mvfZ = function () {};
+  try {
+    if (navigator.doNotTrack === '1' || window.doNotTrack === '1'
+        || navigator.globalPrivacyControl === true) return;
+    // Automatische Umgebungen melden sich selbst: navigator.webdriver setzen
+    // Headless Chrome und Selenium von sich aus. Zuverlaessiger als jede
+    // Liste von Browserkennungen, weil es nicht geraten, sondern gemeldet wird.
+    if (navigator.webdriver) return;
+    if (!screen.width || !screen.height) return;   // kein echter Bildschirm
+    if (!/\.m-vf\.de$/.test(location.hostname)) return;   // lokal nicht zaehlen
+    var r = '';
+    try { r = document.referrer ? new URL(document.referrer).hostname : ''; }
+    catch (e) { r = ''; }
+    if (r === location.hostname) r = '';
+    // Bildschirmbreite nur in Stufen. Die genaue Aufloesung waere eines der
+    // staerksten Merkmale zum Wiedererkennen eines Browsers; fuer die Frage,
+    // fuer welche Breite zu gestalten ist, genuegt die Schublade.
+    var w = screen.width;
+    var stufe = w < 480 ? 'bis480' : w < 768 ? 'bis768' : w < 1024 ? 'bis1024'
+              : w < 1440 ? 'bis1440' : w < 1920 ? 'bis1920' : 'ueber1920';
+    var q = 'h=' + encodeURIComponent(location.hostname)
+          + '&p=' + encodeURIComponent(location.pathname)
+          + '&r=' + encodeURIComponent(r ? 'https://' + r + '/' : '')
+          + '&g=' + (Math.min(screen.width, screen.height) < 768 ? 'm' : 'd')
+          + '&b=' + stufe
+          + '&c=' + Date.now();
+    var ziel = 'https://www.monitor-versorgungsforschung.de/zaehler/z.php?';
+    new Image(1, 1).src = ziel + q;
+
+    // Ein Begriff wird nur mitgeschickt, wenn er wie ein Fachbegriff aussieht.
+    // Ziffern, Klammern, Anfuehrungszeichen, @ und mehr als drei Woerter
+    // deuten auf Freitext oder eine Kennung - so etwas verlaesst den Browser
+    // gar nicht erst. Was uebrig bleibt, prueft der Server noch einmal und
+    // wirft dort zusaetzlich alle Krankheitsbegriffe weg.
+    function sauber(v) {
+      if (typeof v !== 'string') return '';
+      var t = v.toLowerCase().replace(/\s+/g, ' ').trim();
+      if (t.length < 3 || t.length > 40) return '';
+      if (t.split(' ').length > 3) return '';
+      if (/[^a-zßà-öø-ÿ \-]/.test(t)) return '';
+      if (t.charAt(0) === '-') return '';
+      if (/(^| )(and|or|not)( |$)/.test(t)) return '';   // Formel, kein Begriff
+      return t;
+    }
+
+    // Eine abgesendete Suche zaehlen. Kein Seitenaufruf: z.php fuehrt beides
+    // getrennt. sendBeacon ueberlebt einen Seitenwechsel, ein Bild nicht -
+    // wer sucht und sofort auf eine Kachel klickt, wird sonst nicht gezaehlt.
+    window.mvfZ = function (art, begriff) {
+      try {
+        var f = 'h=' + encodeURIComponent(location.hostname)
+              + '&e=' + encodeURIComponent(art)
+              + '&c=' + Date.now();
+        var t = sauber(begriff);
+        if (t) f += '&t=' + encodeURIComponent(t);
+        if (navigator.sendBeacon) navigator.sendBeacon(ziel + f);
+        else new Image(1, 1).src = ziel + f;
+      } catch (e) { /* eine ungezaehlte Suche ist kein Grund, etwas kaputtzumachen */ }
+    };
+  } catch (e) { /* Zaehlung ist nie wichtiger als die Seite */ }
+})();
+</script>
+<!-- ZAEHLER-ENDE -->
+</html>
