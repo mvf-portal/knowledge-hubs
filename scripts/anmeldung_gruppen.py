@@ -72,7 +72,7 @@ ERLAEUTERUNG = {
     "wissen": "Versorgungsforschung", "klima": "Hitze, Klima & Gesundheit",
     "ki": "Digitalisierung, KI & Gesundheit", "pflege": "Pflege & Langzeitversorgung",
     "longevity": "Gesundes Altern & Longevity", "healthliteracy": "Gesundheitskompetenz",
-    "impfen": "Impfen & Impfpraevention", "ncd": "Nicht uebertragbare Krankheiten",
+    "impfen": "Impfen & Praevention", "ncd": "NCD/Chronische Krankheiten",
     "gender": "Geschlechtersensible Medizin", "adipositas": "Adipositas",
     "safety": "Patientensicherheit", "mental": "Psychische Gesundheit",
     "mvf": "MVF-Newsletter (redaktionell)",
