@@ -285,6 +285,10 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
   padding:14px 18px; font-size:15px; color:var(--ink-soft); max-width:60em; }
 .sprachnotiz b{ display:block; color:var(--ink); font-size:16px; margin-bottom:3px; }
 .sprachnotiz a{ color:var(--brand); font-weight:700; }
+/* Kontakt mit sichtbarer Adresse: ein blosser mailto-Link tut nichts, wenn
+   kein Mailprogramm eingerichtet ist (09.10.2026). */
+.fuss-mail{ color:#C3CFDD; }
+.fuss-mail a{ color:#9CC6F4 !important; }
 </style>
 <style>
   .netz{ --nz-grund:#14202E; --nz-text:#D3DCE8; --nz-leise:#9FB0C4; --nz-gold:#BE9E53;
@@ -909,7 +913,7 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
     <nav class="fuss-links" aria-label="Legal">
       <a href="legal-notice.html">Legal notice</a>
       <a href="privacy.html">Privacy</a>
-      <a href="mailto:info@m-vf.de">Contact</a>
+      <span class="fuss-mail">Contact: <a href="mailto:info@m-vf.de">info@m-vf.de</a></span>
     </nav>
     <p class="stand">Figures as of 9 October 2026. They are counted from the portals themselves on every build.</p>
   </div>

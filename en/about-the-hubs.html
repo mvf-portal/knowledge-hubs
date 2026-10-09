@@ -285,6 +285,10 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
   padding:14px 18px; font-size:15px; color:var(--ink-soft); max-width:60em; }
 .sprachnotiz b{ display:block; color:var(--ink); font-size:16px; margin-bottom:3px; }
 .sprachnotiz a{ color:var(--brand); font-weight:700; }
+/* Kontakt mit sichtbarer Adresse: ein blosser mailto-Link tut nichts, wenn
+   kein Mailprogramm eingerichtet ist (09.10.2026). */
+.fuss-mail{ color:#C3CFDD; }
+.fuss-mail a{ color:#9CC6F4 !important; }
 </style>
 <style>
   .netz{ --nz-grund:#14202E; --nz-text:#D3DCE8; --nz-leise:#9FB0C4; --nz-gold:#BE9E53;
@@ -683,7 +687,7 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
 <tbody><tr><td><a href="https://wissen.m-vf.de/">Health Services Research</a></td><td>57</td><td>29</td><td>8</td><td>170</td><td>335</td></tr><tr><td><a href="https://kardio.m-vf.de/">Cardiology</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td>171</td></tr><tr><td><a href="https://ncd.m-vf.de/">Chronic Conditions</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td>286</td></tr><tr><td><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td>182</td></tr><tr><td><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td>307</td></tr><tr><td><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></td><td>76</td><td>36</td><td>10</td><td>165</td><td>296</td></tr><tr><td><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td>294</td></tr><tr><td><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td>292</td></tr><tr><td><a href="https://mental.m-vf.de/">Mental Health</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td>276</td></tr><tr><td><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></td><td>88</td><td>42</td><td>11</td><td>156</td><td>287</td></tr><tr><td><a href="https://adipositas.m-vf.de/">Obesity</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td>287</td></tr><tr><td><a href="https://onkologie.m-vf.de/">Oncology</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td>189</td></tr><tr><td><a href="https://safety.m-vf.de/">Patient Safety</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td>276</td></tr><tr><td><a href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td>282</td></tr><tr><td><a href="https://impfen.m-vf.de/">Vaccination</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td>287</td></tr></tbody>
 <tfoot><tr><td>Total</td><td>1189</td><td>563</td><td>147</td><td>2325</td><td>4047</td></tr></tfoot>
 </table></div>
-<p style="font-size:14px">The glossaries overlap: without duplicates there are 1,349 distinct terms.</p>
+<p style="font-size:14px">The glossaries overlap: without duplicates there are 1,340 distinct terms.</p>
 
 <h2>Who is behind it</h2>
 <div class="wer">
@@ -942,7 +946,7 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
     <nav class="fuss-links" aria-label="Legal">
       <a href="legal-notice.html">Legal notice</a>
       <a href="privacy.html">Privacy</a>
-      <a href="mailto:info@m-vf.de">Contact</a>
+      <span class="fuss-mail">Contact: <a href="mailto:info@m-vf.de">info@m-vf.de</a></span>
     </nav>
     <p class="stand">Figures as of 9 October 2026. They are counted from the portals themselves on every build.</p>
   </div>
