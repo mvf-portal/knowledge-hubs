@@ -88,10 +88,15 @@ GH = shutil.which("gh") or r"C:\Program Files\GitHub CLI\gh.exe"
 
 
 def gh_ruf(*args: str) -> subprocess.CompletedProcess:
-    """gh mit abgeschaltetem Pager - sonst wartet die Aufgabe auf eine Taste."""
+    """gh mit abgeschaltetem Pager - sonst wartet die Aufgabe auf eine Taste.
+
+    CREATE_NO_WINDOW: Die Aufgabe laeuft unter pyw.exe ohne Konsole; jedes
+    gh.exe bekaeme sonst ein eigenes schwarzes Fenster (Beschwerde 10.10.2026).
+    """
     return subprocess.run([GH, *args], capture_output=True, text=True,
                           encoding="utf-8", errors="replace", timeout=120,
-                          env={**__import__("os").environ, "GH_PAGER": "cat", "PAGER": "cat"})
+                          env={**__import__("os").environ, "GH_PAGER": "cat", "PAGER": "cat"},
+                          creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
 
 
 # Ein einzelner Fehlschlag der Abfrage ist kein Befund, sondern meist ein
@@ -267,6 +272,37 @@ def melden(betreff: str, text: str) -> bool:
         return False
 
 
+# Die Runde um 06:00 ist der Ausloeser, nicht die Kontrolle.
+#
+# GitHubs Cron startet die Hubs seit Wochen praktisch nie, der Weckruf vom
+# Server kommt erst um 06:20. Um 06:00 hat also noch kein Hub gelaufen, und
+# die Wache stiess jeden Morgen alle fuenfzehn an - und meldete das als
+# "16 Lauf/Laeufe fehlten heute frueh". Seit mindestens dem 04.10.2026
+# taeglich, ohne dass etwas kaputt war. Eine Warnung, die jeden Tag kommt,
+# wird nicht mehr gelesen; der Tag mit einem echten Ausfall waere darin
+# untergegangen.
+#
+# Seit dem 11.10.2026: In der Ausloeserrunde ist Anstossen die Aufgabe und
+# keine Stoerung. Gemeldet wird nur, was danach scheitert oder nicht
+# durchkommt. Im Protokoll steht weiter jede Zeile. Die Runde um 09:00
+# meldet wie bisher jede Luecke.
+#
+# Unterschieden wird an der Uhrzeit, weil beide Runden dieselbe Aufgabe mit
+# demselben Aufruf sind. Holt Windows die 06:00-Runde spaeter nach
+# (StartWhenAvailable), gilt sie ab 08:00 als Kontrolle - lieber eine Mail
+# zu viel als eine zu wenig.
+AUSLOESER_BIS = 8
+
+
+def angestossen_erfolgreich(repo: str, workflow: str, heute: str) -> bool:
+    """Ist heute mindestens ein Lauf erfolgreich durch? Im Zweifel: nein."""
+    try:
+        return any(j["conclusion"] == "success"
+                   for j in laeufe_von_heute(repo, workflow, heute))
+    except Exception:  # noqa: BLE001 - nicht abfragbar heisst: melden
+        return False
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--trocken", action="store_true", help="nichts anstossen, nur berichten")
@@ -276,6 +312,10 @@ def main() -> int:
     jetzt = dt.datetime.now(TZ)
     heute = jetzt.date().isoformat()
     zeilen, auffaellig = [], []
+    ausloeser = jetzt.hour < AUSLOESER_BIS
+    # In der Ausloeserrunde: eben angestossene Hubs, deren Ergebnis erst
+    # nach dem Warten feststeht. Gemeldet werden sie nur, wenn sie scheitern.
+    nachweisen: list[tuple[str, str, str]] = []
 
     # Erst den Dirigenten fragen, dann die Hubs: Sonst wecken beide.
     wartend = dirigent_unterwegs(heute)
@@ -293,7 +333,9 @@ def main() -> int:
         zeile, ist_auffaellig, laeuft = pruefen(name, repo, workflow, heute,
                                                 a.trocken, wartend)
         zeilen.append(zeile)
-        if ist_auffaellig:
+        if ist_auffaellig and laeuft and ausloeser:
+            nachweisen.append((name, repo, workflow))
+        elif ist_auffaellig:
             auffaellig.append(name)
         if laeuft:
             offen.append((name, repo, workflow))
@@ -316,6 +358,20 @@ def main() -> int:
         else:
             zeilen.append(f"-- Alle Hub-Laeufe durch nach {dauer // 60}:"
                           f"{dauer % 60:02d} Minuten.")
+        # Durch heisst nicht erfolgreich: Jetzt zaehlt das Ergebnis.
+        for name, repo, workflow in nachweisen:
+            if name in haengen:
+                continue  # steht schon in auffaellig
+            if angestossen_erfolgreich(repo, workflow, heute):
+                continue
+            zeilen.append(f"!! {name}: angestossener Lauf ist gescheitert")
+            auffaellig.append(name)
+    if nachweisen and (a.trocken or wartend):
+        # Nicht abgewartet, also nicht nachgewiesen: dann wie bisher melden.
+        auffaellig.extend(n for n, _, _ in nachweisen)
+    if ausloeser:
+        zeilen.append("-- Ausloeserrunde: Anstossen ist hier die Aufgabe; "
+                      "gemeldet wird nur, was danach scheitert.")
 
     name, repo, workflow = SAMMELBERICHT
     if offen and not a.trocken and not wartend:
@@ -329,7 +385,10 @@ def main() -> int:
         # der richtige, und zwei Berichte sind besser als ein falscher.
         tat = anstossen(repo, workflow)
         zeilen.append(f"!! {name}: nach den Hub-Laeufen neu {tat}")
-        auffaellig.append(name)
+        # Ob er durchkommt, sieht die Runde um 09:00. Melden muss die
+        # Ausloeserrunde nur, wenn schon der Start scheitert.
+        if not ausloeser or tat != "angestossen":
+            auffaellig.append(name)
     else:
         zeile, ist_auffaellig, _ = pruefen(name, repo, workflow, heute,
                                            a.trocken, wartend)
@@ -356,8 +415,10 @@ def main() -> int:
                         "GitHub erreichbar war. Bis zum Versand um 10:00 Uhr bleibt "
                         "Zeit, das Ergebnis anzusehen:"
                         "\nhttps://github.com/mvf-portal\n")
-        melden(f"Knowledge-Hubs: {len(auffaellig)} Lauf/Laeufe fehlten heute früh",
-               text + nachsatz)
+        betreff = (f"Knowledge-Hubs: {len(auffaellig)} Lauf/Laeufe heute früh gescheitert"
+                   if ausloeser else
+                   f"Knowledge-Hubs: {len(auffaellig)} Lauf/Laeufe fehlten heute früh")
+        melden(betreff, text + nachsatz)
     return 0
 
 
