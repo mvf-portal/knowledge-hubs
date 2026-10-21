@@ -2239,8 +2239,11 @@ def vom_modell_geprueft(unklar: list) -> list:
             if geprueft[kennung] is True:
                 gefunden.append(mail)
             continue
+        # Nicht abbrechen: Dahinter koennen schon beurteilte Mitteilungen
+        # stehen. Ein break liess sie liegen, bis sie aus PM_TAGE fielen
+        # (OTC-Mitteilung vom 15.10.2026).
         if gefragt >= PRUEF_HOECHSTENS:
-            break
+            continue
         gefragt += 1
         urteil, grund = modell_urteil(absender, betreff, koerper)
         geprueft[kennung] = urteil
