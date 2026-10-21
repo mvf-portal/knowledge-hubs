@@ -55,6 +55,26 @@ $zugang = require $einstellungen;
 
 $REPO      = $zugang['repo']      ?? 'mvf-portal/knowledge-hubs';
 $EREIGNIS  = $zugang['ereignis']  ?? 'morgenlauf';
+
+// Zweiter Weckruf seit dem 21.10.2026: "kontrolle" um 08:00. Er startet in
+// knowledge-hubs den Workflow "Kontrolle", der gescheiterte oder fehlende
+// Hub-Laeufe vor dem Versand um 10:00 erneut anstoesst. Bis dahin tat das
+// nur die Laufwache auf dem Redaktionsrechner - und war der Rechner aus, fiel
+// ein gescheiterter Hub fuer den Tag aus (Impfen am 15.10.2026).
+//
+//   php wecker.php              -> morgenlauf (wie bisher, 06:20)
+//   php wecker.php kontrolle    -> kontrolle  (08:00)
+//
+// Nur diese beiden Namen: Ein frei waehlbares Ereignis liesse ueber die
+// Adresse beliebige Workflows ausloesen.
+$ERLAUBT = ['morgenlauf', 'kontrolle'];
+$gewuenscht = PHP_SAPI === 'cli' ? ($argv[1] ?? '') : ($_GET['ereignis'] ?? '');
+if ($gewuenscht !== '') {
+    if (!in_array($gewuenscht, $ERLAUBT, true)) {
+        fehler("Unbekanntes Ereignis: {$gewuenscht}", 400);
+    }
+    $EREIGNIS = $gewuenscht;
+}
 $TOKEN     = $zugang['token']     ?? '';
 $SCHLUESSEL = $zugang['schluessel'] ?? '';
 
@@ -112,7 +132,9 @@ $meldung = $gut
     ? 'Weckruf abgesetzt.'
     : ($curlFehler !== '' ? "Netzfehler: {$curlFehler}" : "GitHub antwortete {$status}: " . substr((string)$antwort, 0, 300));
 
-protokoll(($gut ? 'OK  ' : 'FEHL ') . $meldung);
+// Das Ereignis steht mit im Protokoll - sonst sehen der Morgenlauf und die
+// Kontrolle dort gleich aus.
+protokoll(($gut ? 'OK  ' : 'FEHL ') . "[{$EREIGNIS}] " . $meldung);
 
 if (!$gut) {
     fehler($meldung, 502);

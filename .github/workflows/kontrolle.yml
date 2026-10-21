@@ -1,0 +1,77 @@
+# Die Kontrolle vor dem Versand - die Laufwache, aber ohne Redaktionsrechner.
+#
+# Bis zum 21.10.2026 war die einzige Stelle, die einen gescheiterten
+# Hub-Lauf noch vor dem Versand um 10:00 rettete, die Laufwache auf dem
+# Redaktionsrechner (scripts/laufwache.py, Windows-Aufgabe "MVF Laufwache").
+# War der Rechner aus, fiel ein gescheiterter Hub fuer den Tag aus: Am
+# 15.10.2026 waehlte das Modell im Impf-Hub keine Studie, der Lauf brach ab,
+# GitHubs eigene Zeitplaene holten ihn erst um 10:27 nach - der Newsletter
+# ging nicht hinaus.
+#
+# Jetzt dasselbe hier, ausgeloest vom MVF-Server um 08:00:
+#
+#   MVF-Server 06:20  --morgenlauf-->  Dirigent  --> 15 Hubs + Sammelbericht
+#   MVF-Server 08:00  --kontrolle--->  Kontrolle --> was fehlt oder scheiterte,
+#                                                    neu anstossen, abwarten,
+#                                                    Sammelbericht neu
+#
+# Gemeldet wird nur, was nach dem neuen Anstossen IMMER NOCH scheitert - als
+# Issue in diesem Repo, zu der GitHub eine Mail schickt. Ist alles gelaufen,
+# meldet die Kontrolle nichts; ein Blick in diesen Workflow zeigt das Protokoll.
+#
+# Der Cron unten ist nur das zweite Netz: GitHubs Cron ist best effort.
+# Doppelt kostet nichts - update_studies.py bricht ab, wenn das Archiv fuer
+# heute schon Studien hat, und die Wache stoesst nur an, was fehlt.
+name: Kontrolle (vor dem Versand)
+
+on:
+  repository_dispatch:
+    types: [kontrolle]
+  schedule:
+    - cron: "17 6 * * *"     # 08:17 MESZ / 07:17 MEZ, falls der Server-Ruf ausbleibt
+  workflow_dispatch:
+    inputs:
+      trocken:
+        description: "Nur pruefen und berichten, nichts anstossen, keine Issue"
+        type: boolean
+        default: false
+
+permissions:
+  issues: write          # nur fuer die Meldung; die Laeufe startet DIRIGENT_TOKEN
+
+concurrency:
+  group: kontrolle
+  cancel-in-progress: false
+
+jobs:
+  kontrolle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40     # Wartefrist der Wache 20 Minuten plus Abfragen
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Hubs pruefen, Fehlendes neu anstossen
+        env:
+          # Startet Laeufe in den fuenfzehn Portal-Repos (Actions: write).
+          GH_TOKEN: ${{ secrets.DIRIGENT_TOKEN }}
+          # Legt die Meldung an (Issues: write, siehe permissions oben).
+          ISSUE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -u
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::error::DIRIGENT_TOKEN fehlt"
+            exit 1
+          fi
+          # Modus "ausloeser": anstossen ist die Aufgabe, gemeldet wird nur,
+          # was danach scheitert. Das ist das Verhalten der 06:00-Runde der
+          # Laufwache - hier bewusst auch um 08:00, weil es die letzte Runde
+          # vor dem Versand ist, die noch etwas retten kann.
+          if [ "${{ inputs.trocken }}" = "true" ]; then
+            python scripts/laufwache.py --modus ausloeser --trocken --ohne-mail
+          else
+            python scripts/laufwache.py --modus ausloeser --issue
+          fi

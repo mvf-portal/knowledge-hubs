@@ -272,6 +272,32 @@ def melden(betreff: str, text: str) -> bool:
         return False
 
 
+def melden_issue(betreff: str, text: str) -> bool:
+    """Meldung als GitHub-Issue - der Weg, wenn die Wache bei GitHub laeuft.
+
+    Seit dem 21.10.2026 laeuft diese Wache auch als Workflow "Kontrolle" in
+    knowledge-hubs, ausgeloest vom MVF-Server um 08:00 - ohne Redaktionsrechner
+    und ohne Outlook. GitHub schickt zu jeder neuen Issue eine Mail, also
+    kommt die Meldung trotzdem an.
+
+    Angelegt wird mit ISSUE_TOKEN (dem GITHUB_TOKEN des Workflows, Issues:
+    write); das DIRIGENT_TOKEN darf Laeufe starten, aber keine Issues.
+    """
+    import os
+    token = os.environ.get("ISSUE_TOKEN", "")
+    r = subprocess.run(
+        [GH, "issue", "create", "-R", "mvf-portal/knowledge-hubs",
+         "--title", betreff, "--body", "```\n" + text + "\n```"],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+        timeout=120,
+        env={**os.environ, "GH_PAGER": "cat", **({"GH_TOKEN": token} if token else {})})
+    if r.returncode != 0:
+        print(f"Issue nicht angelegt: {r.stderr.strip()[:200]}")
+        return False
+    print(f"Issue angelegt: {r.stdout.strip()}")
+    return True
+
+
 # Die Runde um 06:00 ist der Ausloeser, nicht die Kontrolle.
 #
 # GitHubs Cron startet die Hubs seit Wochen praktisch nie, der Weckruf vom
@@ -307,12 +333,19 @@ def main() -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--trocken", action="store_true", help="nichts anstossen, nur berichten")
     p.add_argument("--ohne-mail", action="store_true", help="keine Outlook-Meldung")
+    p.add_argument("--issue", action="store_true",
+                   help="per GitHub-Issue melden statt per Outlook (Workflow Kontrolle)")
+    p.add_argument("--modus", choices=("auto", "ausloeser", "kontrolle"), default="auto",
+                   help="auto: vor 08:00 Ausloeser, danach Kontrolle. Der Workflow "
+                        "Kontrolle laeuft als 'ausloeser': anstossen, abwarten, "
+                        "nur melden, was danach noch scheitert.")
     a = p.parse_args()
 
     jetzt = dt.datetime.now(TZ)
     heute = jetzt.date().isoformat()
     zeilen, auffaellig = [], []
-    ausloeser = jetzt.hour < AUSLOESER_BIS
+    ausloeser = (jetzt.hour < AUSLOESER_BIS if a.modus == "auto"
+                 else a.modus == "ausloeser")
     # In der Ausloeserrunde: eben angestossene Hubs, deren Ergebnis erst
     # nach dem Warten feststeht. Gemeldet werden sie nur, wenn sie scheitern.
     nachweisen: list[tuple[str, str, str]] = []
@@ -418,7 +451,7 @@ def main() -> int:
         betreff = (f"Knowledge-Hubs: {len(auffaellig)} Lauf/Laeufe heute früh gescheitert"
                    if ausloeser else
                    f"Knowledge-Hubs: {len(auffaellig)} Lauf/Laeufe fehlten heute früh")
-        melden(betreff, text + nachsatz)
+        (melden_issue if a.issue else melden)(betreff, text + nachsatz)
     return 0
 
 
