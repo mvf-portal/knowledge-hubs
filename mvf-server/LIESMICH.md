@@ -87,6 +87,18 @@ Im Panel des Hosters ein täglicher Auftrag, 06:20 Uhr:
 php /pfad/zum/webverzeichnis/wecker/wecker.php
 ```
 
+Seit dem 21.10.2026 eine **zweite** Zeile, täglich 08:00 Uhr — die Kontrolle
+vor dem Versand (Workflow `kontrolle.yml`: stößt gescheiterte oder fehlende
+Hub-Läufe neu an, meldet per Issue nur, was danach noch scheitert):
+
+```
+php /pfad/zum/webverzeichnis/wecker/wecker.php kontrolle
+```
+
+Ohne Argument weckt das Skript den Morgenlauf wie bisher; erlaubt sind nur
+`morgenlauf` und `kontrolle`. Im Protokoll steht das Ereignis in eckigen
+Klammern.
+
 Den genauen PHP-Pfad nennt das Panel; bei manchen Hostern heißt er
 `/usr/bin/php8.2` oder ähnlich. Die Zeit ist bewusst gewählt: GitHub hätte bis
 dahin seinen eigenen Zeitplan gehabt (03:03–03:47 UTC), und bis zum Versand um
