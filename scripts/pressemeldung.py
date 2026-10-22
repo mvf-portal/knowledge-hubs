@@ -2202,6 +2202,242 @@ def aufraeumen_faellig() -> bool:
     return alt >= AUFRAEUM_TAGE
 
 
+# ----------------------------------------------------------- Vorsortierung
+# Seit dem 21.10.2026: Was die Redaktion erfahrungsgemaess ohnehin in den
+# Papierkorb legt, wird gar nicht erst zum Entwurf. Gemessen an 128 Meldungen
+# ab dem 01.10.2026: 47 von 83 spaeter geloeschten waeren zurueckgestellt
+# worden, von 45 veroeffentlichten 3 - zwei davon waren in der Quelle
+# tatsaechlich Servicemails. Die uebrigen geloeschten sind fachlich passende
+# Meldungen, die aus anderen Gruenden wegkamen (Dublette, schon gebracht);
+# die soll der Filter durchlassen.
+#
+# Nichts geht verloren: Die Mail wandert in Pressemitteilungen\zurueckgestellt,
+# einmal die Woche kommt die Liste per Mail an Peter Stegmaier. Was er von dort
+# zurueck in den Ordner Pressemitteilungen zieht, wird ohne Vorsortierung
+# eingespielt. Was liegen bleibt, landet eine Woche spaeter in Geloeschte
+# Elemente - endgueltig leert Outlook selbst.
+ZURUECK_ORDNER = "zurückgestellt"
+ZURUECK_MARKE = "Vorsortierung vorgelegt"
+# Stand und Gruende liegen in der Ablage, nicht im Repo: Absender und
+# Betreffzeilen gehoeren nicht in ein oeffentliches Repository.
+VORLAGE_STUNDE = 7              # montags ab 07:00, nicht um 00:05
+VORSORT_BEISPIELE = 60          # je Seite so viele Titel im Prompt
+VORSORT_SYSTEM = (
+    "Du sortierst vor, was ein Fachredakteur zu sehen bekommt. Er gibt auf der "
+    "Nachrichtenseite von Monitor Versorgungsforschung Pressemitteilungen aus "
+    "dem Gesundheitswesen wieder - für ein Fachpublikum aus Kassen, Kliniken, "
+    "Ärzteschaft, Pflege, Industrie, Politik und Forschung.\n\n"
+    "ZURÜCKSTELLEN, wenn eines zutrifft:\n"
+    "1. Es ist gar keine Pressemitteilung: automatische Antwort, "
+    "Eingangsbestätigung, Abwesenheitsnotiz, Service- oder Transaktionsmail, "
+    "Kundenwerbung, Antwort auf eine Aussendung von Monitor "
+    "Versorgungsforschung selbst.\n"
+    "2. Das Thema hat keinen Bezug zu Gesundheit und Versorgung: Finanzen, "
+    "Fintech, Versicherungen außerhalb der Krankenversicherung, Industrie, "
+    "Energie, Bau, Immobilien, IT ohne Gesundheitsbezug, Konsumgüter, Reisen, "
+    "Kultur, Kunst, Sport, allgemeine Konjunktur und Wirtschaftsforschung, "
+    "Wirtschaftsforen und Investitionsmeldungen aus dem Ausland, Personalien "
+    "fachfremder Firmen.\n\n"
+    "BEHALTEN, sobald ein Bezug zur Gesundheitsversorgung besteht: Medizin, "
+    "Pflege, Arzneimittel, Medizinprodukte, Krankenkassen, PKV, "
+    "Gesundheitspolitik, Prävention, Gesundheitsforschung, Kliniken und "
+    "Praxen - auch Firmenmeldungen aus Pharma und Medizintechnik, auch "
+    "Kongresse, auch politische Meldungen zu Pflege oder GKV. Ob die Meldung "
+    "wichtig oder gut ist, beurteilst du NICHT. Im Zweifel: BEHALTEN."
+)
+VORSORT_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["zurueckstellen", "grund"],
+    "properties": {
+        "zurueckstellen": {"type": "boolean"},
+        # Die Laenge steht hier und nicht im Prompt - sonst bricht die
+        # Antwort an max_tokens mitten im JSON ab.
+        "grund": {"type": "string", "maxLength": 140},
+    },
+}
+WP_VERMISCHTES = 2920
+
+
+def vorsort_datei(name: str) -> pathlib.Path:
+    return ablageordner() / name
+
+
+def json_lesen(pfad: pathlib.Path, ersatz):
+    try:
+        return json.loads(pfad.read_text(encoding="utf-8"))
+    except Exception:
+        return ersatz
+
+
+def json_schreiben(pfad: pathlib.Path, daten) -> None:
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    pfad.write_text(json.dumps(daten, ensure_ascii=False, indent=1),
+                    encoding="utf-8")
+
+
+def vorsort_beispiele() -> str:
+    """Was die Redaktion zuletzt geloescht und was sie gebracht hat."""
+    b = json_lesen(vorsort_datei("vorsortierung-beispiele.json"), {})
+    weg, da = b.get("geloescht", []), b.get("veroeffentlicht", [])
+    if not (weg and da):
+        return ""
+    return ("\n\nAus der Erfahrung der Redaktion. Gelöscht wurden zuletzt "
+            "zum Beispiel:\n" + "\n".join("- " + t for t in weg) +
+            "\n\nVeröffentlicht wurden zum Beispiel (auch scheinbar "
+            "Randständiges):\n" + "\n".join("- " + t for t in da))
+
+
+def vorsortieren(text: str) -> tuple[bool, str]:
+    """(zurueckstellen, Grund). Scheitert der Aufruf, wird nichts zurueckgestellt."""
+    import anthropic
+
+    schluessel = os.environ.get("KNOWLEDGEHUBS", "").strip()
+    if not schluessel:
+        return False, "kein Schluessel"
+    try:
+        antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+            model=PRUEF_MODELL, max_tokens=400,
+            system=VORSORT_SYSTEM + vorsort_beispiele(),
+            output_config={"format": {"type": "json_schema",
+                                      "schema": VORSORT_SCHEMA}},
+            messages=[{"role": "user",
+                       "content": "Anfang der Mail:\n" + text[:2500]}])
+        d = json.loads(next(b.text for b in antwort.content if b.type == "text"))
+        return bool(d["zurueckstellen"]), str(d.get("grund", ""))
+    except Exception as fehler:
+        return False, f"Vorsortierung fehlgeschlagen: {str(fehler)[:80]}"
+
+
+def zurueckstellen(mail, ordner, grund: str) -> None:
+    """In den Wartesaal - samt Grund fuer die Wochenliste."""
+    neu = mail.Move(ordner)
+    gruende = json_lesen(vorsort_datei("vorsortierung-gruende.json"), {})
+    gruende[str(neu.EntryID)] = {"datum": dt_heute(), "grund": grund}
+    json_schreiben(vorsort_datei("vorsortierung-gruende.json"), gruende)
+
+
+def beispiele_lernen() -> int:
+    """Papierkorb und Veroeffentlichtes des Pipeline-Benutzers einsammeln.
+
+    Als Gegenbeispiel zaehlt nur, was im Papierkorb liegt UND das Schlagwort
+    Vermischtes traegt - also schon beim Schreiben keinen Platz fand. Sonst
+    lernte der Filter aus geloeschten Dubletten zur Pflegereform, dass
+    Pflegereform unerwuenscht ist. WordPress leert den Papierkorb nach 30
+    Tagen; deshalb waechst die Liste hier an, statt jedes Mal neu zu entstehen.
+    """
+    import datetime
+
+    kopf = zugang()
+    if not kopf:
+        return 0
+    ich = wp_ruf("/users/me", kopf).get("id")
+    nach = (datetime.date.today() - datetime.timedelta(days=60)).isoformat()
+
+    def titel(stand: str, nur_vermischtes: bool) -> list[str]:
+        gesammelt = []
+        for seite in range(1, 6):
+            # Kein author=-Filter: den beantwortet die MVF-Seite mit 404.
+            felder = {"status": stand, "per_page": 100, "page": seite,
+                      "after": nach + "T00:00:00", "context": "edit",
+                      "_fields": "author,title,tags"}
+            try:
+                teil = wp_ruf(f"/posts?{urllib.parse.urlencode(felder)}", kopf)
+            except Exception:
+                break
+            for p in teil:
+                if p.get("author") != ich:
+                    continue
+                if nur_vermischtes and WP_VERMISCHTES not in p.get("tags", []):
+                    continue
+                if re.search(r"\d+ (neue )?Studien$", p["title"]["raw"]):
+                    continue                    # Tagesnews, nicht hier
+                gesammelt.append(p["title"]["raw"])
+            if len(teil) < 100:
+                break
+        return gesammelt
+
+    pfad = vorsort_datei("vorsortierung-beispiele.json")
+    alt = json_lesen(pfad, {})
+    neu = {}
+    for schluessel, frisch in (("geloescht", titel("trash", True)),
+                               ("veroeffentlicht", titel("publish", False))):
+        liste = list(dict.fromkeys(frisch + alt.get(schluessel, [])))
+        neu[schluessel] = liste[:VORSORT_BEISPIELE]
+    json_schreiben(pfad, neu)
+    print(f"Vorsortierung gelernt: {len(neu['geloescht'])} geloeschte, "
+          f"{len(neu['veroeffentlicht'])} veroeffentlichte Beispiele")
+    return len(neu["geloescht"])
+
+
+def vorlage_faellig() -> bool:
+    """Einmal je Kalenderwoche, beim ersten Lauf ab Montag VORLAGE_STUNDE."""
+    import datetime
+
+    jetzt = datetime.datetime.now()
+    zuletzt = json_lesen(vorsort_datei("vorsortierung-stand.json"),
+                         {}).get("zuletzt")
+    if zuletzt and (datetime.date.fromisoformat(zuletzt).isocalendar()[:2]
+                    == jetzt.date().isocalendar()[:2]):
+        return False
+    return jetzt.weekday() > 0 or jetzt.hour >= VORLAGE_STUNDE
+
+
+def wochenvorlage(raum, ordner) -> None:
+    """Letzte Woche Vorgelegtes wegraeumen, den Rest an Peter schicken."""
+    import datetime
+
+    gruende = json_lesen(vorsort_datei("vorsortierung-gruende.json"), {})
+    weg, neu = [], []
+    for mail in list(ordner.Items):
+        try:
+            if ZURUECK_MARKE in str(getattr(mail, "Categories", "")):
+                weg.append(mail)
+            else:
+                neu.append(mail)
+        except Exception:
+            continue
+    for mail in weg:
+        gruende.pop(str(mail.EntryID), None)
+        mail.Delete()                   # nach Geloeschte Elemente, umkehrbar
+    print(f"Vorsortierung: {len(weg)} nach einer Woche geloescht, "
+          f"{len(neu)} neu vorgelegt")
+
+    if neu:
+        zeilen = []
+        for mail in sorted(neu, key=lambda m: m.ReceivedTime):
+            g = gruende.get(str(mail.EntryID), {}).get("grund", "")
+            zeilen.append(
+                "<tr><td style='white-space:nowrap;vertical-align:top'>"
+                f"{mail.ReceivedTime:%d.%m.}</td>"
+                f"<td style='vertical-align:top'><b>{escape(str(mail.Subject))}</b><br>"
+                f"<span style='color:#666'>{escape(absender_name(mail))}</span></td>"
+                f"<td style='vertical-align:top;color:#444'>{escape(g)}</td></tr>")
+            mail.Categories = f"{mail.Categories}; {ZURUECK_MARKE}".strip("; ")
+            mail.Save()
+        brief = raum.Application.CreateItem(0)
+        brief.To = raum.CurrentUser.AddressEntry.GetExchangeUser().PrimarySmtpAddress
+        brief.Subject = (f"Vorsortierung Pressemitteilungen: {len(neu)} "
+                         f"zurückgestellt (KW {datetime.date.today().isocalendar()[1]})")
+        brief.HTMLBody = (
+            "<div style='font:14px/1.45 Segoe UI,Arial,sans-serif'>"
+            f"<p>Diese {len(neu)} Mails hat die Vorsortierung diese Woche nicht "
+            "zum Entwurf gemacht. Sie liegen in Outlook unter "
+            f"<b>Pressemitteilungen &gt; {ZURUECK_ORDNER}</b>.</p>"
+            "<p><b>Was doch auf die Seite soll:</b> in den Ordner "
+            "<b>Pressemitteilungen</b> ziehen. Der nächste Lauf macht daraus "
+            "einen Entwurf, ohne erneute Vorsortierung.<br>"
+            "<b>Alles andere</b> wird nächste Woche nach Gelöschte Elemente "
+            "verschoben.</p>"
+            "<table cellpadding='6' style='border-collapse:collapse'>"
+            + "".join(zeilen) + "</table></div>")
+        brief.Send()
+    json_schreiben(vorsort_datei("vorsortierung-gruende.json"), gruende)
+    json_schreiben(vorsort_datei("vorsortierung-stand.json"),
+                   {"zuletzt": dt_heute(), "geloescht": len(weg),
+                    "vorgelegt": len(neu)})
+
+
 # ------------------------------------------------------------ Postfachlauf
 PM_ORDNER = "Pressemitteilungen"
 PM_ERLEDIGT = "erledigt"
@@ -2304,6 +2540,19 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
     posteingang = raum.GetDefaultFolder(6)                  # olFolderInbox
     ziel = unterordner(posteingang, PM_ORDNER)
     erledigt = unterordner(ziel, PM_ERLEDIGT)
+    wartesaal = unterordner(ziel, ZURUECK_ORDNER)
+
+    # Montags: aus dem Papierkorb lernen, dann die Woche vorlegen. Erst
+    # lernen, damit schon die Mails dieses Laufs davon profitieren.
+    if not trocken and vorlage_faellig():
+        try:
+            beispiele_lernen()
+        except Exception as fehler:
+            print(f"Vorsortierung lernen fehlgeschlagen: {str(fehler)[:120]}")
+        try:
+            wochenvorlage(raum, wartesaal)
+        except Exception as fehler:
+            print(f"Wochenvorlage fehlgeschlagen: {str(fehler)[:120]}")
 
     import datetime
     grenze = (dt_jetzt_utc() - datetime.timedelta(days=PM_TAGE))
@@ -2376,6 +2625,19 @@ def postfach_durchgehen(hoechstens: int, trocken: bool) -> int:
                     mail_abhaken(mail, erledigt)
                 print()
                 continue
+            # Vor dem teuren Modell: Wuerde die Redaktion das ohnehin
+            # loeschen? Was Peter aus dem Wartesaal zurueckgeholt hat, traegt
+            # die Marke und geht ungefragt durch.
+            if ZURUECK_MARKE not in str(getattr(mail, "Categories", "")):
+                zurueck, grund = vorsortieren(text)
+                if zurueck:
+                    print(f"  Zurueckgestellt: {grund}")
+                    if trocken:
+                        print("  [trocken] Mail bleibt liegen.\n")
+                    else:
+                        zurueckstellen(mail, wartesaal, grund)
+                        print()
+                    continue
             meldung = schreibe_meldung(text, adressen(text))
             if meldung.get("schlagwort") not in SCHLAGWOERTER:
                 meldung["schlagwort"] = "Vermischtes"
