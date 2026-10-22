@@ -44,6 +44,7 @@ import os
 import pathlib
 import re
 import sys
+import time
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import pressemeldung as pm                                      # noqa: E402
@@ -738,9 +739,72 @@ def schreib_auftrag(stuecke: list[tuple[str, dict, str]], zeichen: int,
     return kopf + "".join(teile)
 
 
+# Seit dem 22.10.2026 stoesst die Freigabe das Schreiben selbst an: der
+# Knopf "Fertig", das Abschalten des Dienstes und der stuendliche Lauf.
+# Zwei Laeufe gleichzeitig legten jeden Entwurf doppelt an - geschrieben.json
+# wird erst am Ende einer Woche gespeichert. Deshalb eine Sperrdatei.
+SPERRE = "schreiben.lock"
+SPERRE_VERFALL = 3 * 3600       # aelter heisst: der Lauf ist abgestuerzt
+
+
 def schreiben(hoechstens: int, trocken: bool, nur_woche: str = "",
               trotzdem: bool = False) -> int:
     """Was in den Laengen-Ordnern liegt, zu Entwuerfen machen."""
+    sperre = stammordner() / SPERRE
+    try:
+        if time.time() - sperre.stat().st_mtime > SPERRE_VERFALL:
+            sperre.unlink(missing_ok=True)
+    except FileNotFoundError:
+        pass
+    try:
+        os.close(os.open(str(sperre), os.O_CREAT | os.O_EXCL | os.O_WRONLY))
+    except FileExistsError:
+        print("Es schreibt schon ein Lauf - dieser hier tut nichts.")
+        return 0
+    try:
+        return _schreiben(hoechstens, trocken, nur_woche, trotzdem)
+    finally:
+        sperre.unlink(missing_ok=True)
+
+
+def freigaben_offen() -> bool:
+    """Liegt etwas Freigegebenes, das noch nicht geschrieben ist?"""
+    try:
+        return any(p["stand"] == "schreiben" for p in eingeordnete_posten())
+    except Exception:
+        return False
+
+
+def schreiben_anstossen() -> bool:
+    """Den Schreiblauf als eigenen Prozess starten, ohne Fenster.
+
+    Eigener Prozess, weil er eine Viertelstunde und laenger braucht - der
+    Dienst und die stuendliche Ernte sollen darauf nicht warten. Was er
+    ausgibt, steht in schreiben.log neben den Wochenordnern.
+    """
+    import subprocess
+
+    if not freigaben_offen():
+        return False
+    python = pathlib.Path(sys.executable)
+    ohne_fenster = python.with_name("pythonw.exe")
+    if ohne_fenster.exists():
+        python = ohne_fenster
+    protokoll = open(stammordner() / "schreiben.log", "a", encoding="utf-8")
+    protokoll.write(f"\n===== {datetime.datetime.now():%d.%m.%Y %H:%M} =====\n")
+    protokoll.flush()
+    subprocess.Popen(
+        [str(python), "-X", "utf8", str(pathlib.Path(__file__).resolve()),
+         "schreiben", "--hoechstens", "25"],
+        stdout=protokoll, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
+        cwd=str(pathlib.Path(__file__).parent.parent),
+        creationflags=0x00000008 | 0x00000200 | 0x08000000)
+    print("Schreiblauf gestartet - Protokoll in schreiben.log")
+    return True
+
+
+def _schreiben(hoechstens: int, trocken: bool, nur_woche: str = "",
+               trotzdem: bool = False) -> int:
     import anthropic
 
     stamm = stammordner()
@@ -1437,10 +1501,13 @@ freigegeben · geschätzte Kosten des nächsten Laufs:
 <strong>{summe:.2f} €</strong>. Zurückgestelltes bleibt liegen und kostet
 nichts – es lässt sich jederzeit nachträglich freigeben.</p>
 {"".join(zweite) or "<p class='hinweis'>Noch nichts einsortiert.</p>"}
-<p><button class="k" onclick="fetch('/fertig').then(()=>document.body.innerHTML=
- '<h1>Fertig.</h1><p>Das Fenster kann zu.</p>')">Fertig – Dienst beenden</button>
- <span class="hinweis">Beendet sich auch von selbst, wenn zwei Stunden nichts
- geschieht.</span></p>
+<p><button class="k" onclick="fetch('/fertig').then(r=>r.json()).then(d=>
+ document.body.innerHTML='<h1>Fertig.</h1><p>'+(d.schreibt
+ ?'Die Freigaben werden jetzt geschrieben und landen als Entwürfe in WordPress.'
+ :'Nichts freigegeben – es wird nichts geschrieben.')
+ +' Das Fenster kann zu.</p>')">Fertig – Freigaben jetzt schreiben</button>
+ <span class="hinweis">Wer nur das Fenster schließt: Nach zwei Stunden ohne
+ Zugriff beendet sich der Dienst und schreibt dann.</span></p>
 <script>
 // Erste Entscheidung: die Datei in einen Laengen-Ordner verschieben.
 document.querySelectorAll('button.k[data-fach]').forEach(k => {{
@@ -1491,6 +1558,7 @@ def dienst(oeffnen: bool = True) -> int:
 
     class Griff(http.server.BaseHTTPRequestHandler):
         zuletzt = time.time()                # fuer den Waechter unten
+        angestossen = False                  # hat "Fertig" schon geschrieben?
 
         def log_message(self, *_):           # kein Protokollrauschen
             pass
@@ -1508,8 +1576,10 @@ def dienst(oeffnen: bool = True) -> int:
 
         def do_GET(self):
             if self.path.startswith("/fertig"):
-                self._sende("<p>Fertig. Das Fenster kann zu.</p>"
-                            .encode("utf-8"))
+                gestartet = schreiben_anstossen()
+                Griff.angestossen = True
+                self._sende(json.dumps({"schreibt": gestartet})
+                            .encode("utf-8"), "application/json")
                 threading.Thread(target=self.server.shutdown).start()
                 return
             self._sende(seite_bauen().encode("utf-8"))
@@ -1570,6 +1640,9 @@ def dienst(oeffnen: bool = True) -> int:
         server.serve_forever()
     except KeyboardInterrupt:
         print("\nbeendet")
+    # Fenster zu, ohne "Fertig" zu druecken: Die Freigaben gelten trotzdem.
+    if not Griff.angestossen:
+        schreiben_anstossen()
     return 0
 
 
@@ -1595,6 +1668,10 @@ def main() -> int:
 
     if a.was == "ernten":
         ergebnis = ernten(a.hoechstens, a.trocken)
+        # Der stuendliche Lauf holt nach, was freigegeben, aber liegen
+        # geblieben ist - etwa weil der Rechner beim Schliessen ausging.
+        if not a.trocken:
+            schreiben_anstossen()
         # Nach einer frischen Lieferung gleich die Entscheidungsseite zeigen -
         # sonst bleibt die Arbeit liegen.
         if not a.trocken and a.zeigen and NEUE_PDFS and offene_posten():
