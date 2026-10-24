@@ -664,52 +664,218 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
 </div>
 
 <main class="wrap unterseite">
+<style>
+.unterseite:has(.uh){ max-width:1180px; }
+.uh-eyebrow{ margin:0 0 6px; font-size:12px; font-weight:700; letter-spacing:.12em; color:var(--ink-soft); }
+.uh{ display:flex; gap:44px; align-items:flex-start; }
+.uh-nav{ flex:0 0 230px; position:sticky; top:calc(var(--netz-h,0px) + var(--ort-h,0px) + 18px); }
+.uh-nav b{ display:block; font-size:12px; letter-spacing:.12em; color:var(--ink-soft); margin-bottom:10px; }
+.uh-nav a{ display:block; padding:6px 0 6px 14px; border-left:2px solid var(--line); color:var(--ink-soft);
+  text-decoration:none; font-size:14px; line-height:1.35; }
+.uh-nav a:hover{ color:var(--brand); }
+.uh-nav a[aria-current="true"]{ border-left-color:var(--brand); color:var(--brand); font-weight:700; }
+.uh-text{ flex:1 1 auto; min-width:0; max-width:820px; }
+.uh-text section{ scroll-margin-top:calc(var(--netz-h,0px) + var(--ort-h,0px) + 18px); }
+.uh-text h2{ margin-top:38px; }
+.uh-lede{ font-size:18px; line-height:1.6; color:var(--ink-soft); max-width:46em; }
+.uh-leisten{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin:16px 0 0; padding:0; list-style:none; }
+.uh-leisten li{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+.uh-leisten li b{ display:block; color:var(--ink); font-size:15.5px; margin-bottom:3px; }
+.uh-knopf{ display:inline-block; background:var(--action); color:var(--on-action); border-radius:6px; padding:8px 14px;
+  font-weight:700; font-size:14px; text-decoration:none; }
+.uh-kz{ display:grid; grid-template-columns:auto 1fr; gap:10px 14px; align-items:baseline; margin:14px 0; }
+.uh-pille{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  padding:3px 8px; border-radius:6px; white-space:nowrap; }
+.uh-pille.live{ background:var(--brand-tint); color:var(--brand-deep); }
+.uh-pille.portal{ border:1px solid var(--line); color:var(--ink-faint); }
+.uh-pille.lic{ border:1px solid var(--line); color:var(--ink-soft); background:var(--card-2); }
+.uh-pille.bool{ border:1px solid var(--brand); color:var(--brand); text-transform:none; letter-spacing:0; }
+.ki-pille{ display:inline-block; font-size:11.5px; font-weight:700; padding:2px 9px; border-radius:20px;
+  background:#EEE8F7; color:#4B2E83; border:1px solid #D5C8EC; white-space:nowrap; }
+:root[data-theme="dark"] .ki-pille{ background:#2A2140; color:#D9CBF5; border-color:#43356A; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .ki-pille{ background:#2A2140; color:#D9CBF5; border-color:#43356A; } }
+.uh-ops{ width:100%; border-collapse:collapse; margin:10px 0 14px; font-size:14.5px; }
+.uh-ops td{ padding:7px 10px 7px 0; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+.uh-ops code{ font-weight:700; color:var(--brand); }
+.uh-wege{ margin:12px 0 0; padding:0; list-style:none; }
+.uh-wege li{ padding:8px 0; border-bottom:1px solid var(--line-soft); font-size:15px; line-height:1.5; }
+.uh-grenzen{ width:100%; border-collapse:collapse; margin-top:12px; font-size:14.5px; line-height:1.5; }
+.uh-grenzen th{ text-align:left; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); padding:6px 12px 6px 0; }
+.uh-grenzen td{ padding:9px 12px 9px 0; border-top:1px solid var(--line-soft); vertical-align:top; }
+.uh-grenzen td:first-child{ font-weight:700; width:45%; }
+.uh-arten{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.uh-arten > div{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; }
+.uh-arten small{ font-size:11.5px; letter-spacing:.12em; font-weight:700; color:var(--ink-soft); }
+.uh-arten p{ font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+.uh-arten ul{ margin:8px 0 0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:6px; }
+.uh-arten li a{ display:inline-block; font-size:13px; padding:4px 10px; border-radius:20px; border:1px solid var(--line);
+  background:var(--card-2); text-decoration:none; }
+.uh-arten li a:hover{ border-color:var(--brand); }
+.zahlentafel th[data-sort]{ cursor:pointer; white-space:nowrap; }
+.zahlentafel th[data-sort]::after{ content:" ↕"; color:var(--ink-faint); font-weight:400; }
+.zahlentafel thead th{ position:sticky; top:calc(var(--netz-h,0px) + var(--ort-h,0px)); background:var(--card); z-index:1; }
+.uh-feedback{ margin-top:36px; background:var(--brand-tint); border-radius:10px; padding:16px 18px; font-size:15px; line-height:1.55; }
+@media (max-width:860px){
+  .uh{ flex-direction:column; gap:10px; }
+  .uh-nav{ position:static; flex:none; width:100%; }
+  .uh-arten{ grid-template-columns:1fr; }
+  .uh-grenzen td:first-child{ width:auto; }
+}
+</style>
+<p class="uh-eyebrow">ÜBER DIE KNOWLEDGE-HUBS</p>
 <h1>Über die Knowledge-Hubs</h1>
-<p>Zusammen 1189 Datenbanken, davon 563 mit echter Live-Suche;
-  2325 Suchbegriffe im deutsch-englischen Glossar. Jeder Hub ist eigenständig und
-  hat seinen eigenen täglichen Newsletter. Die Suchräume berühren sich dabei durchaus — je nach Hub
-  liegen 3 bis 28 Prozent der gefundenen Arbeiten auch im Feld eines anderen (geprüft 08/2026);
-  der obere Wert betrifft allein Gesundheitskompetenz und KI, ohne den KI-Hub reicht die Spanne
-  nur bis 13 Prozent.
-  In der täglichen Auswahl schlägt das kaum durch: Von 5186 bisher ausgelieferten
-  Studien erschienen 203 in mehr als einem Hub.</p>
+<p class="uh-lede">15 Rechercheportale von <i>Monitor Versorgungsforschung</i> für das deutsche Gesundheitswesen. Ein Suchbegriff öffnet die Suche in allen passenden Fachdatenbanken, jeden Morgen kommen neue Studien mit deutscher Zusammenfassung dazu. Kostenfrei, ohne Anmeldung, ohne Cookies.</p>
 
-<h2>Was alle Hubs gemeinsam haben</h2>
-<ul class="punkte"><li><b>Eine Suche, alle Datenbanken</b>Ein Begriff genügt: Jede Kachel öffnet damit die
-      passende Live-Suche in einem neuen Tab. Wo eine Quelle das nicht zulässt, führt die Kachel
-      auf die Startseite — und sagt das auch.</li><li><b>Deutsch suchen, englisch finden</b>Ein kuratiertes Suchglossar übersetzt den
-      deutschen Fachbegriff für die internationalen Datenbanken; deutschsprachige Quellen
-      behalten ihn.</li><li><b>Jeden Morgen neue Studien</b>Eine KI wählt aus den Neuzugängen in PubMed aus, was
-      für das deutsche Gesundheitswesen zählt, und fasst es auf Deutsch zusammen — mit den
-      Ergebniszahlen und einer Einschätzung zur Übertragbarkeit.</li><li><b>Newsletter und Downloads</b>Die Tagesauswahl kommt auf Wunsch per E-Mail, dazu als
-      Word- und Excel-Datei. Auf jeder Newsletter-Seite lassen sich auch die Newsletter der
-      anderen Hubs mitbestellen.</li><li><b>Keine Cookies, keine fremden Dienste</b>Statische Seiten ohne Analysedienste
-      Dritter. Schriften und Bilder liegen auf dem eigenen Server. Wie oft die Seiten aufgerufen
-      werden, zählen wir selbst — ohne Cookies, ohne gespeicherte IP-Adresse.</li><li><b>Kostenfrei und offen</b>Kein Konto, keine Anmeldung, keine Bezahlschranke. Wo eine
-      Datenbank selbst eine Lizenz verlangt, ist die Kachel als lizenzpflichtig gekennzeichnet.</li></ul>
+<div class="uh">
+<nav class="uh-nav" aria-label="Auf dieser Seite"><b>AUF DIESER SEITE</b><a href="#leisten">Was die Hubs leisten</a><a href="#suche">So funktioniert die Suche</a><a href="#volltext">Volltext beschaffen</a><a href="#studien">Neue Studien jeden Morgen</a><a href="#newsletter">Newsletter und Downloads</a><a href="#grenzen">Was die Hubs nicht leisten</a><a href="#arten">Zwei Arten von Hubs</a><a href="#zahlen">Die Hubs in Zahlen</a><a href="#wer">Wer dahintersteht</a></nav>
+<div class="uh-text">
 
-<h2>Versorgungsthemen und Krankheitsgebiete</h2>
-<p><b>Versorgungsthemen.</b> Diese Hubs folgen einem Versorgungsthema quer durch alle Krankheitsbilder —
-  wie gepflegt, geimpft, digitalisiert und entschieden wird. Ausgewählt wird, was das
-  Versorgungsgeschehen verändert.</p>
-<p><b>Krankheitsgebiete.</b> Diese Hubs folgen einem Krankheitsgebiet. Sie sind anders gebaut: Sie lesen
-  die Kernzeitschriften des Fachs und zeigen die klinische <em>und</em> die
-  Grundlagenforschung — Versorgungsforschung ist darin eine Rubrik, nicht der Maßstab.
-  Wer wissen will, was sich in einem Fach bewegt, ist hier richtig.</p>
+<section id="leisten">
+<h2>Was die Hubs leisten</h2>
+<ul class="uh-leisten">
+  <li><b>Eine Suche, alle Datenbanken</b>Ein Begriff genügt: Die Suche läuft in allen Fachdatenbanken des Hubs, von PubMed bis zu deutschen Registern.</li>
+  <li><b>Deutsch suchen, international finden</b>Sie geben den deutschen Fachbegriff ein. Internationale Datenbanken erhalten automatisch den englischen.</li>
+  <li><b>Jeden Morgen neue Studien</b>Neue Fachartikel aus PubMed, ausgewählt nach ihrer Bedeutung für Deutschland und auf Deutsch zusammengefasst.</li>
+  <li><b>Newsletter und Downloads</b>Die tägliche Auswahl kommt auf Wunsch per E-Mail und lässt sich als Word- oder Excel-Datei herunterladen.</li>
+  <li><b>Keine Cookies, keine fremden Dienste</b>Die Hubs setzen keine Cookies und binden keine Analyse- oder Trackingdienste Dritter ein. IP-Adressen werden nicht gespeichert.</li>
+  <li><b>Kostenfrei und offen</b>Alle Hubs sind kostenfrei. Sie brauchen weder ein Konto noch eine Anmeldung, und es gibt keine Bezahlschranke.</li>
+</ul>
+</section>
 
+<section id="suche">
+<h2>So funktioniert die Suche</h2>
+<p>Jede Datenbank hat im Hub eine <b>Kachel</b>: ein Kästchen mit Namen und Link. Sie geben oben einen Begriff ein, etwa „Primärversorgung“, und klicken auf <span class="uh-knopf">In allen Datenbanken suchen</span>. Danach öffnet ein Klick auf eine Kachel die passende Suche in der Datenbank, in einem neuen Tab. Jede Kachel zeigt, welche von drei Arten sie ist:</p>
+<div class="uh-kz">
+  <span class="uh-pille live">Live-Suche</span><span>Der Klick öffnet direkt die fertige Trefferliste in der Datenbank.</span>
+  <span class="uh-pille portal">Portal</span><span>Der Klick öffnet die Startseite der Datenbank, denn sie erlaubt keine Live-Suche. Der Hub kopiert Ihren Begriff dabei, Sie fügen ihn dort mit Strg+V ein.</span>
+  <span class="uh-pille lic">Lizenz</span><span>Sie benötigen eine Lizenz, etwa für Scopus oder Web of Science. Zugang meist über Ihre Bibliothek oder Einrichtung.</span>
+</div>
+<p><b>Treffer direkt anzeigen.</b> Dieser zweite Knopf fragt sieben frei zugängliche Datenbanken gleichzeitig ab, in allen Hubs dieselben: PubMed, Europe PMC, OpenAlex, Crossref, DOAJ, ClinicalTrials.gov und Zenodo. Alle Treffer erscheinen direkt unter dem Suchfeld in einer Liste, 25 pro Seite; doppelte Treffer werden zusammengeführt. Für die ersten Treffer prüft der Dienst Unpaywall, ob es einen frei zugänglichen Volltext gibt; dann steht ein Link dabei. Die Liste lässt sich als Word- oder Excel-Datei speichern oder als RIS- bzw. BibTeX-Datei in Literaturprogramme wie Zotero, EndNote oder Citavi übernehmen.</p>
+<p><b>Glossar.</b> Sie suchen mit einem deutschen Begriff. Für internationale Datenbanken übersetzt der Hub ihn automatisch ins Englische. Dafür sind 1.340 deutsche Fachbegriffe mit ihrem englischen Gegenstück hinterlegt, zum Beispiel <i>Nutzenbewertung → health technology assessment</i> oder <i>Routinedaten → claims data</i>. Die Übersetzung ist eine feste Liste, keine KI.</p>
+<p><b>Suchoperatoren.</b> Mit den Wörtern AND, OR und NOT (sogenannte Boolesche Operatoren) verknüpfen Sie mehrere Begriffe:</p>
+<table class="uh-ops">
+  <tr><td><code>AND</code></td><td>beide Begriffe kommen vor</td><td>Diabetes AND Telemedizin</td></tr>
+  <tr><td><code>OR</code></td><td>einer der Begriffe reicht</td><td>Pflegeheim OR Altenheim</td></tr>
+  <tr><td><code>NOT</code></td><td>schließt einen Begriff aus</td><td>Demenz NOT Alzheimer</td></tr>
+</table>
+<p>Nicht jede Datenbank versteht diese Operatoren. Wir haben es einzeln geprüft. Jede Kachel zeigt, ob sie dort geprüft und wirksam (<span class="uh-pille bool">AND/OR ✓</span>), geprüft und unwirksam (<span class="uh-pille bool">AND/OR ✗</span>) oder noch nicht geprüft sind (ohne Zeichen).</p>
+</section>
+
+<section id="volltext">
+<h2>Volltext beschaffen</h2>
+<p>Die Hubs zeigen, wo es Literatur gibt; den Text selbst lesen Sie beim Anbieter. Vieles ist frei zugänglich: Open-Access-Artikel, etwa aus <i>Monitor Versorgungsforschung</i>, ebenso Berichte und Beschlüsse von G-BA, IQWiG oder RKI. Steht ein Artikel hinter einer Bezahlschranke, helfen fünf legale Wege, auch ohne Zugang über eine Hochschule oder Klinik:</p>
+<ul class="uh-wege">
+  <li><b>Nationallizenzen.</b> Von der DFG finanziert. Nach kostenloser Registrierung lesen Sie viele Zeitschriften und E-Books.</li>
+  <li><b>Unpaywall.</b> Findet eine frei zugängliche Fassung eines Artikels.</li>
+  <li><b>Open Access Button.</b> Findet freie Fassungen oder fragt bei den Autoren an.</li>
+  <li><b>subito.</b> Lieferdienst der Bibliotheken; schickt Ihnen den Artikel gegen Gebühr.</li>
+  <li><b>Fernleihe.</b> Bestellung über Ihre örtliche Bibliothek, im Katalog K10plus.</li>
+</ul>
+</section>
+
+<section id="studien">
+<h2>Neue Studien jeden Morgen</h2>
+<p>Jeden Morgen erscheinen im Hub neue Studien: Fachartikel, die frisch in PubMed aufgenommen wurden, mit deutscher Zusammenfassung, den wichtigsten Ergebniszahlen und einer Einschätzung, wie gut sich das Ergebnis auf Deutschland übertragen lässt. Die Hubs zu Versorgungsthemen und der Hub Adipositas wählen aus allen PubMed-Neuzugängen zu ihrem Thema, Diabetes, Kardiologie und Onkologie aus den Kernzeitschriften ihres Fachs.</p>
+<p>Ausgewählt wird nach drei Kriterien:</p>
+<ul>
+  <li><b>Übertragbar auf Deutschland:</b> hoch bei ähnlichen Gesundheitssystemen (DACH, Benelux, Frankreich), mittel (Skandinavien, Vereinigtes Königreich, Kanada, Australien), gering (USA)</li>
+  <li><b>Erkennbarer Bezug zur Versorgung</b></li>
+  <li><b>Belastbares Ergebnis</b> statt reiner Beschreibung; qualitative Studien sind eingeschlossen</li>
+</ul>
+<p>Maßgeblich ist der Tag, an dem PubMed eine Studie aufnimmt, nicht ihr Erscheinungsdatum; deshalb tauchen manchmal ältere Studien auf. Am Wochenende kommt meist nichts hinzu.</p>
+<p><span class="ki-pille">Von KI ausgewählt und zusammengefasst</span> Die Auswahl der Studien und ihre deutschen Zusammenfassungen erstellt eine KI automatisch, ohne redaktionelle Prüfung. Deshalb trägt jede dieser Studien dieses Kennzeichen.</p>
+<p><b>News und Ausschreibungen.</b> Neben den Studien zeigt jeder Hub aktuelle News und Ausschreibungen. Die News wählt ein einfacher Stichwortfilter aus, ganz ohne KI; sie tragen deshalb kein Kennzeichen. Die Ausschreibungen kommen aus dem <a href="https://wissen.m-vf.de/ausschreibungen.html">Ausschreibungsradar</a>: Eine KI wählt sie aus, die Texte stammen direkt aus der jeweiligen Quelle. Sie tragen deshalb das Kennzeichen <span class="ki-pille">von KI ausgewählt</span>.</p>
+</section>
+
+<section id="newsletter">
+<h2>Newsletter und Downloads</h2>
+<p>Jeder Hub hat einen eigenen täglichen Newsletter mit seiner Auswahl der Studien, werktags gegen 10 Uhr. Mehrere Hubs lassen sich gemeinsam bestellen, kostenlos und jederzeit kündbar. Die Auswahl im Hub und das Archiv lassen sich außerdem als Word- oder Excel-Datei herunterladen, zum Weiterleiten oder Auswerten.</p>
+<p><a class="uh-knopf" href="./#newsletter">Newsletter auswählen →</a></p>
+</section>
+
+<section id="grenzen">
+<h2>Was die Hubs nicht leisten</h2>
+<table class="uh-grenzen">
+<thead><tr><th>Was die Hubs nicht leisten</th><th>Was Sie stattdessen tun können</th></tr></thead>
+<tbody>
+<tr><td>Keine vollständige oder systematische Recherche</td><td>Für einen systematischen Review entwickeln Sie eine eigene Suchstrategie. Hochschul- und Fachbibliotheken helfen dabei.</td></tr>
+<tr><td>Keine Bewertung der Studienqualität, nur der Übertragbarkeit auf Deutschland</td><td>Lesen Sie die Originalstudie und bewerten Sie sie selbst.</td></tr>
+<tr><td>Nicht jede Datenbank lässt sich direkt durchsuchen</td><td>Bei Portalen kopiert der Hub den Begriff; Sie fügen ihn dort ein.</td></tr>
+<tr><td>Die tägliche Auswahl zeigt nicht alle neuen Studien</td><td>Nutzen Sie für eine breitere Suche die Live-Suchen und „Treffer direkt anzeigen“.</td></tr>
+<tr><td>Keine Beratung im Einzelfall</td><td>Wenden Sie sich an Fachgesellschaften, Verbände oder Beratungsstellen.</td></tr>
+<tr><td>Keine Konten und keine gespeicherten Suchen</td><td>Exportieren Sie Ihre Treffer oder abonnieren Sie den Newsletter.</td></tr>
+<tr><td>Keine Volltexte im Hub</td><td>Nutzen Sie die legalen Wege unter <a href="#volltext">„Volltext beschaffen“</a>.</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="arten">
+<h2>Zwei Arten von Hubs</h2>
+<div class="uh-arten">
+  <div><small>VERSORGUNGSTHEMEN · 11 HUBS</small>
+    <p>Versorgungsthemen folgen einem Thema quer durch alle Krankheitsbilder und fragen, was die Versorgung verändert.</p>
+    <ul><li><a href="https://wissen.m-vf.de/">Versorgungsforschung</a></li><li><a href="https://ki.m-vf.de/">Digitalisierung, KI &amp; Gesundheit</a></li><li><a href="https://gender.m-vf.de/">Geschlechtersensible Medizin</a></li><li><a href="https://longevity.m-vf.de/">Gesundes Altern &amp; Longevity</a></li><li><a href="https://healthliteracy.m-vf.de/">Gesundheitskompetenz</a></li><li><a href="https://klima.m-vf.de/">Hitze, Klima &amp; Gesundheit</a></li><li><a href="https://impfen.m-vf.de/">Impfen &amp; Prävention</a></li><li><a href="https://ncd.m-vf.de/">NCD/Chronische Krankheiten</a></li><li><a href="https://safety.m-vf.de/">Patientensicherheit</a></li><li><a href="https://pflege.m-vf.de/">Pflege &amp; Langzeitversorgung</a></li><li><a href="https://mental.m-vf.de/">Psychische Gesundheit</a></li></ul></div>
+  <div><small>KRANKHEITSGEBIETE · 4 HUBS</small>
+    <p>Krankheitsgebiete konzentrieren sich auf ein Krankheitsbild und alles, was dazu gehört: Klinik, Therapie, Grundlagenforschung und Versorgung.</p>
+    <ul><li><a href="https://adipositas.m-vf.de/">Adipositas</a></li><li><a href="https://diabetes.m-vf.de/">Diabetes</a></li><li><a href="https://kardio.m-vf.de/">Kardiologie</a></li><li><a href="https://onkologie.m-vf.de/">Onkologie</a></li></ul></div>
+</div>
+<p>Dieselbe Studie kann deshalb im einen Hub erscheinen und im anderen nicht. Je nach Hub stehen 1 bis 16 % der ausgewählten Studien auch in einem anderen Hub. Alle 15 Hubs im Überblick stehen auf der <a href="./#themen">Startseite der Knowledge-Hubs</a>.</p>
+</section>
+
+<section id="zahlen">
 <h2>Die Hubs in Zahlen</h2>
-<div class="tafel-rahmen"><table class="zahlentafel">
-<thead><tr><th>Hub</th><th>Datenbanken</th><th>Live-Suche</th><th>Rubriken</th><th>Glossar</th><th>Studien</th></tr></thead>
-<tbody><tr><td><a href="https://wissen.m-vf.de/">Versorgungsforschung</a></td><td>57</td><td>29</td><td>8</td><td>170</td><td>418</td></tr><tr><td><a href="https://adipositas.m-vf.de/">Adipositas</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td>363</td></tr><tr><td><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td>255</td></tr><tr><td><a href="https://ki.m-vf.de/">Digitalisierung, KI &amp; Gesundheit</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td>376</td></tr><tr><td><a href="https://gender.m-vf.de/">Geschlechtersensible Medizin</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td>360</td></tr><tr><td><a href="https://longevity.m-vf.de/">Gesundes Altern &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td>367</td></tr><tr><td><a href="https://healthliteracy.m-vf.de/">Gesundheitskompetenz</a></td><td>76</td><td>36</td><td>10</td><td>165</td><td>374</td></tr><tr><td><a href="https://klima.m-vf.de/">Hitze, Klima &amp; Gesundheit</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td>367</td></tr><tr><td><a href="https://impfen.m-vf.de/">Impfen &amp; Prävention</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td>360</td></tr><tr><td><a href="https://kardio.m-vf.de/">Kardiologie</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td>248</td></tr><tr><td><a href="https://ncd.m-vf.de/">NCD/Chronische Krankheiten</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td>365</td></tr><tr><td><a href="https://onkologie.m-vf.de/">Onkologie</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td>263</td></tr><tr><td><a href="https://safety.m-vf.de/">Patientensicherheit</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td>354</td></tr><tr><td><a href="https://pflege.m-vf.de/">Pflege &amp; Langzeitversorgung</a></td><td>88</td><td>42</td><td>11</td><td>156</td><td>362</td></tr><tr><td><a href="https://mental.m-vf.de/">Psychische Gesundheit</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td>354</td></tr></tbody>
-<tfoot><tr><td>Zusammen</td><td>1189</td><td>563</td><td>147</td><td>2325</td><td>5186</td></tr></tfoot>
+<div class="tafel-rahmen"><table class="zahlentafel" id="uhZahlen">
+<thead><tr><th data-sort>Hub</th><th data-sort>Datenbanken</th><th data-sort>Live-Suche</th><th data-sort>Rubriken</th><th data-sort>Glossar</th><th data-sort>Studien</th></tr></thead>
+<tbody><tr><td data-wert="Versorgungsforschung"><a href="https://wissen.m-vf.de/">Versorgungsforschung</a></td><td>57</td><td>29</td><td>8</td><td>170</td><td>424</td></tr><tr><td data-wert="Adipositas"><a href="https://adipositas.m-vf.de/">Adipositas</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td>376</td></tr><tr><td data-wert="Diabetes"><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td>266</td></tr><tr><td data-wert="Digitalisierung, KI &amp; Gesundheit"><a href="https://ki.m-vf.de/">Digitalisierung, KI &amp; Gesundheit</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td>388</td></tr><tr><td data-wert="Geschlechtersensible Medizin"><a href="https://gender.m-vf.de/">Geschlechtersensible Medizin</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td>373</td></tr><tr><td data-wert="Gesundes Altern &amp; Longevity"><a href="https://longevity.m-vf.de/">Gesundes Altern &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td>379</td></tr><tr><td data-wert="Gesundheitskompetenz"><a href="https://healthliteracy.m-vf.de/">Gesundheitskompetenz</a></td><td>76</td><td>36</td><td>10</td><td>165</td><td>386</td></tr><tr><td data-wert="Hitze, Klima &amp; Gesundheit"><a href="https://klima.m-vf.de/">Hitze, Klima &amp; Gesundheit</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td>377</td></tr><tr><td data-wert="Impfen &amp; Prävention"><a href="https://impfen.m-vf.de/">Impfen &amp; Prävention</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td>373</td></tr><tr><td data-wert="Kardiologie"><a href="https://kardio.m-vf.de/">Kardiologie</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td>260</td></tr><tr><td data-wert="NCD/Chronische Krankheiten"><a href="https://ncd.m-vf.de/">NCD/Chronische Krankheiten</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td>377</td></tr><tr><td data-wert="Onkologie"><a href="https://onkologie.m-vf.de/">Onkologie</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td>271</td></tr><tr><td data-wert="Patientensicherheit"><a href="https://safety.m-vf.de/">Patientensicherheit</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td>368</td></tr><tr><td data-wert="Pflege &amp; Langzeitversorgung"><a href="https://pflege.m-vf.de/">Pflege &amp; Langzeitversorgung</a></td><td>88</td><td>42</td><td>11</td><td>156</td><td>374</td></tr><tr><td data-wert="Psychische Gesundheit"><a href="https://mental.m-vf.de/">Psychische Gesundheit</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td>366</td></tr></tbody>
+<tfoot><tr><td>Zusammen</td><td>1.189</td><td>563</td><td>147</td><td>1.340*</td><td>5.358</td></tr></tfoot>
 </table></div>
-<p style="font-size:14px">Die Glossare überschneiden sich: Ohne Doppelungen sind es 1.340 verschiedene Begriffe.</p>
+<p style="font-size:14px;color:var(--ink-soft)"><b>Datenbanken:</b> Kacheln im Hub, eine je Datenbank. <b>Live-Suche:</b> Kacheln, deren Klick direkt die Trefferliste öffnet. <b>Rubriken:</b> Gruppen von Datenbanken im Hub. <b>Glossar:</b> hinterlegte deutsch-englische Übersetzungen. <b>Studien:</b> bisher ausgewählte Studien. *Ohne Doppelungen. Ein Klick auf den Spaltenkopf sortiert.</p>
+<p style="font-size:14px;color:var(--ink-soft)">Stand: 24.10.2026. Die Zahlen werden bei jedem Bau der Seite neu gezählt.</p>
+</section>
 
+<section id="wer">
 <h2>Wer dahintersteht</h2>
 <div class="wer">
   <img src="logo/mvf-logo.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
   <p>Die Knowledge-Hubs sind ein Angebot von <i>Monitor Versorgungsforschung</i>, der Fachzeitschrift für Versorgungsforschung und Gesundheitsökonomie, herausgegeben von der eRelation AG – Content in Health in Bonn. <a href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=ueber" target="_blank" rel="noopener">monitor-versorgungsforschung.de ↗</a></p>
 </div>
+<div class="uh-feedback"><b>Ihr Feedback ist willkommen.</b> Fehlt Ihnen eine Datenbank, ein Thema oder ein ganzer Hub? Funktioniert eine Suche nicht wie erwartet? Schreiben Sie uns an <a href="mailto:info@m-vf.de">info@m-vf.de</a>. Die Hubs werden mit Ihren Hinweisen besser.</div>
+</section>
+
+</div>
+</div>
+<script>
+(function(){
+  // Abschnitt im Blick in der Seitennavigation markieren.
+  var links = Array.prototype.slice.call(document.querySelectorAll('.uh-nav a'));
+  var ziele = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
+  function markiere(){
+    var oben = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--netz-h')) || 0) + 140;
+    var aktiv = 0;
+    ziele.forEach(function(z, i){ if(z && z.getBoundingClientRect().top <= oben) aktiv = i; });
+    links.forEach(function(a, i){ if(i === aktiv) a.setAttribute('aria-current','true'); else a.removeAttribute('aria-current'); });
+  }
+  window.addEventListener('scroll', markiere, {passive:true}); markiere();
+  // Tabelle sortieren: Klick auf den Spaltenkopf, zweiter Klick dreht um.
+  var tafel = document.getElementById('uhZahlen');
+  if(!tafel) return;
+  tafel.querySelectorAll('th[data-sort]').forEach(function(th, sp){
+    th.addEventListener('click', function(){
+      var ab = th.dataset.richtung !== 'ab';
+      tafel.querySelectorAll('th').forEach(function(x){ delete x.dataset.richtung; });
+      th.dataset.richtung = ab ? 'ab' : 'auf';
+      var zeilen = Array.prototype.slice.call(tafel.tBodies[0].rows);
+      zeilen.sort(function(a, b){
+        var x = a.cells[sp].dataset.wert || a.cells[sp].textContent, y = b.cells[sp].dataset.wert || b.cells[sp].textContent;
+        var nx = parseFloat(x), ny = parseFloat(y);
+        var r = (isNaN(nx) || isNaN(ny)) ? x.localeCompare(y, 'de') : nx - ny;
+        return ab ? -r : r;
+      });
+      zeilen.forEach(function(z){ tafel.tBodies[0].appendChild(z); });
+    });
+  });
+})();
+</script>
 </main>
 <script type="application/json" id="hubDaten">{"hubs":[],"t":{"passend":"PASSENDE HUBS","ueber":"über","oeffnen":"Hub öffnen →","leer":"Kein Hub führt diesen Begriff in seinem Glossar. Mit „Suchen“ öffnen Sie den Ausgangs-Hub Versorgungsforschung mit Ihrem Begriff.","studien":"STUDIEN","inAllen":"in allen deutschen Zusammenfassungen suchen","alleHubs":"Alle Hubs ↗","heute":"heute","gestern":"gestern","locale":"de-DE","zusammenfassung":"Zusammenfassung","mehr":"Mehr Studien anzeigen ▾","weniger":"Weniger anzeigen ▴"}}</script>
 <script>
@@ -964,7 +1130,7 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
       <a href="datenschutz.html">Datenschutz</a>
       <span class="fuss-mail">Kontakt: <a href="mailto:info@m-vf.de">info@m-vf.de</a></span>
     </nav>
-    <p class="stand">Stand der Zahlen: 23.10.2026. Sie werden bei jedem Bau aus den Portalen selbst gezählt.</p>
+    <p class="stand">Stand der Zahlen: 24.10.2026. Sie werden bei jedem Bau aus den Portalen selbst gezählt.</p>
   </div>
 </footer>
 <!-- ZAEHLER-START --------------------------------------------------------

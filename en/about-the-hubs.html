@@ -654,51 +654,218 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
 </div>
 
 <main class="wrap unterseite">
+<style>
+.unterseite:has(.uh){ max-width:1180px; }
+.uh-eyebrow{ margin:0 0 6px; font-size:12px; font-weight:700; letter-spacing:.12em; color:var(--ink-soft); }
+.uh{ display:flex; gap:44px; align-items:flex-start; }
+.uh-nav{ flex:0 0 230px; position:sticky; top:calc(var(--netz-h,0px) + var(--ort-h,0px) + 18px); }
+.uh-nav b{ display:block; font-size:12px; letter-spacing:.12em; color:var(--ink-soft); margin-bottom:10px; }
+.uh-nav a{ display:block; padding:6px 0 6px 14px; border-left:2px solid var(--line); color:var(--ink-soft);
+  text-decoration:none; font-size:14px; line-height:1.35; }
+.uh-nav a:hover{ color:var(--brand); }
+.uh-nav a[aria-current="true"]{ border-left-color:var(--brand); color:var(--brand); font-weight:700; }
+.uh-text{ flex:1 1 auto; min-width:0; max-width:820px; }
+.uh-text section{ scroll-margin-top:calc(var(--netz-h,0px) + var(--ort-h,0px) + 18px); }
+.uh-text h2{ margin-top:38px; }
+.uh-lede{ font-size:18px; line-height:1.6; color:var(--ink-soft); max-width:46em; }
+.uh-leisten{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin:16px 0 0; padding:0; list-style:none; }
+.uh-leisten li{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+.uh-leisten li b{ display:block; color:var(--ink); font-size:15.5px; margin-bottom:3px; }
+.uh-knopf{ display:inline-block; background:var(--action); color:var(--on-action); border-radius:6px; padding:8px 14px;
+  font-weight:700; font-size:14px; text-decoration:none; }
+.uh-kz{ display:grid; grid-template-columns:auto 1fr; gap:10px 14px; align-items:baseline; margin:14px 0; }
+.uh-pille{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  padding:3px 8px; border-radius:6px; white-space:nowrap; }
+.uh-pille.live{ background:var(--brand-tint); color:var(--brand-deep); }
+.uh-pille.portal{ border:1px solid var(--line); color:var(--ink-faint); }
+.uh-pille.lic{ border:1px solid var(--line); color:var(--ink-soft); background:var(--card-2); }
+.uh-pille.bool{ border:1px solid var(--brand); color:var(--brand); text-transform:none; letter-spacing:0; }
+.ki-pille{ display:inline-block; font-size:11.5px; font-weight:700; padding:2px 9px; border-radius:20px;
+  background:#EEE8F7; color:#4B2E83; border:1px solid #D5C8EC; white-space:nowrap; }
+:root[data-theme="dark"] .ki-pille{ background:#2A2140; color:#D9CBF5; border-color:#43356A; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .ki-pille{ background:#2A2140; color:#D9CBF5; border-color:#43356A; } }
+.uh-ops{ width:100%; border-collapse:collapse; margin:10px 0 14px; font-size:14.5px; }
+.uh-ops td{ padding:7px 10px 7px 0; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+.uh-ops code{ font-weight:700; color:var(--brand); }
+.uh-wege{ margin:12px 0 0; padding:0; list-style:none; }
+.uh-wege li{ padding:8px 0; border-bottom:1px solid var(--line-soft); font-size:15px; line-height:1.5; }
+.uh-grenzen{ width:100%; border-collapse:collapse; margin-top:12px; font-size:14.5px; line-height:1.5; }
+.uh-grenzen th{ text-align:left; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); padding:6px 12px 6px 0; }
+.uh-grenzen td{ padding:9px 12px 9px 0; border-top:1px solid var(--line-soft); vertical-align:top; }
+.uh-grenzen td:first-child{ font-weight:700; width:45%; }
+.uh-arten{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.uh-arten > div{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; }
+.uh-arten small{ font-size:11.5px; letter-spacing:.12em; font-weight:700; color:var(--ink-soft); }
+.uh-arten p{ font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+.uh-arten ul{ margin:8px 0 0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:6px; }
+.uh-arten li a{ display:inline-block; font-size:13px; padding:4px 10px; border-radius:20px; border:1px solid var(--line);
+  background:var(--card-2); text-decoration:none; }
+.uh-arten li a:hover{ border-color:var(--brand); }
+.zahlentafel th[data-sort]{ cursor:pointer; white-space:nowrap; }
+.zahlentafel th[data-sort]::after{ content:" ↕"; color:var(--ink-faint); font-weight:400; }
+.zahlentafel thead th{ position:sticky; top:calc(var(--netz-h,0px) + var(--ort-h,0px)); background:var(--card); z-index:1; }
+.uh-feedback{ margin-top:36px; background:var(--brand-tint); border-radius:10px; padding:16px 18px; font-size:15px; line-height:1.55; }
+@media (max-width:860px){
+  .uh{ flex-direction:column; gap:10px; }
+  .uh-nav{ position:static; flex:none; width:100%; }
+  .uh-arten{ grid-template-columns:1fr; }
+  .uh-grenzen td:first-child{ width:auto; }
+}
+</style>
+<p class="uh-eyebrow">ABOUT THE KNOWLEDGE HUBS</p>
 <h1>About the Knowledge Hubs</h1>
-<p>Together 1189 databases, 563 of them with a genuine live search;
-  2325 search terms in the German–English glossary. Each hub stands on its own and
-  has its own daily newsletter. The search spaces do touch — depending on the hub, 3 to 28
-  per cent of the works found also fall within the field of another (checked 08/2026);
-  the upper figure concerns health literacy and AI alone, and without the AI hub the range
-  reaches only 13 per cent.
-  In the daily selection this barely shows: of 5186 studies delivered so far,
-  203 have appeared in more than one hub.</p>
+<p class="uh-lede">15 research portals by <i>Monitor Versorgungsforschung</i> for the German health system. One search term opens the search in all relevant databases, and new studies with a German summary arrive every morning. Free of charge, no registration, no cookies.</p>
 
-<h2>What all hubs have in common</h2>
-<ul class="punkte"><li><b>One search, every database</b>One term is enough: each tile opens the matching
-      live search in a new tab. Where a source does not allow that, the tile leads to the start
-      page — and says so.</li><li><b>Search in German, find in English</b>A curated search glossary translates the German
-      technical term for the international databases; German-language sources keep it.</li><li><b>New studies every morning</b>An AI selects from the new entries in PubMed what
-      matters for the German healthcare system and summarises it in German — with the result
-      figures and an assessment of how far it transfers.</li><li><b>Newsletter and downloads</b>The daily selection comes by e-mail on request, plus as
-      a Word and an Excel file. Every newsletter page also lets you subscribe to the newsletters
-      of the other hubs.</li><li><b>No cookies, no third-party services</b>Static pages without third-party analytics.
-      Fonts and images sit on our own server. How often the pages are opened we count ourselves —
-      without cookies and without storing IP addresses.</li><li><b>Free and open</b>No account, no registration, no paywall. Where a database itself
-      requires a licence, the tile is marked as licence-restricted.</li></ul>
+<div class="uh">
+<nav class="uh-nav" aria-label="On this page"><b>ON THIS PAGE</b><a href="#leisten">What the hubs do</a><a href="#suche">How the search works</a><a href="#volltext">Getting the full text</a><a href="#studien">New studies every morning</a><a href="#newsletter">Newsletters and downloads</a><a href="#grenzen">What the hubs do not do</a><a href="#arten">Two kinds of hubs</a><a href="#zahlen">The hubs in numbers</a><a href="#wer">Who is behind the hubs</a></nav>
+<div class="uh-text">
 
-<h2>Topics in care and disease areas</h2>
-<p><b>Topics in care.</b> These hubs follow a topic in health care across all conditions — how care is
-  given, how people are vaccinated, how services are digitalised and how decisions are
-  made. What gets selected is what changes care delivery.</p>
-<p><b>Disease areas.</b> These hubs follow a disease area. They are built differently: they read the
-  core journals of the field and show clinical <em>and</em> basic research — health
-  services research is one category within them, not the yardstick. If you want to know
-  what is moving in a field, this is the place.</p>
+<section id="leisten">
+<h2>What the hubs do</h2>
+<ul class="uh-leisten">
+  <li><b>One search, all databases</b>One term is enough: the search runs in all databases of the hub, from PubMed to German registries.</li>
+  <li><b>Search in German, find internationally</b>You enter the German technical term. International databases automatically receive the English one.</li>
+  <li><b>New studies every morning</b>New articles from PubMed, selected for their relevance to Germany and summarised in German.</li>
+  <li><b>Newsletters and downloads</b>The daily selection arrives by e-mail on request and can be downloaded as a Word or Excel file.</li>
+  <li><b>No cookies, no third-party services</b>The hubs set no cookies and use no third-party analytics or tracking. IP addresses are not stored.</li>
+  <li><b>Free and open</b>All hubs are free of charge. You need neither an account nor a registration, and there is no paywall.</li>
+</ul>
+</section>
 
-<h2>The hubs in figures</h2>
-<div class="tafel-rahmen"><table class="zahlentafel">
-<thead><tr><th>Hub</th><th>Databases</th><th>Live search</th><th>Categories</th><th>Glossary</th><th>Studies</th></tr></thead>
-<tbody><tr><td><a href="https://wissen.m-vf.de/">Health Services Research</a></td><td>57</td><td>29</td><td>8</td><td>170</td><td>418</td></tr><tr><td><a href="https://kardio.m-vf.de/">Cardiology</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td>248</td></tr><tr><td><a href="https://ncd.m-vf.de/">Chronic Conditions</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td>365</td></tr><tr><td><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td>255</td></tr><tr><td><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td>376</td></tr><tr><td><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></td><td>76</td><td>36</td><td>10</td><td>165</td><td>374</td></tr><tr><td><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td>367</td></tr><tr><td><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td>367</td></tr><tr><td><a href="https://mental.m-vf.de/">Mental Health</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td>354</td></tr><tr><td><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></td><td>88</td><td>42</td><td>11</td><td>156</td><td>362</td></tr><tr><td><a href="https://adipositas.m-vf.de/">Obesity</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td>363</td></tr><tr><td><a href="https://onkologie.m-vf.de/">Oncology</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td>263</td></tr><tr><td><a href="https://safety.m-vf.de/">Patient Safety</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td>354</td></tr><tr><td><a href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td>360</td></tr><tr><td><a href="https://impfen.m-vf.de/">Vaccination</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td>360</td></tr></tbody>
-<tfoot><tr><td>Total</td><td>1189</td><td>563</td><td>147</td><td>2325</td><td>5186</td></tr></tfoot>
+<section id="suche">
+<h2>How the search works</h2>
+<p>Every database has a <b>tile</b> in the hub: a box with its name and a link. You enter a term at the top, for example „Primärversorgung“ (primary care), and click <span class="uh-knopf">In allen Datenbanken suchen</span> (search all databases). A click on a tile then opens the matching search in that database, in a new tab. Each tile shows which of three kinds it is:</p>
+<div class="uh-kz">
+  <span class="uh-pille live">Live-Suche</span><span>Live search: the click opens the finished results list in the database.</span>
+  <span class="uh-pille portal">Portal</span><span>The click opens the start page of the database, which does not allow a live search. The hub copies your term, and you paste it there with Ctrl+V.</span>
+  <span class="uh-pille lic">Lizenz</span><span>Licence: you need a subscription, for example for Scopus or Web of Science, usually through your library or institution.</span>
+</div>
+<p><b>Show results directly.</b> The second button („Treffer direkt anzeigen“) queries seven openly accessible databases at once, the same in every hub: PubMed, Europe PMC, OpenAlex, Crossref, DOAJ, ClinicalTrials.gov and Zenodo. All results appear in one list directly below the search field, 25 per page; duplicates are merged. For the first results the Unpaywall service checks whether a free full text exists, and if so a link is shown. The list can be saved as a Word or Excel file or exported as RIS or BibTeX to reference managers such as Zotero, EndNote or Citavi.</p>
+<p><b>Glossary.</b> You search with a German term. For international databases the hub translates it into English automatically, using 1,340 German technical terms with their English equivalents, for example <i>Nutzenbewertung → health technology assessment</i> or <i>Routinedaten → claims data</i>. The translation is a fixed list, not AI.</p>
+<p><b>Search operators.</b> With the words AND, OR and NOT (Boolean operators) you combine several terms:</p>
+<table class="uh-ops">
+  <tr><td><code>AND</code></td><td>both terms occur</td><td>Diabetes AND Telemedizin</td></tr>
+  <tr><td><code>OR</code></td><td>either term is enough</td><td>Pflegeheim OR Altenheim</td></tr>
+  <tr><td><code>NOT</code></td><td>excludes a term</td><td>Demenz NOT Alzheimer</td></tr>
+</table>
+<p>Not every database understands these operators. We tested each one. Every tile shows whether they were tested and work (<span class="uh-pille bool">AND/OR ✓</span>), tested and do not work (<span class="uh-pille bool">AND/OR ✗</span>) or have not been tested yet (no mark).</p>
+</section>
+
+<section id="volltext">
+<h2>Getting the full text</h2>
+<p>The hubs show where literature can be found; you read the text itself with the provider. Much of it is openly accessible: open access articles, for example from <i>Monitor Versorgungsforschung</i>, as well as reports and decisions of G-BA, IQWiG or RKI. If an article is behind a paywall, five legal routes help, even without access through a university or hospital:</p>
+<ul class="uh-wege">
+  <li><b>Nationallizenzen.</b> Funded by the German Research Foundation (DFG). After free registration you can read many journals and e-books.</li>
+  <li><b>Unpaywall.</b> Finds a freely accessible version of an article.</li>
+  <li><b>Open Access Button.</b> Finds free versions or asks the authors.</li>
+  <li><b>subito.</b> Document delivery service of the libraries; sends you the article for a fee.</li>
+  <li><b>Interlibrary loan (Fernleihe).</b> Ordered through your local library, in the K10plus catalogue.</li>
+</ul>
+</section>
+
+<section id="studien">
+<h2>New studies every morning</h2>
+<p>Every morning new studies appear in each hub: articles newly added to PubMed, with a German summary, the key result figures and an assessment of how well the result transfers to Germany. The hubs on health care topics and the obesity hub select from all new PubMed records on their topic; diabetes, cardiology and oncology select from the core journals of their field.</p>
+<p>Three criteria decide:</p>
+<ul>
+  <li><b>Transferable to Germany:</b> high for similar health systems (German-speaking countries, Benelux, France), medium (Scandinavia, United Kingdom, Canada, Australia), low (USA)</li>
+  <li><b>A recognisable link to health care</b></li>
+  <li><b>A clear result</b> rather than a mere description; qualitative studies are included</li>
+</ul>
+<p>What counts is the day PubMed adds a study, not its publication date; this is why older studies sometimes appear. At weekends usually nothing is added.</p>
+<p><span class="ki-pille">Selected and summarised by AI</span> The selection of the studies and their German summaries are produced automatically by AI, without editorial review. This is why every one of these studies carries this label (in the hub: „Von KI ausgewählt und zusammengefasst“).</p>
+<p><b>News and funding calls.</b> Next to the studies, every hub shows current news and funding calls. The news are chosen by a simple keyword filter without any AI and therefore carry no label. The funding calls come from the <a href="https://wissen.m-vf.de/ausschreibungen.html">funding radar</a> (in German): an AI selects them, the texts come directly from the source. They therefore carry the label <span class="ki-pille">selected by AI</span>.</p>
+</section>
+
+<section id="newsletter">
+<h2>Newsletters and downloads</h2>
+<p>Every hub has its own daily newsletter with its selection of studies, on weekdays at around 10 a.m. Several hubs can be ordered together, free of charge and cancellable at any time. The selection in the hub and the archive can also be downloaded as a Word or Excel file, for forwarding or analysis.</p>
+<p><a class="uh-knopf" href="./#newsletter">Choose newsletters →</a></p>
+</section>
+
+<section id="grenzen">
+<h2>What the hubs do not do</h2>
+<table class="uh-grenzen">
+<thead><tr><th>What the hubs do not do</th><th>What you can do instead</th></tr></thead>
+<tbody>
+<tr><td>No complete or systematic search</td><td>For a systematic review, develop your own search strategy. University and specialist libraries can help.</td></tr>
+<tr><td>No assessment of study quality, only of transferability to Germany</td><td>Read the original study and assess it yourself.</td></tr>
+<tr><td>Not every database can be searched directly</td><td>For portals the hub copies your term; you paste it there.</td></tr>
+<tr><td>The daily selection does not show all new studies</td><td>For a broader search, use the live searches and „Treffer direkt anzeigen“.</td></tr>
+<tr><td>No individual advice</td><td>Contact professional societies, associations or counselling services.</td></tr>
+<tr><td>No accounts and no saved searches</td><td>Export your results or subscribe to the newsletter.</td></tr>
+<tr><td>No full texts in the hub</td><td>Use the legal routes under <a href="#volltext">„Getting the full text“</a>.</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="arten">
+<h2>Two kinds of hubs</h2>
+<div class="uh-arten">
+  <div><small>HEALTH CARE TOPICS · 11 HUBS</small>
+    <p>Health care topics follow one theme across all conditions and ask what changes care.</p>
+    <ul><li><a href="https://wissen.m-vf.de/">Health Services Research</a></li><li><a href="https://ncd.m-vf.de/">Chronic Conditions</a></li><li><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></li><li><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></li><li><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></li><li><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></li><li><a href="https://mental.m-vf.de/">Mental Health</a></li><li><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></li><li><a href="https://safety.m-vf.de/">Patient Safety</a></li><li><a href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></li><li><a href="https://impfen.m-vf.de/">Vaccination</a></li></ul></div>
+  <div><small>DISEASE AREAS · 4 HUBS</small>
+    <p>Disease areas concentrate on one condition and everything that belongs to it: clinical practice, therapy, basic research and care.</p>
+    <ul><li><a href="https://kardio.m-vf.de/">Cardiology</a></li><li><a href="https://diabetes.m-vf.de/">Diabetes</a></li><li><a href="https://adipositas.m-vf.de/">Obesity</a></li><li><a href="https://onkologie.m-vf.de/">Oncology</a></li></ul></div>
+</div>
+<p>The same study may therefore appear in one hub and not in another. Depending on the hub, 1 to 16 % of the selected studies also appear in another hub. All 15 hubs at a glance are on the <a href="./#themen">start page of the Knowledge Hubs</a>.</p>
+</section>
+
+<section id="zahlen">
+<h2>The hubs in numbers</h2>
+<div class="tafel-rahmen"><table class="zahlentafel" id="uhZahlen">
+<thead><tr><th data-sort>Hub</th><th data-sort>Databases</th><th data-sort>Live search</th><th data-sort>Categories</th><th data-sort>Glossary</th><th data-sort>Studies</th></tr></thead>
+<tbody><tr><td data-wert="Health Services Research"><a href="https://wissen.m-vf.de/">Health Services Research</a></td><td>57</td><td>29</td><td>8</td><td>170</td><td>424</td></tr><tr><td data-wert="Cardiology"><a href="https://kardio.m-vf.de/">Cardiology</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td>260</td></tr><tr><td data-wert="Chronic Conditions"><a href="https://ncd.m-vf.de/">Chronic Conditions</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td>377</td></tr><tr><td data-wert="Diabetes"><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td>266</td></tr><tr><td data-wert="Digitalisation, AI &amp; Health"><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td>388</td></tr><tr><td data-wert="Health Literacy"><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></td><td>76</td><td>36</td><td>10</td><td>165</td><td>386</td></tr><tr><td data-wert="Healthy Ageing &amp; Longevity"><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td>379</td></tr><tr><td data-wert="Heat, Climate &amp; Health"><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td>377</td></tr><tr><td data-wert="Mental Health"><a href="https://mental.m-vf.de/">Mental Health</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td>366</td></tr><tr><td data-wert="Nursing &amp; Long-Term Care"><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></td><td>88</td><td>42</td><td>11</td><td>156</td><td>374</td></tr><tr><td data-wert="Obesity"><a href="https://adipositas.m-vf.de/">Obesity</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td>376</td></tr><tr><td data-wert="Oncology"><a href="https://onkologie.m-vf.de/">Oncology</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td>271</td></tr><tr><td data-wert="Patient Safety"><a href="https://safety.m-vf.de/">Patient Safety</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td>368</td></tr><tr><td data-wert="Sex- and Gender-Sensitive Medicine"><a href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td>373</td></tr><tr><td data-wert="Vaccination"><a href="https://impfen.m-vf.de/">Vaccination</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td>373</td></tr></tbody>
+<tfoot><tr><td>Total</td><td>1,189</td><td>563</td><td>147</td><td>1,340*</td><td>5,358</td></tr></tfoot>
 </table></div>
-<p style="font-size:14px">The glossaries overlap: without duplicates there are 1,340 distinct terms.</p>
+<p style="font-size:14px;color:var(--ink-soft)"><b>Databases:</b> tiles in the hub, one per database. <b>Live search:</b> tiles whose click opens the results list directly. <b>Categories:</b> groups of databases in the hub. <b>Glossary:</b> stored German-English translations. <b>Studies:</b> studies selected so far. *Without duplicates. Click a column header to sort.</p>
+<p style="font-size:14px;color:var(--ink-soft)">As of 24 October 2026. The numbers are recounted every time this page is built.</p>
+</section>
 
-<h2>Who is behind it</h2>
+<section id="wer">
+<h2>Who is behind the hubs</h2>
 <div class="wer">
   <img src="../logo/mvf-logo.png" width="1236" height="327" alt="Monitor Versorgungsforschung">
   <p>The Knowledge Hubs are a service of <i>Monitor Versorgungsforschung</i>, the German journal for health services research and health economics, published by eRelation AG – Content in Health in Bonn. Our English-language journal is <a href="https://www.monitor-healthcare-research.com/" target="_blank" rel="noopener">Monitor Healthcare Research</a>. <a href="https://www.monitor-versorgungsforschung.de/?utm_source=hub-uebersicht&amp;utm_medium=referral&amp;utm_campaign=ueber" target="_blank" rel="noopener">monitor-versorgungsforschung.de ↗</a></p>
 </div>
+<div class="uh-feedback"><b>Your feedback is welcome.</b> Is a database, a topic or a whole hub missing? Does a search not work as expected? Write to us at <a href="mailto:info@m-vf.de">info@m-vf.de</a>. Your suggestions make the hubs better.</div>
+</section>
+
+</div>
+</div>
+<script>
+(function(){
+  // Abschnitt im Blick in der Seitennavigation markieren.
+  var links = Array.prototype.slice.call(document.querySelectorAll('.uh-nav a'));
+  var ziele = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
+  function markiere(){
+    var oben = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--netz-h')) || 0) + 140;
+    var aktiv = 0;
+    ziele.forEach(function(z, i){ if(z && z.getBoundingClientRect().top <= oben) aktiv = i; });
+    links.forEach(function(a, i){ if(i === aktiv) a.setAttribute('aria-current','true'); else a.removeAttribute('aria-current'); });
+  }
+  window.addEventListener('scroll', markiere, {passive:true}); markiere();
+  // Tabelle sortieren: Klick auf den Spaltenkopf, zweiter Klick dreht um.
+  var tafel = document.getElementById('uhZahlen');
+  if(!tafel) return;
+  tafel.querySelectorAll('th[data-sort]').forEach(function(th, sp){
+    th.addEventListener('click', function(){
+      var ab = th.dataset.richtung !== 'ab';
+      tafel.querySelectorAll('th').forEach(function(x){ delete x.dataset.richtung; });
+      th.dataset.richtung = ab ? 'ab' : 'auf';
+      var zeilen = Array.prototype.slice.call(tafel.tBodies[0].rows);
+      zeilen.sort(function(a, b){
+        var x = a.cells[sp].dataset.wert || a.cells[sp].textContent, y = b.cells[sp].dataset.wert || b.cells[sp].textContent;
+        var nx = parseFloat(x), ny = parseFloat(y);
+        var r = (isNaN(nx) || isNaN(ny)) ? x.localeCompare(y, 'en') : nx - ny;
+        return ab ? -r : r;
+      });
+      zeilen.forEach(function(z){ tafel.tBodies[0].appendChild(z); });
+    });
+  });
+})();
+</script>
 </main>
 <script type="application/json" id="hubDaten">{"hubs":[],"t":{"passend":"MATCHING HUBS","ueber":"via","oeffnen":"Open hub →","leer":"No hub lists this term in its glossary. “Search” opens the first hub, Health Services Research, with your term.","studien":"STUDIES","inAllen":"– search all German summaries","alleHubs":"All hubs ↗","heute":"today","gestern":"yesterday","locale":"en-GB","zusammenfassung":"Summary (German)","mehr":"Show more studies ▾","weniger":"Show fewer ▴"}}</script>
 <script>
@@ -953,7 +1120,7 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
       <a href="privacy.html">Privacy</a>
       <span class="fuss-mail">Contact: <a href="mailto:info@m-vf.de">info@m-vf.de</a></span>
     </nav>
-    <p class="stand">Figures as of 23 October 2026. They are counted from the portals themselves on every build.</p>
+    <p class="stand">Figures as of 24 October 2026. They are counted from the portals themselves on every build.</p>
   </div>
 </footer>
 <!-- ZAEHLER-START --------------------------------------------------------
