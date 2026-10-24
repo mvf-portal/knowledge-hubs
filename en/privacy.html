@@ -2,8 +2,8 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Privacy notice of the Knowledge Hubs of Monitor Versorgungsforschung.">
-<title>Privacy – Knowledge Hubs</title>
+<meta name="description" content="Privacy notice for all online services of Monitor Versorgungsforschung.">
+<title>Privacy notice – Knowledge Hubs</title>
 <link rel="canonical" href="https://knowledge-hubs.m-vf.de/en/privacy.html">
 <link rel="alternate" hreflang="de" href="https://knowledge-hubs.m-vf.de/">
 <link rel="alternate" hreflang="en" href="https://knowledge-hubs.m-vf.de/en/">
@@ -654,18 +654,159 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
 </div>
 
 <main class="wrap unterseite">
+<style>
+.unterseite:has(.uh){ max-width:1180px; }
+.uh-eyebrow{ margin:0 0 6px; font-size:12px; font-weight:700; letter-spacing:.12em; color:var(--ink-soft); }
+.uh{ display:flex; gap:44px; align-items:flex-start; }
+.uh-nav{ flex:0 0 230px; position:sticky; top:calc(var(--netz-h,0px) + var(--ort-h,0px) + 18px); }
+.uh-nav b{ display:block; font-size:12px; letter-spacing:.12em; color:var(--ink-soft); margin-bottom:10px; }
+.uh-nav a{ display:block; padding:6px 0 6px 14px; border-left:2px solid var(--line); color:var(--ink-soft);
+  text-decoration:none; font-size:14px; line-height:1.35; }
+.uh-nav a:hover{ color:var(--brand); }
+.uh-nav a[aria-current="true"]{ border-left-color:var(--brand); color:var(--brand); font-weight:700; }
+.uh-text{ flex:1 1 auto; min-width:0; max-width:820px; }
+.uh-text section{ scroll-margin-top:calc(var(--netz-h,0px) + var(--ort-h,0px) + 18px); }
+.uh-text h2{ margin-top:38px; }
+.uh-lede{ font-size:18px; line-height:1.6; color:var(--ink-soft); max-width:46em; }
+.uh-leisten{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin:16px 0 0; padding:0; list-style:none; }
+.uh-leisten li{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+.uh-leisten li b{ display:block; color:var(--ink); font-size:15.5px; margin-bottom:3px; }
+.uh-knopf{ display:inline-block; background:var(--action); color:var(--on-action); border-radius:6px; padding:8px 14px;
+  font-weight:700; font-size:14px; text-decoration:none; }
+.uh-kz{ display:grid; grid-template-columns:auto 1fr; gap:10px 14px; align-items:baseline; margin:14px 0; }
+.uh-pille{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  padding:3px 8px; border-radius:6px; white-space:nowrap; }
+.uh-pille.live{ background:var(--brand-tint); color:var(--brand-deep); }
+.uh-pille.portal{ border:1px solid var(--line); color:var(--ink-faint); }
+.uh-pille.lic{ border:1px solid var(--line); color:var(--ink-soft); background:var(--card-2); }
+.uh-pille.bool{ border:1px solid var(--brand); color:var(--brand); text-transform:none; letter-spacing:0; }
+.ki-pille{ display:inline-block; font-size:11.5px; font-weight:700; padding:2px 9px; border-radius:20px;
+  background:#EEE8F7; color:#4B2E83; border:1px solid #D5C8EC; white-space:nowrap; }
+:root[data-theme="dark"] .ki-pille{ background:#2A2140; color:#D9CBF5; border-color:#43356A; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .ki-pille{ background:#2A2140; color:#D9CBF5; border-color:#43356A; } }
+.uh-ops{ width:100%; border-collapse:collapse; margin:10px 0 14px; font-size:14.5px; }
+.uh-ops td{ padding:7px 10px 7px 0; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+.uh-ops code{ font-weight:700; color:var(--brand); }
+.uh-wege{ margin:12px 0 0; padding:0; list-style:none; }
+.uh-wege li{ padding:8px 0; border-bottom:1px solid var(--line-soft); font-size:15px; line-height:1.5; }
+.uh-grenzen{ width:100%; border-collapse:collapse; margin-top:12px; font-size:14.5px; line-height:1.5; }
+.uh-grenzen th{ text-align:left; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); padding:6px 12px 6px 0; }
+.uh-grenzen td{ padding:9px 12px 9px 0; border-top:1px solid var(--line-soft); vertical-align:top; }
+.uh-grenzen td:first-child{ font-weight:700; width:45%; }
+.uh-arten{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.uh-arten > div{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; }
+.uh-arten small{ font-size:11.5px; letter-spacing:.12em; font-weight:700; color:var(--ink-soft); }
+.uh-arten p{ font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+.uh-arten ul{ margin:8px 0 0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:6px; }
+.uh-arten li a{ display:inline-block; font-size:13px; padding:4px 10px; border-radius:20px; border:1px solid var(--line);
+  background:var(--card-2); text-decoration:none; }
+.uh-arten li a:hover{ border-color:var(--brand); }
+.zahlentafel th[data-sort]{ cursor:pointer; white-space:nowrap; }
+.zahlentafel th[data-sort]::after{ content:" ↕"; color:var(--ink-faint); font-weight:400; }
+.zahlentafel thead th{ position:sticky; top:calc(var(--netz-h,0px) + var(--ort-h,0px)); background:var(--card); z-index:1; }
+.uh-feedback{ margin-top:36px; background:var(--brand-tint); border-radius:10px; padding:16px 18px; font-size:15px; line-height:1.55; }
+@media (max-width:860px){
+  .uh{ flex-direction:column; gap:10px; }
+  .uh-nav{ position:static; flex:none; width:100%; }
+  .uh-arten{ grid-template-columns:1fr; }
+  .uh-grenzen td:first-child{ width:auto; }
+}
+</style><style>
+.ki-pille{ display:inline-block; font-size:11.5px; font-weight:700; padding:2px 9px; border-radius:20px;
+  background:#EEE8F7; color:#4B2E83; border:1px solid #D5C8EC; white-space:nowrap; }
+.uh-text h3{ font-size:16px; margin:20px 0 6px; }
+</style><p class="uh-eyebrow">LEGAL</p>
 <h1>Privacy notice</h1>
-        <h4>1. Controller</h4>
-        <p>eRelation AG – Content in Health, represented by Peter Stegmaier, Johannes-von-Hanstein-Str. 2, 53115 Bonn, Germany. Contact details in the legal notice above.</p>
-        <h4>2. Nature of this page</h4>
-        <p>This overview is a static page. It sets <strong>no cookies</strong> and embeds <strong>no third-party analytics or tracking services</strong>. Fonts and images are served from the same server; no third-party content is loaded. There is no form on this page.</p><p>How often the page is opened we count on a server of our own at <i>Monitor Versorgungsforschung</i>. Nothing is stored on or read from your device, and your IP address is not stored: it enters, together with a secret random number, into a non-reversible hash value that makes repeated visits on the same day countable as one person. The random number is replaced every night; recognition beyond the day does not take place. The legal basis is Art. 6 (1) (f) GDPR. Visits sending <i>Do Not Track</i> are not counted.</p>
-        <h4>3. Server logs</h4>
-        <p>This page is hosted by GitHub Pages (GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA). On retrieval the provider processes technically necessary connection data such as your IP address. The legal basis is our legitimate interest in secure operation (Art. 6 (1) (f) GDPR).</p>
-        <h4>4. Links to other pages</h4>
-        <p>The tiles lead to the individual Knowledge Hubs and to monitor-versorgungsforschung.de. For their content and data processing, the privacy notices published there apply; newsletter subscription takes place there only.</p>
-        <h4>5. Your rights</h4>
-        <p>You have the right to information, rectification, erasure, restriction of processing, data portability and objection, as well as the right to lodge a complaint with a supervisory authority. The competent authority is the State Commissioner for Data Protection and Freedom of Information of North Rhine-Westphalia.</p>
-        <p>This is a translation for convenience. The <a href="/datenschutz.html">German version</a> is the legally binding one.</p>
+<p><i>This is a translation for convenience. The <a href="/datenschutz.html">German version</a> is the legally binding one.</i></p>
+<div class="uh">
+<nav class="uh-nav" aria-label="On this page"><b>ON THIS PAGE</b><a href="#verantwortlicher">1. Controller</a><a href="#alle">2. What applies to all</a><a href="#zaehlung">3. Audience measurement</a><a href="#hosting">4. Hosting</a><a href="#hubs">5. Knowledge Hubs</a><a href="#innofonds">6. Innovationsfonds-Wissen</a><a href="#radar">7. Funding radar</a><a href="#curatio">8. CuratioHub</a><a href="#rechte">9. Your rights</a><a href="#stand">10. Last updated</a></nav>
+<div class="uh-text">
+
+<section id="verantwortlicher"><h2>1. Controller</h2>
+<p>eRelation AG – Content in Health, represented by Peter Stegmaier, Johannes-von-Hanstein-Str. 2, 53115 Bonn, Germany. Contact details in the <a href="legal-notice.html">legal notice</a>.</p></section>
+
+<section id="alle"><h2>2. What applies to all services</h2>
+<p>This notice applies to all online services of <i>Monitor Versorgungsforschung</i>: the Knowledge Hubs, Innovationsfonds-Wissen, the funding radar and the CuratioHub. Anything that applies to one service only is set out in that service's own section.</p>
+<p>All services consist of pre-built (static) pages. They set no cookies, store nothing on your device and embed no third-party analytics or tracking services. Fonts, images and program code are served from the same servers as the pages. Beyond the audience measurement described in section 3, data leave your device only in the cases described in the sections on the individual services – essentially when you click a link yourself or submit a form.</p></section>
+
+<section id="zaehlung"><h2>3. Audience measurement without cookies</h2>
+<p>To know whether and how our services are used, we count page views. Counting takes place on a server of our own at <i>Monitor Versorgungsforschung</i>; no third party is involved. No cookies are set and no information is stored on or read from your device – consent under § 25 (1) TDDDG is therefore not required.</p>
+<p>Only totals are stored: the page viewed, the domain of the referring page, the type of device (desktop or mobile), the screen width in broad steps and the hour of access. The screen width is deliberately recorded only as a step and not as the exact resolution – the latter would be one of the strongest features for recognising a browser. Your IP address is not stored. Together with the browser identifier and a secret random number, it enters into a non-reversible hash value that only allows us to count several views on the same day as one person. The random number is replaced by a new one every night and the old one discarded; after that, even we can no longer make any attribution. There is no recognition beyond the day, no combination with other data and no profiling.</p>
+<p>The legal basis is our legitimate interest in designing our services according to demand (Art. 6 (1) (f) GDPR). Views from browsers sending Do Not Track or Global Privacy Control are not counted at all.</p></section>
+
+<section id="hosting"><h2>4. Hosting (GitHub Pages)</h2>
+<p>The pages are delivered via GitHub Pages (GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA). GitHub processes technically necessary access data, including IP address, time, requested file and browser type, in server log files for secure operation. The legal basis is Art. 6 (1) (f) GDPR. Details in the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement ↗</a>. The transfer to the USA is based on the EU Standard Contractual Clauses.</p></section>
+
+<section id="hubs"><h2>5. Knowledge Hubs</h2>
+<p>The Knowledge Hubs are static information pages. Beyond the audience measurement under section 3, no personal data are collected or stored when you simply read them. Exceptions are the counting of searches, newsletter subscription and the button “Treffer direkt anzeigen” (show results directly).</p>
+<h3>Counting of searches</h3>
+<p>In addition, we count how often a hub's search is used – separately according to whether a term was typed, a quick-pick suggestion was clicked or the results list was requested via “Treffer direkt anzeigen”. This count is separate from the count of page views and does not change its figures.</p>
+<p>The search term entered is stored only under narrow conditions, and separately from everything else: in a collection of its own that knows only the hub, the month and the term – no day, no time and no link to your visit. Attribution to a person is therefore impossible even for us. The sole purpose is to align the suggested search terms with what people actually search for. Terms naming a disease or diagnosis are not stored. Also discarded are entries with more than three words, with digits, punctuation or special characters, and search formulas. In these cases the search is counted as an event, but the term itself is not recorded.</p>
+<h3>Copying the term for portal tiles</h3>
+<p>If, after a search, you click a tile marked “Portal” or “Lizenz” (licence), the hub places your search term on your device's clipboard so that you can paste it there. Nothing is transmitted to us in the process.</p>
+<h3>Newsletter subscription</h3>
+<p><b>Which data.</b> To order a newsletter we need your e-mail address. We do not ask for any further information. Which newsletters you selected is transmitted as well.</p>
+<p><b>Confirmation procedure.</b> After submitting, you receive an e-mail with a confirmation link; sending begins only once you click it (double opt-in). This prevents anyone from entering other people's addresses. Subscription and confirmation are logged with time and IP address so that we can prove your consent.</p>
+<p><b>Legal basis.</b> Newsletters are sent on the basis of your consent under Art. 6 (1) (a) GDPR. Logging of the consent is based on Art. 6 (1) (c) GDPR in conjunction with the duty of proof under Art. 7 (1) GDPR.</p>
+<p><b>Withdrawal.</b> You can withdraw your consent at any time – most easily via the unsubscribe link at the end of every e-mail. The lawfulness of processing carried out before the withdrawal remains unaffected. After withdrawal we remove your address from the mailing list; we keep the records of consent for as long as claims could be asserted against us.</p>
+<p><b>Performance measurement.</b> Our newsletters contain a tracking pixel and trackable links. These show whether an e-mail was opened and which links were clicked. We analyse this to tailor the newsletters better to our readers' interests; this, too, is based on your consent (Art. 6 (1) (a) GDPR) and ends with its withdrawal.</p>
+<p><b>Mailing service provider (Mailchimp).</b> For subscription, management and sending we use Mailchimp, a service of The Rocket Science Group LLC, 405 N. Angier Ave. NE, Atlanta, GA 30308, USA (an Intuit Inc. company). Your data are stored there and processed on our behalf on the basis of a data processing agreement under Art. 28 GDPR. When you submit the subscription form, your entries first go to our own server at monitor-versorgungsforschung.de and from there to Mailchimp. Our server does not store your e-mail address; it passes it on immediately. To protect against automated mass sign-ups, it counts how many subscriptions come from one connection on one day – for this, your IP address enters, together with a random number that changes daily, into a non-reversible hash value; the IP address itself is not stored (Art. 6 (1) (f) GDPR). Processing at Mailchimp takes place in the USA. Mailchimp is certified under the EU-US Data Privacy Framework, for which the European Commission determined an adequate level of protection on 10 July 2023; in addition, Mailchimp has contractually committed to the EU Standard Contractual Clauses.</p>
+<h3>Results list across several databases</h3>
+<p>Upon your explicit click on “Treffer direkt anzeigen”, your browser calls the public programming interfaces of several scientific databases and compiles the references on the page. Currently these are PubMed and ClinicalTrials.gov (both National Library of Medicine, USA), Europe PMC (EMBL-EBI, United Kingdom), OpenAlex (OurResearch, Canada), Crossref (United Kingdom/USA), DOAJ (Directory of Open Access Journals, Sweden) and Zenodo (CERN, Switzerland). Afterwards, Unpaywall (OurResearch, Canada) is consulted for the top results to see whether a freely accessible version exists; only the DOI of the respective work is transmitted.</p>
+<p>The query is made directly from your device; no server of ours is involved, and none learns your search term or your results. The providers named receive your search term and technical connection data, in particular your IP address, and process them under their own terms, for which they are themselves responsible. Crossref, OpenAlex and Unpaywall additionally receive the editorial contact address (info@m-vf.de) – for these services this is the intended identification of non-commercial queries and concerns no data of yours. Without this click no such query takes place. The results exist only in your browser's memory and are gone when you close the page. The legal basis is the consent you give by clicking and our legitimate interest in providing this research service (Art. 6 (1) (a) and (f) GDPR).</p>
+<h3>External links</h3>
+<p>The hubs link to external databases, studies and institutions (e.g. PubMed, Cochrane, LIVIVO). By clicking, you leave our service; the providers called receive your IP address, the information which page you came from (referrer) and possibly further data, and process them under their own terms. For tiles with live search, your search term is part of the address called.</p></section>
+
+<section id="innofonds"><h2>6. Innovationsfonds-Wissen</h2>
+<p>Innovationsfonds-Wissen consists of pre-built pages that already contain their data. When you read, search, filter or download images or tables, no data leave your device: all analyses run in the browser. What you search for or filter is neither transmitted nor counted. Exceptions are the idea check (Ideencheck), the order form and correction notices that you send yourself.</p>
+<h3>Idea check</h3>
+<p><b>The check itself.</b> The idea check compares your project description with the collection entirely in your browser. The description is not transmitted.</p>
+<p><b>Anonymous count.</b> After each check, the page reports only the result of the calculation to a server of <i>Monitor Versorgungsforschung</i>: the best-matching topic area, up to three building blocks and the funding area – never your input. This tells us which topics are in demand. Attribution to a person is not possible. The legal basis is Art. 6 (1) (f) GDPR.</p>
+<p><b>Sending us an idea.</b> If you expressly send us your idea – in a box of its own, with its own tick box and its own click – your description, your e-mail address and, voluntarily, your name and institution go to this server. We store the submission there and send one e-mail each to the editorial team and to you. We use your information only to reply to you. The legal basis is your consent (Art. 6 (1) (a) GDPR); you can withdraw it at any time – an informal message to <a href="mailto:info@m-vf.de">info@m-vf.de</a> is sufficient, and we will then delete the submission. To protect against misuse, the server counts how many submissions come from one connection on one day; for this, your IP address enters, together with a random number that changes daily, into a non-reversible hash value; the IP address itself is not stored.</p>
+<h3>Ordering an evidence synthesis</h3>
+<p><b>Which data.</b> Institution, contact person, address and e-mail address; voluntarily department, telephone, VAT identification number, order number and a remark. In addition, the service chosen.</p>
+<p><b>Where to.</b> The information goes to a server of <i>Monitor Versorgungsforschung</i> at monitor-versorgungsforschung.de, not to third parties. From there, you and our accounts department each receive an e-mail.</p>
+<p><b>Purpose and legal basis.</b> Performance of the contract and invoicing (Art. 6 (1) (b) GDPR). Retention of invoicing records follows the periods under commercial and tax law (Art. 6 (1) (c) GDPR).</p>
+<p><b>Protection against mass orders.</b> The server counts how many orders arrive from one connection on one day. For this, your IP address enters, together with a random number that changes daily, into a non-reversible hash value; the IP address itself is not stored. The legal basis is Art. 6 (1) (f) GDPR.</p>
+<h3>Correction notices</h3>
+<p>The link “Angabe korrigieren” (correct entry) opens your e-mail program with a prepared message to <a href="mailto:info@m-vf.de">info@m-vf.de</a>. Nothing is sent until you trigger it yourself. We then process your information to check and correct the entry (Art. 6 (1) (f) GDPR).</p>
+<h3>Contact details in project entries</h3>
+<p>For the funded projects, the G-BA project database names contact persons. Innovationsfonds-Wissen does not display personal contact details but links to the G-BA's page. If, as a person involved in a project, you would like an entry corrected or removed, an informal message to <a href="mailto:info@m-vf.de">info@m-vf.de</a> is sufficient.</p>
+<h3>Map</h3>
+<p>The outlines of the federal states and the map program are contained in the page. No map tiles or program code from third-party providers are loaded, so your IP address is not transmitted to anyone in the process.</p>
+<h3>External links</h3>
+<p>Innovationsfonds-Wissen links to the project and resolution pages of the Federal Joint Committee and to the documents published there. By clicking, you leave our service; the provider called receives your IP address and the information which page you came from, and processes them under its own terms.</p></section>
+
+<section id="radar"><h2>7. Funding radar (Ausschreibungsradar)</h2>
+<p>The funding radar is a static page. Sections 2 to 4 apply to it; there is no form there.</p>
+<p><b>External links.</b> Each call links to the announcement at its source (such as the Federal Government's funding portal, the German Research Foundation or grants.gov). By clicking, you leave our service; the provider called receives your IP address and the information which page you came from.</p>
+<p><b>Links to monitor-versorgungsforschung.de.</b> Links to our own website carry an addition to the address (so-called utm parameters) that only states which of our pages the visit comes from. It contains no information about you. The website monitor-versorgungsforschung.de has its own privacy notice.</p></section>
+
+<section id="curatio"><h2>8. CuratioHub</h2>
+<p>The CuratioHub is a static page. Sections 2 to 4 apply to it. Your search term is not transmitted to us: it stays in your browser until you click a tile and then goes exclusively to the job board you open.</p>
+<p><b>Links to third-party job boards.</b> The tiles lead to job boards of third parties. As soon as you click a tile, you leave our service; from then on only the privacy notice of the respective provider applies, and your search term becomes part of the address called there. Some of these providers are based outside the EU (among others in the USA and the United Kingdom) and set their own cookies. We have no influence on their processing and accept no liability for the job advertisements shown there.</p></section>
+
+<section id="rechte"><h2>9. Your rights</h2>
+<p>You have the right of access (Art. 15), rectification (Art. 16), erasure (Art. 17), restriction of processing (Art. 18), data portability (Art. 20) and objection (Art. 21 GDPR), as well as the right to lodge a complaint with a supervisory authority (Art. 77 GDPR). The competent authority is the <a href="https://www.ldi.nrw.de/" target="_blank" rel="noopener">State Commissioner for Data Protection and Freedom of Information of North Rhine-Westphalia (LDI NRW) ↗</a>.</p></section>
+
+<section id="stand"><h2>10. Last updated</h2>
+<p>Last updated: October 2026.</p></section>
+
+</div>
+</div><script>
+(function(){
+  // Abschnitt im Blick in der Seitennavigation markieren.
+  var links = Array.prototype.slice.call(document.querySelectorAll('.uh-nav a'));
+  var ziele = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
+  function markiere(){
+    var oben = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--netz-h')) || 0) + 140;
+    var aktiv = 0;
+    ziele.forEach(function(z, i){ if(z && z.getBoundingClientRect().top <= oben) aktiv = i; });
+    links.forEach(function(a, i){ if(i === aktiv) a.setAttribute('aria-current','true'); else a.removeAttribute('aria-current'); });
+  }
+  window.addEventListener('scroll', markiere, {passive:true}); markiere();
+  })();
+</script>
 </main>
 <script type="application/json" id="hubDaten">{"hubs":[],"t":{"passend":"MATCHING HUBS","ueber":"via","oeffnen":"Open hub →","leer":"No hub lists this term in its glossary. “Search” opens the first hub, Health Services Research, with your term.","studien":"STUDIES","inAllen":"– search all German summaries","alleHubs":"All hubs ↗","heute":"today","gestern":"yesterday","locale":"en-GB","zusammenfassung":"Summary (German)","mehr":"Show more studies ▾","weniger":"Show fewer ▴"}}</script>
 <script>
