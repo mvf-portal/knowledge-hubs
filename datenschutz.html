@@ -2,8 +2,8 @@
 <html lang="de">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Datenschutzhinweise der Knowledge-Hubs von Monitor Versorgungsforschung.">
-<title>Datenschutz – Knowledge-Hubs</title>
+<meta name="description" content="Datenschutzhinweise für alle Angebote von Monitor Versorgungsforschung.">
+<title>Datenschutzhinweise – Knowledge-Hubs</title>
 <link rel="canonical" href="https://knowledge-hubs.m-vf.de/datenschutz.html">
 <link rel="alternate" hreflang="de" href="https://knowledge-hubs.m-vf.de/">
 <link rel="alternate" hreflang="en" href="https://knowledge-hubs.m-vf.de/en/">
@@ -664,17 +664,158 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
 </div>
 
 <main class="wrap unterseite">
+<style>
+.unterseite:has(.uh){ max-width:1180px; }
+.uh-eyebrow{ margin:0 0 6px; font-size:12px; font-weight:700; letter-spacing:.12em; color:var(--ink-soft); }
+.uh{ display:flex; gap:44px; align-items:flex-start; }
+.uh-nav{ flex:0 0 230px; position:sticky; top:calc(var(--netz-h,0px) + var(--ort-h,0px) + 18px); }
+.uh-nav b{ display:block; font-size:12px; letter-spacing:.12em; color:var(--ink-soft); margin-bottom:10px; }
+.uh-nav a{ display:block; padding:6px 0 6px 14px; border-left:2px solid var(--line); color:var(--ink-soft);
+  text-decoration:none; font-size:14px; line-height:1.35; }
+.uh-nav a:hover{ color:var(--brand); }
+.uh-nav a[aria-current="true"]{ border-left-color:var(--brand); color:var(--brand); font-weight:700; }
+.uh-text{ flex:1 1 auto; min-width:0; max-width:820px; }
+.uh-text section{ scroll-margin-top:calc(var(--netz-h,0px) + var(--ort-h,0px) + 18px); }
+.uh-text h2{ margin-top:38px; }
+.uh-lede{ font-size:18px; line-height:1.6; color:var(--ink-soft); max-width:46em; }
+.uh-leisten{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin:16px 0 0; padding:0; list-style:none; }
+.uh-leisten li{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+.uh-leisten li b{ display:block; color:var(--ink); font-size:15.5px; margin-bottom:3px; }
+.uh-knopf{ display:inline-block; background:var(--action); color:var(--on-action); border-radius:6px; padding:8px 14px;
+  font-weight:700; font-size:14px; text-decoration:none; }
+.uh-kz{ display:grid; grid-template-columns:auto 1fr; gap:10px 14px; align-items:baseline; margin:14px 0; }
+.uh-pille{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  padding:3px 8px; border-radius:6px; white-space:nowrap; }
+.uh-pille.live{ background:var(--brand-tint); color:var(--brand-deep); }
+.uh-pille.portal{ border:1px solid var(--line); color:var(--ink-faint); }
+.uh-pille.lic{ border:1px solid var(--line); color:var(--ink-soft); background:var(--card-2); }
+.uh-pille.bool{ border:1px solid var(--brand); color:var(--brand); text-transform:none; letter-spacing:0; }
+.ki-pille{ display:inline-block; font-size:11.5px; font-weight:700; padding:2px 9px; border-radius:20px;
+  background:#EEE8F7; color:#4B2E83; border:1px solid #D5C8EC; white-space:nowrap; }
+:root[data-theme="dark"] .ki-pille{ background:#2A2140; color:#D9CBF5; border-color:#43356A; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .ki-pille{ background:#2A2140; color:#D9CBF5; border-color:#43356A; } }
+.uh-ops{ width:100%; border-collapse:collapse; margin:10px 0 14px; font-size:14.5px; }
+.uh-ops td{ padding:7px 10px 7px 0; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+.uh-ops code{ font-weight:700; color:var(--brand); }
+.uh-wege{ margin:12px 0 0; padding:0; list-style:none; }
+.uh-wege li{ padding:8px 0; border-bottom:1px solid var(--line-soft); font-size:15px; line-height:1.5; }
+.uh-grenzen{ width:100%; border-collapse:collapse; margin-top:12px; font-size:14.5px; line-height:1.5; }
+.uh-grenzen th{ text-align:left; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); padding:6px 12px 6px 0; }
+.uh-grenzen td{ padding:9px 12px 9px 0; border-top:1px solid var(--line-soft); vertical-align:top; }
+.uh-grenzen td:first-child{ font-weight:700; width:45%; }
+.uh-arten{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.uh-arten > div{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; }
+.uh-arten small{ font-size:11.5px; letter-spacing:.12em; font-weight:700; color:var(--ink-soft); }
+.uh-arten p{ font-size:14.5px; line-height:1.5; color:var(--ink-soft); }
+.uh-arten ul{ margin:8px 0 0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:6px; }
+.uh-arten li a{ display:inline-block; font-size:13px; padding:4px 10px; border-radius:20px; border:1px solid var(--line);
+  background:var(--card-2); text-decoration:none; }
+.uh-arten li a:hover{ border-color:var(--brand); }
+.zahlentafel th[data-sort]{ cursor:pointer; white-space:nowrap; }
+.zahlentafel th[data-sort]::after{ content:" ↕"; color:var(--ink-faint); font-weight:400; }
+.zahlentafel thead th{ position:sticky; top:calc(var(--netz-h,0px) + var(--ort-h,0px)); background:var(--card); z-index:1; }
+.uh-feedback{ margin-top:36px; background:var(--brand-tint); border-radius:10px; padding:16px 18px; font-size:15px; line-height:1.55; }
+@media (max-width:860px){
+  .uh{ flex-direction:column; gap:10px; }
+  .uh-nav{ position:static; flex:none; width:100%; }
+  .uh-arten{ grid-template-columns:1fr; }
+  .uh-grenzen td:first-child{ width:auto; }
+}
+</style><style>
+.ki-pille{ display:inline-block; font-size:11.5px; font-weight:700; padding:2px 9px; border-radius:20px;
+  background:#EEE8F7; color:#4B2E83; border:1px solid #D5C8EC; white-space:nowrap; }
+.uh-text h3{ font-size:16px; margin:20px 0 6px; }
+</style><p class="uh-eyebrow">RECHTLICHES</p>
 <h1>Datenschutzhinweise</h1>
-        <h4>1. Verantwortlicher</h4>
-        <p>eRelation AG – Content in Health, vertreten durch Peter Stegmaier, Johannes-von-Hanstein-Str. 2, 53115 Bonn. Kontakt siehe Impressum.</p>
-        <h4>2. Charakter dieser Seite</h4>
-        <p>Diese Übersicht ist eine statische Seite. Sie setzt <strong>keine Cookies</strong> und bindet <strong>keine Analyse- oder Trackingdienste Dritter</strong> ein. Schriften und Bilder liegen auf demselben Server; es werden keine Inhalte von Dritten nachgeladen. Ein Formular gibt es hier nicht.</p><p>Wie oft die Seite aufgerufen wird, zählen wir auf einem eigenen Server von <i>Monitor Versorgungsforschung</i>. Dabei wird nichts auf Ihrem Endgerät gespeichert oder ausgelesen, und Ihre IP-Adresse wird nicht gespeichert: Sie geht nur gemeinsam mit einer geheimen Zufallszahl in einen nicht umkehrbaren Hashwert ein, der mehrfache Aufrufe desselben Tages als eine Person zählbar macht. Die Zufallszahl wird jede Nacht ersetzt; eine Wiedererkennung über den Tag hinaus findet nicht statt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Aufrufe mit <i>Do Not Track</i> werden nicht gezählt.</p>
-        <h4>3. Server-Protokolle</h4>
-        <p>Die Seite wird bei GitHub Pages (GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA) gehostet. Beim Abruf verarbeitet der Anbieter technisch notwendige Verbindungsdaten wie Ihre IP-Adresse. Rechtsgrundlage ist unser berechtigtes Interesse am sicheren Betrieb (Art. 6 Abs. 1 lit. f DSGVO).</p>
-        <h4>4. Verweise auf andere Seiten</h4>
-        <p>Die Kacheln führen auf die einzelnen Knowledge-Hubs und auf monitor-versorgungsforschung.de. Für deren Inhalte und Datenverarbeitung gelten die dortigen Datenschutzhinweise; die Newsletter-Bestellung findet ausschließlich dort statt.</p>
-        <h4>5. Ihre Rechte</h4>
-        <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch sowie das Recht, sich bei einer Aufsichtsbehörde zu beschweren. Zuständig ist die Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen.</p>
+<div class="uh">
+<nav class="uh-nav" aria-label="Auf dieser Seite"><b>AUF DIESER SEITE</b><a href="#verantwortlicher">1. Verantwortlicher</a><a href="#alle">2. Was für alle gilt</a><a href="#zaehlung">3. Reichweitenmessung</a><a href="#hosting">4. Hosting</a><a href="#hubs">5. Knowledge-Hubs</a><a href="#innofonds">6. Innovationsfonds-Wissen</a><a href="#radar">7. Ausschreibungsradar</a><a href="#curatio">8. CuratioHub</a><a href="#rechte">9. Ihre Rechte</a><a href="#stand">10. Stand</a></nav>
+<div class="uh-text">
+
+<section id="verantwortlicher"><h2>1. Verantwortlicher</h2>
+<p>eRelation AG – Content in Health, vertreten durch Peter Stegmaier, Johannes-von-Hanstein-Str. 2, 53115 Bonn. Kontakt siehe <a href="impressum.html">Impressum</a>.</p></section>
+
+<section id="alle"><h2>2. Was für alle Angebote gilt</h2>
+<p>Diese Hinweise gelten für alle Angebote von <i>Monitor Versorgungsforschung</i> im Netz: die Knowledge-Hubs, Innovationsfonds-Wissen, das Ausschreibungsradar und den CuratioHub. Was nur für ein Angebot gilt, steht in dessen eigenem Abschnitt.</p>
+<p>Alle Angebote bestehen aus fertig gebauten (statischen) Seiten. Sie setzen keine Cookies, speichern nichts auf Ihrem Gerät und binden keine Analyse- oder Trackingdienste Dritter ein. Schriften, Bilder und Programmteile liegen auf denselben Servern wie die Seiten. Über die Reichweitenmessung nach Abschnitt 3 hinaus verlassen Daten Ihr Gerät nur in den Fällen, die in den Abschnitten zu den einzelnen Angeboten beschrieben sind – im Wesentlichen dann, wenn Sie selbst einen Link anklicken oder ein Formular absenden.</p></section>
+
+<section id="zaehlung"><h2>3. Reichweitenmessung ohne Cookies</h2>
+<p>Damit wir wissen, ob und wie unsere Angebote genutzt werden, zählen wir Seitenaufrufe. Die Zählung läuft auf einem eigenen Server von <i>Monitor Versorgungsforschung</i>; ein Dritter ist daran nicht beteiligt. Es werden keine Cookies gesetzt und keine Informationen auf Ihrem Endgerät gespeichert oder ausgelesen – eine Einwilligung nach § 25 Abs. 1 TDDDG ist dafür nicht erforderlich.</p>
+<p>Gespeichert werden ausschließlich Summen: die aufgerufene Seite, die Domain der verweisenden Seite, die Art des Geräts (Desktop oder Mobilgerät), die Bildschirmbreite in groben Stufen und die Stunde des Zugriffs. Die Bildschirmbreite wird bewusst nur als Stufe festgehalten und nicht als genaue Auflösung – diese wäre eines der stärksten Merkmale, um einen Browser wiederzuerkennen. Ihre IP-Adresse wird nicht gespeichert. Sie geht gemeinsam mit der Browserkennung und einer geheimen Zufallszahl in einen nicht umkehrbaren Hashwert ein, der es uns allein erlaubt, mehrere Aufrufe desselben Tages als eine Person zu zählen. Die Zufallszahl wird jede Nacht durch eine neue ersetzt und die alte verworfen; danach ist auch uns eine Zuordnung nicht mehr möglich. Eine Wiedererkennung über den Tag hinaus findet nicht statt, ebenso wenig eine Zusammenführung mit anderen Daten oder eine Profilbildung.</p>
+<p>Rechtsgrundlage ist unser berechtigtes Interesse an einer bedarfsgerechten Gestaltung unserer Angebote (Art. 6 Abs. 1 lit. f DSGVO). Aufrufe von Browsern, die Do Not Track oder Global Privacy Control senden, werden gar nicht erst gezählt.</p></section>
+
+<section id="hosting"><h2>4. Hosting (GitHub Pages)</h2>
+<p>Die Seiten werden über GitHub Pages ausgeliefert (GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA). Dabei verarbeitet GitHub technisch notwendige Zugriffsdaten, unter anderem IP-Adresse, Zeitpunkt, angeforderte Datei und Browsertyp, in Server-Logdateien zum sicheren Betrieb. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Näheres im <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement ↗</a>. Die Übermittlung in die USA erfolgt auf Grundlage der EU-Standardvertragsklauseln.</p></section>
+
+<section id="hubs"><h2>5. Knowledge-Hubs</h2>
+<p>Die Knowledge-Hubs sind statische Informationsseiten. Über die Reichweitenmessung nach Abschnitt 3 hinaus werden beim bloßen Lesen keine personenbezogenen Daten erhoben oder gespeichert. Ausnahmen sind die Zählung der Suche, die Newsletter-Anmeldung und die Schaltfläche „Treffer direkt anzeigen“.</p>
+<h3>Zählung der Suche</h3>
+<p>Zusätzlich zählen wir, wie oft die Suche eines Hubs benutzt wird – getrennt danach, ob ein Begriff eingetippt, ein Schnellwahl-Vorschlag angeklickt oder die Trefferliste über „Treffer direkt anzeigen“ angefordert wurde. Diese Zählung ist von der Zählung der Seitenaufrufe getrennt und verändert deren Zahlen nicht.</p>
+<p>Der eingegebene Suchbegriff wird dabei nur unter engen Voraussetzungen gespeichert, und zwar getrennt von allem anderen: in einer eigenen Sammlung, die ausschließlich den Hub, den Monat und den Begriff kennt – keinen Tag, keine Uhrzeit und keinen Bezug zu Ihrem Aufruf. Eine Zuordnung zu einer Person ist damit auch uns selbst nicht möglich. Der Zweck ist allein, die vorgeschlagenen Suchbegriffe an dem auszurichten, wonach tatsächlich gesucht wird. Begriffe, die eine Krankheit oder Diagnose benennen, werden nicht gespeichert. Ebenfalls verworfen werden Eingaben mit mehr als drei Wörtern, mit Ziffern, Satz- oder Sonderzeichen sowie Suchformeln. In diesen Fällen wird die Suche als Vorgang gezählt, der Begriff selbst aber nicht aufgeschrieben.</p>
+<h3>Begriff kopieren bei Portal-Kacheln</h3>
+<p>Klicken Sie nach einer Suche auf eine Kachel, die als „Portal“ oder „Lizenz“ gekennzeichnet ist, legt der Hub Ihren Suchbegriff in die Zwischenablage Ihres Geräts, damit Sie ihn dort einfügen können. Dabei wird nichts an uns übertragen.</p>
+<h3>Newsletter-Anmeldung</h3>
+<p><b>Welche Daten.</b> Für die Bestellung eines Newsletters benötigen wir Ihre E-Mail-Adresse. Weitere Angaben verlangen wir nicht. Mit übermittelt wird, welche Newsletter Sie ausgewählt haben.</p>
+<p><b>Bestätigungsverfahren.</b> Nach dem Absenden erhalten Sie eine E-Mail mit einem Bestätigungslink; der Versand beginnt erst, wenn Sie ihn anklicken (Double-Opt-in). So kann niemand fremde Adressen eintragen. Anmeldung und Bestätigung werden mit Zeitpunkt und IP-Adresse protokolliert, damit wir Ihre Einwilligung nachweisen können.</p>
+<p><b>Rechtsgrundlage.</b> Der Versand erfolgt aufgrund Ihrer Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO. Die Protokollierung der Einwilligung stützt sich auf Art. 6 Abs. 1 lit. c DSGVO in Verbindung mit der Nachweispflicht aus Art. 7 Abs. 1 DSGVO.</p>
+<p><b>Widerruf.</b> Sie können Ihre Einwilligung jederzeit widerrufen – am einfachsten über den Abmeldelink am Ende jeder E-Mail. Die Rechtmäßigkeit der bis zum Widerruf erfolgten Verarbeitung bleibt davon unberührt. Nach dem Widerruf entfernen wir Ihre Adresse aus dem Verteiler; die Einwilligungsnachweise bewahren wir auf, solange Ansprüche gegen uns geltend gemacht werden könnten.</p>
+<p><b>Erfolgsmessung.</b> Unsere Newsletter enthalten ein Zählpixel und nachverfolgbare Links. Damit lässt sich erkennen, ob eine E-Mail geöffnet und welche Links angeklickt wurden. Wir werten das aus, um die Newsletter besser auf die Interessen unserer Leserinnen und Leser zuzuschneiden; auch dies erfolgt auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) und endet mit dem Widerruf.</p>
+<p><b>Versanddienstleister (Mailchimp).</b> Für Anmeldung, Verwaltung und Versand nutzen wir Mailchimp, einen Dienst der The Rocket Science Group LLC, 405 N. Angier Ave. NE, Atlanta, GA 30308, USA (ein Unternehmen von Intuit Inc.). Ihre Angaben werden dort gespeichert und in unserem Auftrag verarbeitet; Grundlage ist ein Auftragsverarbeitungsvertrag nach Art. 28 DSGVO. Wenn Sie das Anmeldeformular absenden, gehen Ihre Eingaben zunächst an unseren eigenen Server unter monitor-versorgungsforschung.de und von dort an Mailchimp. Auf unserem Server wird Ihre E-Mail-Adresse nicht gespeichert; er reicht sie unmittelbar weiter. Zum Schutz vor automatisierten Masseneintragungen zählt er, wie viele Anmeldungen von einem Anschluss an einem Tag kommen – dafür geht Ihre IP-Adresse gemeinsam mit einer täglich wechselnden Zufallszahl in einen nicht umkehrbaren Hashwert ein; die IP-Adresse selbst wird nicht gespeichert (Art. 6 Abs. 1 lit. f DSGVO). Die Verarbeitung bei Mailchimp findet in den USA statt. Mailchimp ist unter dem EU-US Data Privacy Framework zertifiziert, für das die Europäische Kommission am 10. Juli 2023 ein angemessenes Schutzniveau festgestellt hat; ergänzend hat sich Mailchimp vertraglich zu den EU-Standardvertragsklauseln verpflichtet.</p>
+<h3>Trefferliste über mehrere Datenbanken</h3>
+<p>Auf Ihren ausdrücklichen Klick auf „Treffer direkt anzeigen“ ruft Ihr Browser die öffentlichen Programmierschnittstellen mehrerer wissenschaftlicher Datenbanken auf und stellt die Fundstellen auf der Seite zusammen. Derzeit sind dies PubMed und ClinicalTrials.gov (beide National Library of Medicine, USA), Europe PMC (EMBL-EBI, Vereinigtes Königreich), OpenAlex (OurResearch, Kanada), Crossref (Vereinigtes Königreich/USA), DOAJ (Directory of Open Access Journals, Schweden) und Zenodo (CERN, Schweiz). Anschließend wird für die vordersten Treffer bei Unpaywall (OurResearch, Kanada) nachgeschlagen, ob eine frei zugängliche Fassung vorliegt; übermittelt wird dabei nur die DOI der jeweiligen Arbeit.</p>
+<p>Die Abfrage erfolgt unmittelbar von Ihrem Gerät aus; ein Server von uns ist daran nicht beteiligt und erfährt weder Ihren Suchbegriff noch Ihre Treffer. Die genannten Anbieter erhalten Ihren Suchbegriff sowie technische Verbindungsdaten, insbesondere Ihre IP-Adresse, und verarbeiten diese nach ihren eigenen Bestimmungen; hierfür sind sie selbst verantwortlich. Gegenüber Crossref, OpenAlex und Unpaywall wird zusätzlich die Kontaktadresse der Redaktion (info@m-vf.de) übermittelt – das ist bei diesen Diensten die vorgesehene Kennzeichnung nicht-kommerzieller Abfragen und betrifft keine Daten von Ihnen. Ohne diesen Klick findet keine solche Abfrage statt. Die Treffer bestehen nur im Arbeitsspeicher Ihres Browsers und sind mit dem Schließen der Seite fort. Rechtsgrundlage ist Ihre durch das Anklicken erklärte Einwilligung sowie unser berechtigtes Interesse an der Bereitstellung dieser Rechercheleistung (Art. 6 Abs. 1 lit. a und f DSGVO).</p>
+<h3>Externe Links</h3>
+<p>Die Hubs verlinken auf externe Datenbanken, Studien und Institutionen (z. B. PubMed, Cochrane, LIVIVO). Mit dem Anklicken verlassen Sie unser Angebot; die aufgerufenen Anbieter erhalten Ihre IP-Adresse, die Angabe, von welcher Seite Sie kommen (Referrer), und gegebenenfalls weitere Daten und verarbeiten diese nach ihren eigenen Bestimmungen. Bei Kacheln mit Live-Suche ist Ihr Suchbegriff Teil der aufgerufenen Adresse.</p></section>
+
+<section id="innofonds"><h2>6. Innovationsfonds-Wissen</h2>
+<p>Innovationsfonds-Wissen besteht aus fertig gebauten Seiten, die ihre Daten bereits enthalten. Beim Lesen, Suchen, Filtern und Herunterladen von Bildern oder Tabellen verlässt kein Datum Ihr Gerät: Alle Auswertungen laufen im Browser. Was Sie suchen oder filtern, wird nicht übertragen und nicht gezählt. Ausnahmen sind der Ideencheck, das Bestellformular und Korrekturhinweise, die Sie selbst absenden.</p>
+<h3>Ideencheck</h3>
+<p><b>Die Prüfung selbst.</b> Der Ideencheck vergleicht Ihre Projektbeschreibung vollständig in Ihrem Browser mit dem Bestand. Die Beschreibung wird dabei nicht übertragen.</p>
+<p><b>Anonyme Zählung.</b> Nach jedem Check meldet die Seite an einen Server von <i>Monitor Versorgungsforschung</i> nur das Ergebnis der Rechnung: das am besten passende Themenfeld, bis zu drei Bausteine und den Förderbereich – nie Ihre Eingabe. Daraus erfahren wir, welche Themen gefragt sind. Eine Zuordnung zu einer Person ist nicht möglich. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.</p>
+<p><b>Zusendung einer Idee.</b> Wenn Sie uns Ihre Idee ausdrücklich zusenden – in einem eigenen Kasten, mit eigenem Häkchen und eigenem Klick –, gehen Ihre Beschreibung, Ihre E-Mail-Adresse und, freiwillig, Ihr Name und Ihre Einrichtung an diesen Server. Wir legen die Zusendung dort ab und schicken der Redaktion und Ihnen je eine E-Mail. Wir nutzen Ihre Angaben nur, um Ihnen zu antworten. Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO); Sie können sie jederzeit widerrufen, eine formlose Nachricht an <a href="mailto:info@m-vf.de">info@m-vf.de</a> genügt, dann löschen wir die Zusendung. Zum Schutz vor Missbrauch zählt der Server, wie viele Zusendungen von einem Anschluss an einem Tag kommen; dafür geht Ihre IP-Adresse mit einer täglich wechselnden Zufallszahl in einen nicht umkehrbaren Hashwert ein, die IP-Adresse selbst wird nicht gespeichert.</p>
+<h3>Bestellung einer Evidenzsynthese</h3>
+<p><b>Welche Daten.</b> Einrichtung, Ansprechpartner, Anschrift und E-Mail-Adresse, freiwillig Abteilung, Telefon, Umsatzsteuer-Identifikationsnummer, Bestellnummer und eine Bemerkung. Dazu die gewählte Leistung.</p>
+<p><b>Wohin.</b> Die Angaben gehen an einen Server von <i>Monitor Versorgungsforschung</i> unter monitor-versorgungsforschung.de, nicht an Dritte. Von dort erhalten Sie und unsere Buchhaltung je eine E-Mail.</p>
+<p><b>Zweck und Rechtsgrundlage.</b> Durchführung des Vertragsverhältnisses und Rechnungsstellung (Art. 6 Abs. 1 lit. b DSGVO). Die Aufbewahrung der Rechnungsunterlagen richtet sich nach den handels- und steuerrechtlichen Fristen (Art. 6 Abs. 1 lit. c DSGVO).</p>
+<p><b>Schutz vor Massenbestellungen.</b> Der Server zählt, wie viele Bestellungen von einem Anschluss an einem Tag eingehen. Dafür geht Ihre IP-Adresse gemeinsam mit einer täglich wechselnden Zufallszahl in einen nicht umkehrbaren Hashwert ein; die IP-Adresse selbst wird nicht gespeichert. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.</p>
+<h3>Korrekturhinweise</h3>
+<p>Der Link „Angabe korrigieren“ öffnet Ihr E-Mail-Programm mit einer vorbereiteten Nachricht an <a href="mailto:info@m-vf.de">info@m-vf.de</a>. Gesendet wird erst, wenn Sie es selbst auslösen. Wir verarbeiten Ihre Angaben dann, um den Eintrag zu prüfen und zu berichtigen (Art. 6 Abs. 1 lit. f DSGVO).</p>
+<h3>Kontaktdaten in den Projekteinträgen</h3>
+<p>Zu den Förderprojekten nennt die Projektdatenbank des G-BA Ansprechpartner. Innovationsfonds-Wissen zeigt keine personenbezogenen Kontaktdaten an, sondern verlinkt auf die Seite des G-BA. Wenn Sie als projektbeteiligte Person eine Angabe berichtigt oder entfernt haben möchten, genügt eine formlose Nachricht an <a href="mailto:info@m-vf.de">info@m-vf.de</a>.</p>
+<h3>Landkarte</h3>
+<p>Die Umrisse der Bundesländer und das Kartenprogramm sind in der Seite enthalten. Es werden keine Kartenkacheln oder Programmteile fremder Anbieter geladen; Ihre IP-Adresse wird dabei also an niemanden übermittelt.</p>
+<h3>Externe Links</h3>
+<p>Innovationsfonds-Wissen verlinkt auf die Projekt- und Beschlussseiten des Gemeinsamen Bundesausschusses sowie auf die dort veröffentlichten Dokumente. Mit dem Anklicken verlassen Sie unser Angebot; der aufgerufene Anbieter erhält Ihre IP-Adresse und die Angabe, von welcher Seite Sie kommen, und verarbeitet diese nach seinen eigenen Bestimmungen.</p></section>
+
+<section id="radar"><h2>7. Ausschreibungsradar</h2>
+<p>Das Ausschreibungsradar ist eine statische Seite. Für sie gelten die Abschnitte 2 bis 4; ein Formular gibt es dort nicht.</p>
+<p><b>Externe Links.</b> Jede Ausschreibung verlinkt auf die Bekanntmachung bei ihrer Quelle (etwa dem Förderportal des Bundes, der Deutschen Forschungsgemeinschaft oder grants.gov). Mit dem Anklicken verlassen Sie unser Angebot; der aufgerufene Anbieter erhält Ihre IP-Adresse und die Angabe, von welcher Seite Sie kommen.</p>
+<p><b>Links zu monitor-versorgungsforschung.de.</b> Verweise auf unsere eigene Website tragen einen Zusatz in der Adresse (sogenannte utm-Parameter), der nur angibt, von welcher unserer Seiten der Besuch kommt. Er enthält keine Angaben über Sie. Für die Website monitor-versorgungsforschung.de gelten deren eigene Datenschutzhinweise.</p></section>
+
+<section id="curatio"><h2>8. CuratioHub</h2>
+<p>Der CuratioHub ist eine statische Seite. Für ihn gelten die Abschnitte 2 bis 4. Ihr Suchbegriff wird nicht an uns übertragen: Er bleibt in Ihrem Browser, bis Sie eine Kachel anklicken, und geht dann ausschließlich an den Stellenmarkt, den Sie öffnen.</p>
+<p><b>Verweise auf fremde Stellenmärkte.</b> Die Kacheln führen auf Stellenmärkte Dritter. Sobald Sie eine Kachel anklicken, verlassen Sie unser Angebot; ab dann gelten allein die Datenschutzhinweise des jeweiligen Anbieters, und Ihr Suchbegriff wird Teil der dort aufgerufenen Adresse. Einige dieser Anbieter sitzen außerhalb der EU (unter anderem in den USA und im Vereinigten Königreich) und setzen eigene Cookies. Wir haben auf deren Verarbeitung keinen Einfluss und übernehmen für die dort angezeigten Stellenanzeigen keine Gewähr.</p></section>
+
+<section id="rechte"><h2>9. Ihre Rechte</h2>
+<p>Sie haben das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21 DSGVO) sowie das Recht auf Beschwerde bei einer Aufsichtsbehörde (Art. 77 DSGVO). Zuständig ist die <a href="https://www.ldi.nrw.de/" target="_blank" rel="noopener">Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen (LDI NRW) ↗</a>.</p></section>
+
+<section id="stand"><h2>10. Stand</h2>
+<p>Stand: Oktober 2026.</p></section>
+
+</div>
+</div><script>
+(function(){
+  // Abschnitt im Blick in der Seitennavigation markieren.
+  var links = Array.prototype.slice.call(document.querySelectorAll('.uh-nav a'));
+  var ziele = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
+  function markiere(){
+    var oben = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--netz-h')) || 0) + 140;
+    var aktiv = 0;
+    ziele.forEach(function(z, i){ if(z && z.getBoundingClientRect().top <= oben) aktiv = i; });
+    links.forEach(function(a, i){ if(i === aktiv) a.setAttribute('aria-current','true'); else a.removeAttribute('aria-current'); });
+  }
+  window.addEventListener('scroll', markiere, {passive:true}); markiere();
+  })();
+</script>
 </main>
 <script type="application/json" id="hubDaten">{"hubs":[],"t":{"passend":"PASSENDE HUBS","ueber":"über","oeffnen":"Hub öffnen →","leer":"Kein Hub führt diesen Begriff in seinem Glossar. Mit „Suchen“ öffnen Sie den Ausgangs-Hub Versorgungsforschung mit Ihrem Begriff.","studien":"STUDIEN","inAllen":"in allen deutschen Zusammenfassungen suchen","alleHubs":"Alle Hubs ↗","heute":"heute","gestern":"gestern","locale":"de-DE","zusammenfassung":"Zusammenfassung","mehr":"Mehr Studien anzeigen ▾","weniger":"Weniger anzeigen ▴"}}</script>
 <script>
@@ -927,6 +1068,7 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
     <nav class="fuss-links" aria-label="Rechtliches">
       <a href="impressum.html">Impressum</a>
       <a href="datenschutz.html">Datenschutz</a>
+      <a href="ueber-uns.html">Über uns</a>
       <span class="fuss-mail">Kontakt: <a href="mailto:info@m-vf.de">info@m-vf.de</a></span>
     </nav>
     <p class="stand">Stand der Zahlen: 24.10.2026. Sie werden bei jedem Bau aus den Portalen selbst gezählt.</p>
