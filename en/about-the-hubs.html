@@ -428,6 +428,9 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
   .netz-handy .handy-unten a{ color:var(--ink-soft,#444A50); }
   .netz-handy .netz-sprache{ border-color:var(--line,#D0D8E4); }
 
+  /* Rechtsseiten: keine Sprunglinks, die Leiste traegt nur den Menueknopf
+     fuer schmale Bildschirme (startseite_neu.sprungleiste, links=False). */
+  .ortsleiste.nur-handy{ display:none; }
   @media (max-width:980px){ .netz-mvf .lang{ display:none; } }
   @media (max-width:860px){
     .netz-rechts, .netz-link{ display:none; }
@@ -435,6 +438,7 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
     .netz-angebote{ grid-column:1 / -1; }
     .ort-links, .ort-nl{ display:none; }
     .ort-menue{ display:inline-flex; margin-left:auto; }
+    .ortsleiste.nur-handy{ display:block; }
     .ortsleiste-innen{ min-height:56px; }
   }
   @media (max-width:560px){
@@ -515,6 +519,9 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
             <li><a href="https://knowledge-hubs.m-vf.de/curatiohub.html">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7.5" width="18" height="12.5" rx="2"/><path d="M9 7.5V5.5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5.5v2"/><path d="M3 13h18"/></svg>
               <span><b>CuratioHub</b><small>Jobs in health services research, public health and medicine</small></span></a></li>
+            <li><a href="https://wissen.m-vf.de/zulassungen.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.6" y="8.6" width="18.8" height="6.8" rx="3.4"/><path d="M12 8.6v6.8"/></svg>
+              <span><b>Medicines &amp; DiGA radar</b><small>Authorised, recommended, under review: EMA, FDA and BfArM digital health apps (in German)</small></span></a></li>
           </ul>
         </div>
       </div>
@@ -816,11 +823,11 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
 <h2>The hubs in numbers</h2>
 <div class="tafel-rahmen"><table class="zahlentafel" id="uhZahlen">
 <thead><tr><th data-sort>Hub</th><th data-sort>Databases</th><th data-sort>Live search</th><th data-sort>Categories</th><th data-sort>Glossary</th><th data-sort>Studies</th></tr></thead>
-<tbody><tr><td data-wert="Health Services Research"><a href="https://wissen.m-vf.de/">Health Services Research</a></td><td>57</td><td>29</td><td>8</td><td>170</td><td>424</td></tr><tr><td data-wert="Cardiology"><a href="https://kardio.m-vf.de/">Cardiology</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td>260</td></tr><tr><td data-wert="Chronic Conditions"><a href="https://ncd.m-vf.de/">Chronic Conditions</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td>377</td></tr><tr><td data-wert="Diabetes"><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td>266</td></tr><tr><td data-wert="Digitalisation, AI &amp; Health"><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td>388</td></tr><tr><td data-wert="Health Literacy"><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></td><td>76</td><td>36</td><td>10</td><td>165</td><td>386</td></tr><tr><td data-wert="Healthy Ageing &amp; Longevity"><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td>379</td></tr><tr><td data-wert="Heat, Climate &amp; Health"><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td>377</td></tr><tr><td data-wert="Mental Health"><a href="https://mental.m-vf.de/">Mental Health</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td>366</td></tr><tr><td data-wert="Nursing &amp; Long-Term Care"><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></td><td>88</td><td>42</td><td>11</td><td>156</td><td>374</td></tr><tr><td data-wert="Obesity"><a href="https://adipositas.m-vf.de/">Obesity</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td>376</td></tr><tr><td data-wert="Oncology"><a href="https://onkologie.m-vf.de/">Oncology</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td>271</td></tr><tr><td data-wert="Patient Safety"><a href="https://safety.m-vf.de/">Patient Safety</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td>368</td></tr><tr><td data-wert="Sex- and Gender-Sensitive Medicine"><a href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td>373</td></tr><tr><td data-wert="Vaccination"><a href="https://impfen.m-vf.de/">Vaccination</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td>373</td></tr></tbody>
-<tfoot><tr><td>Total</td><td>1,189</td><td>563</td><td>147</td><td>1,340*</td><td>5,358</td></tr></tfoot>
+<tbody><tr><td data-wert="Health Services Research"><a href="https://wissen.m-vf.de/">Health Services Research</a></td><td>57</td><td>29</td><td>8</td><td>170</td><td>442</td></tr><tr><td data-wert="Cardiology"><a href="https://kardio.m-vf.de/">Cardiology</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td>273</td></tr><tr><td data-wert="Chronic Conditions"><a href="https://ncd.m-vf.de/">Chronic Conditions</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td>395</td></tr><tr><td data-wert="Diabetes"><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td>282</td></tr><tr><td data-wert="Digitalisation, AI &amp; Health"><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td>406</td></tr><tr><td data-wert="Health Literacy"><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></td><td>76</td><td>36</td><td>10</td><td>165</td><td>404</td></tr><tr><td data-wert="Healthy Ageing &amp; Longevity"><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td>398</td></tr><tr><td data-wert="Heat, Climate &amp; Health"><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td>395</td></tr><tr><td data-wert="Mental Health"><a href="https://mental.m-vf.de/">Mental Health</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td>378</td></tr><tr><td data-wert="Nursing &amp; Long-Term Care"><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></td><td>88</td><td>42</td><td>11</td><td>156</td><td>391</td></tr><tr><td data-wert="Obesity"><a href="https://adipositas.m-vf.de/">Obesity</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td>395</td></tr><tr><td data-wert="Oncology"><a href="https://onkologie.m-vf.de/">Oncology</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td>289</td></tr><tr><td data-wert="Patient Safety"><a href="https://safety.m-vf.de/">Patient Safety</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td>381</td></tr><tr><td data-wert="Sex- and Gender-Sensitive Medicine"><a href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td>391</td></tr><tr><td data-wert="Vaccination"><a href="https://impfen.m-vf.de/">Vaccination</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td>391</td></tr></tbody>
+<tfoot><tr><td>Total</td><td>1,189</td><td>563</td><td>147</td><td>1,340*</td><td>5,611</td></tr></tfoot>
 </table></div>
 <p style="font-size:14px;color:var(--ink-soft)"><b>Databases:</b> tiles in the hub, one per database. <b>Live search:</b> tiles whose click opens the results list directly. <b>Categories:</b> groups of databases in the hub. <b>Glossary:</b> stored German-English translations. <b>Studies:</b> studies selected so far. *Without duplicates. Click a column header to sort.</p>
-<p style="font-size:14px;color:var(--ink-soft)">As of 24 October 2026. The numbers are recounted every time this page is built.</p>
+<p style="font-size:14px;color:var(--ink-soft)">As of 27 October 2026. The numbers are recounted every time this page is built.</p>
 </section>
 
 <section id="wer">
@@ -1121,7 +1128,6 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
       
       <span class="fuss-mail">Contact: <a href="mailto:info@m-vf.de">info@m-vf.de</a></span>
     </nav>
-    <p class="stand">Figures as of 24 October 2026. They are counted from the portals themselves on every build.</p>
   </div>
 </footer>
 <!-- ZAEHLER-START --------------------------------------------------------
