@@ -95,6 +95,9 @@ def main() -> int:
     grenze = (dt.date.today() - dt.timedelta(days=a.tage - 1)).isoformat()
     alle: list[dict] = []
     je_hub: dict[str, int] = {}
+    # Gesamtzahl je Hub (ganzes Archiv): Die Seiten der Uebersicht lesen sie
+    # taeglich nach, statt bis zum naechsten Bau einen alten Stand zu zeigen.
+    gesamt: dict[str, int] = {}
 
     for name, domain, repo in PORTALE:
         archiv = hole(repo)
@@ -105,6 +108,7 @@ def main() -> int:
             eintrag["domain"] = domain
             alle.append(eintrag)
         je_hub[name] = len(neu)
+        gesamt[name] = len(archiv)
         print(f"  {domain:<24} {len(neu):>4} von {len(archiv):>5} Studien im Fenster")
 
     # Neueste zuerst; bei gleichem Tag nach Hub, damit die Reihenfolge stabil
@@ -117,7 +121,7 @@ def main() -> int:
         "stand": grenze,
         "fenster_tage": a.tage,
         "erzeugt": dt.date.today().isoformat(),
-        "hubs": [{"name": n, "domain": d, "anzahl": je_hub.get(n, 0)}
+        "hubs": [{"name": n, "domain": d, "anzahl": je_hub.get(n, 0), "gesamt": gesamt.get(n, 0)}
                  for n, d, _ in PORTALE],
         "tage": tage,
         "studien": alle,
