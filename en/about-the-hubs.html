@@ -470,6 +470,107 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
     </a>
     <button class="netz-knopf" type="button" id="netzKnopf" aria-expanded="false" aria-controls="netzMega">All hubs<span class="pfeil" aria-hidden="true">▼</span></button>
     <a class="netz-link" href="about-the-hubs.html">About the hubs</a>
+    <!-- DARSTELLUNG-START ====================================================
+         Schalter „Darstellung" (hell / dunkel / wie mein Geraet), links neben
+         DE/EN. Entwurf Mariann Stegmaier, Canvas 2 (28.10.2026); gebaut von der
+         Innofonds-Sitzung (innovationsfonds/darstellung.html), seit 30.10.2026
+         hier in der gemeinsamen Leiste und damit auf allen Seiten der Reihe.
+
+         Vertrag: Cookie „mvf-theme" = light | dark, bei „Wie mein Geraet"
+         geloescht (Max-Age=0); Domain=.m-vf.de, Path=/, ein Jahr, SameSite=Lax,
+         Secure nur unter https. Kein localStorage - der gaelte nur je Subdomain.
+         Wirkung ueber <html data-theme>. Der Datenschutztext dazu steht in
+         recht_neu.py, Abschnitt 2, #darstellung - wer hier etwas am Cookie
+         aendert, aendert ihn dort mit.
+
+         Englisch: startseite_neu.NETZ_EN uebersetzt die Texte fuer /en/. -->
+    <style>
+      .dsw{ position:relative; margin-left:auto; display:flex; align-items:center; }
+      .dsw ~ .netz-rechts{ margin-left:14px; }  /* ~ statt +: dazwischen steht das <script> */
+      .dsw-knopf{ width:34px; height:27px; border:1px solid #3A4A60; border-radius:6px; background:transparent;
+                  display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+      .dsw-knopf:hover, .dsw-knopf[aria-expanded="true"]{ background:#22324A; }
+      .dsw-knopf svg{ width:16px; height:16px; display:block; }
+      .dsw .mond{ display:none; }
+      :root[data-theme="dark"] .dsw .sonne{ display:none; }
+      :root[data-theme="dark"] .dsw .mond{ display:block; }
+      @media (prefers-color-scheme:dark){
+        :root:not([data-theme="light"]) .dsw .sonne{ display:none; }
+        :root:not([data-theme="light"]) .dsw .mond{ display:block; }
+      }
+      .dsw-menue{ position:absolute; top:36px; right:0; z-index:95; width:230px; background:#FFF; color:#14202E;
+                  border:1px solid #D8DFE9; border-radius:10px; box-shadow:0 14px 32px rgba(20,32,46,.28);
+                  padding:6px; display:flex; flex-direction:column; font-size:14px; font-weight:500; letter-spacing:0; }
+      .dsw-menue[hidden]{ display:none; }
+      .dsw-titel{ font-size:11px; font-weight:700; letter-spacing:.12em; color:#5A6577; padding:6px 10px 4px; }
+      .dsw-menue button{ display:flex; align-items:center; gap:10px; padding:8px 10px; border:0; border-radius:6px;
+                  background:transparent; color:#14202E; font:inherit; text-align:left; cursor:pointer; }
+      .dsw-menue button:hover{ background:#EEF1F5; }
+      .dsw-menue button[aria-checked="true"]{ background:#E3ECF7; }
+      .dsw-menue button span{ flex:1 1 auto; }
+      .dsw-menue button i{ font-style:normal; color:#00529F; font-weight:700; visibility:hidden; }
+      .dsw-menue button[aria-checked="true"] i{ visibility:visible; }
+      .dsw-menue svg{ width:16px; height:16px; flex:none; }
+      .dsw-fuss{ font-size:12px; line-height:1.4; color:#5A6577; padding:6px 10px 4px; border-top:1px solid #EEF1F5; margin-top:4px; }
+      @media print{ .dsw{ display:none !important; } }
+    </style>
+    <div class="dsw">
+      <button class="dsw-knopf" type="button" id="dswKnopf" aria-haspopup="menu" aria-expanded="false" aria-controls="dswMenue"
+              title="Appearance" aria-label="Appearance: light, dark or like your device">
+        <svg class="sonne" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="#F2B84B" stroke-width="2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="#F2B84B" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="mond" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="#C9D6F2" stroke-width="2" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="dsw-menue" id="dswMenue" role="menu" aria-label="Appearance" hidden>
+        <span class="dsw-titel">APPEARANCE</span>
+        <button type="button" role="menuitemradio" data-wahl="hell" aria-checked="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="#B7791F" stroke-width="2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="#B7791F" stroke-width="2" stroke-linecap="round"/></svg><span>Light</span><i>✓</i></button>
+        <button type="button" role="menuitemradio" data-wahl="dunkel" aria-checked="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="#3A4658" stroke-width="2" stroke-linejoin="round"/></svg><span>Dark</span><i>✓</i></button>
+        <button type="button" role="menuitemradio" data-wahl="geraet" aria-checked="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="#3A4658" stroke-width="1.8"/><path d="M8 20h8M12 16v4" stroke="#3A4658" stroke-width="1.8" stroke-linecap="round"/></svg><span>Like my device</span><i>✓</i></button>
+        <span class="dsw-fuss">Default: like your device. Your choice applies to all services.</span>
+      </div>
+    </div>
+    <script>
+    (function () {
+      var knopf = document.getElementById("dswKnopf"), menue = document.getElementById("dswMenue");
+      if (!knopf || !menue) return;
+      function lesen() {
+        var m = document.cookie.match(/(?:^|;\s*)mvf-theme=(light|dark)/);
+        return m ? (m[1] === "light" ? "hell" : "dunkel") : "geraet";
+      }
+      function schreiben(w) {
+        var d = /(^|\.)m-vf\.de$/.test(location.hostname) ? "; Domain=.m-vf.de" : "";
+        var sicher = location.protocol === "https:" ? "; Secure" : "";
+        document.cookie = "mvf-theme=" + (w === "geraet" ? "; Max-Age=0" : (w === "hell" ? "light" : "dark") + "; Max-Age=31536000")
+          + "; Path=/; SameSite=Lax" + d + sicher;
+      }
+      function anwenden(w) {
+        var h = document.documentElement;
+        if (w === "hell") h.setAttribute("data-theme", "light");
+        else if (w === "dunkel") h.setAttribute("data-theme", "dark");
+        else h.removeAttribute("data-theme");
+        menue.querySelectorAll("[data-wahl]").forEach(function (b) {
+          b.setAttribute("aria-checked", b.getAttribute("data-wahl") === w ? "true" : "false");
+        });
+      }
+      function zu() { menue.hidden = true; knopf.setAttribute("aria-expanded", "false"); }
+      anwenden(lesen());
+      knopf.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var auf = menue.hidden;
+        menue.hidden = !auf;
+        knopf.setAttribute("aria-expanded", auf ? "true" : "false");
+        if (auf) { var b = menue.querySelector('[aria-checked="true"]'); if (b) b.focus(); }
+      });
+      menue.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-wahl]");
+        if (!b) return;
+        var w = b.getAttribute("data-wahl");
+        schreiben(w); anwenden(w); zu(); knopf.focus();
+      });
+      document.addEventListener("click", function (e) { if (!menue.hidden && !e.target.closest(".dsw")) zu(); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !menue.hidden) { zu(); knopf.focus(); } });
+    })();
+    </script>
+    <!-- DARSTELLUNG-ENDE -->
     <div class="netz-rechts">
       <div class="netz-sprache" role="group" aria-label="Language">
         <a href="../" lang="de" hreflang="de" aria-label="Deutsch" title="Diese Seite auf Deutsch">DE</a>
@@ -823,11 +924,11 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
 <h2>The hubs in numbers</h2>
 <div class="tafel-rahmen"><table class="zahlentafel" id="uhZahlen">
 <thead><tr><th data-sort>Hub</th><th data-sort>Databases</th><th data-sort>Live search</th><th data-sort>Categories</th><th data-sort>Glossary</th><th data-sort>Studies</th></tr></thead>
-<tbody><tr><td data-wert="Health Services Research"><a href="https://wissen.m-vf.de/">Health Services Research</a></td><td>57</td><td>29</td><td>8</td><td>170</td><td data-studien="wissen.m-vf.de">454</td></tr><tr><td data-wert="Cardiology"><a href="https://kardio.m-vf.de/">Cardiology</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td data-studien="kardio.m-vf.de">286</td></tr><tr><td data-wert="Chronic Conditions"><a href="https://ncd.m-vf.de/">Chronic Conditions</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td data-studien="ncd.m-vf.de">407</td></tr><tr><td data-wert="Diabetes"><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td data-studien="diabetes.m-vf.de">294</td></tr><tr><td data-wert="Digitalisation, AI &amp; Health"><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td data-studien="ki.m-vf.de">418</td></tr><tr><td data-wert="Health Literacy"><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></td><td>76</td><td>36</td><td>10</td><td>165</td><td data-studien="healthliteracy.m-vf.de">417</td></tr><tr><td data-wert="Healthy Ageing &amp; Longevity"><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td data-studien="longevity.m-vf.de">411</td></tr><tr><td data-wert="Heat, Climate &amp; Health"><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td data-studien="klima.m-vf.de">407</td></tr><tr><td data-wert="Mental Health"><a href="https://mental.m-vf.de/">Mental Health</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td data-studien="mental.m-vf.de">391</td></tr><tr><td data-wert="Nursing &amp; Long-Term Care"><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></td><td>88</td><td>42</td><td>11</td><td>156</td><td data-studien="pflege.m-vf.de">403</td></tr><tr><td data-wert="Obesity"><a href="https://adipositas.m-vf.de/">Obesity</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td data-studien="adipositas.m-vf.de">407</td></tr><tr><td data-wert="Oncology"><a href="https://onkologie.m-vf.de/">Oncology</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td data-studien="onkologie.m-vf.de">301</td></tr><tr><td data-wert="Patient Safety"><a href="https://safety.m-vf.de/">Patient Safety</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td data-studien="safety.m-vf.de">391</td></tr><tr><td data-wert="Sex- and Gender-Sensitive Medicine"><a href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td data-studien="gender.m-vf.de">403</td></tr><tr><td data-wert="Vaccination"><a href="https://impfen.m-vf.de/">Vaccination</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td data-studien="impfen.m-vf.de">404</td></tr></tbody>
-<tfoot><tr><td>Total</td><td>1,189</td><td>563</td><td>147</td><td>1,340*</td><td data-studien="alle">5,794</td></tr></tfoot>
+<tbody><tr><td data-wert="Health Services Research"><a href="https://wissen.m-vf.de/">Health Services Research</a></td><td>57</td><td>29</td><td>8</td><td>170</td><td data-studien="wissen.m-vf.de">460</td></tr><tr><td data-wert="Cardiology"><a href="https://kardio.m-vf.de/">Cardiology</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td data-studien="kardio.m-vf.de">287</td></tr><tr><td data-wert="Chronic Conditions"><a href="https://ncd.m-vf.de/">Chronic Conditions</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td data-studien="ncd.m-vf.de">412</td></tr><tr><td data-wert="Diabetes"><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td data-studien="diabetes.m-vf.de">300</td></tr><tr><td data-wert="Digitalisation, AI &amp; Health"><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td data-studien="ki.m-vf.de">424</td></tr><tr><td data-wert="Health Literacy"><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></td><td>76</td><td>36</td><td>10</td><td>165</td><td data-studien="healthliteracy.m-vf.de">423</td></tr><tr><td data-wert="Healthy Ageing &amp; Longevity"><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td data-studien="longevity.m-vf.de">417</td></tr><tr><td data-wert="Heat, Climate &amp; Health"><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td data-studien="klima.m-vf.de">413</td></tr><tr><td data-wert="Mental Health"><a href="https://mental.m-vf.de/">Mental Health</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td data-studien="mental.m-vf.de">397</td></tr><tr><td data-wert="Nursing &amp; Long-Term Care"><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></td><td>88</td><td>42</td><td>11</td><td>156</td><td data-studien="pflege.m-vf.de">409</td></tr><tr><td data-wert="Obesity"><a href="https://adipositas.m-vf.de/">Obesity</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td data-studien="adipositas.m-vf.de">414</td></tr><tr><td data-wert="Oncology"><a href="https://onkologie.m-vf.de/">Oncology</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td data-studien="onkologie.m-vf.de">307</td></tr><tr><td data-wert="Patient Safety"><a href="https://safety.m-vf.de/">Patient Safety</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td data-studien="safety.m-vf.de">397</td></tr><tr><td data-wert="Sex- and Gender-Sensitive Medicine"><a href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td data-studien="gender.m-vf.de">409</td></tr><tr><td data-wert="Vaccination"><a href="https://impfen.m-vf.de/">Vaccination</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td data-studien="impfen.m-vf.de">411</td></tr></tbody>
+<tfoot><tr><td>Total</td><td>1,189</td><td>563</td><td>147</td><td>1,340*</td><td data-studien="alle">5,880</td></tr></tfoot>
 </table></div>
 <p style="font-size:14px;color:var(--ink-soft)"><b>Databases:</b> tiles in the hub, one per database. <b>Live search:</b> tiles whose click opens the results list directly. <b>Categories:</b> groups of databases in the hub. <b>Glossary:</b> stored German-English translations. <b>Studies:</b> studies selected so far. *Without duplicates. Click a column header to sort.</p>
-<p style="font-size:14px;color:var(--ink-soft)">As of 29 October 2026. The study counts are refreshed every morning from all hubs; the other numbers are recounted every time this page is built.</p><script>
+<p style="font-size:14px;color:var(--ink-soft)">As of 30 October 2026. The study counts are refreshed every morning from all hubs; the other numbers are recounted every time this page is built.</p><script>
 /* Studienzahlen taeglich aus studien.json (Morgenlauf studien_sammeln.py).
    Faellt der Abruf aus, bleiben die beim Bau gezaehlten Zahlen stehen. */
 (function () {

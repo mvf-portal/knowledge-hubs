@@ -480,6 +480,107 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
     </a>
     <button class="netz-knopf" type="button" id="netzKnopf" aria-expanded="false" aria-controls="netzMega">Alle Hubs<span class="pfeil" aria-hidden="true">▼</span></button>
     <a class="netz-link" href="https://knowledge-hubs.m-vf.de/ueber-die-hubs.html">Über die Hubs</a>
+    <!-- DARSTELLUNG-START ====================================================
+         Schalter „Darstellung" (hell / dunkel / wie mein Geraet), links neben
+         DE/EN. Entwurf Mariann Stegmaier, Canvas 2 (28.10.2026); gebaut von der
+         Innofonds-Sitzung (innovationsfonds/darstellung.html), seit 30.10.2026
+         hier in der gemeinsamen Leiste und damit auf allen Seiten der Reihe.
+
+         Vertrag: Cookie „mvf-theme" = light | dark, bei „Wie mein Geraet"
+         geloescht (Max-Age=0); Domain=.m-vf.de, Path=/, ein Jahr, SameSite=Lax,
+         Secure nur unter https. Kein localStorage - der gaelte nur je Subdomain.
+         Wirkung ueber <html data-theme>. Der Datenschutztext dazu steht in
+         recht_neu.py, Abschnitt 2, #darstellung - wer hier etwas am Cookie
+         aendert, aendert ihn dort mit.
+
+         Englisch: startseite_neu.NETZ_EN uebersetzt die Texte fuer /en/. -->
+    <style>
+      .dsw{ position:relative; margin-left:auto; display:flex; align-items:center; }
+      .dsw ~ .netz-rechts{ margin-left:14px; }  /* ~ statt +: dazwischen steht das <script> */
+      .dsw-knopf{ width:34px; height:27px; border:1px solid #3A4A60; border-radius:6px; background:transparent;
+                  display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+      .dsw-knopf:hover, .dsw-knopf[aria-expanded="true"]{ background:#22324A; }
+      .dsw-knopf svg{ width:16px; height:16px; display:block; }
+      .dsw .mond{ display:none; }
+      :root[data-theme="dark"] .dsw .sonne{ display:none; }
+      :root[data-theme="dark"] .dsw .mond{ display:block; }
+      @media (prefers-color-scheme:dark){
+        :root:not([data-theme="light"]) .dsw .sonne{ display:none; }
+        :root:not([data-theme="light"]) .dsw .mond{ display:block; }
+      }
+      .dsw-menue{ position:absolute; top:36px; right:0; z-index:95; width:230px; background:#FFF; color:#14202E;
+                  border:1px solid #D8DFE9; border-radius:10px; box-shadow:0 14px 32px rgba(20,32,46,.28);
+                  padding:6px; display:flex; flex-direction:column; font-size:14px; font-weight:500; letter-spacing:0; }
+      .dsw-menue[hidden]{ display:none; }
+      .dsw-titel{ font-size:11px; font-weight:700; letter-spacing:.12em; color:#5A6577; padding:6px 10px 4px; }
+      .dsw-menue button{ display:flex; align-items:center; gap:10px; padding:8px 10px; border:0; border-radius:6px;
+                  background:transparent; color:#14202E; font:inherit; text-align:left; cursor:pointer; }
+      .dsw-menue button:hover{ background:#EEF1F5; }
+      .dsw-menue button[aria-checked="true"]{ background:#E3ECF7; }
+      .dsw-menue button span{ flex:1 1 auto; }
+      .dsw-menue button i{ font-style:normal; color:#00529F; font-weight:700; visibility:hidden; }
+      .dsw-menue button[aria-checked="true"] i{ visibility:visible; }
+      .dsw-menue svg{ width:16px; height:16px; flex:none; }
+      .dsw-fuss{ font-size:12px; line-height:1.4; color:#5A6577; padding:6px 10px 4px; border-top:1px solid #EEF1F5; margin-top:4px; }
+      @media print{ .dsw{ display:none !important; } }
+    </style>
+    <div class="dsw">
+      <button class="dsw-knopf" type="button" id="dswKnopf" aria-haspopup="menu" aria-expanded="false" aria-controls="dswMenue"
+              title="Darstellung" aria-label="Darstellung: hell, dunkel oder wie Ihr Gerät">
+        <svg class="sonne" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="#F2B84B" stroke-width="2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="#F2B84B" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="mond" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="#C9D6F2" stroke-width="2" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="dsw-menue" id="dswMenue" role="menu" aria-label="Darstellung" hidden>
+        <span class="dsw-titel">DARSTELLUNG</span>
+        <button type="button" role="menuitemradio" data-wahl="hell" aria-checked="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="#B7791F" stroke-width="2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="#B7791F" stroke-width="2" stroke-linecap="round"/></svg><span>Hell</span><i>✓</i></button>
+        <button type="button" role="menuitemradio" data-wahl="dunkel" aria-checked="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="#3A4658" stroke-width="2" stroke-linejoin="round"/></svg><span>Dunkel</span><i>✓</i></button>
+        <button type="button" role="menuitemradio" data-wahl="geraet" aria-checked="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="#3A4658" stroke-width="1.8"/><path d="M8 20h8M12 16v4" stroke="#3A4658" stroke-width="1.8" stroke-linecap="round"/></svg><span>Wie mein Gerät</span><i>✓</i></button>
+        <span class="dsw-fuss">Voreinstellung: wie Ihr Gerät. Die Wahl gilt für alle Angebote.</span>
+      </div>
+    </div>
+    <script>
+    (function () {
+      var knopf = document.getElementById("dswKnopf"), menue = document.getElementById("dswMenue");
+      if (!knopf || !menue) return;
+      function lesen() {
+        var m = document.cookie.match(/(?:^|;\s*)mvf-theme=(light|dark)/);
+        return m ? (m[1] === "light" ? "hell" : "dunkel") : "geraet";
+      }
+      function schreiben(w) {
+        var d = /(^|\.)m-vf\.de$/.test(location.hostname) ? "; Domain=.m-vf.de" : "";
+        var sicher = location.protocol === "https:" ? "; Secure" : "";
+        document.cookie = "mvf-theme=" + (w === "geraet" ? "; Max-Age=0" : (w === "hell" ? "light" : "dark") + "; Max-Age=31536000")
+          + "; Path=/; SameSite=Lax" + d + sicher;
+      }
+      function anwenden(w) {
+        var h = document.documentElement;
+        if (w === "hell") h.setAttribute("data-theme", "light");
+        else if (w === "dunkel") h.setAttribute("data-theme", "dark");
+        else h.removeAttribute("data-theme");
+        menue.querySelectorAll("[data-wahl]").forEach(function (b) {
+          b.setAttribute("aria-checked", b.getAttribute("data-wahl") === w ? "true" : "false");
+        });
+      }
+      function zu() { menue.hidden = true; knopf.setAttribute("aria-expanded", "false"); }
+      anwenden(lesen());
+      knopf.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var auf = menue.hidden;
+        menue.hidden = !auf;
+        knopf.setAttribute("aria-expanded", auf ? "true" : "false");
+        if (auf) { var b = menue.querySelector('[aria-checked="true"]'); if (b) b.focus(); }
+      });
+      menue.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-wahl]");
+        if (!b) return;
+        var w = b.getAttribute("data-wahl");
+        schreiben(w); anwenden(w); zu(); knopf.focus();
+      });
+      document.addEventListener("click", function (e) { if (!menue.hidden && !e.target.closest(".dsw")) zu(); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !menue.hidden) { zu(); knopf.focus(); } });
+    })();
+    </script>
+    <!-- DARSTELLUNG-ENDE -->
     <div class="netz-rechts">
       <div class="netz-sprache" role="group" aria-label="Sprache">
         <span aria-current="true" lang="de" title="Deutsch" aria-label="Deutsch">DE</span>
@@ -830,21 +931,21 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
       <button type="button" data-teil="indikation" aria-pressed="false">Krankheitsgebiete</button>
     </div>
     <ul class="st-liste" id="stListe">
-        <li data-teil="thema"><div class="st-zeile1"><a class="st-hub" href="https://pflege.m-vf.de/">Pflege &amp; Langzeitversorgung ›</a><a class="st-titel" href="https://pflege.m-vf.de/#studie-42950852" lang="de">Pflegebedarf älterer Menschen: Geschlechtliche Unterschiede und Alterseffekte über sechs Jahre</a></div><p class="st-erg"><span lang="de">Anteil ≥85-Jähriger, besonders Frauen, stieg kontinuierlich an. Schwerer Pflegebedarf (Stufe ≥2) stieg deutlich bei ≥85-Jährigen, besonders Frauen. Frauen ≥85 Jahre hatten OR≈46 für …</span> · <a href="https://pflege.m-vf.de/#studie-42950852">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="thema"><div class="st-zeile1"><a class="st-hub" href="https://mental.m-vf.de/">Psychische Gesundheit ›</a><a class="st-titel" href="https://mental.m-vf.de/#studie-42951688" lang="de">Augmentierungsstrategien bei Clozapin-Resistenz: Verweildauer und Symptomverbesserung</a></div><p class="st-erg"><span lang="de">D2/D3-selektive Antagonisten assoziiert mit kürzerer Verweildauer als ECT (HR 2,50, 95%-KI 1,35–4,62). ECT zeigte größere Reduktion positiver Symptome als selektive Antagonisten (MD −3,20, …</span> · <a href="https://mental.m-vf.de/#studie-42951688">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="thema"><div class="st-zeile1"><a class="st-hub" href="https://wissen.m-vf.de/">Versorgungsforschung ›</a><a class="st-titel" href="https://wissen.m-vf.de/#studie-42951064" lang="de">Spezialisierte ILD-Kliniken verbessern Behandlung und Ergebnisse</a></div><p class="st-erg"><span lang="de">66 % der 6.637 Patienten wurden in spezialisierter Klinik behandelt. Diese zeigten höhere Odds für CT-Bildgebung (OR 2,51), Antifibrotika-Therapie (OR 1,54) und niedrigere Odds für …</span> · <a href="https://wissen.m-vf.de/#studie-42951064">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="indikation"><div class="st-zeile1"><a class="st-hub krank" href="https://adipositas.m-vf.de/">Adipositas ›</a><a class="st-titel" href="https://adipositas.m-vf.de/#studie-42947710" lang="de">TyHGB-Index sagt Typ-2-Diabetes zuverlässiger voraus als BMI</a></div><p class="st-erg"><span lang="de">373 Diabetes-Neuerkrankungen. Jede TyHGB-Einheit erhöhte das Diabetesrisiko um 36 % (HR 1,36, 95%-KI 1,27–1,45). Höchstes vs. niedrigstes Quartil: HR 5,68 (95%-KI 2,84–11,36). Nichtlinearer …</span> · <a href="https://adipositas.m-vf.de/#studie-42947710">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="indikation" hidden data-mehr><div class="st-zeile1"><a class="st-hub krank" href="https://diabetes.m-vf.de/">Diabetes ›</a><a class="st-titel" href="https://diabetes.m-vf.de/#studie-42949632" lang="de">3,4 % Zöliakie-Inzidenz innerhalb 5 Jahren nach Typ-1-Diabetes-Diagnose bei Kindern</a></div><p class="st-erg"><span lang="de">65 von 1934 Kindern (3,4 %) entwickelten Zöliakie während Follow-up. Medianer Zeitpunkt zur Zöliakie-Diagnose: 1,5 Jahre; 40 % wurden im ersten Jahr diagnostiziert. Inzidenzrate im ersten …</span> · <a href="https://diabetes.m-vf.de/#studie-42949632">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://ki.m-vf.de/">Digitalisierung, KI &amp; Gesundheit ›</a><a class="st-titel" href="https://ki.m-vf.de/#studie-42947537" lang="de">Machine-Learning-gestützte Fernüberwachung bei fortgeschrittener Parkinson-Erkrankung</a></div><p class="st-erg"><span lang="de">Bei angenommener Sensitivität und Spezifität von 88 % und 62 % generierte die ML-Fernüberwachung nur 0,0044 zusätzliche qualitätsadjustierte Lebensjahre (QALYs) bei Zusatzkosten von 761 € …</span> · <a href="https://ki.m-vf.de/#studie-42947537">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://gender.m-vf.de/">Geschlechtersensible Medizin ›</a><a class="st-titel" href="https://gender.m-vf.de/#studie-42949784" lang="de">Geschlechtsangleichende Hormontherapie: Strukturelle Zugangsbarrieren und Rolle von Apotheken</a></div><p class="st-erg"><span lang="de">Drei Überarching-Themen: (1) Navigations-Herausforderungen bei Zugang zu Hormontherapie; (2) Auswirkungen von Zugangsbarrieren auf Wohlbefinden und Vertrauen in Gesundheitsdienste; (3) …</span> · <a href="https://gender.m-vf.de/#studie-42949784">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://longevity.m-vf.de/">Gesundes Altern &amp; Longevity ›</a><a class="st-titel" href="https://longevity.m-vf.de/#studie-42950281" lang="de">Frailty-Vorhersage per Machine Learning aus Kliniksystemen innerhalb 72 Stunden</a></div><p class="st-erg"><span lang="de">Das finale XGBoost-Modell erreichte F2-Score 0,755 (95%-KI 0,741–0,768), AUROC 0,777 (0,764–0,790), Recall 0,873 (0,857–0,887). Wichtigste Prädiktoren: Polypharmazi, Laborwerte (Kreatinin, …</span> · <a href="https://longevity.m-vf.de/#studie-42950281">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://healthliteracy.m-vf.de/">Gesundheitskompetenz ›</a><a class="st-titel" href="https://healthliteracy.m-vf.de/#studie-42950177" lang="de">Kulturell maßgeschneiderte Schulung erhöht Verständnis klinischer Krebsstudien bei Minderheiten</a></div><p class="st-erg"><span lang="de">Wissensscores verbesserten sich (p &lt; 0,001), besonders zum Verständnis von Prästudien (p = 0,012), Placebos (p = 0,001) und Registrierung (p = 0,012). &gt;90% stimmten zu, dass klinische …</span> · <a href="https://healthliteracy.m-vf.de/#studie-42950177">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://klima.m-vf.de/">Hitze, Klima &amp; Gesundheit ›</a><a class="st-titel" href="https://klima.m-vf.de/#studie-42951577" lang="de">Hitze und Lebensmittelinfektionen: Vorhersagefenster für E.-coli-Ausbrüche</a></div><p class="st-erg"><span lang="de">Die kumulative Hitzeassoziationen erreichten ein signifikantes Maximum über einen 5-6-Wochen-Fenster mit +9,24 % Fällen pro 1 °C Temperaturanstieg (95%-KI: +0,92 bis +18,25; p=0,029). Dies …</span> · <a href="https://klima.m-vf.de/#studie-42951577">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://impfen.m-vf.de/">Impfen &amp; Prävention ›</a><a class="st-titel" href="https://impfen.m-vf.de/#studie-42949743" lang="de">RSV-mRNA-Impfstoff schützt US-Veteranen mit sinkender Effektivität im Alter</a></div><p class="st-erg"><span lang="de">Impfeffektivität 60,3% (95% CI 49,0–70,4%) gegen dokumentierte Infektionen, 60,2% (95% CI 47,2–71,5%) gegen RSV-ED/UC-Kontakte, 81,8% (95% CI 58,1–99,9%) gegen Hospitalisierungen. …</span> · <a href="https://impfen.m-vf.de/#studie-42949743">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="indikation" hidden data-mehr><div class="st-zeile1"><a class="st-hub krank" href="https://kardio.m-vf.de/">Kardiologie ›</a><a class="st-titel" href="https://kardio.m-vf.de/#studie-42951093" lang="de">Pulsfeldablation senkt Rezidive bei Vorhofflimmern und hypertropher Kardiomyopathie</a></div><p class="st-erg"><span lang="de">Pulsfeldablation zeigte gegenüber Radiofrequenz eine um 43 % gesenkte Arrhythmierezidivrate (adjustierte HR 0,57; 95%-KI 0,36–0,91; p=0,018) und 57 % weniger kardiovaskuläre …</span> · <a href="https://kardio.m-vf.de/#studie-42951093">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://ncd.m-vf.de/">NCD/Chronische Krankheiten ›</a><a class="st-titel" href="https://ncd.m-vf.de/#studie-42948330" lang="de">14 Lungengewebs-miRNAs assoziiert mit Emphysem-Ausmaß und Lungenfunktion in COPD</a></div><p class="st-erg"><span lang="de">14 miRNAs waren assoziiert mit Emphysem-Prozentsatz (BH-FDR &lt;0,05): acht mit positiver Assoziation (miR-144-5p, miR-190a, miR-20b-5p, miR-451a, miR-3912, miR-15a-5p, miR-202-5p, miR-4497), …</span> · <a href="https://ncd.m-vf.de/#studie-42948330">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="indikation" hidden data-mehr><div class="st-zeile1"><a class="st-hub krank" href="https://onkologie.m-vf.de/">Onkologie ›</a><a class="st-titel" href="https://onkologie.m-vf.de/#studie-42950862" lang="de">ctDNA und CTC bei Prostatakarzinom: Prognostischer Nutzen unter PARP-Inhibition</a></div><p class="st-erg"><span lang="de">84% Konkordanz der HRR-Alteration zwischen Gewebeprobe und ctDNA. Basale ctDNA-Positivität war prognostisch für schlechteres Progressions-freies Überleben (PFS): HR 2,46 [95%-KI 1,68–3,60; …</span> · <a href="https://onkologie.m-vf.de/#studie-42950862">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
-        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://safety.m-vf.de/">Patientensicherheit ›</a><a class="st-titel" href="https://safety.m-vf.de/#studie-42951471" lang="de">Zeitnahe Fürsorge nach Geburtskomplikationen stärkt Vertrauen und Zufriedenheit</a></div><p class="st-erg"><span lang="de">Deutliche Wahrnehmungslücken: nur 38,6 % der Familien erhielten Fürsorge innerhalb 2 Tage (vs. 82,4 % Angabe der Einrichtungen). Frühe Kontaktaufnahme (≤2 Tage) war stark assoziiert mit …</span> · <a href="https://safety.m-vf.de/#studie-42951471">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="thema"><div class="st-zeile1"><a class="st-hub" href="https://safety.m-vf.de/">Patientensicherheit ›</a><a class="st-titel" href="https://safety.m-vf.de/#studie-42955405" lang="de">Proportionale Antibiotika-Therapie in pädiatrischer Palliativmedizin: praktisches Entscheidungsrahmenwerk</a></div><p class="st-erg"><span lang="de">Verfügbare Evidenz deutet darauf hin, dass Antimikrobika proportional sind, wenn symptomatischer Nutzen plausibel, wahrnehmbar und mit Versorgungszielen abgestimmt ist. Direkte pädiatrische …</span> · <a href="https://safety.m-vf.de/#studie-42955405">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="thema"><div class="st-zeile1"><a class="st-hub" href="https://pflege.m-vf.de/">Pflege &amp; Langzeitversorgung ›</a><a class="st-titel" href="https://pflege.m-vf.de/#studie-42954815" lang="de">Despotische Führung und Wohlbefinden von Pflegekräften im Krankenhaus: ein Zusammenhang</a></div><p class="st-erg"><span lang="de">Pflegekräfte berichteten moderate despotische Führung (Mittelwert 3,19 ± 1,21) und Wohlbefinden (3,29 ± 1,05). Despotische Führung korrelierte negativ mit Wohlbefinden (r = -0,323, p &lt; …</span> · <a href="https://pflege.m-vf.de/#studie-42954815">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="thema"><div class="st-zeile1"><a class="st-hub" href="https://mental.m-vf.de/">Psychische Gesundheit ›</a><a class="st-titel" href="https://mental.m-vf.de/#studie-42954989" lang="de">Finanzielle Schwierigkeiten treten Monate vor Offenbarung psychischer Erkrankungen auf</a></div><p class="st-erg"><span lang="de">Fälle zeigten bis 36 Monate präoffenbarungsbedingt höhere Sozialhilfeeinnahmen (Koeffizient: 0,80), höhere finanzielle Belastung (Credit Scores: -0,52), erhöhte Kontoüberziehungsnutzung …</span> · <a href="https://mental.m-vf.de/#studie-42954989">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="thema"><div class="st-zeile1"><a class="st-hub" href="https://wissen.m-vf.de/">Versorgungsforschung ›</a><a class="st-titel" href="https://wissen.m-vf.de/#studie-42951327" lang="de">Patientensicherheit und Chancengleichheit bei KI-gestützten Triage-Tools</a></div><p class="st-erg"><span lang="de">Die Übersichtsarbeit fand heterogene Evidenz für KI-Triage-Tools; viele Studien wiesen Lücken bei der Bewertung von Sicherheit, Fairness und Chancengleichheit auf, ohne konkrete Zahlen zu …</span> · <a href="https://wissen.m-vf.de/#studie-42951327">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="indikation" hidden data-mehr><div class="st-zeile1"><a class="st-hub krank" href="https://adipositas.m-vf.de/">Adipositas ›</a><a class="st-titel" href="https://adipositas.m-vf.de/#studie-42955519" lang="de">Semaglutide: stärkere Gastrointestinal- und Nierenschäden als Tirzepatid im Spontanmeldesystem</a></div><p class="st-erg"><span lang="de">Semaglutid zeigte höhere Meldungsquoten als Tirzepatid für verzögerte Magenentleerung (ROR 6,39), Darmverschluss/Ileus (ROR 4,56), akutes Nierenversagen (ROR 2,51), Pankreatitis (ROR 2,18), …</span> · <a href="https://adipositas.m-vf.de/#studie-42955519">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="indikation" hidden data-mehr><div class="st-zeile1"><a class="st-hub krank" href="https://diabetes.m-vf.de/">Diabetes ›</a><a class="st-titel" href="https://diabetes.m-vf.de/#studie-42957437" lang="de">Semaglutide zur Adipositastherapie: 67,6 % Abbruch im ersten Jahr, Dosis und frühe Gewichtsabnahme sind Prädiktoren</a></div><p class="st-erg"><span lang="de">Kumulative Abbruchrate 36,5 % nach 180 Tagen und 67,6 % nach 365 Tagen. Prädiktoren für Abbruch: arabische Bevölkerung (HR 1,65), niedriger soziökonomieller Status (HR 1,13), Rauchen (HR …</span> · <a href="https://diabetes.m-vf.de/#studie-42957437">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://ki.m-vf.de/">Digitalisierung, KI &amp; Gesundheit ›</a><a class="st-titel" href="https://ki.m-vf.de/#studie-42956816" lang="de">KI-Scribes in der Pädiatrie: Elternperspektiven auf Dokumentationsassistenz</a></div><p class="st-erg"><span lang="de">Zwei Themen zu virtuellen Scribes: Eltern fühlten sich besser gehört und die Arztkommunikation fokussierter; Vertrauen in Third-Party-Listeners war gering, aber Scribes unauffällig. Zu …</span> · <a href="https://ki.m-vf.de/#studie-42956816">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://gender.m-vf.de/">Geschlechtersensible Medizin ›</a><a class="st-titel" href="https://gender.m-vf.de/#studie-42954347" lang="de">Strukturelle Diskriminierung von LGBTQ+-Patienten im Gesundheitswesen: Kenia und Ruanda</a></div><p class="st-erg"><span lang="de">Lesben, Trans- und geschlechtsnichtkonformen Personen berichteten signifikant mehr Diskriminierung als bisexuelle und cis-Personen. Lesben und Trans-Personen zeigten die höchsten Odds für …</span> · <a href="https://gender.m-vf.de/#studie-42954347">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://longevity.m-vf.de/">Gesundes Altern &amp; Longevity ›</a><a class="st-titel" href="https://longevity.m-vf.de/#studie-42947315" lang="de">Maschinenlernmodell zur 4-Jahres-Vorhersage von Frailty bei älteren Arthritis-Patienten: CHARLS/KLoSA-Validierung</a></div><p class="st-erg"><span lang="de">Interne AUC 0,764 (95 %-KI 0,707–0,816), externe AUC 0,747 (0,701–0,793) nach Recalibration. Zehnfach-Kreuzvalidierung: Mittelwert 0,772 ± 0,046. Top-Prädiktoren (SHAP-Ranking): Anzahl …</span> · <a href="https://longevity.m-vf.de/#studie-42947315">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://healthliteracy.m-vf.de/">Gesundheitskompetenz ›</a><a class="st-titel" href="https://healthliteracy.m-vf.de/#studie-42952800" lang="de">Wie Wissensstand und Risk Literacy die Angst vor Strahlenschäden prägen</a></div><p class="st-erg"><span lang="de">Fukushima-Einwohner hatten höheres Strahlen-Wissen, Tokyo-Bewohner höhere Besorgnis. Höheres Wissen (OR=0,77, 95%-KI: 0,69–0,85) und bessere Risk Literacy, besonders Awareness für kogn. …</span> · <a href="https://healthliteracy.m-vf.de/#studie-42952800">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://klima.m-vf.de/">Hitze, Klima &amp; Gesundheit ›</a><a class="st-titel" href="https://klima.m-vf.de/#studie-42955412" lang="de">Thermische Stressbelastung in Indien: räumlich-zeitliche Trends 1975–2024</a></div><p class="st-erg"><span lang="de">Östliche Distrikte zeigten konsistent höhere thermische Belastung. Mehrere Distrikte mit Anstieg &gt;0,5 °C in WBGT/UTCI 2000–2024. Markante Verschiebung von niedriger/moderater zu …</span> · <a href="https://klima.m-vf.de/#studie-42955412">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://impfen.m-vf.de/">Impfen &amp; Prävention ›</a><a class="st-titel" href="https://impfen.m-vf.de/#studie-42956266" lang="de">Impfquoten und Abbruchquoten bei Kindern in Ghana: Prädiktoren für lückenlose Immunisierung</a></div><p class="st-erg"><span lang="de">OPV0-Abdeckung betrug 44,2–50,5% (deutlich unter BCG mit 93,6–98,0%), Penta-Reihe fiel von 96% (Dosis 1) auf 88% (Dosis 3), Rotavirus-Dosis-3-Quote nur 40,5–44,0%. Dropout-Raten blieben …</span> · <a href="https://impfen.m-vf.de/#studie-42956266">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="indikation" hidden data-mehr><div class="st-zeile1"><a class="st-hub krank" href="https://kardio.m-vf.de/">Kardiologie ›</a><a class="st-titel" href="https://kardio.m-vf.de/#studie-42956796" lang="de">0/1-Stunden-Troponin-Pathway reduziert Notfallaufenthalt nicht gegenüber Standard</a></div><p class="st-erg"><span lang="de">Kombinereignis (Tod oder neuer Typ-1-Herzinfarkt innerhalb 30 Tagen): 0,8% (0/1 h) vs. 1,0% (0/3 h), OR 0,83 (95%-KI 0,45–1,53). Notfallaufenthaltszeit 314 min (0/1 h) vs. 308 min (0/3 h), …</span> · <a href="https://kardio.m-vf.de/#studie-42956796">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="thema" hidden data-mehr><div class="st-zeile1"><a class="st-hub" href="https://ncd.m-vf.de/">NCD/Chronische Krankheiten ›</a><a class="st-titel" href="https://ncd.m-vf.de/#studie-42955528" lang="de">SGLT2-Inhibitoren: Formularbehinderungen für Herzinsuffizienz und Niere sind gering, Zugang aber nicht flächendeckend</a></div><p class="st-erg"><span lang="de">Prior Authorization &lt;1,6 % über alle Jahre, ≥98 % Formulare boten mind. einen PA-freien SGLT2i. Step-Therapy 2025 auf null, 2026 Rebound auf Empagliflozin (18,18 %), aber nicht bei …</span> · <a href="https://ncd.m-vf.de/#studie-42955528">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
+        <li data-teil="indikation" hidden data-mehr><div class="st-zeile1"><a class="st-hub krank" href="https://onkologie.m-vf.de/">Onkologie ›</a><a class="st-titel" href="https://onkologie.m-vf.de/#studie-42945979" lang="de">Pazopanib alternierend mit Bevacizumab: PFS 24,8 Monate in Nierenzellkarzinom-Studie</a></div><p class="st-erg"><span lang="de">Medianes PFS 24,8 Monate (95%-KI 17,2–34,3). Häufigste Grad-3/4-AE: Hypertonie (34 %), erhöhte Transaminasen (12–17 %). 8 % der Patienten beendeten die Studie wegen behandlungsbedingt …</span> · <a href="https://onkologie.m-vf.de/#studie-42945979">Zusammenfassung</a></p><span class="st-datum">heute</span></li>
     </ul>
     <div class="st-unten">
       <button type="button" id="stMehr" aria-expanded="false" aria-controls="stListe">Mehr Studien anzeigen ▾</button>
@@ -875,7 +976,7 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
       </div>
       <a class="knopf" href="ueber-die-hubs.html">Mehr erfahren</a>
     </div>
-    <p class="stand-seite" style="margin:28px 0 0;font-size:13px;color:var(--ink-soft)">Stand der Zahlen: 29.10.2026. Sie werden bei jedem Bau aus den Portalen selbst gezählt.</p>
+    <p class="stand-seite" style="margin:28px 0 0;font-size:13px;color:var(--ink-soft)">Stand der Zahlen: 30.10.2026. Sie werden bei jedem Bau aus den Portalen selbst gezählt.</p>
   </div>
 </section>
 </main>
