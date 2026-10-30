@@ -5,12 +5,12 @@
        Hubs. Bewusst nur vier statt zwoelf - bei 16 Pixeln in der Tableiste
        zerfaellt jedes feinere Raster zu Grau. Die Kacheln sind in der Hoehe
        der Leiste zentriert; sonst haengt das Zeichen sichtbar schief.
-       Die Kacheln sind hier GOLD, in den zwoelf Portalen weiss: Die
-       Vorschaltseite ist die einzige Seite, auf der alle Hubs zusammen
-       stehen, und das ist der eine Unterschied, den ihr Zeichen tragen darf. -->
+       Die Kacheln sind WEISS wie in allen Portalen. Bis 30.10.2026 waren sie
+       hier gold; Mariann: nie goldene Quadrate, auch nicht im Favicon
+       (Canvas 2). Gold bleibt allein die Leiste. -->
   <rect width="512" height="512" rx="113" fill="#0051A1"/>
   <rect x="66.6" y="81.9" width="76.8" height="348.2" rx="17.9" fill="#BE9E53"/>
-  <g fill="#BE9E53">
+  <g fill="#FFFFFF">
     <rect x="184.3" y="125.5" width="112.6" height="112.6" rx="24.8"/>
     <rect x="332.7" y="125.5" width="112.6" height="112.6" rx="24.8"/>
     <rect x="184.3" y="273.9" width="112.6" height="112.6" rx="24.8"/>

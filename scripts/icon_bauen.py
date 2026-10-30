@@ -32,9 +32,8 @@ KANTE = 512
 def zeichen(groesse: int = KANTE) -> Image.Image:
     """Dieselben Formen wie in logo/hub-icon.svg, auf 512 gerechnet.
 
-    Kacheln in Gold - das Zeichen der Vorschaltseite. Die zwoelf Portale
-    tragen dieselbe Form mit weissen Kacheln; ihre Fassung liegt in der
-    Portal-Vorlage.
+    Kacheln weiss wie in allen Portalen (bis 30.10.2026 hier gold; Mariann:
+    nie goldene Quadrate, auch nicht im Favicon). Gold bleibt die Leiste.
     """
     m = groesse / 512
     b = Image.new("RGBA", (groesse, groesse), (0, 0, 0, 0))
@@ -45,7 +44,7 @@ def zeichen(groesse: int = KANTE) -> Image.Image:
     for x in (184.3, 332.7):
         for y in (125.5, 273.9):
             d.rounded_rectangle([x * m, y * m, (x + 112.6) * m, (y + 112.6) * m],
-                                radius=24.8 * m, fill=GOLD)
+                                radius=24.8 * m, fill=WEISS)
     return b
 
 
