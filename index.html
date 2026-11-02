@@ -296,8 +296,22 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
   .kachel b{ flex:1; }
   .kachel span.satz{ flex-basis:100%; padding-left:36px; }
   .kachel span.zahl{ flex-basis:100%; padding:2px 0 0 36px; }
-  .kachel.ausgang{ grid-column:auto; flex-wrap:nowrap; }
+  /* ⚠ OBEN AUSRICHTEN, NICHT MITTIG. Auf dem Telefon steht die
+     Kachel einspaltig und der Satz braucht sechs Zeilen. Mit
+     align-items:center aus der Grundregel hing das Symbol allein
+     in der Mitte links, mit viel Leere darueber und darunter,
+     waehrend es bei allen anderen Kacheln oben neben dem Titel
+     sitzt. Vorher fiel das nicht auf, weil der Satz eine Zeile
+     lang war. */
+  .kachel.ausgang{ grid-column:auto; flex-wrap:nowrap; align-items:flex-start; }
   .kachel.ausgang .ic{ width:30px; height:30px; flex-basis:30px; }
+  /* ⚠ DEN EINZUG DER ANDEREN KACHELN HIER ZURUECKNEHMEN. Die Regel
+     .kachel span.satz{ padding-left:36px } ist fuer die normalen
+     Kacheln gedacht, wo das Symbol in derselben Zeile steht wie der
+     Titel. Die Dachkachel hat ihre eigene Symbolspalte, dort schob
+     der Einzug nur den Satz nach rechts, waehrend Augenbraue und
+     Titel links blieben. */
+  .kachel.ausgang span.satz, .kachel.ausgang span.zahl{ padding-left:0; }
   .st-liste li{ grid-template-columns:1fr; padding:13px 14px; }
   .st-datum{ grid-column:1; grid-row:auto; }
   .nl-kasten{ padding:20px 18px; }
