@@ -43,6 +43,15 @@ jobs:
         continue-on-error: true
         run: python scripts/studien_sammeln.py
 
+      # Goldenes Feld der neuen MVF-Startseite (seit 02.11.2026). Steht hier,
+      # weil der Dirigent diesen Workflow erst nach den Portallaeufen anstoesst
+      # - dann hat der Versorgungsforschungs-Hub seine Studien von heute.
+      # Ohne Modell und ohne Schluessel; scheitert es, bleibt die Studie von
+      # gestern stehen.
+      - name: Studie des Tages fuer m-vf.de
+        continue-on-error: true
+        run: python scripts/studie_des_tages.py
+
       - name: Statusdateien einsammeln und Meldung anlegen
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -60,14 +69,14 @@ jobs:
           WPPASSWORT: ${{ secrets.WPPASSWORT }}
         run: python scripts/tagesnews.py
 
-      - name: studien.json committen (nur bei Aenderung)
+      - name: studien.json und Studie des Tages committen (nur bei Aenderung)
         run: |
-          if [ -z "$(git status --porcelain studien.json)" ]; then
+          if [ -z "$(git status --porcelain studien.json mvf-startseite)" ]; then
             echo "Keine Aenderung - nichts zu committen."
             exit 0
           fi
           git config user.name  "Knowledge-Hubs Bot"
           git config user.email "stegmaier@m-vf.de"
-          git add studien.json
+          git add studien.json mvf-startseite
           git commit -m "Studien aller Hubs, Stand $(TZ=Europe/Berlin date +%d.%m.%Y)"
           git push
