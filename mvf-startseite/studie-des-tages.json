@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-02",
+ "aufgenommen": "2026-11-03",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Professionelle Identitätsbildung durch Reflexion: niederländische Ärzte-Studie",
-  "worum_es_geht": "Interpretativ-phänomenologische Analyse von 15 Interviews mit niederländischen Hausärzten und Altenpflegern über ihre Reflexionserfahrungen während der Weiterbildung und deren Auswirkungen auf aktuelle Praxis.",
-  "ergebnis": "Supervised Collaborative Reflection (SCR) wird als strukturierter Ansatz internalisiert und integriert. Fünf Auswirkungsbereiche: Verinnerlichung reflektiver Praktiken, Perspektivenbewusstsein, relationale/reflektive Kommunikation, emotionale Entwicklung, Wohlbefinden. Reflektive Praxis bleibt im beruflichen Alltag verankert.",
-  "uebertragbarkeit": "Niederlande, vergleichbares Sozialversicherungssystem; Befunde zur reflexiven Professionalisierung für deutschsprachige Weiterbildungskonzepte relevant.",
-  "autoren": "van Oorschot F et al.",
-  "zeitschrift": "Perspect Med Educ",
+  "titel": "Living-Lab-Ansatz zur Optimierung digitaler Verschreibungsworkflows",
+  "worum_es_geht": "Qualitative Analyse der Co-Design-Prozesse zur Entwicklung eines digitalen Rezeptsystems durch interprofessionelle Zusammenarbeit zwischen Hausärzten, Apothekern und weiteren Akteuren an drei deutschen Standorten.",
+  "ergebnis": "Neun kulturelle Dimensionen identifiziert: Workflow-Effizienz, technische Implementierung und neue Arbeitsformen. Zentrale Befunde waren Workload-Bedenken, Interoperabilitätsprobleme, Rollen-Abstimmungen sowie erhebliche Divergenzen zwischen Ärzten und Apothekern über erforderliche Datenaustausche für Arzneimittelsicherheitsprüfungen.",
+  "uebertragbarkeit": "Deutsche Routinedaten, Living-Lab-Methodik in drei Bundesländern, Sozialversicherungssystem",
+  "autoren": "Poppe A et al.",
+  "zeitschrift": "JMIR Form Res",
   "jahr": "2026",
-  "pmid": "42965145",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42965145/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42965145"
+  "pmid": "42970788",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42970788/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42970788"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42965145"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42970788"
  }
 }
