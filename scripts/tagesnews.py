@@ -103,6 +103,9 @@ MC_GRUPPE_NAME = "Redaktion Tagesliste"
 MC_LISTE_KENNUNG = "1c8fc10ec7"
 MC_ABSENDER = "Monitor Versorgungsforschung"
 MC_ANTWORT = "redaktion@m-vf.de"
+# Kampagnenordner "Redaktion Tagesliste" (seit 03.11.2026, Wunsch von Anke Heiser).
+# Nur beim Anlegen wirksam: verschickte Kampagnen verschiebt die API nicht.
+MC_ORDNER = "bc7fd97c2d"
 
 MODELL = os.environ.get("MODEL", "claude-opus-5")
 
@@ -773,6 +776,7 @@ def mailchimp_liste(studien: list[dict], heute: str, trocken: bool) -> None:
             "subject_line": f"Neuzugänge {spanne} — {len(studien)} Studien aus {len(gruppen)} Hubs",
             "title": titel,
             "from_name": MC_ABSENDER, "reply_to": MC_ANTWORT,
+            "folder_id": MC_ORDNER,
         },
     }, "POST")
     kid = kampagne["id"]

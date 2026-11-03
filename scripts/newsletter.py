@@ -69,6 +69,10 @@ WP = "https://www.monitor-versorgungsforschung.de/wp-json/wp/v2"
 # replicate ohnehin mit; hier steht es zur Kontrolle und fuer den PUT.
 LISTE = "1c8fc10ec7"
 VORLAGE = 10000489
+# Kampagnenordner "MVF Newsletter" (seit 03.11.2026, Wunsch von Anke Heiser).
+# replicate uebernimmt den Ordner der Vorausgabe nicht verlaesslich, deshalb
+# setzt der PATCH ihn ausdruecklich. Beim Entwurf nimmt Mailchimp das an.
+ORDNER = "34e0685ee9"
 
 # Die Rubriken des Newsletters in der Reihenfolge, in der sie in der Vorlage
 # stehen. Links der Bereich der Mailchimp-Vorlage, rechts das Schlagwort der
@@ -583,7 +587,7 @@ def main() -> int:
         mc(f"/campaigns/{kennung}", method="PATCH",
            body={"settings": {"title": name, "subject_line": betreff,
                               "from_name": "Monitor Versorgungsforschung | Newsletter",
-                              "reply_to": "cms@m-vf.de"}})
+                              "reply_to": "cms@m-vf.de", "folder_id": ORDNER}})
         mc(f"/campaigns/{kennung}/content", method="PUT",
            body={"template": {"id": VORLAGE, "sections": bereiche}})
         angelegt.append((name, kennung, teil))
