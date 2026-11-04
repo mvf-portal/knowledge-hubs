@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-03",
+ "aufgenommen": "2026-11-04",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Living-Lab-Ansatz zur Optimierung digitaler Verschreibungsworkflows",
-  "worum_es_geht": "Qualitative Analyse der Co-Design-Prozesse zur Entwicklung eines digitalen Rezeptsystems durch interprofessionelle Zusammenarbeit zwischen Hausärzten, Apothekern und weiteren Akteuren an drei deutschen Standorten.",
-  "ergebnis": "Neun kulturelle Dimensionen identifiziert: Workflow-Effizienz, technische Implementierung und neue Arbeitsformen. Zentrale Befunde waren Workload-Bedenken, Interoperabilitätsprobleme, Rollen-Abstimmungen sowie erhebliche Divergenzen zwischen Ärzten und Apothekern über erforderliche Datenaustausche für Arzneimittelsicherheitsprüfungen.",
-  "uebertragbarkeit": "Deutsche Routinedaten, Living-Lab-Methodik in drei Bundesländern, Sozialversicherungssystem",
-  "autoren": "Poppe A et al.",
-  "zeitschrift": "JMIR Form Res",
+  "titel": "Sektorübergreifende psychogeriatrische Rehabilitations in deutschen Pflegeheimen",
+  "worum_es_geht": "Studienprotokoll für eine gestaffelte Cluster-randomisierte Studie zur Implementierung eines multiprofessionellen Rehabilitationsmodells in 12 deutschen Pflegeheimen mit 720 Bewohnern (≥65 Jahre).",
+  "ergebnis": "Primäre Interventionsziele: Verbesserung der Aktivitäten des täglichen Lebens, Kognition und Lebensqualität durch strukturierte Multidisziplinär-Konferenzen und psychotrope Medikamentenreduktion. Sekundär: Senkung von Hospitalisierungen, Verweildauer und Kosten.",
+  "uebertragbarkeit": "Deutsche Versorgungsdaten, gesetzlich Versicherte, Pflegeheimsektor – vollständig übertragbar",
+  "autoren": "Mierzwa N et al.",
+  "zeitschrift": "Front Health Serv",
   "jahr": "2026",
-  "pmid": "42970788",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42970788/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42970788"
+  "pmid": "42973769",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42973769/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42973769"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42970788"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42973769"
  }
 }
