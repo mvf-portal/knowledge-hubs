@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-04",
+ "aufgenommen": "2026-11-05",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Sektorübergreifende psychogeriatrische Rehabilitations in deutschen Pflegeheimen",
-  "worum_es_geht": "Studienprotokoll für eine gestaffelte Cluster-randomisierte Studie zur Implementierung eines multiprofessionellen Rehabilitationsmodells in 12 deutschen Pflegeheimen mit 720 Bewohnern (≥65 Jahre).",
-  "ergebnis": "Primäre Interventionsziele: Verbesserung der Aktivitäten des täglichen Lebens, Kognition und Lebensqualität durch strukturierte Multidisziplinär-Konferenzen und psychotrope Medikamentenreduktion. Sekundär: Senkung von Hospitalisierungen, Verweildauer und Kosten.",
-  "uebertragbarkeit": "Deutsche Versorgungsdaten, gesetzlich Versicherte, Pflegeheimsektor – vollständig übertragbar",
-  "autoren": "Mierzwa N et al.",
-  "zeitschrift": "Front Health Serv",
+  "titel": "Einsamkeit am Arbeitsplatz und Inanspruchnahme von Gesundheitsleistungen in Deutschland",
+  "worum_es_geht": "Untersuchung der Assoziation zwischen Einsamkeit am Arbeitsplatz und Inanspruchnahme von Gesundheitsleistungen in einer bevölkerungsrepräsentativen Stichprobe erwerbstätiger Personen.",
+  "ergebnis": "Arbeitsplatzeinsamkeit war mit signifikant höheren Besuchszahlen bei Hausärztinnen/Hausärzten (aIRR 1,32), Fachärztinnen/Fachärzten (aIRR 1,22) und erhöhten Krankenhauseinweisungen (aOR 1,44) assoziiert, teilweise abhängig von Häufigkeitsgrad der Einsamkeit.",
+  "uebertragbarkeit": "Deutsche Routinedaten, bevölkerungsrepräsentativ; direkt übertragbar auf Versorgungsforschung.",
+  "autoren": "Hajek A et al.",
+  "zeitschrift": "Scand J Public Health",
   "jahr": "2026",
-  "pmid": "42973769",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42973769/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42973769"
+  "pmid": "42979984",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42979984/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42979984"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42973769"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42979984"
  }
 }
