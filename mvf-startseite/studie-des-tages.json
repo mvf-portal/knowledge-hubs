@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-05",
+ "aufgenommen": "2026-11-06",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Einsamkeit am Arbeitsplatz und Inanspruchnahme von Gesundheitsleistungen in Deutschland",
-  "worum_es_geht": "Untersuchung der Assoziation zwischen Einsamkeit am Arbeitsplatz und Inanspruchnahme von Gesundheitsleistungen in einer bevölkerungsrepräsentativen Stichprobe erwerbstätiger Personen.",
-  "ergebnis": "Arbeitsplatzeinsamkeit war mit signifikant höheren Besuchszahlen bei Hausärztinnen/Hausärzten (aIRR 1,32), Fachärztinnen/Fachärzten (aIRR 1,22) und erhöhten Krankenhauseinweisungen (aOR 1,44) assoziiert, teilweise abhängig von Häufigkeitsgrad der Einsamkeit.",
-  "uebertragbarkeit": "Deutsche Routinedaten, bevölkerungsrepräsentativ; direkt übertragbar auf Versorgungsforschung.",
-  "autoren": "Hajek A et al.",
-  "zeitschrift": "Scand J Public Health",
+  "titel": "Barrieren und Facilitatoren bei konservativer Nierennbehandlung im Alter",
+  "worum_es_geht": "Qualitative Studie zu Hindernissen und Förderfaktoren bei konservativer Nierennbehandlung für ältere Patienten mit chronischem Nierenversagen in Deutschland.",
+  "ergebnis": "Barrieren identifiziert: Mangel an CKM-Fortbildung, unzureichendes Shared Decision Making, Unklarheit über Nephrologen-Rolle in Palliativmedizin, fehlende interdisziplinäre Zusammenarbeit. Facilitatoren: CKM-Trainings, adäquate Vergütung, strukturierte Shared-Decision-Making-Ansätze, Patientenhilferessourcen. Multifaktorielle Strategien erforderlich.",
+  "uebertragbarkeit": "Deutsche Studie, direkt auf deutsches System übertragbar",
+  "autoren": "Kaiser J et al.",
+  "zeitschrift": "BMC Nephrol",
   "jahr": "2026",
-  "pmid": "42979984",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42979984/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42979984"
+  "pmid": "42983624",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42983624/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42983624"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42979984"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42983624"
  }
 }
