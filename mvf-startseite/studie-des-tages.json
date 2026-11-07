@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-06",
+ "aufgenommen": "2026-11-07",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Barrieren und Facilitatoren bei konservativer Nierennbehandlung im Alter",
-  "worum_es_geht": "Qualitative Studie zu Hindernissen und Förderfaktoren bei konservativer Nierennbehandlung für ältere Patienten mit chronischem Nierenversagen in Deutschland.",
-  "ergebnis": "Barrieren identifiziert: Mangel an CKM-Fortbildung, unzureichendes Shared Decision Making, Unklarheit über Nephrologen-Rolle in Palliativmedizin, fehlende interdisziplinäre Zusammenarbeit. Facilitatoren: CKM-Trainings, adäquate Vergütung, strukturierte Shared-Decision-Making-Ansätze, Patientenhilferessourcen. Multifaktorielle Strategien erforderlich.",
-  "uebertragbarkeit": "Deutsche Studie, direkt auf deutsches System übertragbar",
-  "autoren": "Kaiser J et al.",
-  "zeitschrift": "BMC Nephrol",
+  "titel": "Alltagsbegleitung für ältere Menschen: Merkmale und Aktivitäten",
+  "worum_es_geht": "Online-Befragung und Interviews mit Alltagsbegleitern in Bayern zur Charakterisierung dieser niedrigschwelligen Unterstützungsleistung für Pflegebedürftige und ihre Angehörigen.",
+  "ergebnis": "Von 165 Befragten waren die meisten Frauen (40–65 Jahre), überwiegend ehrenamtlich tätig, etwa ein Drittel mit Gesundheits- oder Sozialerfahrung. Die Begleitungen unterstützten vor allem ältere Menschen ab 65 Jahren mit psychischen Einschränkungen durch psychosoziale und aktivierende Tätigkeiten sowie hauswirtschaftliche Hilfen.",
+  "uebertragbarkeit": "Deutsche Routinedaten, SGB-XI-finanzierte Angebote in Bayern",
+  "autoren": "Pauls M et al.",
+  "zeitschrift": "Z Gerontol Geriatr",
   "jahr": "2026",
-  "pmid": "42983624",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42983624/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42983624"
+  "pmid": "42993248",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42993248/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42993248"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42983624"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42993248"
  }
 }
