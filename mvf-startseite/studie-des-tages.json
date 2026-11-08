@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-07",
+ "aufgenommen": "2026-11-08",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Alltagsbegleitung für ältere Menschen: Merkmale und Aktivitäten",
-  "worum_es_geht": "Online-Befragung und Interviews mit Alltagsbegleitern in Bayern zur Charakterisierung dieser niedrigschwelligen Unterstützungsleistung für Pflegebedürftige und ihre Angehörigen.",
-  "ergebnis": "Von 165 Befragten waren die meisten Frauen (40–65 Jahre), überwiegend ehrenamtlich tätig, etwa ein Drittel mit Gesundheits- oder Sozialerfahrung. Die Begleitungen unterstützten vor allem ältere Menschen ab 65 Jahren mit psychischen Einschränkungen durch psychosoziale und aktivierende Tätigkeiten sowie hauswirtschaftliche Hilfen.",
-  "uebertragbarkeit": "Deutsche Routinedaten, SGB-XI-finanzierte Angebote in Bayern",
-  "autoren": "Pauls M et al.",
-  "zeitschrift": "Z Gerontol Geriatr",
+  "titel": "Dupilumab-Non-Responder bei atopischer Dermatitis",
+  "worum_es_geht": "Registerstudie (TREATgermany) zur Identifikation und Charakterisierung von Dupilumab-Non-Respondern bei atopischer Dermatitis; 476 Patienten zwischen Juni 2016 und Dezember 2024.",
+  "ergebnis": "4% (n=19) wurden als Dupilumab-Non-Responder klassifiziert (EASI-Reduktion ≤40% bei 1. Kontrolle, 8–20 Wochen, plus 2. Kontrolle bis Woche 52). 44% (n=209) als stabile Responder (EASI≥75% bei beiden Kontrollen). Non-Responder häufiger männlich, mehr Raucher, höhere arterielle Hypertonie und erhöhter BMI (p<0,05).",
+  "uebertragbarkeit": "Deutsche Routinedaten, TREATgermany-Register; direkt auf deutsches System übertragbar",
+  "autoren": "Heratizadeh A et al.",
+  "zeitschrift": "Acta Derm Venereol",
   "jahr": "2026",
-  "pmid": "42993248",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42993248/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42993248"
+  "pmid": "42986187",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42986187/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42986187"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42993248"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42986187"
  }
 }
