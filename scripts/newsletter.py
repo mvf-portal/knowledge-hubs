@@ -74,6 +74,62 @@ VORLAGE = 10000489
 # setzt der PATCH ihn ausdruecklich. Beim Entwurf nimmt Mailchimp das an.
 ORDNER = "34e0685ee9"
 
+# ---------------------------------------------------------------- Titelkopf --
+# Der Name des Vorlagenbereichs, in dem der Titelkopf der Druckausgabe steht.
+#
+# **Diesen Bereich gibt es in der Vorlage noch nicht.** Am 10.11.2026 nachgesehen:
+# Die Vorlage 10000489 fuehrt 27 Bereiche, keiner davon enthaelt den Kopf. Er
+# steckt fest im Markup der Vorlage, und dorthin kommt die API nicht - weder
+# ueber die Bereiche noch ueber einen PUT auf das HTML, denn eine
+# Template-Kampagne rendert beim Lesen neu und verwirft, was man ihr schickt.
+#
+# Die Folge: Die Vorschlags-Entwuerfe tragen den Kopf, den die Vorlage traegt -
+# seit 2022 denselben (NL_Header_06-2022_1_620px.jpg), waehrend der Haupt-
+# newsletter laengst bei 05/2026 steht.
+#
+# **Der eine Handgriff, der das loest** - einmal, nicht je Ausgabe:
+#   In Mailchimp die Vorlage "MVF Newsletter Manuell 2023-3" im Code-Editor
+#   oeffnen, beim <img> des Titelkopfs den umgebenden Block mit
+#       mc:edit="titelkopf"
+#   versehen und speichern. Von da an setzt dieses Skript den Kopf bei jedem
+#   Lauf selbst, und der Vorschlag traegt immer die aktuelle Ausgabe.
+# Bis dahin laeuft alles weiter wie bisher: Ein Bereich, den die Vorlage nicht
+# kennt, wird von Mailchimp stillschweigend verworfen.
+TITELKOPF_BEREICH = "titelkopf"
+TITELKOPF_LINK = "https://www.monitor-versorgungsforschung.de/internals/abonnement/"
+TITELKOPF_MUSTER = re.compile(r"^NL_Header_(\d{2})-(\d{4})-620px\.jpg$", re.I)
+
+
+def titelkopf_block() -> str:
+    """Das <img> des juengsten Titelkopfs, fertig fuer den Vorlagenbereich.
+
+    Welcher der juengste ist, entscheidet der Name, nicht das Hochladedatum:
+    NL_Header_NN-JJJJ ordnet sich von selbst. Ein Kopf, der nachtraeglich noch
+    einmal hochgeladen wird, soll die Reihenfolge nicht durcheinanderbringen.
+    """
+    try:
+        antwort = mc("/file-manager/files",
+                     {"count": 1000, "type": "image",
+                      "fields": "files.name,files.full_size_url"})
+    except Exception as fehler:
+        print(f"  Titelkopf nicht ermittelbar ({fehler}) - der Kopf der "
+              f"Vorausgabe bleibt stehen.")
+        return ""
+    kandidaten = []
+    for datei in antwort.get("files", []):
+        passt = TITELKOPF_MUSTER.match(datei.get("name") or "")
+        if passt:
+            kandidaten.append(((int(passt.group(2)), int(passt.group(1))),
+                               datei["full_size_url"], datei["name"]))
+    if not kandidaten:
+        return ""
+    _, adresse, name = max(kandidaten)
+    print(f"  Titelkopf: {name}")
+    return (f'<a href="{TITELKOPF_LINK}" target="_blank">'
+            f'<img src="{adresse}" width="620" border="0" alt="" '
+            f'style="border:none;height:auto;line-height:100%;outline:none;'
+            f'text-decoration:none;display:block;"></a>')
+
 # Die Rubriken des Newsletters in der Reihenfolge, in der sie in der Vorlage
 # stehen. Links der Bereich der Mailchimp-Vorlage, rechts das Schlagwort der
 # Newsseite. Ermittelt am 13.09.2026 mit einer Sonde: ein Entwurf, in dem jeder
@@ -398,6 +454,12 @@ def bereiche_bauen(topthema: dict, top_vorspann: str,
         "topthema_content": html.escape(top_vorspann),
         "topthema_url": WEITER_TOP.format(url=topthema["link"]),
     }
+    # Der Titelkopf der aktuellen Druckausgabe. Siehe TITELKOPF_BEREICH:
+    # Solange die Vorlage den Bereich nicht fuehrt, verfaellt dieser Eintrag
+    # folgenlos - der Kopf bleibt dann der, den replicate mitbringt.
+    kopf = titelkopf_block()
+    if kopf:
+        bereiche[TITELKOPF_BEREICH] = kopf
     for bereich, _name, tag in RUBRIKEN:
         eintraege = []
         for beitrag in faecher[tag]:
