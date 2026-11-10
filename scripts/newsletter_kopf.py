@@ -7,19 +7,28 @@ sechsmal im Jahr ein neues, 01 bis 06. Gebaut wird es bisher von Hand: die
 InDesign-Datei der Vorausgabe kopieren, das Titelbild neu verknuepfen,
 zweimal als JPG ausgeben, in Mailchimp hochladen, im Entwurf austauschen.
 
-Dieses Skript nimmt die ersten vier Schritte ab:
+Dieses Skript nimmt alle fuenf Schritte ab:
 
     python scripts/newsletter_kopf.py 05-2026
     python scripts/newsletter_kopf.py 05-2026 --trocken
+    python scripts/newsletter_kopf.py 05-2026 --ohne-einsetzen
     python scripts/newsletter_kopf.py 05-2026 --ziel D:\\Probe
 
-**Den fuenften Schritt nimmt es nicht ab, und das ist keine Nachlaessigkeit.**
-Der Titelkopf steckt nicht in einem Bereich, den die Mailchimp-API setzen
-koennte - er ist Teil des Kampagnen-HTML. Wer ihn ueber die API austauschen
-wollte, muesste die ganze Kampagne als rohes HTML ersetzen und verloere damit
-den Baukasten, in dem die Redaktion arbeitet. Am 13.09.2026 geprueft. Der
-Austausch bleibt deshalb ein Klick in Mailchimp - sechsmal im Jahr, und nur
-in der ersten Ausgabe je Druckausgabe. Danach erbt ihn jede Kopie von selbst.
+**Der fuenfte Schritt war bis zum 10.11.2026 Handarbeit, zu Unrecht.**
+Hier stand, der Titelkopf lasse sich ueber die API nicht austauschen: Er sei
+Teil des Kampagnen-HTML, und wer ihn setze, ersetze die ganze Kampagne als
+rohes HTML und verliere den Baukasten, in dem die Redaktion arbeitet. So am
+13.09.2026 vermerkt.
+
+Nachgemessen am 10.11.2026 mit zwei Wegwerfkopien derselben Kampagne, einer
+mit API-Austausch und einer unberuehrten: Beide oeffnen in Mailchimp denselben
+Editor unter derselben Adresse. Der MVF-Newsletter ist keine Baukasten-,
+sondern eine HTML-Kampagne, es war also nichts zu verlieren. Der Preis der
+falschen Annahme: Der Kopf fuer 05/2026 lag ab dem 13.09.2026 ungenutzt in
+Mailchimp, und bis zum 10.11.2026 trug jede Ausgabe den Titel von 04/2026 -
+knapp zwei Monate lang, ueber zehn Aussendungen.
+
+Angefasst werden nur Entwuerfe. Was verschickt ist, bleibt, wie es war.
 
 Gebraucht werden: InDesign CS6 auf diesem Rechner (das Skript startet es, wenn
 es nicht laeuft), `pip install pywin32`, und das Titelbild der neuen Ausgabe im
@@ -131,6 +140,113 @@ def hochladen(bild: pathlib.Path) -> str:
         return ""
 
 
+def titelkoepfe() -> dict[str, str]:
+    """Alle Titelkopf-Dateien aus Mailchimp: Dateiname -> Adresse.
+
+    Erkannt am Namen, nicht an einer Liste: Jede Datei, die NL_Header heisst,
+    ist ein Titelkopf. Eine Handliste wuerde die naechste Ausgabe nicht kennen.
+    """
+    raus, versatz = {}, 0
+    while True:
+        d = mc(f"/file-manager/files?count=1000&offset={versatz}"
+               f"&fields=files.name,files.full_size_url,total_items")
+        teil = d.get("files", [])
+        for f in teil:
+            if "nl_header" in (f.get("name") or "").lower():
+                raus[f["name"]] = f["full_size_url"]
+        versatz += len(teil)
+        if not teil or versatz >= d.get("total_items", 0):
+            break
+    return raus
+
+
+def in_entwuerfe_setzen(neue_adresse: str, seit: str = "", machen: bool = False) -> int:
+    """Setzt den neuen Titelkopf in jeden offenen MVF-Newsletter-Entwurf.
+
+    DAS GING FRUEHER NICHT - UND DOCH GEHT ES.
+      Bis zum 10.11.2026 stand hier, der Austausch sei ein Klick in Mailchimp:
+      Der Titelkopf stecke im Kampagnen-HTML, und wer ihn ueber die API
+      austausche, ersetze die ganze Kampagne als rohes HTML und verliere den
+      Baukasten, in dem die Redaktion arbeitet. So am 13.09.2026 vermerkt.
+
+      Nachgemessen am 10.11.2026, mit zwei Wegwerfkopien derselben Kampagne:
+      eine mit API-Austausch, eine unberuehrt. Beide zeigen in Mailchimp
+      denselben Editor unter derselben Adresse (campaigns/wizard/html-paste),
+      beide dasselbe Bild bis auf den getauschten Kopf. Der MVF-Newsletter ist
+      gar keine Baukasten-Kampagne, sondern seit jeher eine HTML-Kampagne. Es
+      war also nichts zu verlieren. Die Folge der falschen Annahme: Der Kopf
+      fuer 05/2026 lag seit dem 13.09.2026 ungenutzt in Mailchimp, und bis zum
+      10.11.2026 trug jede Ausgabe den Titel von 04/2026.
+
+    ZWEI RIEGEL, BEIDE AM 10.11.2026 TEUER BEZAHLT.
+
+    `seit` grenzt auf die Entwuerfe DIESER Ausgabe ein. Ohne die Grenze ging
+    ein Aufruf ueber alle sechzehn offenen Entwuerfe, bis zurueck zu einem vom
+    03.02.2026, und setzte ueberall den neuesten Kopf - auch dort, wo ein
+    aelterer richtig war.
+
+    `machen` ist standardmaessig FALSCH. Die Funktion zeigt erst, was sie
+    taete. Ein Aufruf "zur Probe" hat sonst geschrieben.
+
+    **Und die Rueckleseprobe traegt nicht.** Nach dem PUT meldete Mailchimp
+    beim sofortigen Lesen den neuen Kopf, Minuten spaeter stand wieder der
+    alte da - bei allen "Vorschlag"-Entwuerfen, die aus einer Vorlage stammen
+    und beim Lesen neu gerendert werden. Deshalb wird hier nicht mehr
+    behauptet, etwas sei gesetzt: Gemeldet wird, was der PUT geantwortet hat,
+    und dass der Stand spaeter nachzusehen ist. Wer es sicher wissen will,
+    ruft die Funktion ein zweites Mal auf - dann zeigt sie den wahren Stand.
+
+    Angefasst werden nur Entwuerfe (Status save). Verschicktes bleibt, wie es
+    war, und eine Kampagne mit mehreren oder keinem erkennbaren Titelkopf wird
+    gemeldet statt geraten.
+    """
+    if not neue_adresse:
+        print("  Keine Adresse - nichts einzusetzen.")
+        return 0
+    koepfe = {name: adr for name, adr in titelkoepfe().items()
+              if adr != neue_adresse}
+    d = mc("/campaigns?count=100&status=save&sort_field=create_time"
+           "&sort_dir=DESC&fields=campaigns.id,campaigns.settings.title,"
+           "campaigns.create_time")
+    entwuerfe = [c for c in d.get("campaigns", [])
+                 if (c["settings"].get("title") or "").startswith("MVF Newsletter")]
+    aelter = [c for c in entwuerfe if seit and c["create_time"][:10] < seit]
+    entwuerfe = [c for c in entwuerfe if not (seit and c["create_time"][:10] < seit)]
+    if aelter:
+        print(f"  {len(aelter)} aeltere Entwuerfe (vor {seit}) bleiben unberuehrt: "
+              + ", ".join(c["settings"]["title"][:28] for c in aelter[:4])
+              + (" ..." if len(aelter) > 4 else ""))
+    if not entwuerfe:
+        print("  Kein Entwurf dieser Ausgabe - nichts einzusetzen.")
+        return 0
+
+    gesetzt = 0
+    for c in entwuerfe:
+        titel = c["settings"].get("title")
+        html_text = mc(f"/campaigns/{c['id']}/content").get("html", "")
+        if neue_adresse in html_text:
+            print(f"  {titel}: hat den neuen Kopf schon.")
+            continue
+        treffer = [adr for adr in koepfe.values() if adr in html_text]
+        if len(treffer) != 1:
+            print(f"  {titel}: {len(treffer)} Titelkoepfe gefunden, erwartet 1 "
+                  f"- nicht angefasst.")
+            continue
+        alt_name = next((n for n, a in koepfe.items() if a == treffer[0]), "?")
+        if not machen:
+            print(f"  {titel}: wuerde {alt_name} ersetzen.")
+            gesetzt += 1
+            continue
+        mc(f"/campaigns/{c['id']}/content", method="PUT",
+           body={"html": html_text.replace(treffer[0], neue_adresse)})
+        print(f"  {titel}: {alt_name} ersetzt (PUT angenommen).")
+        gesetzt += 1
+    if machen and gesetzt:
+        print(f"  Stand bitte nachsehen - ein zweiter Aufruf ohne --einsetzen "
+              f"zeigt, was wirklich drinsteht.")
+    return gesetzt
+
+
 def vorausgabe(nummer: int, jahr: int) -> tuple[int, int]:
     """Die Ausgabe davor - sechs im Jahr, danach faengt das Jahr von vorn an."""
     return (nummer - 1, jahr) if nummer > 1 else (6, jahr - 1)
@@ -196,6 +312,8 @@ def main() -> int:
                           help="nur pruefen, nichts bauen und nichts hochladen")
     zerleger.add_argument("--ohne-upload", action="store_true",
                           help="JPGs bauen, aber nicht zu Mailchimp legen")
+    zerleger.add_argument("--ohne-einsetzen", action="store_true",
+                          help="hochladen, aber den Entwurf nicht anfassen")
     argumente = zerleger.parse_args()
 
     passt = AUSGABE_MUSTER.match(argumente.ausgabe.strip())
@@ -335,10 +453,15 @@ def main() -> int:
     else:
         print("  Nicht hochgeladen - Datei liegt aber im Ordner.")
 
-    print("\nWas jetzt noch von Hand geschieht - einmal je Druckausgabe:")
-    print("  Im Mailchimp-Entwurf oben auf den Titelkopf klicken, das neue Bild")
-    print("  waehlen, den Link auf /internals/abonnement/ stehen lassen.")
-    print("  Jede weitere Ausgabe erbt den Kopf dann von der Kopie.")
+    if argumente.ohne_einsetzen:
+        print("\n--ohne-einsetzen: Der Entwurf behaelt seinen alten Titelkopf.")
+        print("  Von Hand: im Entwurf oben auf den Titelkopf klicken, das neue")
+        print("  Bild waehlen, den Link auf /internals/abonnement/ stehen lassen.")
+        return 0
+
+    print("\nSetze den Kopf in die Entwuerfe dieser Ausgabe ...")
+    in_entwuerfe_setzen(adresse, seit=erscheint.isoformat(), machen=True)
+    print("  Jede weitere Ausgabe erbt ihn von der Kopie.")
     return 0
 
 
