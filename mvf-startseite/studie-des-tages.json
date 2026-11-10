@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-09",
+ "aufgenommen": "2026-11-10",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Gesundheitskompetenz albanischer Migranten in Deutschland",
-  "worum_es_geht": "Qualitative Studie zu Hürden bei der Inanspruchnahme von Gesundheitsleistungen durch albanische Zuwanderer anhand von 15 Interviews.",
-  "ergebnis": "Sprachbarrieren, Bürokratieaufwand und lange Wartezeiten erschwerten Zugang zu Versorgung; trotz hoher Schulbildung und Versicherungschutz persistierten Systembarrieren unabhängig von Sozioökonomie.",
-  "uebertragbarkeit": "Deutsche Routinedaten, Versorgungssystem sehr ähnlich strukturiert",
-  "autoren": "Pistulli F et al.",
-  "zeitschrift": "BMC Health Serv Res",
+  "titel": "Partizipative Forschung in Onkologie und Palliativmedizin: was ermöglicht Sinnhaftigkeit",
+  "worum_es_geht": "Eine retrospektive qualitative Evaluierung von zwei participatory research Projekten in Onkologie und Palliativmedizin identifizierte Faktoren für sinnvolle Partizipation von Patienten, Angehörigen und Fachkräften.",
+  "ergebnis": "Drei übergeordnete Themen: (1) Frühe Beteiligung, transparente Kommunikation, sichtbare Nutzung von Beiträgen; (2) Herausforderungen – wechselnde Kapazitäten, wissenschaftliche Komplexität, Barriereabstruktion; (3) Wahrgenommene Impacts – stärkeres Vertrauen, bessere Relevanz und Nutzbarkeit. Flexible Strukturen ermöglichten sustain Partizipation.",
+  "uebertragbarkeit": "Deutschland, qualitative Faktoren für Patient Involvement in Forschung",
+  "autoren": "Neugebauer T et al.",
+  "zeitschrift": "BMC Palliat Care",
   "jahr": "2026",
-  "pmid": "42995573",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42995573/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42995573"
+  "pmid": "42983444",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42983444/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42983444"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42995573"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42983444"
  }
 }
