@@ -1,0 +1,9 @@
+# knowledge-hubs.m-vf.de - Fassung 2026-11-11
+# Alles frei: Suchmaschinen und KI-Dienste sollen die Hubs finden.
+# Gesperrt ist nur Quelltext, der hier mitliegt, aber kein Inhalt ist.
+User-agent: *
+Allow: /
+Disallow: /scripts/
+Disallow: /mvf-server/
+
+Sitemap: https://knowledge-hubs.m-vf.de/sitemap.xml

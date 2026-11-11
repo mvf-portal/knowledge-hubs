@@ -1,0 +1,52 @@
+# MVF-Knowledge-Hubs
+
+> Die Knowledge-Hubs sind ein Angebot von Monitor Versorgungsforschung (MVF). Jeder Hub bündelt für ein Thema der Gesundheitsversorgung Live-Suchen über die wichtigen Fachdatenbanken und zeigt jeden Werktag neue Studien aus PubMed mit deutscher Zusammenfassung. Die Studien werden danach ausgewählt, ob sich ihre Ergebnisse auf das deutsche Gesundheits- und Versorgungssystem übertragen lassen.
+
+Hinweise zur Nutzung:
+- Jede Studie in den Datendateien hat eine PubMed-ID (pmid). Bitte bei Zitaten die Originalstudie über https://pubmed.ncbi.nlm.nih.gov/<pmid>/ angeben und die deutsche Zusammenfassung als Quelle „MVF-Knowledge-Hub“ nennen.
+- Felder je Studie: title (deutscher Titel), sum (Zusammenfassung), result (Ergebnis), transfer (Übertragbarkeit auf Deutschland), journal, author, year, pubdate, added.
+- Auswahl und deutsche Zusammenfassung stammen von einer KI, ohne redaktionelle Prüfung (Kennzeichnung „Von KI ausgewählt und zusammengefasst“). Maßgeblich ist immer die Originalpublikation.
+- Jede Studie hat eine eigene Seite unter https://<hub>.m-vf.de/studie/<pmid>/; die Übersicht steht unter https://<hub>.m-vf.de/studie/ und in der sitemap.xml jedes Hubs.
+- Englische Fassung der Übersicht: https://knowledge-hubs.m-vf.de/en/
+
+## Daten
+
+- [Alle Studien Versorgungsforschung](https://wissen.m-vf.de/studie/): Übersicht mit einer eigenen HTML-Seite je Studie; dasselbe gibt es in jedem Hub unter /studie/
+- [Neue Studien aller Hubs (JSON)](https://knowledge-hubs.m-vf.de/studien.json): Studien der letzten 14 Tage, nach Hub gegliedert, täglich aktualisiert
+- [Studienarchiv Versorgungsforschung (JSON)](https://wissen.m-vf.de/studien-archiv.json): Alle bisher aufgenommenen Studien des Hubs Versorgungsforschung
+- Jeder Themen-Hub hat sein eigenes Archiv unter https://<hub>.m-vf.de/studien-archiv.json, z. B. [KI & Gesundheit](https://ki.m-vf.de/studien-archiv.json)
+
+## Versorgungsthemen
+
+- [Versorgungsforschung](https://wissen.m-vf.de/): Das ganze Fach, Klammer um die anderen Hubs
+- [Digitalisierung, KI & Gesundheit](https://ki.m-vf.de/): Digitale Anwendungen und KI in der Versorgung (106 Datenbanken)
+- [Geschlechtersensible Medizin](https://gender.m-vf.de/): Geschlecht in Diagnostik, Dosierung, Zugang (93 Datenbanken)
+- [Gesundes Altern & Longevity](https://longevity.m-vf.de/): Prävention, Geriatrie, Biologie des Alterns (100 Datenbanken)
+- [Gesundheitskompetenz](https://healthliteracy.m-vf.de/): Verständliche Information, Entscheidungshilfen (76 Datenbanken)
+- [Hitze, Klima & Gesundheit](https://klima.m-vf.de/): Klimawandel und Versorgung, mit Messdaten (90 Datenbanken)
+- [Impfen & Prävention](https://impfen.m-vf.de/): Impfquoten, Impfbereitschaft, Sicherheitsregister (97 Datenbanken)
+- [NCD/Chronische Krankheiten](https://ncd.m-vf.de/): Programme und Leitlinien für chronisch Kranke (102 Datenbanken)
+- [Patientensicherheit](https://safety.m-vf.de/): Behandlungsfehler, Infektionen, Sepsis (75 Datenbanken)
+- [Pflege & Langzeitversorgung](https://pflege.m-vf.de/): Personal, Qualität, Angehörige (88 Datenbanken)
+- [Psychische Gesundheit](https://mental.m-vf.de/): Zugang, Wartezeiten, Krisenversorgung (72 Datenbanken)
+
+## Krankheitsgebiete
+
+- [Adipositas](https://adipositas.m-vf.de/): Gewichtsmanagement, Therapie, Chirurgie (65 Datenbanken)
+- [Diabetes](https://diabetes.m-vf.de/): Typ 1 und 2, Folgeerkrankungen, Technik (61 Datenbanken)
+- [Kardiologie](https://kardio.m-vf.de/): Herz und Kreislauf, starker Europabezug (53 Datenbanken)
+- [Onkologie](https://onkologie.m-vf.de/): Krebsforschung und Krebsversorgung (54 Datenbanken)
+
+## Weitere Angebote
+
+- [Innovationsfonds-Radar](https://innofonds.m-vf.de/): Projekte und Beschlüsse des Innovationsfonds beim G-BA
+- [Ausschreibungsradar](https://wissen.m-vf.de/ausschreibungen.html): Offene Förderausschreibungen, zweimal pro Woche aktualisiert
+- [Zulassungs-/DiGA-Radar](https://wissen.m-vf.de/zulassungen.html): Zulassungen und Empfehlungen von EMA und FDA sowie DiGA des BfArM
+- [CuratioHub](https://knowledge-hubs.m-vf.de/curatiohub.html): Jobs in Versorgungsforschung, Public Health und Medizin
+- [Manuskript einreichen](https://einreichung.m-vf.de/): Für Monitor Versorgungsforschung, mit doppelt verdecktem Peer Review
+
+## Optional
+
+- [Über die Hubs](https://knowledge-hubs.m-vf.de/ueber-die-hubs.html): Arbeitsweise, Auswahl der Studien, Datenbanken
+- [Monitor Versorgungsforschung](https://www.monitor-versorgungsforschung.de/llms.txt): Die Fachzeitschrift hinter den Hubs
+- [Impressum](https://knowledge-hubs.m-vf.de/impressum.html)
