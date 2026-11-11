@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-10",
+ "aufgenommen": "2026-11-11",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Partizipative Forschung in Onkologie und Palliativmedizin: was ermöglicht Sinnhaftigkeit",
-  "worum_es_geht": "Eine retrospektive qualitative Evaluierung von zwei participatory research Projekten in Onkologie und Palliativmedizin identifizierte Faktoren für sinnvolle Partizipation von Patienten, Angehörigen und Fachkräften.",
-  "ergebnis": "Drei übergeordnete Themen: (1) Frühe Beteiligung, transparente Kommunikation, sichtbare Nutzung von Beiträgen; (2) Herausforderungen – wechselnde Kapazitäten, wissenschaftliche Komplexität, Barriereabstruktion; (3) Wahrgenommene Impacts – stärkeres Vertrauen, bessere Relevanz und Nutzbarkeit. Flexible Strukturen ermöglichten sustain Partizipation.",
-  "uebertragbarkeit": "Deutschland, qualitative Faktoren für Patient Involvement in Forschung",
-  "autoren": "Neugebauer T et al.",
-  "zeitschrift": "BMC Palliat Care",
+  "titel": "Strukturfaktoren und Zugangssteuerung in der Akutversorgung älterer Patienten",
+  "worum_es_geht": "Analyse der Variation bei Aufnahmen von Patienten ab 80 Jahren in norwegischen kommunalen Akutkrankenhäusern (MIPAC) anhand von Register- und Befragungsdaten.",
+  "ergebnis": "Das Regressionsmodell erklärte 38% der Varianz. Standort, Pflegefachkräfteausstattung und Fahrtdistanz zur nächsten Notaufnahme waren assoziiert mit dem Anteil der über 80-Jährigen: GP-Bereitschaftspraxen hatten 17,12 Punkte weniger (95%-KI -23,51 bis -10,73, p<0,001) als stationsäquivalente Einrichtungen; höhere Pflegefachkräfteausstattung war mit niedrigeren Anteilen verbunden (B=-0,12, 95%-KI -0,22 bis -0,02, p=0,021).",
+  "uebertragbarkeit": "Skandinavien (steuerfinanziert); Ergebnisse zu Prozessen und Strukturqualität teilweise übertragbar",
+  "autoren": "Rostad HM et al.",
+  "zeitschrift": "Health Serv Insights",
   "jahr": "2026",
-  "pmid": "42983444",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42983444/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42983444"
+  "pmid": "43005325",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43005325/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43005325"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42983444"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43005325"
  }
 }
