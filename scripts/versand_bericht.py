@@ -50,6 +50,8 @@ PORTALE = [
     ("Onkologie", "mvf-portal/onkologie-portal"),
     ("Kardiologie", "mvf-portal/kardio-portal"),
     ("Diabetes", "mvf-portal/diabetes-portal"),
+    ("Augenheilkunde", "mvf-portal/auge-portal"),
+    ("Muskuloskelettale Erkrankungen", "mvf-portal/muskel-portal"),
 ]
 # Portale, die in portale.json auf `bereit: false` stehen: gebaut und im Netz,
 # aber noch nicht scharfgeschaltet - sie fehlen bewusst in der Liste des
@@ -70,6 +72,8 @@ PORTALE = [
 # Zeile daneben auch nicht mehr auf.
 WARTEND = [
     # erzeugt aus portale.json von portale_pflegen.py - nicht von Hand aendern
+    "mvf-portal/auge-portal",
+    "mvf-portal/muskel-portal",
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 ROH_ARCHIV = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"

@@ -64,6 +64,8 @@ PORTALE = [
     ("Onkologie", "mvf-portal/onkologie-portal"),
     ("Kardiologie", "mvf-portal/kardio-portal"),
     ("Diabetes", "mvf-portal/diabetes-portal"),
+    ("Augenheilkunde", "mvf-portal/auge-portal"),
+    ("Muskuloskelettale Erkrankungen", "mvf-portal/muskel-portal"),
 ]
 
 
