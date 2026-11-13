@@ -66,6 +66,8 @@ PORTALE = [
     ("Diabetes", "mvf-portal/diabetes-portal"),
     ("Augenheilkunde", "mvf-portal/auge-portal"),
     ("Muskuloskelettale Erkrankungen", "mvf-portal/muskel-portal"),
+    ("Kinder- und Jugendmedizin", "mvf-portal/kinder-portal"),
+    ("Neurologie", "mvf-portal/neuro-portal"),
 ]
 
 

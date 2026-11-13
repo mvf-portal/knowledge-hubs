@@ -329,17 +329,29 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
   .netz .wrap, .ortsleiste .wrap{ max-width:1180px; margin-left:auto; margin-right:auto;
          padding-left:22px; padding-right:22px; box-sizing:border-box; }
   @media (max-width:560px){ .netz .wrap, .ortsleiste .wrap{ padding-left:16px; padding-right:16px; } }
+  /* Unter 400 px zaehlt jeder Pixel - das sind die schmalsten Telefone, die
+     noch im Umlauf sind (iPhone SE der ersten Reihe: 320 px). */
+  @media (max-width:400px){ .netz .wrap, .ortsleiste .wrap{ padding-left:10px; padding-right:10px; } }
   :root[data-theme="dark"] .netz{ --nz-petrol:#4FC2C4; }
   @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .netz{ --nz-petrol:#4FC2C4; } }
   .netz *{ box-sizing:border-box; }
   /* Breite und Seitenrand kommen von .wrap der jeweiligen Seite - Hubs und
      Uebersicht setzen den Rand verschieden, die Leiste soll buendig mit dem
      Inhalt darunter stehen. */
-  .netz-innen{ display:flex; align-items:center; gap:4px; min-height:44px; }
+  /* flex-wrap ist die Notbremse gegen seitliches Verschieben der ganzen Seite.
+     Gemessen am 12.11.2026 auf diabetes.m-vf.de bei 323 px Fensterbreite: Die
+     Leiste war 357 px breit (Wortmarke 167 + Knopf 116 + Darstellungsschalter
+     34 + Rand 32 + Abstaende 8), die Seite liess sich um 24 px zur Seite
+     schieben. Solange alles nebeneinander passt, aendert wrap nichts; passt es
+     nicht, rutscht der Darstellungsschalter in eine zweite Zeile, statt dass
+     die ganze Seite wandert. Bewusst kein display:none unter 400 px: Der
+     Schalter ist der einzige Weg zu Hell und Dunkel, im Handy-Menue steht er
+     nicht. */
+  .netz-innen{ display:flex; flex-wrap:wrap; align-items:center; gap:4px; min-height:44px; }
   .netz a, .netz button{ font:inherit; color:inherit; }
   .netz a:focus-visible, .netz button:focus-visible{ outline:2px solid var(--nz-gold); outline-offset:2px; border-radius:4px; }
   .netz-marke{ display:flex; align-items:center; gap:9px; text-decoration:none; padding:8px 14px 8px 0;
-               margin-right:6px; border-right:1px solid #2E3D52; font-weight:700; letter-spacing:.09em; font-size:12.5px; color:#FFF; white-space:nowrap; }
+               margin-right:6px; border-right:1px solid #2E3D52; font-weight:700; letter-spacing:.02em; font-size:12.5px; color:#FFF; white-space:nowrap; }
   .netz-marke img{ width:20px; height:20px; display:block; }
   .netz-marke b{ color:var(--nz-gold); font-weight:700; }
   .netz-knopf, .netz-link{ background:none; border:0; cursor:pointer; padding:13px 11px; text-decoration:none;
@@ -397,7 +409,10 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
   .ortsleiste-innen{ display:flex; align-items:center; gap:6px; min-height:58px; }
   .ort-name{ display:flex; align-items:center; gap:11px; text-decoration:none; color:var(--ink,#111); margin-right:18px; min-width:0; }
   .ort-name img{ width:34px; height:34px; flex:0 0 34px; display:block; }
-  .ort-name small{ display:block; font-size:10.5px; letter-spacing:.12em; font-weight:700; color:var(--ink-soft,#444A50); }
+  /* Sperrung von .12em auf .03em, weil „Knowledge-Hub" seit dem 12.11.2026
+     gemischt gesetzt ist - eine fuer Versalien gemachte Sperrung zerreisst
+     gemischten Satz. */
+  .ort-name small{ display:block; font-size:10.5px; letter-spacing:.03em; font-weight:700; color:var(--ink-soft,#444A50); }
   .ort-name b{ display:block; font-size:14.5px; color:var(--brand,#0051A1); line-height:1.2; }
   .ort-links{ display:flex; gap:2px; }
   .ort-links a{ padding:18px 11px 17px; font-size:13.5px; font-weight:700; color:var(--ink-soft,#444A50);
@@ -449,6 +464,14 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
      fuer schmale Bildschirme (startseite_neu.sprungleiste, links=False). */
   .ortsleiste.nur-handy{ display:none; }
   @media (max-width:980px){ .netz-mvf .lang{ display:none; } }
+  /* Seit dem 12.11.2026 traegt die Leiste zwei Eintraege mehr („Ueber uns",
+     „Kontakt") und den Radar. Gemessen auf einem 1024er Bildschirm: Die Teile
+     ergaben zusammen 1.032 px bei 1.009 px Platz, die Leiste wurde zweizeilig.
+     Als Erstes weicht deshalb der Absender rechts - er steht auf jeder Seite
+     noch einmal im Fuss, geht also nirgends verloren. DE/EN bleibt stehen:
+     Zwischen 860 und 1.120 px gaebe es sonst gar keinen Sprachwechsel, denn
+     im Handy-Menue erscheint er erst unter 860. */
+  @media (max-width:1120px){ .netz-mvf{ display:none; } }
   @media (max-width:860px){
     .netz-rechts, .netz-link{ display:none; }
     .netz-spalten{ grid-template-columns:1fr 1fr; }
@@ -483,10 +506,39 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
   <div class="netz-innen wrap">
     <a class="netz-marke" href="https://knowledge-hubs.m-vf.de/" title="Overview of all Knowledge Hubs">
       <img src="../logo/hub-icon.svg" alt="" width="20" height="20">
-      <span>KNOWLEDGE<b>-HUBS</b></span>
+      <!-- Gemischte Schreibweise seit 12.11.2026 auf Anweisung des
+           Herausgebers: Beim Innovationsfonds-Radar sind alle Versalien
+           abgeschafft worden, die Leiste zieht mit. Die Sperrung faellt dabei
+           von .09em auf .02em - sie war fuer Grossbuchstaben gesetzt und
+           zerreisst gemischten Satz. Nebenwirkung, gemessen: Die Wortmarke
+           wird auf dem Telefon von 167 auf 139 Pixel schmaler. -->
+      <span>Knowledge<b>-Hubs</b></span>
     </a>
     <button class="netz-knopf" type="button" id="netzKnopf" aria-expanded="false" aria-controls="netzMega">All services<span class="pfeil" aria-hidden="true">▼</span></button>
-    <a class="netz-link" href="about-the-hubs.html">About the hubs</a>
+    <!-- „Ueber die Hubs" stand bis zum 12.11.2026 hier und ist in das Menue
+         „Alle Angebote" gewandert, Gruppe „Weitere Angebote" - Platz fuer
+         „Ueber uns" und „Kontakt", die laut Marianns Liste „Was noch fehlt"
+         (Teil 2, Punkt 9) in die Leiste jedes Angebots gehoeren.
+         ⚠ Der Bau des Innovationsfonds-Radars suchte seine Einfuegestelle
+         mit einem assert auf „Ueber die Hubs". Die Innofonds-Sitzung ist am
+         12.11.2026 vorgewarnt worden, bevor dieser Eintrag ging. Wer hier
+         wieder etwas herausnimmt, sagt dort vorher Bescheid. -->
+    <!-- Eigener Eintrag fuer das Innovationsfonds-Radar, auf Anweisung des
+         Herausgebers vom 12.11.2026. Es steht zwar schon unter „Alle
+         Angebote" an erster Stelle der Gruppe „Weitere Angebote" - sichtbar
+         genug war es dort nicht. Auf innofonds.m-vf.de entsteht die Leiste
+         aus einer eigenen Quelle (innovationsfonds/), die an dieser Stelle
+         die Navigation jener Seite traegt; dort ist also nichts abzufangen,
+         diese Datei erreicht sie gar nicht.
+         Unter 860 px verschwindet er mit .netz-link in das Handy-Menue, wo er
+         unter „Weitere Angebote" ohnehin steht - deshalb kostet er auf dem
+         Telefon keine Breite. -->
+    <a class="netz-link netz-radar" href="https://innofonds.m-vf.de/">Innovation Fund radar</a>
+    <a class="netz-link" href="https://knowledge-hubs.m-vf.de/ueber-uns.html">About us</a>
+    <!-- Die Kontaktseite liegt bei der Innofonds-Sitzung und gilt ALLEN
+         Angeboten der Reihe, nicht nur dem Radar. Ohne Parameter erkennt sie
+         den Hub an der Herkunftsadresse, ein schlichter Link genuegt. -->
+    <a class="netz-link" href="https://innofonds.m-vf.de/kontakt/">Contact</a>
     <!-- DARSTELLUNG-START ====================================================
          Schalter „Darstellung" (hell / dunkel / wie mein Geraet), links neben
          DE/EN. Entwurf Mariann Stegmaier, Canvas 2 (28.10.2026); gebaut von der
@@ -617,11 +669,15 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
           </ul>
         </div>
         <div class="netz-gruppe krank">
-          <h3>Disease areas · 4</h3>
+          <h3>Disease areas · 8</h3>
           <ul>
             <li><a data-domain="adipositas.m-vf.de" href="https://adipositas.m-vf.de/">Obesity</a></li>
+            <li><a data-domain="auge.m-vf.de" href="https://auge.m-vf.de/">Ophthalmology</a></li>
             <li><a data-domain="diabetes.m-vf.de" href="https://diabetes.m-vf.de/">Diabetes</a></li>
             <li><a data-domain="kardio.m-vf.de" href="https://kardio.m-vf.de/">Cardiology</a></li>
+            <li><a data-domain="kinder.m-vf.de" href="https://kinder.m-vf.de/">Paediatrics</a></li>
+            <li><a data-domain="muskel.m-vf.de" href="https://muskel.m-vf.de/">Musculoskeletal Disorders</a></li>
+            <li><a data-domain="neuro.m-vf.de" href="https://neuro.m-vf.de/">Neurology</a></li>
             <li><a data-domain="onkologie.m-vf.de" href="https://onkologie.m-vf.de/">Oncology</a></li>
           </ul>
         </div>
@@ -646,6 +702,11 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
             <li><a href="https://www.monitor-versorgungsforschung.de/education/mvf-jahreskongresse/">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="6" r="2.5"/><path d="M8 13a4 4 0 0 1 8 0"/><path d="M4 15h16l-1.5 6h-13z"/></svg>
               <span><b>MVF-Fachkongress</b><small>Once a year in Berlin (in German)</small></span></a></li>
+            <!-- Am 12.11.2026 aus der Leiste hierher gewandert, damit dort
+                 „Ueber uns" und „Kontakt" Platz haben. -->
+            <li><a href="https://knowledge-hubs.m-vf.de/ueber-die-hubs.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8.5v.01"/></svg>
+              <span><b>About the hubs</b><small>How the hubs are built and where the studies come from</small></span></a></li>
           </ul>
         </div>
       </div>
@@ -845,7 +906,7 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
 </style>
 <p class="uh-eyebrow">ABOUT THE KNOWLEDGE HUBS</p>
 <h1>About the Knowledge Hubs</h1>
-<p class="uh-lede">15 research portals by <i>Monitor Versorgungsforschung</i> for the German health system. One search term opens the search in all relevant databases, and new studies with a German summary arrive every morning. Free of charge, no registration, no tracking cookies.</p>
+<p class="uh-lede">19 research portals by <i>Monitor Versorgungsforschung</i> for the German health system. One search term opens the search in all relevant databases, and new studies with a German summary arrive every morning. Free of charge, no registration, no tracking cookies.</p>
 
 <div class="uh">
 <nav class="uh-nav" aria-label="On this page"><b>ON THIS PAGE</b><a href="#leisten">What the hubs do</a><a href="#suche">How the search works</a><a href="#volltext">Getting the full text</a><a href="#studien">New studies every morning</a><a href="#newsletter">Newsletters and downloads</a><a href="#grenzen">What the hubs do not do</a><a href="#arten">Two kinds of hubs</a><a href="#zahlen">The hubs in numbers</a><a href="#wer">Who is behind the hubs</a></nav>
@@ -872,7 +933,7 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
   <span class="uh-pille lic">Lizenz</span><span>Licence: you need a subscription, for example for Scopus or Web of Science, usually through your library or institution.</span>
 </div>
 <p><b>Show results directly.</b> The second button („Treffer direkt anzeigen“) queries seven openly accessible databases at once, the same in every hub: PubMed, Europe PMC, OpenAlex, Crossref, DOAJ, ClinicalTrials.gov and Zenodo. All results appear in one list directly below the search field, 25 per page; duplicates are merged. For the first results the Unpaywall service checks whether a free full text exists, and if so a link is shown. The list can be saved as a Word or Excel file or exported as RIS or BibTeX to reference managers such as Zotero, EndNote or Citavi.</p>
-<p><b>Glossary.</b> You search with a German term. For international databases the hub translates it into English automatically, using 1,340 German technical terms with their English equivalents, for example <i>Nutzenbewertung → health technology assessment</i> or <i>Routinedaten → claims data</i>. The translation is a fixed list, not AI.</p>
+<p><b>Glossary.</b> You search with a German term. For international databases the hub translates it into English automatically, using 1,505 German technical terms with their English equivalents, for example <i>Nutzenbewertung → health technology assessment</i> or <i>Routinedaten → claims data</i>. The translation is a fixed list, not AI.</p>
 <p><b>Search operators.</b> With the words AND, OR and NOT (Boolean operators) you combine several terms:</p>
 <table class="uh-ops">
   <tr><td><code>AND</code></td><td>both terms occur</td><td>Diabetes AND Telemedizin</td></tr>
@@ -936,22 +997,22 @@ footer.fuss .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-con
   <div><small>HEALTH CARE TOPICS · 11 HUBS</small>
     <p>Health care topics follow one theme across all conditions and ask what changes care.</p>
     <ul><li><a href="https://wissen.m-vf.de/">Health Services Research</a></li><li><a href="https://ncd.m-vf.de/">Chronic Conditions</a></li><li><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></li><li><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></li><li><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></li><li><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></li><li><a href="https://mental.m-vf.de/">Mental Health</a></li><li><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></li><li><a href="https://safety.m-vf.de/">Patient Safety</a></li><li><a href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></li><li><a href="https://impfen.m-vf.de/">Vaccination</a></li></ul></div>
-  <div><small>DISEASE AREAS · 4 HUBS</small>
+  <div><small>DISEASE AREAS · 8 HUBS</small>
     <p>Disease areas concentrate on one condition and everything that belongs to it: clinical practice, therapy, basic research and care.</p>
-    <ul><li><a href="https://kardio.m-vf.de/">Cardiology</a></li><li><a href="https://diabetes.m-vf.de/">Diabetes</a></li><li><a href="https://adipositas.m-vf.de/">Obesity</a></li><li><a href="https://onkologie.m-vf.de/">Oncology</a></li></ul></div>
+    <ul><li><a href="https://kardio.m-vf.de/">Cardiology</a></li><li><a href="https://diabetes.m-vf.de/">Diabetes</a></li><li><a href="https://muskel.m-vf.de/">Musculoskeletal Disorders</a></li><li><a href="https://neuro.m-vf.de/">Neurology</a></li><li><a href="https://adipositas.m-vf.de/">Obesity</a></li><li><a href="https://onkologie.m-vf.de/">Oncology</a></li><li><a href="https://auge.m-vf.de/">Ophthalmology</a></li><li><a href="https://kinder.m-vf.de/">Paediatrics</a></li></ul></div>
 </div>
-<p>The same study may therefore appear in one hub and not in another. Depending on the hub, 1 to 15 % of the selected studies also appear in another hub. All 15 hubs at a glance are on the <a href="./#themen">start page of the Knowledge Hubs</a>.</p>
+<p>The same study may therefore appear in one hub and not in another. Depending on the hub, 0 to 16 % of the selected studies also appear in another hub. All 19 hubs at a glance are on the <a href="./#themen">start page of the Knowledge Hubs</a>.</p>
 </section>
 
 <section id="zahlen">
 <h2>The hubs in numbers</h2>
 <div class="tafel-rahmen"><table class="zahlentafel" id="uhZahlen">
 <thead><tr><th data-sort>Hub</th><th data-sort>Databases</th><th data-sort>Live search</th><th data-sort>Categories</th><th data-sort>Glossary</th><th data-sort>Studies</th></tr></thead>
-<tbody><tr><td data-wert="Health Services Research"><a href="https://wissen.m-vf.de/">Health Services Research</a></td><td>57</td><td>29</td><td>8</td><td>170</td><td data-studien="wissen.m-vf.de">460</td></tr><tr><td data-wert="Cardiology"><a href="https://kardio.m-vf.de/">Cardiology</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td data-studien="kardio.m-vf.de">287</td></tr><tr><td data-wert="Chronic Conditions"><a href="https://ncd.m-vf.de/">Chronic Conditions</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td data-studien="ncd.m-vf.de">412</td></tr><tr><td data-wert="Diabetes"><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td data-studien="diabetes.m-vf.de">300</td></tr><tr><td data-wert="Digitalisation, AI &amp; Health"><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td data-studien="ki.m-vf.de">424</td></tr><tr><td data-wert="Health Literacy"><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></td><td>76</td><td>36</td><td>10</td><td>165</td><td data-studien="healthliteracy.m-vf.de">423</td></tr><tr><td data-wert="Healthy Ageing &amp; Longevity"><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td data-studien="longevity.m-vf.de">417</td></tr><tr><td data-wert="Heat, Climate &amp; Health"><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td data-studien="klima.m-vf.de">413</td></tr><tr><td data-wert="Mental Health"><a href="https://mental.m-vf.de/">Mental Health</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td data-studien="mental.m-vf.de">397</td></tr><tr><td data-wert="Nursing &amp; Long-Term Care"><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></td><td>88</td><td>42</td><td>11</td><td>156</td><td data-studien="pflege.m-vf.de">409</td></tr><tr><td data-wert="Obesity"><a href="https://adipositas.m-vf.de/">Obesity</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td data-studien="adipositas.m-vf.de">414</td></tr><tr><td data-wert="Oncology"><a href="https://onkologie.m-vf.de/">Oncology</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td data-studien="onkologie.m-vf.de">307</td></tr><tr><td data-wert="Patient Safety"><a href="https://safety.m-vf.de/">Patient Safety</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td data-studien="safety.m-vf.de">397</td></tr><tr><td data-wert="Sex- and Gender-Sensitive Medicine"><a href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td data-studien="gender.m-vf.de">409</td></tr><tr><td data-wert="Vaccination"><a href="https://impfen.m-vf.de/">Vaccination</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td data-studien="impfen.m-vf.de">411</td></tr></tbody>
-<tfoot><tr><td>Total</td><td>1,189</td><td>563</td><td>147</td><td>1,340*</td><td data-studien="alle">5,880</td></tr></tfoot>
+<tbody><tr><td data-wert="Health Services Research"><a href="https://wissen.m-vf.de/">Health Services Research</a></td><td>71</td><td>37</td><td>10</td><td>170</td><td data-studien="wissen.m-vf.de">479</td></tr><tr><td data-wert="Cardiology"><a href="https://kardio.m-vf.de/">Cardiology</a></td><td>53</td><td>28</td><td>9</td><td>88</td><td data-studien="kardio.m-vf.de">365</td></tr><tr><td data-wert="Chronic Conditions"><a href="https://ncd.m-vf.de/">Chronic Conditions</a></td><td>102</td><td>41</td><td>11</td><td>158</td><td data-studien="ncd.m-vf.de">491</td></tr><tr><td data-wert="Diabetes"><a href="https://diabetes.m-vf.de/">Diabetes</a></td><td>61</td><td>28</td><td>9</td><td>87</td><td data-studien="diabetes.m-vf.de">377</td></tr><tr><td data-wert="Digitalisation, AI &amp; Health"><a href="https://ki.m-vf.de/">Digitalisation, AI &amp; Health</a></td><td>106</td><td>49</td><td>10</td><td>253</td><td data-studien="ki.m-vf.de">507</td></tr><tr><td data-wert="Health Literacy"><a href="https://healthliteracy.m-vf.de/">Health Literacy</a></td><td>84</td><td>41</td><td>11</td><td>165</td><td data-studien="healthliteracy.m-vf.de">504</td></tr><tr><td data-wert="Healthy Ageing &amp; Longevity"><a href="https://longevity.m-vf.de/">Healthy Ageing &amp; Longevity</a></td><td>100</td><td>51</td><td>11</td><td>222</td><td data-studien="longevity.m-vf.de">496</td></tr><tr><td data-wert="Heat, Climate &amp; Health"><a href="https://klima.m-vf.de/">Heat, Climate &amp; Health</a></td><td>90</td><td>40</td><td>9</td><td>240</td><td data-studien="klima.m-vf.de">489</td></tr><tr><td data-wert="Mental Health"><a href="https://mental.m-vf.de/">Mental Health</a></td><td>72</td><td>34</td><td>9</td><td>96</td><td data-studien="mental.m-vf.de">475</td></tr><tr><td data-wert="Musculoskeletal Disorders"><a href="https://muskel.m-vf.de/">Musculoskeletal Disorders</a></td><td>58</td><td>36</td><td>9</td><td>108</td><td data-studien="muskel.m-vf.de">0</td></tr><tr><td data-wert="Neurology"><a href="https://neuro.m-vf.de/">Neurology</a></td><td>55</td><td>31</td><td>9</td><td>89</td><td data-studien="neuro.m-vf.de">0</td></tr><tr><td data-wert="Nursing &amp; Long-Term Care"><a href="https://pflege.m-vf.de/">Nursing &amp; Long-Term Care</a></td><td>96</td><td>47</td><td>12</td><td>156</td><td data-studien="pflege.m-vf.de">483</td></tr><tr><td data-wert="Obesity"><a href="https://adipositas.m-vf.de/">Obesity</a></td><td>65</td><td>31</td><td>10</td><td>166</td><td data-studien="adipositas.m-vf.de">495</td></tr><tr><td data-wert="Oncology"><a href="https://onkologie.m-vf.de/">Oncology</a></td><td>54</td><td>25</td><td>9</td><td>89</td><td data-studien="onkologie.m-vf.de">385</td></tr><tr><td data-wert="Ophthalmology"><a href="https://auge.m-vf.de/">Ophthalmology</a></td><td>64</td><td>40</td><td>9</td><td>104</td><td data-studien="auge.m-vf.de">12</td></tr><tr><td data-wert="Paediatrics"><a href="https://kinder.m-vf.de/">Paediatrics</a></td><td>71</td><td>39</td><td>10</td><td>91</td><td data-studien="kinder.m-vf.de">0</td></tr><tr><td data-wert="Patient Safety"><a href="https://safety.m-vf.de/">Patient Safety</a></td><td>75</td><td>34</td><td>11</td><td>95</td><td data-studien="safety.m-vf.de">473</td></tr><tr><td data-wert="Sex- and Gender-Sensitive Medicine"><a href="https://gender.m-vf.de/">Sex- and Gender-Sensitive Medicine</a></td><td>93</td><td>45</td><td>10</td><td>173</td><td data-studien="gender.m-vf.de">490</td></tr><tr><td data-wert="Vaccination"><a href="https://impfen.m-vf.de/">Vaccination</a></td><td>97</td><td>50</td><td>10</td><td>167</td><td data-studien="impfen.m-vf.de">492</td></tr></tbody>
+<tfoot><tr><td>Total</td><td>1,467</td><td>727</td><td>188</td><td>1,505*</td><td data-studien="alle">7,013</td></tr></tfoot>
 </table></div>
 <p style="font-size:14px;color:var(--ink-soft)"><b>Databases:</b> tiles in the hub, one per database. <b>Live search:</b> tiles whose click opens the results list directly. <b>Categories:</b> groups of databases in the hub. <b>Glossary:</b> stored German-English translations. <b>Studies:</b> studies selected so far. *Without duplicates. Click a column header to sort.</p>
-<p style="font-size:14px;color:var(--ink-soft)">As of 30 October 2026. The study counts are refreshed every morning from all hubs; the other numbers are recounted every time this page is built.</p><script>
+<p style="font-size:14px;color:var(--ink-soft)">As of 13 November 2026. The study counts are refreshed every morning from all hubs; the other numbers are recounted every time this page is built.</p><script>
 /* Studienzahlen taeglich aus studien.json (Morgenlauf studien_sammeln.py).
    Faellt der Abruf aus, bleiben die beim Bau gezaehlten Zahlen stehen. */
 (function () {
