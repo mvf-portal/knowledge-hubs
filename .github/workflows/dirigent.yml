@@ -56,7 +56,7 @@ jobs:
           GH_TOKEN: ${{ secrets.DIRIGENT_TOKEN }}
         run: gh workflow run newsletter-entwurf.yml -R mvf-portal/knowledge-hubs
 
-      - name: Die fünfzehn Hubs anstoßen
+      - name: Die zwanzig Hubs anstoßen
         env:
           # Fein granuliertes Token mit "Actions: write" auf den fünfzehn
           # Portal-Repos. Ohne dieses Secret bricht der Lauf sofort ab - der
@@ -97,7 +97,7 @@ jobs:
             versorgungsforschung-portal klima-gesundheit-portal ki-gesundheit-portal \
             pflege-portal longevity-portal healthliteracy-portal impfen-portal \
             ncd-portal gender-portal adipositas-portal safety-portal mental-portal \
-            onkologie-portal kardio-portal diabetes-portal
+            onkologie-portal kardio-portal diabetes-portal \n            auge-portal muskel-portal kinder-portal neuro-portal genom-portal
           do
             if [ "$ERSTER" -eq 1 ]; then
               ERSTER=0
@@ -115,7 +115,7 @@ jobs:
           echo "$FEHLER Repo(s) ohne Start."
           # Ein einzelner Ausfall darf die übrigen vierzehn nicht mitreißen; erst
           # wenn NICHTS lief, ist der Weckruf gescheitert.
-          [ "$FEHLER" -lt 15 ]
+          [ "$FEHLER" -lt 20 ]
 
       # Der Sammelbericht liest die Statusdateien der Hubs. Er braucht Vorlauf,
       # deshalb erst nach einer Weile - die Hubs brauchen ein bis zwei Minuten.
@@ -125,6 +125,8 @@ jobs:
       # bereits verbraucht, die Wartezeit hier gilt also weiterhin dem zuletzt
       # geweckten Hub. Der zuerst geweckte hat dann gut neun Minuten gehabt.
       - name: Warten, bis die Hubs durch sind
+        # Seit 13.11.2026 zwanzig Hubs: Der letzte startet gut sechs Minuten nach
+        # dem ersten, die Wartezeit gilt weiter ihm.
         run: sleep 240
 
       - name: Sammelbericht anstoßen

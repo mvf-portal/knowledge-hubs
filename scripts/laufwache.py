@@ -65,6 +65,12 @@ LAEUFE = [
     ("Onkologie", "mvf-portal/onkologie-portal", "update-studies.yml"),
     ("Kardiologie", "mvf-portal/kardio-portal", "update-studies.yml"),
     ("Diabetes", "mvf-portal/diabetes-portal", "update-studies.yml"),
+    # Seit 13.11.2026 (neue Hubs der Hub-Sitzung):
+    ("Augenheilkunde", "mvf-portal/auge-portal", "update-studies.yml"),
+    ("Muskuloskelettale Erkrankungen", "mvf-portal/muskel-portal", "update-studies.yml"),
+    ("Kinder- und Jugendmedizin", "mvf-portal/kinder-portal", "update-studies.yml"),
+    ("Neurologie", "mvf-portal/neuro-portal", "update-studies.yml"),
+    ("Genommedizin & Seltene Erkrankungen", "mvf-portal/genom-portal", "update-studies.yml"),
 ]
 
 # Der Sammelbericht wird mitgeprueft - faellt er aus, faellt die einzige

@@ -35,7 +35,7 @@ Stellen liegt.
 
 | | |
 |---|---|
-| **Repository access** | alle **dreizehn**: die zwölf Portale **und** `knowledge-hubs` |
+| **Repository access** | **alle Repositories** des Kontos mvf-portal (Stand 13.11.2026: zwanzig Portale und `knowledge-hubs`). Neue Hubs sind damit ohne Änderung am Token erreichbar. |
 | **Contents** | Read and write — für `repository_dispatch` in knowledge-hubs |
 | **Actions** | Read and write — zum Starten der Workflows in den zwölf Portalen |
 | **Liegt** | auf dem MVF-Server in `wecker-zugang.php` **und** als GitHub-Secret `DIRIGENT_TOKEN` |
@@ -74,7 +74,7 @@ war unter ihrer Adresse lesbar. Liegt sie noch auf dem Server: löschen.
 
 In `wecker-zugang.php` das fein granulierte GitHub-Token einsetzen — dasselbe,
 das auch als Secret `DIRIGENT_TOKEN` bei GitHub liegt (Contents *und* Actions
-je Read and write, alle dreizehn Repos).
+je Read and write, alle Repos des Kontos).
 
 `schluessel` bleibt leer, wenn der Hoster Cron kann — dann ist der Aufruf über
 das Netz gesperrt und das Skript nur von der Kommandozeile erreichbar.
