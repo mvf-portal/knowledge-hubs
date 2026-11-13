@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-12",
+ "aufgenommen": "2026-11-13",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Patient-Reported Outcome Measures in digitaler Infrastruktur: Machbarkeitsstudie",
-  "worum_es_geht": "Machbarkeitsstudie zur Integration von Patient-Reported Outcome Measures (PROMs) in eine digitale Plattform (H2O) zur Echtzeit-Symptomerfassung across 4 europäischen Ländern.",
-  "ergebnis": "Von 241 teilnehmenden Patienten lieferten 115 (47,7%) Follow-up-Daten. System Usability Scale (SUS)-Durchschnitt 44,65/100 (SD 9,78) zeigte schlechte Benutzerfreundlichkeit. 83% (44/53) der Befragten empfahlen H2O trotzdem, aber Patientenzufriedenheit sank signifikant (t₄₉=2,20; p=0,03). Interviews identifizierten wahrgenommenen Mehrwert, aber auch technische Probleme und schwache klinische Systemintegration.",
-  "uebertragbarkeit": "Österreich, Niederlande, Deutschland beteiligt; Sozialversicherungssysteme ähnlich Deutschland",
-  "autoren": "Long P et al.",
-  "zeitschrift": "JMIR Form Res",
+  "titel": "Kognitives Training mit Ernährungsberatung bei leichter kognitiver Beeinträchtigung",
+  "worum_es_geht": "Randomisierte Studie zur Wirksamkeit computergestützten kognitiven Trainings kombiniert mit Online-Ernährungsberatung zur Verbesserung der globalen Kognition bei Patienten mit leichter kognitiver Beeinträchtigung in Deutschland.",
+  "ergebnis": "Alle vier Gruppen erreichten signifikante Verbesserungen von ca. 2 Punkten auf der Montreal Cognitive Assessment (MoCA) nach 6 Monaten (F=3,96, p=0,048). 55% aller Teilnehmer erreichten nach 6 Monaten Werte außerhalb des MCI-Bereichs. Zwischen iCCT und bCCT sowie WFPB und DGE-Ernährungsberatung gab es keine relevanten Gruppenunterschiede.",
+  "uebertragbarkeit": "Deutsche RCT, gesetzlich Versicherte, Telemedizin-Setting übertragbar",
+  "autoren": "Scheuermann JS et al.",
+  "zeitschrift": "Alzheimers Res Ther",
   "jahr": "2026",
-  "pmid": "43013339",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43013339/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43013339"
+  "pmid": "43015907",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43015907/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43015907"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43013339"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43015907"
  }
 }
