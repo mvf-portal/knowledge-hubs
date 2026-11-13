@@ -174,8 +174,17 @@ if ($studien) {
         // keine Bedingung. Eine Bestellung darf daran nicht scheitern.
         $takt = 'tag';
     }
-    if (($takte[$takt] ?? '') !== '') {
-        $interessen[$takte[$takt]] = true;
+    // ALLE DREI setzen, nicht nur die gewaehlte. Am 13.11.2026 stand hier
+    // zuerst nur die eine Zeile "$interessen[$takte[$takt]] = true;" - und
+    // damit war die Wahl additiv statt ausschliessend: Wer von taeglich auf
+    // monatlich wechselte, stand danach in BEIDEN Gruppen und bekam beide
+    // Ausgaben. Gemessen an einer Probeadresse, die nacheinander woche,
+    // monat und einen unsinnigen Wert schickte: Am Ende standen alle drei.
+    // Eine Frequenzwahl, die nichts abwaehlt, ist schlimmer als keine.
+    foreach ($takte as $wahl => $kennung) {
+        if ($kennung !== '') {
+            $interessen[$kennung] = ($wahl === $takt);
+        }
     }
 }
 
