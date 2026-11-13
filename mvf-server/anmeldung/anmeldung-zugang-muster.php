@@ -83,6 +83,18 @@ const INTERESSEN = [
 ];
 
 // ---------------------------------------------------------------------------
+// 4b. Die Versandfrequenz (seit 13.11.2026). Gruppenmenge "Wie oft sollen die
+//     Studien kommen" (Kennung 6e84ea3aac). EINE Menge fuer alle Hubs
+//     zusammen, nicht je Hub: Mailchimp laesst hoechstens 60 Gruppen je Liste
+//     zu, drei Spuren mal zwanzig Hubs waeren sechzig allein dafuer gewesen.
+// ---------------------------------------------------------------------------
+const TAKTE = [
+    'tag'   => '9844d2256a',   // Jeden Werktag
+    'woche' => 'c4db4fa436',   // Einmal die Woche, freitags
+    'monat' => 'a7ed12ee67',   // Einmal im Monat
+];
+
+// ---------------------------------------------------------------------------
 // 5. Erlaubte Tags. Auch hier gilt: Was nicht dasteht, kann ueber diesen
 //    Endpunkt nicht gesetzt werden. Der Tag wird ueber seinen NAMEN gesetzt;
 //    eine Nummer braucht es nicht.

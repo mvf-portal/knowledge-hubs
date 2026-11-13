@@ -149,6 +149,36 @@ foreach ($hubs as $schluessel) {
 if (($tabelle['datenschutz'] ?? '') !== '') {
     $interessen[$tabelle['datenschutz']] = true;
 }
+
+// ---------------------------------------------------------------------------
+// Frequenzwahl (seit 13.11.2026). Zwanzig Hubs heissen fuer jemanden mit drei
+// Interessen drei E-Mails am Tag - die Menge, bei der Leute abbestellen. Die
+// Anmeldeseiten schicken deshalb ein Feld "takt" mit: tag, woche oder monat.
+//
+// EINE Gruppenmenge fuer alle Hubs zusammen, nicht je Hub: Mailchimp laesst
+// hoechstens 60 Gruppen je Liste zu, drei Spuren mal zwanzig Hubs waeren
+// sechzig allein dafuer gewesen.
+//
+// Nur wenn ein Studien-Newsletter dabei ist. Wer allein den MVF-Newsletter
+// bestellt, hat mit der Frequenz der Studien nichts zu tun.
+// ---------------------------------------------------------------------------
+$studien = array_diff(array_map('strval', $hubs), ['mvf']);
+if ($studien) {
+    // isset() laesst sich auf eine Konstante nicht anwenden, erst in eine
+    // Variable - genau wie oben bei INTERESSEN.
+    $takte = TAKTE;
+    $takt  = (string)($ein['takt'] ?? 'tag');
+    if (!isset($takte[$takt]) || $takte[$takt] === '') {
+        // Ein unbekannter oder fehlender Wert faellt still auf 'tag' zurueck
+        // und loest KEINE Ablehnung aus: Die Frequenz ist eine Bequemlichkeit,
+        // keine Bedingung. Eine Bestellung darf daran nicht scheitern.
+        $takt = 'tag';
+    }
+    if (($takte[$takt] ?? '') !== '') {
+        $interessen[$takte[$takt]] = true;
+    }
+}
+
 $tagNamen = [];
 foreach ($tags as $t) {
     $t = (string)$t;
