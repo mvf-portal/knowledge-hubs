@@ -48,6 +48,7 @@ PORTALE = [
     ("Augenheilkunde", "auge.m-vf.de", "mvf-portal/auge-portal"),
     ("Diabetes", "diabetes.m-vf.de", "mvf-portal/diabetes-portal"),
     ("Digitalisierung, KI & Gesundheit", "ki.m-vf.de", "mvf-portal/ki-gesundheit-portal"),
+    ("Genommedizin & Seltene Erkrankungen", "genom.m-vf.de", "mvf-portal/genom-portal"),
     ("Geschlechtersensible Medizin", "gender.m-vf.de", "mvf-portal/gender-portal"),
     ("Gesundes Altern & Longevity", "longevity.m-vf.de", "mvf-portal/longevity-portal"),
     ("Gesundheitskompetenz", "healthliteracy.m-vf.de", "mvf-portal/healthliteracy-portal"),

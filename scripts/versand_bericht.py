@@ -54,6 +54,7 @@ PORTALE = [
     ("Muskuloskelettale Erkrankungen", "mvf-portal/muskel-portal"),
     ("Kinder- und Jugendmedizin", "mvf-portal/kinder-portal"),
     ("Neurologie", "mvf-portal/neuro-portal"),
+    ("Genommedizin & Seltene Erkrankungen", "mvf-portal/genom-portal"),
 ]
 # Portale, die in portale.json auf `bereit: false` stehen: gebaut und im Netz,
 # aber noch nicht scharfgeschaltet - sie fehlen bewusst in der Liste des
@@ -78,6 +79,7 @@ WARTEND = [
     "mvf-portal/muskel-portal",
     "mvf-portal/kinder-portal",
     "mvf-portal/neuro-portal",
+    "mvf-portal/genom-portal",
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 ROH_ARCHIV = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"

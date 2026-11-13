@@ -68,6 +68,7 @@ PORTALE = [
     ("Muskuloskelettale Erkrankungen", "mvf-portal/muskel-portal"),
     ("Kinder- und Jugendmedizin", "mvf-portal/kinder-portal"),
     ("Neurologie", "mvf-portal/neuro-portal"),
+    ("Genommedizin & Seltene Erkrankungen", "mvf-portal/genom-portal"),
 ]
 
 
