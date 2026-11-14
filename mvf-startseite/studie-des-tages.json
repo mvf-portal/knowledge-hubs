@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-13",
+ "aufgenommen": "2026-11-14",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Kognitives Training mit Ernährungsberatung bei leichter kognitiver Beeinträchtigung",
-  "worum_es_geht": "Randomisierte Studie zur Wirksamkeit computergestützten kognitiven Trainings kombiniert mit Online-Ernährungsberatung zur Verbesserung der globalen Kognition bei Patienten mit leichter kognitiver Beeinträchtigung in Deutschland.",
-  "ergebnis": "Alle vier Gruppen erreichten signifikante Verbesserungen von ca. 2 Punkten auf der Montreal Cognitive Assessment (MoCA) nach 6 Monaten (F=3,96, p=0,048). 55% aller Teilnehmer erreichten nach 6 Monaten Werte außerhalb des MCI-Bereichs. Zwischen iCCT und bCCT sowie WFPB und DGE-Ernährungsberatung gab es keine relevanten Gruppenunterschiede.",
-  "uebertragbarkeit": "Deutsche RCT, gesetzlich Versicherte, Telemedizin-Setting übertragbar",
-  "autoren": "Scheuermann JS et al.",
-  "zeitschrift": "Alzheimers Res Ther",
+  "titel": "Nutzer erleben DiGA für Kniegelenkschäden als sinnvolle Ergänzung zur Physiotherapie",
+  "worum_es_geht": "Qualitative Studie zu Akzeptanz, wahrgenommenem Nutzen und Barrieren bei Nutzung einer Verordnungs-DiGA (Orthopy) für Kreuzband-/Meniskusverletzungen in Deutschland.",
+  "ergebnis": "10 Patienten (2 Abbrüche): DiGA wurde als flexible Ergänzung zur Therapie wahrgenommen, geschätzt wegen Strukturierung, Ortsunabhängigkeit und Therapeutenlückenüberbrückung; Herausforderungen: begrenzte Personalisierung, unzureichende Anpassung des Feedbacks, administrative Verzögerungen; keine schwerwiegenden Sicherheitsbedenken während kurzer Beobachtung.",
+  "uebertragbarkeit": "Deutsche Orthopädie-Praxis, direkt übertragbar auf deutsches DiGA-System",
+  "autoren": "Burgert S et al.",
+  "zeitschrift": "BMC Musculoskelet Disord",
   "jahr": "2026",
-  "pmid": "43015907",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43015907/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43015907"
+  "pmid": "42983354",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42983354/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42983354"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43015907"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42983354"
  }
 }
