@@ -35,6 +35,22 @@ on:
 
 permissions: {}
 
+# Die zwanzig Hubs stehen HIER und nur hier. Bis zum 14.11.2026 stand die
+# Liste im Schleifenkopf, und als am 13.11. fuenf Hubs dazukamen, geriet
+# dabei statt einer Zeilenfortsetzung das Zeichenpaar Rueckstrich-n in den
+# Schleifenkopf, also wortwoertlich zwei Zeichen auf EINER Zeile: Der
+# Lauf vom 14.11. um 04:20 UTC weckte alle zwanzig richtig und meldete
+# zusaetzlich "n liess sich nicht anstossen". Harmlos, aber eine Liste, die
+# an zwei Stellen steht, laeuft auseinander - und die Spuren unten brauchen
+# dieselbe.
+env:
+  HUBS: >-
+    versorgungsforschung-portal klima-gesundheit-portal ki-gesundheit-portal
+    pflege-portal longevity-portal healthliteracy-portal impfen-portal
+    ncd-portal gender-portal adipositas-portal safety-portal mental-portal
+    onkologie-portal kardio-portal diabetes-portal
+    auge-portal muskel-portal kinder-portal neuro-portal genom-portal
+
 jobs:
   wecken:
     runs-on: ubuntu-latest
@@ -93,11 +109,7 @@ jobs:
           STAFFEL=20
           ERSTER=1
           FEHLER=0
-          for REPO in \
-            versorgungsforschung-portal klima-gesundheit-portal ki-gesundheit-portal \
-            pflege-portal longevity-portal healthliteracy-portal impfen-portal \
-            ncd-portal gender-portal adipositas-portal safety-portal mental-portal \
-            onkologie-portal kardio-portal diabetes-portal \n            auge-portal muskel-portal kinder-portal neuro-portal genom-portal
+          for REPO in $HUBS
           do
             if [ "$ERSTER" -eq 1 ]; then
               ERSTER=0
@@ -133,3 +145,90 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.DIRIGENT_TOKEN }}
         run: gh workflow run versand-bericht.yml -R mvf-portal/knowledge-hubs
+
+  # ------------------------------------------------------------------
+  # Wochen- und Monatsausgabe. Seit dem 14.11.2026, auf Peters Freigabe.
+  #
+  # Warum hier und nicht als zwei Cron-Zeilen in update-studies.yml: Der
+  # Auftrag lautete zwar "zwei neue Zeitplaene", aber GitHubs Cron ist der
+  # unzuverlaessigste Ausloeser, den wir haben - die Kommentare in
+  # update-studies.yml fuehren die Ausfaelle einzeln auf, bis hin zu zwei
+  # Naechten ohne jeden Lauf (27./28.08.2026). Eine ausgefallene Tagesausgabe
+  # holt der naechste Morgen ein. Eine ausgefallene Wochenausgabe ist eine
+  # Woche, eine ausgefallene Monatsausgabe ein Monat. Deshalb haengen beide
+  # am Weckruf des MVF-Servers, der traegt.
+  #
+  # Der Kalender steht an ZWEI Stellen, mit Absicht: hier, damit an anderen
+  # Tagen gar nichts angestossen wird, und in `spur_faellig()` in
+  # mailchimp_entwurf.py, das jeden Anstoss nachprueft und an einem falschen
+  # Tag ohne Kosten abbricht. Ein Handstart am Dienstag legt also nichts an.
+  spuren:
+    needs: wecken
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Welche Ausgabe ist heute fällig?
+        id: kalender
+        run: |
+          set -u
+          # Ortszeit, nicht UTC: Der Freitag der Ausgabe ist der deutsche.
+          TAG=$(TZ=Europe/Berlin date +%u)     # 1=Montag ... 7=Sonntag
+          NUM=$(TZ=Europe/Berlin date +%-d)    # Tag im Monat, ohne fuehrende Null
+          DATUM=$(TZ=Europe/Berlin date +%F)
+          SPUREN=""
+          [ "$TAG" = "5" ] && SPUREN="woche"
+          # Erster Werktag des Monats: der 1., oder der 2./3., wenn der 1. auf
+          # Samstag oder Sonntag fiel.
+          if [ "$TAG" -le 5 ]; then
+            if [ "$NUM" = "1" ] \
+               || { [ "$NUM" = "2" ] && [ "$TAG" = "1" ]; } \
+               || { [ "$NUM" = "3" ] && [ "$TAG" = "1" ]; }; then
+              SPUREN="$SPUREN monat"
+            fi
+          fi
+          SPUREN=$(echo $SPUREN)
+          echo "$DATUM (Wochentag $TAG, Monatstag $NUM) -> ${SPUREN:-keine Spur}"
+          echo "spuren=$SPUREN" >> "$GITHUB_OUTPUT"
+
+      # Die Tagesausgabe muss durch sein: Sie committet studien-archiv.json,
+      # und daraus waehlt die Wochen- oder Monatsausgabe. Der Job `wecken` hat
+      # beim Start hier bereits rund zehn Minuten verbraucht (Staffelung plus
+      # die vier Minuten vor dem Sammelbericht); zwanzig weitere reichen auch
+      # dem langsamsten Hub.
+      - name: Warten, bis die Tagesausgabe durch ist
+        if: steps.kalender.outputs.spuren != ''
+        run: sleep 1200
+
+      - name: Die fällige Ausgabe in allen Hubs anstoßen
+        if: steps.kalender.outputs.spuren != ''
+        env:
+          GH_TOKEN: ${{ secrets.DIRIGENT_TOKEN }}
+          SPUREN: ${{ steps.kalender.outputs.spuren }}
+        run: |
+          set -u
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::error::DIRIGENT_TOKEN fehlt - siehe mvf-server/LIESMICH.md"
+            exit 1
+          fi
+          # Dieselbe Staffelung wie beim Morgenlauf und aus demselben Grund:
+          # Die zwanzig Hubs teilen sich EIN Mailchimp-Konto mit hoechstens
+          # zehn gleichzeitigen Verbindungen.
+          GESAMT=0
+          FEHLER=0
+          for SPUR in $SPUREN; do
+            ERSTER=1
+            for REPO in $HUBS; do
+              if [ "$ERSTER" -eq 1 ]; then ERSTER=0; else sleep 20; fi
+              GESAMT=$((GESAMT+1))
+              if gh workflow run newsletter-spur.yml -R "mvf-portal/$REPO" \
+                   -f spur="$SPUR"; then
+                echo "angestoßen ($SPUR): $REPO"
+              else
+                echo "::warning::$REPO ließ sich für die $SPUR-Ausgabe nicht anstoßen"
+                FEHLER=$((FEHLER+1))
+              fi
+            done
+          done
+          echo "$FEHLER von $GESAMT Anstößen ohne Start."
+          # Wie beim Morgenlauf: Erst wenn NICHTS lief, ist es gescheitert.
+          [ "$FEHLER" -lt "$GESAMT" ]
