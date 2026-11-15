@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-14",
+ "aufgenommen": "2026-11-15",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Nutzer erleben DiGA für Kniegelenkschäden als sinnvolle Ergänzung zur Physiotherapie",
-  "worum_es_geht": "Qualitative Studie zu Akzeptanz, wahrgenommenem Nutzen und Barrieren bei Nutzung einer Verordnungs-DiGA (Orthopy) für Kreuzband-/Meniskusverletzungen in Deutschland.",
-  "ergebnis": "10 Patienten (2 Abbrüche): DiGA wurde als flexible Ergänzung zur Therapie wahrgenommen, geschätzt wegen Strukturierung, Ortsunabhängigkeit und Therapeutenlückenüberbrückung; Herausforderungen: begrenzte Personalisierung, unzureichende Anpassung des Feedbacks, administrative Verzögerungen; keine schwerwiegenden Sicherheitsbedenken während kurzer Beobachtung.",
-  "uebertragbarkeit": "Deutsche Orthopädie-Praxis, direkt übertragbar auf deutsches DiGA-System",
-  "autoren": "Burgert S et al.",
-  "zeitschrift": "BMC Musculoskelet Disord",
+  "titel": "Risikofaktoren für Arbeitsunfähigkeit durch Muskelskelettstörungen bei Pflegekräften",
+  "worum_es_geht": "Querschnittstudie mit 501 deutschen Pflegekräften zur Identifikation von Risikofaktoren für Langzeiterkrankung oder reduzierte Arbeitsfähigkeit aufgrund von Muskelskelettstörungen.",
+  "ergebnis": "36% der Teilnehmer waren einem hohen Risiko ausgesetzt. Signifikante Risikofaktoren: Alter 50–59 Jahre (OR 2,8; p=0,001), Schichtarbeit (OR 1,6; p=0,026), unzureichende Ergonomie-Hilfsmittel (OR 1,8; p=0,004), schlechte ergonomische Praktiken (OR 2,5; p=0,033). Diese hohe Prävalenz unterstreicht Interventionsbedarf.",
+  "uebertragbarkeit": "Deutsche Routinedaten von gesetzlich versicherten Pflegekräften (BGW)",
+  "autoren": "Reimann M et al.",
+  "zeitschrift": "Healthcare (Basel)",
   "jahr": "2026",
-  "pmid": "42983354",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/42983354/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-42983354"
+  "pmid": "43028735",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43028735/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43028735"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-42983354"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43028735"
  }
 }
