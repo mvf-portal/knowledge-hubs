@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-15",
+ "aufgenommen": "2026-11-16",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Risikofaktoren für Arbeitsunfähigkeit durch Muskelskelettstörungen bei Pflegekräften",
-  "worum_es_geht": "Querschnittstudie mit 501 deutschen Pflegekräften zur Identifikation von Risikofaktoren für Langzeiterkrankung oder reduzierte Arbeitsfähigkeit aufgrund von Muskelskelettstörungen.",
-  "ergebnis": "36% der Teilnehmer waren einem hohen Risiko ausgesetzt. Signifikante Risikofaktoren: Alter 50–59 Jahre (OR 2,8; p=0,001), Schichtarbeit (OR 1,6; p=0,026), unzureichende Ergonomie-Hilfsmittel (OR 1,8; p=0,004), schlechte ergonomische Praktiken (OR 2,5; p=0,033). Diese hohe Prävalenz unterstreicht Interventionsbedarf.",
-  "uebertragbarkeit": "Deutsche Routinedaten von gesetzlich versicherten Pflegekräften (BGW)",
-  "autoren": "Reimann M et al.",
-  "zeitschrift": "Healthcare (Basel)",
+  "titel": "KI-Nutzung in ärztlicher Entscheidungsfindung: Ansichten von Hausarzt-Assistenten",
+  "worum_es_geht": "Qualitative Studie mit 17 deutschen Hausarzt-Assistenten zu Erfahrungen mit Large Language Models in klinischer Entscheidungsfindung.",
+  "ergebnis": "Kernaussage: KI wird als Entscheidungs-Unterstützung wahrgenommen, aber Risiken der Über-Abhängigkeit und Deskilling identifiziert. Alle Teilnehmenden berichten fehlende strukturierte KI-Ausbildung und fordern Integration in Facharzt-Weiterbildung.",
+  "uebertragbarkeit": "Deutschland: direkte Studienherkunft, Hausarztausbildung im deutschen System.",
+  "autoren": "Dreher AC et al.",
+  "zeitschrift": "BMC Med Educ",
   "jahr": "2026",
-  "pmid": "43028735",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43028735/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43028735"
+  "pmid": "43034204",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43034204/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43034204"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43028735"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43034204"
  }
 }
