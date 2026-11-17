@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-16",
+ "aufgenommen": "2026-11-17",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "KI-Nutzung in ärztlicher Entscheidungsfindung: Ansichten von Hausarzt-Assistenten",
-  "worum_es_geht": "Qualitative Studie mit 17 deutschen Hausarzt-Assistenten zu Erfahrungen mit Large Language Models in klinischer Entscheidungsfindung.",
-  "ergebnis": "Kernaussage: KI wird als Entscheidungs-Unterstützung wahrgenommen, aber Risiken der Über-Abhängigkeit und Deskilling identifiziert. Alle Teilnehmenden berichten fehlende strukturierte KI-Ausbildung und fordern Integration in Facharzt-Weiterbildung.",
-  "uebertragbarkeit": "Deutschland: direkte Studienherkunft, Hausarztausbildung im deutschen System.",
-  "autoren": "Dreher AC et al.",
-  "zeitschrift": "BMC Med Educ",
+  "titel": "Palliativ-Care-Training für Fachkräfte in der Stammzelltransplantation",
+  "worum_es_geht": "Entwicklung und Pilotevaluation eines eintägigen Palliativ-Care-Trainings für 28 Fachkräfte in der allogenen hämatopoietischen Stammzelltransplantation.",
+  "ergebnis": "Post-Training stieg Selbstvertrauen in allen Domänen um Median 1–2 Punkte auf 10er-Skala, mit größten Gewinnen bei Goals-of-Care-Diskussionen und End-of-Life-Versorgung. Praxis-Transfer wurde als moderat bewertet; strukturierte, interdisziplinäre Trainingskomponenten wurden geschätzt.",
+  "uebertragbarkeit": "Deutschland (Köln) – Modell für Integration von Palliativmedizin in spezialisierte Fachbereiche",
+  "autoren": "Reimer A et al.",
+  "zeitschrift": "BMC Palliat Care",
   "jahr": "2026",
-  "pmid": "43034204",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43034204/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43034204"
+  "pmid": "43026594",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43026594/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43026594"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43034204"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43026594"
  }
 }
