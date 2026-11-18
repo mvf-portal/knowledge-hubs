@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-17",
+ "aufgenommen": "2026-11-18",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Palliativ-Care-Training für Fachkräfte in der Stammzelltransplantation",
-  "worum_es_geht": "Entwicklung und Pilotevaluation eines eintägigen Palliativ-Care-Trainings für 28 Fachkräfte in der allogenen hämatopoietischen Stammzelltransplantation.",
-  "ergebnis": "Post-Training stieg Selbstvertrauen in allen Domänen um Median 1–2 Punkte auf 10er-Skala, mit größten Gewinnen bei Goals-of-Care-Diskussionen und End-of-Life-Versorgung. Praxis-Transfer wurde als moderat bewertet; strukturierte, interdisziplinäre Trainingskomponenten wurden geschätzt.",
-  "uebertragbarkeit": "Deutschland (Köln) – Modell für Integration von Palliativmedizin in spezialisierte Fachbereiche",
-  "autoren": "Reimer A et al.",
-  "zeitschrift": "BMC Palliat Care",
+  "titel": "Primärversorgungsfachleute in Griechenland: Konzepte von Bedarfseinschätzung",
+  "worum_es_geht": "Qualitative Fokusgruppen mit 31 Primärversorgungsfachleuten zur Wahrnehmung von Gesundheitsbedarfen in der Community.",
+  "ergebnis": "Gesundheitsbedarfe werden als dynamisch, sozial konstruiert und häufig unartikuliert wahrgenommen (Themen: interpretative Arbeit von Frontline-Fachleuten, ethische Komplexität verschwiegenen Leidens, Fragmentierung zwischen primärer und tertiärer Versorgung, Rollenambiguität). Trotz struktureller Grenzen wurde qualifizierte Unterstützung für Community-Partizipation ausgedrückt.",
+  "uebertragbarkeit": "Südeuropa; Erkenntnisse zu Partizipation und Vertrauensfragen relevant für vergleichbare Systeme",
+  "autoren": "Papakosta-Gaki E et al.",
+  "zeitschrift": "J Commun Healthc",
   "jahr": "2026",
-  "pmid": "43026594",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43026594/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43026594"
+  "pmid": "43042674",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43042674/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43042674"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43026594"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43042674"
  }
 }
