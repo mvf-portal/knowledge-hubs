@@ -66,7 +66,7 @@ LAENGEN = {"wichtig-ausfuehrlich": 15000, "wichtig-lang": 10000,
            "wichtig-mittel": 5000, "wichtig-kurz": 2000}
 
 # Zum Sichten genuegt das kleine Modell - es soll einordnen, nicht schreiben.
-SICHT_MODELL = os.environ.get("SICHTMODELL", "claude-haiku-4-5-20251001")
+SICHT_MODELL = os.environ.get("SICHTMODELL", "claude-haiku-5-5")
 # Nur die sieben Schlagwoerter, aus denen sich der Newsletter speist
 # (newsletter.py, RUBRIKEN). "Vermischtes" und "Termine" fallen heraus - sie
 # kaemen nie in den Newsletter.
@@ -201,7 +201,8 @@ def sichten(text: str, dateiname: str, seiten: int) -> dict:
         "Meldung nicht lohnt.\n\n"
         f"--- Dokument ---\n{text[:16000]}"
     )
-    antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+    antwort = pm.frage(
+        "Kloepfer sichten", schluessel,
         model=SICHT_MODELL, max_tokens=1200, system=SICHT_SYSTEM,
         output_config={"format": {"type": "json_schema",
                                   "schema": SICHT_SCHEMA}},
@@ -282,7 +283,8 @@ def rangfolge(woche: pathlib.Path) -> int:
         "- warum: ein kurzer Satz, der die Platzierung trägt.\n"
         "Jedes Dokument kommt genau einmal vor."
     )
-    antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+    antwort = pm.frage(
+        "Kloepfer ordnen", schluessel,
         model=SICHT_MODELL, max_tokens=4000, system=RANG_SYSTEM,
         output_config={"format": {"type": "json_schema",
                                   "schema": RANG_SCHEMA}},
@@ -388,7 +390,8 @@ def buendeln(woche: pathlib.Path) -> int:
         "Gibt es keine Bündel, antworte mit einer leeren Liste. Dokumente "
         "ohne Partner tauchen nicht auf."
     )
-    antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+    antwort = pm.frage(
+        "Kloepfer buendeln", schluessel,
         model=SICHT_MODELL, max_tokens=2000, system=BUENDEL_SYSTEM,
         output_config={"format": {"type": "json_schema",
                                   "schema": BUENDEL_SCHEMA}},
@@ -803,6 +806,23 @@ def schreiben_anstossen() -> bool:
     return True
 
 
+# Seit dem 19.11.2026 geht das Schreiben ueber die Batch-API: halber Preis,
+# dafuer kommt das Ergebnis nicht sofort, meist binnen einer Stunde. Fuer
+# Kloepfer eilt nichts - die Freigabe ist ohnehin nur der Anstoss. Der Lauf
+# wartet bis zu BATCH_WARTEN auf den Stapel; ist er dann noch nicht fertig,
+# steht er in batch-offen.json, und der naechste Lauf holt ihn ab.
+BATCH_OFFEN = "batch-offen.json"
+BATCH_WARTEN = 2 * 3600
+
+
+def batch_offen_laden() -> dict:
+    try:
+        return json.loads((stammordner() / BATCH_OFFEN)
+                          .read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
 def _schreiben(hoechstens: int, trocken: bool, nur_woche: str = "",
                trotzdem: bool = False) -> int:
     import anthropic
@@ -813,17 +833,27 @@ def _schreiben(hoechstens: int, trocken: bool, nur_woche: str = "",
     schluessel = os.environ.get("KNOWLEDGEHUBS", "").strip()
     if not schluessel:
         raise SystemExit("KNOWLEDGEHUBS ist nicht gesetzt.")
-    modell = os.environ.get("MODEL", "claude-opus-5")
-    gemacht = 0
+    kunde = anthropic.Anthropic(api_key=schluessel)
+    modell = os.environ.get("MODEL", pm.MODELL)
 
+    # Erst abholen, was ein frueherer Lauf abgeschickt hat.
+    offen = batch_offen_laden()
+    if offen:
+        gemacht = stapel_einloesen(kunde, schluessel, offen)
+        if gemacht is None:
+            print(f"Stapel {offen['id']} ist noch in Arbeit - "
+                  "der naechste Lauf holt ihn ab.")
+            return 0
+        print(f"\n{gemacht} Meldung(en) aus dem frueheren Stapel geschrieben.")
+
+    auftraege = []
     for woche in wochen:
         daten = sichtung_laden(woche)
-        fertig_datei = woche / "geschrieben.json"
         try:
-            fertig = json.loads(fertig_datei.read_text(encoding="utf-8"))
+            fertig = json.loads((woche / "geschrieben.json")
+                                .read_text(encoding="utf-8"))
         except Exception:
             fertig = {}
-        (woche / "geschrieben").mkdir(exist_ok=True)
 
         for fach, zeichen in LAENGEN.items():
             ordner = woche / fach
@@ -832,9 +862,8 @@ def _schreiben(hoechstens: int, trocken: bool, nur_woche: str = "",
             posten = sorted(list(ordner.glob("*.pdf"))
                             + [p for p in ordner.iterdir() if p.is_dir()])
             for eintrag in posten:
-                if gemacht >= hoechstens:
-                    print("  Obergrenze erreicht - der Rest beim naechsten Lauf.")
-                    return 0
+                if len(auftraege) >= hoechstens:
+                    break
                 if eintrag.name in fertig:
                     continue
                 # Die zweite Entscheidung: Ohne Freigabe wird nicht
@@ -896,87 +925,168 @@ def _schreiben(hoechstens: int, trocken: bool, nur_woche: str = "",
                     if urteil:
                         print(f"    verwandt zu Nr. {nahe['id']}, aber nicht "
                               f"dasselbe: {urteil.get('begruendung','')[:70]}")
-                auftrag = schreib_auftrag(
-                    stuecke, zeichen,
-                    eintrag.name if eintrag.is_dir() else "")
-                try:
-                    antwort = anthropic.Anthropic(
-                        api_key=schluessel).messages.create(
-                        model=modell, max_tokens=16000, system=SCHREIB_SYSTEM,
-                        output_config={"format": {"type": "json_schema",
-                                                  "schema": SCHREIB_SCHEMA}},
-                        messages=[{"role": "user", "content": auftrag}])
-                    meldung = json.loads(next(b.text for b in antwort.content
-                                              if b.type == "text"))
-                except Exception as fehler:
-                    print(f"    Schreiben gescheitert: {str(fehler)[:110]}")
-                    continue
+                auftraege.append({
+                    "id": f"m{len(auftraege) + 1:03d}",
+                    "woche": woche.name, "fach": fach, "zeichen": zeichen,
+                    "eintrag": eintrag.name,
+                    "auftrag": schreib_auftrag(
+                        stuecke, zeichen,
+                        eintrag.name if eintrag.is_dir() else "")})
 
-                inhalt, laenge = baue_beitrag(meldung, stuecke)
-                # Die Obergrenze muss halten: Der erste Durchgang lag bei der
-                # Probe am 06.10.2026 um ein Drittel darueber (6.614 statt
-                # 5.000). Einmal kuerzen lassen, mit der Auflage, keine Zahl
-                # zu opfern.
-                if laenge > zeichen * 1.1:
-                    print(f"    {laenge} Zeichen - zu lang, wird gekuerzt")
-                    try:
-                        antwort = anthropic.Anthropic(
-                            api_key=schluessel).messages.create(
-                            model=modell, max_tokens=16000,
-                            system=SCHREIB_SYSTEM,
-                            output_config={"format": {"type": "json_schema",
-                                                      "schema": SCHREIB_SCHEMA}},
-                            messages=[
-                                {"role": "user", "content": auftrag},
-                                {"role": "assistant",
-                                 "content": json.dumps(meldung,
-                                                       ensure_ascii=False)},
-                                {"role": "user", "content":
-                                 f"Der Fließtext hat {laenge} Zeichen, erlaubt "
-                                 f"sind {zeichen}. Kürze auf höchstens "
-                                 f"{zeichen} Zeichen. Streiche Einordnendes "
-                                 "und Wiederholungen, niemals eine Zahl, eine "
-                                 "Frist oder eine Zuschreibung. Gleiches "
-                                 "Format."}])
-                        gekuerzt = json.loads(next(b.text for b in antwort.content
-                                                   if b.type == "text"))
-                        inhalt2, laenge2 = baue_beitrag(gekuerzt, stuecke)
-                        if laenge2 and laenge2 <= laenge:
-                            meldung, inhalt, laenge = gekuerzt, inhalt2, laenge2
-                    except Exception as fehler:
-                        print(f"    Kuerzen gescheitert: {str(fehler)[:80]}")
-                print(f"    {meldung['titel'][:66]}")
-                print(f"    {laenge} Zeichen Fließtext, Schlagwort "
-                      f"{meldung.get('schlagwort','?')}")
-                if trocken:
-                    vorschau = woche / "geschrieben" / f"{eintrag.stem}.html"
-                    vorschau.write_text(inhalt, encoding="utf-8")
-                    print(f"    [trocken] Vorschau: {vorschau.name}")
-                    gemacht += 1
-                    continue
+    if not auftraege:
+        print("\nNichts Neues freigegeben.")
+        return 0
 
-                bilder = bilder_sammeln(pdfs, daten, woche.name[:4])
-                try:
-                    angelegt = pm.entwurf(meldung, inhalt, None, False,
-                                          None, bilder, "")
-                except Exception as fehler:
-                    print(f"    WordPress: {str(fehler)[:110]}")
-                    continue
-                if angelegt:
-                    fertig[eintrag.name] = {"datum": pm.dt_heute(),
-                                            "titel": meldung["titel"],
-                                            "zeichen": laenge}
-                    ziel = woche / "geschrieben" / eintrag.name
-                    try:
-                        eintrag.replace(ziel)
-                    except Exception:
-                        pass
-                    gemacht += 1
-        fertig_datei.write_text(
-            json.dumps(fertig, ensure_ascii=False, indent=1, sort_keys=True),
-            encoding="utf-8")
-    print(f"\n{gemacht} Meldung(en) geschrieben.")
+    stapel = kunde.messages.batches.create(requests=[
+        {"custom_id": a["id"],
+         "params": pm.aufruf_parameter(
+             model=modell, max_tokens=16000, system=SCHREIB_SYSTEM,
+             output_config={"format": {"type": "json_schema",
+                                       "schema": SCHREIB_SCHEMA}},
+             messages=[{"role": "user", "content": a["auftrag"]}])}
+        for a in auftraege])
+    offen = {"id": stapel.id, "trocken": trocken,
+             "abgeschickt": f"{datetime.datetime.now():%Y-%m-%d %H:%M}",
+             "auftraege": [{k: v for k, v in a.items() if k != "auftrag"}
+                           for a in auftraege]}
+    (stamm / BATCH_OFFEN).write_text(
+        json.dumps(offen, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"\n{len(auftraege)} Meldung(en) als Stapel {stapel.id} abgeschickt "
+          "- halber Preis, Ergebnis meist binnen einer Stunde.")
+
+    ende = time.time() + BATCH_WARTEN
+    while time.time() < ende:
+        time.sleep(60)
+        gemacht = stapel_einloesen(kunde, schluessel, offen)
+        if gemacht is not None:
+            print(f"\n{gemacht} Meldung(en) geschrieben.")
+            return 0
+    print("\nDer Stapel ist noch nicht fertig - der naechste stuendliche Lauf "
+          "holt ihn ab.")
     return 0
+
+
+def kuerzen(meldung: dict, zeichen: int, laenge: int,
+            schluessel: str, modell: str) -> dict | None:
+    """Den fertigen Entwurf kuerzen - OHNE die Quellen noch einmal zu schicken.
+
+    Bis zum 19.11.2026 ging fuer die Kuerzung der ganze Auftrag samt bis zu
+    90.000 Zeichen Quelltext ein zweites Mal hinaus, bei 14 von 20 Meldungen.
+    Zum Kuerzen braucht es nur den Entwurf.
+    """
+    try:
+        antwort = pm.frage(
+            "Kloepfer kuerzen", schluessel,
+            model=modell, max_tokens=16000, system=SCHREIB_SYSTEM,
+            output_config={"format": {"type": "json_schema",
+                                      "schema": SCHREIB_SCHEMA}},
+            messages=[{"role": "user", "content":
+                       f"Hier ist eine fertige Meldung als JSON. Der Fließtext "
+                       f"hat {laenge} Zeichen, erlaubt sind {zeichen}. Kürze "
+                       f"auf höchstens {zeichen} Zeichen. Streiche "
+                       "Einordnendes und Wiederholungen, niemals eine Zahl, "
+                       "eine Frist oder eine Zuschreibung. Füge nichts hinzu. "
+                       "Titel, Textauszug, Quellen und Schlagwort bleiben, "
+                       "wie sie sind. Gleiches Format.\n\n"
+                       + json.dumps(meldung, ensure_ascii=False)}])
+        return json.loads(next(b.text for b in antwort.content
+                               if b.type == "text"))
+    except Exception as fehler:
+        print(f"    Kuerzen gescheitert: {str(fehler)[:80]}")
+        return None
+
+
+def stapel_einloesen(kunde, schluessel: str, offen: dict) -> int | None:
+    """Einen fertigen Stapel zu Entwuerfen machen. None: noch nicht fertig."""
+    stapel = kunde.messages.batches.retrieve(offen["id"])
+    if stapel.processing_status != "ended":
+        return None
+    ergebnisse = {e.custom_id: e for e in kunde.messages.batches.results(
+        offen["id"])}
+    stamm = stammordner()
+    modell = os.environ.get("MODEL", pm.MODELL)
+    gemacht = 0
+
+    for a in offen["auftraege"]:
+        woche = stamm / a["woche"]
+        eintrag = woche / a["fach"] / a["eintrag"]
+        zeichen = a["zeichen"]
+        print(f"\n--- {a['fach']} / {a['eintrag'][:62]}")
+        e = ergebnisse.get(a["id"])
+        if e is None or e.result.type != "succeeded":
+            # Bleibt freigegeben und ungeschrieben - der naechste Lauf
+            # schickt es noch einmal.
+            print(f"    im Stapel gescheitert "
+                  f"({e.result.type if e else 'fehlt'})")
+            continue
+        nachricht = e.result.message
+        pm.verbrauch_buchen(nachricht, "Kloepfer schreiben", stapel=True)
+        try:
+            meldung = json.loads(next(b.text for b in nachricht.content
+                                      if b.type == "text"))
+        except Exception as fehler:
+            print(f"    Antwort nicht lesbar: {str(fehler)[:80]}")
+            continue
+        if not eintrag.exists():
+            print("    inzwischen verschoben - nicht angelegt")
+            continue
+
+        inhalt, laenge = baue_beitrag(meldung, [])
+        # Die Obergrenze muss halten: Der erste Durchgang lag bei der
+        # Probe am 06.10.2026 um ein Drittel darueber (6.614 statt
+        # 5.000). Einmal kuerzen lassen, mit der Auflage, keine Zahl
+        # zu opfern.
+        if laenge > zeichen * 1.1:
+            print(f"    {laenge} Zeichen - zu lang, wird gekuerzt")
+            gekuerzt = kuerzen(meldung, zeichen, laenge, schluessel, modell)
+            if gekuerzt:
+                inhalt2, laenge2 = baue_beitrag(gekuerzt, [])
+                if laenge2 and laenge2 <= laenge:
+                    meldung, inhalt, laenge = gekuerzt, inhalt2, laenge2
+        print(f"    {meldung['titel'][:66]}")
+        print(f"    {laenge} Zeichen Fließtext, Schlagwort "
+              f"{meldung.get('schlagwort','?')}")
+        (woche / "geschrieben").mkdir(exist_ok=True)
+        if offen.get("trocken"):
+            vorschau = woche / "geschrieben" / f"{eintrag.stem}.html"
+            vorschau.write_text(inhalt, encoding="utf-8")
+            print(f"    [trocken] Vorschau: {vorschau.name}")
+            gemacht += 1
+            continue
+
+        pdfs = ([eintrag] if eintrag.is_file()
+                else sorted(eintrag.glob("*.pdf")))
+        daten = sichtung_laden(woche)
+        pdfs.sort(key=lambda p: daten.get(p.name, {}).get("platz", 99))
+        bilder = bilder_sammeln(pdfs, daten, woche.name[:4])
+        try:
+            angelegt = pm.entwurf(meldung, inhalt, None, False,
+                                  None, bilder, "")
+        except Exception as fehler:
+            print(f"    WordPress: {str(fehler)[:110]}")
+            continue
+        if angelegt:
+            # Sofort festhalten, nicht erst am Ende - bricht der Lauf ab,
+            # darf nichts doppelt angelegt werden.
+            fertig_datei = woche / "geschrieben.json"
+            try:
+                fertig = json.loads(fertig_datei.read_text(encoding="utf-8"))
+            except Exception:
+                fertig = {}
+            fertig[eintrag.name] = {"datum": pm.dt_heute(),
+                                    "titel": meldung["titel"],
+                                    "zeichen": laenge}
+            fertig_datei.write_text(
+                json.dumps(fertig, ensure_ascii=False, indent=1,
+                           sort_keys=True), encoding="utf-8")
+            try:
+                eintrag.replace(woche / "geschrieben" / eintrag.name)
+            except Exception:
+                pass
+            gemacht += 1
+
+    (stamm / BATCH_OFFEN).unlink(missing_ok=True)
+    return gemacht
 
 
 def baue_beitrag(meldung: dict, stuecke: list) -> tuple[str, int]:
@@ -1202,7 +1312,8 @@ def dublette_pruefen(woche: pathlib.Path, name: str, titel: str, worum: str,
         "- begruendung: ein Satz. Bei false: was das neue Dokument bringt, "
         "das im Beitrag fehlt.")
     try:
-        antwort = anthropic.Anthropic(api_key=schluessel_api).messages.create(
+        antwort = pm.frage(
+            "Kloepfer Dublette", schluessel_api,
             model=SICHT_MODELL, max_tokens=400, system=DUBLETTEN_SYSTEM,
             output_config={"format": {"type": "json_schema",
                                       "schema": DUBLETTEN_SCHEMA}},

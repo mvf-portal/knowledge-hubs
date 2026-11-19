@@ -169,7 +169,128 @@ SCHLAGWOERTER = {
     "Mindestmenge": 2251,
 }
 
-MODELL = os.environ.get("MODEL", "claude-opus-5")
+# Seit dem 19.11.2026 Opus 5.5 statt Opus 5: In drei Monaten standen 93 Dollar
+# auf dem Schluessel, fast alles fuer das Schreiben. Opus 5.5 kostet je Token
+# ein Fuenftel weniger, und es denkt nur so viel, wie AUFWAND erlaubt -
+# Opus 5 dachte ungefragt auf hoher Stufe, und Denken wird als Ausgabe
+# abgerechnet, zum teuren Satz, ohne dass man es je sieht.
+MODELL = os.environ.get("MODEL", "claude-opus-5-5")
+AUFWAND = os.environ.get("AUFWAND", "low")
+
+# Dollar je Million Tokens (Eingabe, Ausgabe), Stand 19.11.2026. Ein Modell,
+# das hier fehlt, wird mit 0 gebucht - das Protokoll sagt dann "Preis fehlt".
+PREISE = {
+    "claude-opus-5-5": (4.00, 20.00),
+    "claude-opus-5": (5.00, 25.00),
+    "claude-sonnet-5-5": (2.00, 10.00),
+    "claude-haiku-5-5": (0.10, 0.50),
+    "claude-haiku-4-5": (1.00, 5.00),
+}
+
+
+def verbrauchsdatei() -> pathlib.Path:
+    # Neben die Mitteilungen, nicht ins Repo - das ist oeffentlich.
+    return ablageordner() / "verbrauch.jsonl"
+
+
+def verbrauch_buchen(antwort, zweck: str, stapel: bool = False) -> float:
+    """Einen Modellaufruf mit Tokens und Dollar ins Protokoll schreiben.
+
+    Bis zum 19.11.2026 schrieb keine der Ketten mit, was sie kostet; die 93
+    Dollar liessen sich nur noch schaetzen. stapel: ueber die Batch-API
+    abgerechnet, also zum halben Preis.
+    """
+    import datetime
+    try:
+        nutzung = antwort.usage
+        modell = str(antwort.model)
+        rein = int(nutzung.input_tokens or 0)
+        rein += int(getattr(nutzung, "cache_creation_input_tokens", 0) or 0)
+        rein += int(getattr(nutzung, "cache_read_input_tokens", 0) or 0)
+        raus = int(nutzung.output_tokens or 0)
+        preis = next((p for name, p in PREISE.items()
+                      if modell == name or modell.startswith(name + "-")),
+                     None)
+        dollar = ((rein * preis[0] + raus * preis[1]) / 1e6) if preis else 0.0
+        if stapel:
+            dollar /= 2
+        zeile = {"zeit": f"{datetime.datetime.now():%Y-%m-%d %H:%M:%S}",
+                 "skript": pathlib.Path(sys.argv[0]).stem, "zweck": zweck,
+                 "modell": modell, "stapel": stapel, "eingabe": rein,
+                 "ausgabe": raus, "dollar": round(dollar, 5)}
+        if not preis:
+            zeile["hinweis"] = "Preis fehlt"
+        datei = verbrauchsdatei()
+        datei.parent.mkdir(parents=True, exist_ok=True)
+        with open(datei, "a", encoding="utf-8") as f:
+            f.write(json.dumps(zeile, ensure_ascii=False) + "\n")
+        return dollar
+    except Exception as fehler:
+        # Das Protokoll darf keinen Lauf kippen.
+        print(f"  Verbrauch nicht gebucht: {str(fehler)[:80]}")
+        return 0.0
+
+
+def aufruf_parameter(**params) -> dict:
+    """Die Einstellungen, die fuer jeden Aufruf gelten sollen.
+
+    Denkaufwand: ohne Angabe AUFWAND. Bei Haiku 5.5 wird das Denken ganz
+    abgeschaltet - seine Aufgaben sind Ja/Nein-Urteile und kurze Listen, und
+    Denk-Tokens zaehlen in max_tokens: Bei 300 Tokens bliebe sonst fuer die
+    Antwort nichts uebrig.
+    """
+    konfig = dict(params.pop("output_config", None) or {})
+    konfig.setdefault("effort", AUFWAND)
+    params["output_config"] = konfig
+    if str(params.get("model", "")).startswith("claude-haiku-5"):
+        params.setdefault("thinking", {"type": "disabled"})
+    return params
+
+
+def frage(zweck: str, schluessel: str = "", **params):
+    """Ein Modellaufruf mit den Hauseinstellungen - und mit Buchung."""
+    import anthropic
+    schluessel = schluessel or os.environ.get("KNOWLEDGEHUBS", "").strip()
+    antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+        **aufruf_parameter(**params))
+    verbrauch_buchen(antwort, zweck)
+    return antwort
+
+
+def verbrauch_bericht(tage: int = 31) -> int:
+    """Was die Ketten gekostet haben, nach Skript und Zweck."""
+    import datetime
+    grenze = f"{datetime.date.today() - datetime.timedelta(days=tage)}"
+    summen: dict[tuple, list] = {}
+    try:
+        zeilen = verbrauchsdatei().read_text(encoding="utf-8").splitlines()
+    except FileNotFoundError:
+        print("Noch kein Verbrauch gebucht.")
+        return 0
+    for zeile in zeilen:
+        try:
+            z = json.loads(zeile)
+        except Exception:
+            continue
+        if z.get("zeit", "") < grenze:
+            continue
+        s = summen.setdefault((z["skript"], z["zweck"], z["modell"]),
+                              [0, 0, 0, 0.0])
+        s[0] += 1
+        s[1] += z.get("eingabe", 0)
+        s[2] += z.get("ausgabe", 0)
+        s[3] += z.get("dollar", 0.0)
+    print(f"Verbrauch der letzten {tage} Tage (seit {grenze}):\n")
+    print(f"{'Skript / Zweck':<38} {'Modell':<18} {'Aufrufe':>7} "
+          f"{'Eingabe':>10} {'Ausgabe':>9} {'Dollar':>8}")
+    gesamt = 0.0
+    for (skript, zweck, modell), (n, rein, raus, dollar) in sorted(
+            summen.items(), key=lambda e: -e[1][3]):
+        gesamt += dollar
+        print(f"{(skript + ' / ' + zweck)[:38]:<38} {modell[:18]:<18} {n:>7} "
+              f"{rein:>10,} {raus:>9,} {dollar:>8.2f}".replace(",", "."))
+    print(f"\n{'Summe':<38} {'':<18} {'':>7} {'':>10} {'':>9} {gesamt:>8.2f}")
+    return 0
 
 # Dieser Prompt steht bewusst MIT Umlauten - in den Tagesnews hat das Modell
 # die ASCII-Ersatzschreibung seiner Anweisung in den Fliesstext uebernommen.
@@ -470,7 +591,8 @@ def ist_pressemitteilung(absender: str, betreff: str,
 # Das Sprachmodell entscheidet, was die Wortlisten offenlassen. Haiku genuegt
 # dafuer und kostet Bruchteile eines Cents; die Meldung selbst schreibt
 # weiterhin das grosse Modell.
-PRUEF_MODELL = os.environ.get("PRUEFMODELL", "claude-haiku-4-5-20251001")
+# Haiku 5.5 seit dem 19.11.2026: ein Zehntel des Preises von Haiku 4.5.
+PRUEF_MODELL = os.environ.get("PRUEFMODELL", "claude-haiku-5-5")
 PRUEF_SYSTEM = (
     "Du sortierst den Posteingang eines Fachredakteurs. Er gibt "
     "Pressemitteilungen aus dem deutschen Gesundheitswesen auf der "
@@ -506,7 +628,8 @@ def modell_urteil(absender: str, betreff: str, anfang: str) -> tuple[bool, str]:
     auftrag = (f"Absender: {absender}\nBetreff: {betreff}\n\n"
                f"Anfang der Mail:\n{anfang[:2500]}")
     try:
-        antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+        antwort = frage(
+            "Zweifelsfall pruefen", schluessel,
             model=PRUEF_MODELL, max_tokens=300, system=PRUEF_SYSTEM,
             output_config={"format": {"type": "json_schema",
                                       "schema": PRUEF_SCHEMA}},
@@ -686,9 +809,12 @@ def schreibe_meldung(text: str, links: list[str], hinweis: str = "") -> dict:
         auftrag += f"\nZusätzlicher Hinweis der Redaktion: {hinweis}\n"
     auftrag += f"\n--- Pressemitteilung ---\n{text[:60000]}"
 
-    antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+    # 8000 statt 4000: Opus 5.5 denkt immer ein wenig, und das zaehlt in
+    # max_tokens. Bezahlt wird nur, was wirklich anfaellt.
+    antwort = frage(
+        "Meldung schreiben", schluessel,
         model=MODELL,
-        max_tokens=4000,
+        max_tokens=8000,
         system=SYSTEM,
         output_config={"format": {"type": "json_schema", "schema": SCHEMA}},
         messages=[{"role": "user", "content": auftrag}],
@@ -720,8 +846,13 @@ def titel_kuerzen(titel: str, schluessel: str) -> str:
           f"wird neu angefragt.")
     import anthropic
     try:
-        antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
-            model=MODELL, max_tokens=300, system=SYSTEM,
+        # Nicht Haiku: Am 19.11.2026 machte Haiku 5.5 im Probelauf aus "das
+        # BMG hat den Beschluss nicht beanstandet" den Titel "G-BA-Beschluss
+        # ungeprueft". Kuerzen heisst gewichten, das braucht das grosse Modell.
+        # 2000 Tokens, weil Opus 5.5 immer ein wenig denkt.
+        antwort = frage(
+            "Titel kuerzen", schluessel,
+            model=MODELL, max_tokens=2000, system=SYSTEM,
             messages=[{"role": "user", "content": (
                 f"Kürze diese Überschrift auf höchstens {TITEL_MAX} Zeichen, "
                 f"ohne ihren Sinn zu ändern. Die Sache steht vorn, der "
@@ -2296,7 +2427,8 @@ def vorsortieren(text: str) -> tuple[bool, str]:
     if not schluessel:
         return False, "kein Schluessel"
     try:
-        antwort = anthropic.Anthropic(api_key=schluessel).messages.create(
+        antwort = frage(
+            "Vorsortieren", schluessel,
             model=PRUEF_MODELL, max_tokens=400,
             system=VORSORT_SYSTEM + vorsort_beispiele(),
             output_config={"format": {"type": "json_schema",
@@ -2716,6 +2848,9 @@ def main() -> int:
 
     if a.quelle.lower() == "lernlauf":
         return lernlauf()
+
+    if a.quelle.lower() == "verbrauch":
+        return verbrauch_bericht()
 
     if a.quelle.lower() == "postfach":
         # Der Zeitplan startet das Skript ohne Fenster - was dabei geschieht,
