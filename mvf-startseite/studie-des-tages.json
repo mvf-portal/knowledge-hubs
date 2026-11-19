@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-18",
+ "aufgenommen": "2026-11-19",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Primärversorgungsfachleute in Griechenland: Konzepte von Bedarfseinschätzung",
-  "worum_es_geht": "Qualitative Fokusgruppen mit 31 Primärversorgungsfachleuten zur Wahrnehmung von Gesundheitsbedarfen in der Community.",
-  "ergebnis": "Gesundheitsbedarfe werden als dynamisch, sozial konstruiert und häufig unartikuliert wahrgenommen (Themen: interpretative Arbeit von Frontline-Fachleuten, ethische Komplexität verschwiegenen Leidens, Fragmentierung zwischen primärer und tertiärer Versorgung, Rollenambiguität). Trotz struktureller Grenzen wurde qualifizierte Unterstützung für Community-Partizipation ausgedrückt.",
-  "uebertragbarkeit": "Südeuropa; Erkenntnisse zu Partizipation und Vertrauensfragen relevant für vergleichbare Systeme",
-  "autoren": "Papakosta-Gaki E et al.",
-  "zeitschrift": "J Commun Healthc",
+  "titel": "Patientenperspektiven auf Qualität und Beschwerdeverfahren: ländlich-urbane Unterschiede",
+  "worum_es_geht": "Eine qualitative Studie mit 32 Teilnehmenden aus vier virtuellen Fokusgruppen (Alberta, Kanada) untersuchte Unterschiede in Wahrnehmung von Versorgungsqualität und Nutzung von Beschwerdeverfahren zwischen ländlichen und urbanen Gemeinden.",
+  "ergebnis": "Alle Teilnehmenden betonten respektvolle Kommunikation und Kontinuität als Kernelemente guter Pflege. Ländliche Teilnehmende beschrieben Arztnangel und Reisebelastung; urbane berichteten von Fragmentierung. Beschwerdeverfahren wurden wenig genutzt, bedingt durch hohe Hemmschwellen, Verfahrensunverständnis und in ländlichen Gebieten zusätzlich Vertrauensfragen und Angst vor Versorgungsverlust.",
+  "uebertragbarkeit": "Kanada mit hausarztgesteuertem System; ländlich-urbane Disparitäten übertragbar.",
+  "autoren": "Kain N et al.",
+  "zeitschrift": "Health Serv Insights",
   "jahr": "2026",
-  "pmid": "43042674",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43042674/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43042674"
+  "pmid": "43048458",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43048458/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43048458"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43042674"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43048458"
  }
 }
