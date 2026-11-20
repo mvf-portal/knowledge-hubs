@@ -90,6 +90,47 @@ LAEUFE = [
 # Mal haelt man eine echte Stoerung fuer denselben Fehlalarm.
 SAMMELBERICHT = ("Sammelbericht", "mvf-portal/knowledge-hubs", "versand-bericht.yml")
 
+# --- Die Spuren: Wochen- und Monatsausgabe --------------------------------
+#
+# Eingerichtet am 14.11.2026, erstmals gelaufen am Freitag, 20.11.2026. An
+# jenem Morgen liefen alle zwanzig Wochenausgaben sauber durch, fuenf wurden
+# terminiert und fuenfzehn vom Torwaechter wegen leerem Empfaengersegment
+# gestoppt - und KEINE EINZIGE DAVON STAND UNTER BEOBACHTUNG. Diese Wache sah
+# bis dahin ausschliesslich auf `update-studies.yml`. Ein roter Lauf der
+# Wochenausgabe waere lautlos geblieben, genau der Fall, gegen den diese Wache
+# ueberhaupt gebaut wurde.
+#
+# Der Kalender steht hier ZUM DRITTEN MAL: einmal als Shell im Dirigenten
+# (.github/workflows/dirigent.yml, Schritt "Welche Ausgabe ist heute faellig"),
+# einmal als `spur_faellig()` in mailchimp_entwurf.py, und jetzt hier. Das ist
+# bewusst und nicht aus Versehen: Diese Wache soll NICHT von hub-scripts
+# abhaengen - sie laeuft auch auf dem Redaktionsrechner, wo ein anderer Stand
+# jenes Repos liegt, und eine Wache, die mit dem Ueberwachten zusammen
+# ausfaellt, ist keine. Der Preis ist, dass die drei auseinanderlaufen koennen.
+# Dagegen hilft nur Nachmessen: `py scripts/spur_kalender_probe.py` vergleicht
+# diese Fassung ueber ein ganzes Jahr mit der Regel des Dirigenten.
+SPUR_WORKFLOW = "newsletter-spur.yml"
+SPUR_NAME = {"woche": "Wochenausgabe", "monat": "Monatsausgabe"}
+
+
+def spuren_von_heute(d: dt.date) -> list[str]:
+    """Welche Spuren heute faellig sind - dieselbe Regel wie im Dirigenten.
+
+    woche: jeden Freitag.
+    monat: der erste WERKTAG des Monats. Faellt der Erste auf einen Samstag,
+    ist es der dritte (Montag), faellt er auf einen Sonntag, der zweite.
+    Beides zugleich gibt es, wenn der Monatserste ein Freitag ist.
+    """
+    tag = d.weekday() + 1          # 1 = Montag ... 7 = Sonntag
+    num = d.day
+    aus = []
+    if tag == 5:
+        aus.append("woche")
+    if tag <= 5 and (num == 1 or (num in (2, 3) and tag == 1)):
+        aus.append("monat")
+    return aus
+
+
 GH = shutil.which("gh") or r"C:\Program Files\GitHub CLI\gh.exe"
 
 
@@ -185,8 +226,13 @@ def dirigent_unterwegs(heute: str) -> dict | None:
     return None
 
 
-def anstossen(repo: str, workflow: str) -> str:
-    r = gh_ruf("workflow", "run", workflow, "-R", repo)
+def anstossen(repo: str, workflow: str, zusatz: tuple[str, ...] = ()) -> str:
+    """Einen Lauf starten. `zusatz` traegt Eingaben, etwa -f spur=woche.
+
+    newsletter-spur.yml verlangt die Eingabe `spur`; ohne sie weist GitHub
+    den Start ab. Deshalb der Zusatz statt eines zweiten Anstossers.
+    """
+    r = gh_ruf("workflow", "run", workflow, "-R", repo, *zusatz)
     return "angestossen" if r.returncode == 0 else f"START FEHLGESCHLAGEN: {r.stderr.strip()[:120]}"
 
 
@@ -236,7 +282,8 @@ def warten_bis_durch(offen: list[tuple[str, str, str]], heute: str) -> tuple[lis
 
 
 def pruefen(name: str, repo: str, workflow: str, heute: str,
-            trocken: bool, wartend: dict | None) -> tuple[str, bool, bool]:
+            trocken: bool, wartend: dict | None,
+            zusatz: tuple[str, ...] = ()) -> tuple[str, bool, bool]:
     """Ein Eintrag: Zeile fuers Protokoll, auffaellig?, laeuft jetzt?
 
     "laeuft jetzt" meint beides - eben angestossen oder schon unterwegs. Auf
@@ -434,6 +481,40 @@ def main() -> int:
         zeilen.append(zeile)
         if ist_auffaellig:
             auffaellig.append(name)
+
+    # --- Die Spuren, zum Schluss und bewusst abseits ----------------------
+    #
+    # NICHT in `offen`: Der Sammelbericht berichtet ueber die Tagesausgabe.
+    # Ein angestossener Wochenlauf darf ihn nicht noch einmal wecken, denn
+    # versand-bericht.yml verschickt dabei auch die Tagesnews - die ginge
+    # dann ein zweites Mal hinaus.
+    #
+    # Hier wird auch NICHT gewartet. Ein Spurlauf braucht ein bis zwei
+    # Minuten, und die naechste Runde sieht nach, ob er durchkam; um 09:00
+    # bleibt bis zum Versand um 10:00 noch eine Stunde. Zwanzig Minuten
+    # zusaetzliches Warten brachten dagegen die Kontrolle (timeout-minutes:
+    # 40) nahe an ihre Grenze.
+    #
+    # An Tagen ohne faellige Spur steht hier keine einzige Zeile. Das ist
+    # der Punkt: Eine Wache, die an sechs von sieben Tagen "kein Lauf"
+    # meldet, wird am siebten nicht mehr gelesen.
+    for spur in spuren_von_heute(jetzt.date()):
+        bez = SPUR_NAME[spur]
+        zusatz = ("-f", f"spur={spur}")
+        schlecht = 0
+        for name, repo, _ in LAEUFE:
+            zeile, ist_auffaellig, laeuft = pruefen(
+                f"{name} ({bez})", repo, SPUR_WORKFLOW, heute,
+                a.trocken, wartend, zusatz)
+            zeilen.append(zeile)
+            if not ist_auffaellig:
+                continue
+            schlecht += 1
+            if laeuft and ausloeser:
+                continue      # eben angestossen - die naechste Runde prueft nach
+            auffaellig.append(f"{name} ({bez})")
+        if not schlecht:
+            zeilen.append(f"-- {bez}: alle {len(LAEUFE)} Hubs gelaufen.")
 
     kopf = f"Laufwache {jetzt:%d.%m.%Y %H:%M}"
     text = kopf + "\n" + "\n".join(zeilen)
