@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-19",
+ "aufgenommen": "2026-11-20",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Patientenperspektiven auf Qualität und Beschwerdeverfahren: ländlich-urbane Unterschiede",
-  "worum_es_geht": "Eine qualitative Studie mit 32 Teilnehmenden aus vier virtuellen Fokusgruppen (Alberta, Kanada) untersuchte Unterschiede in Wahrnehmung von Versorgungsqualität und Nutzung von Beschwerdeverfahren zwischen ländlichen und urbanen Gemeinden.",
-  "ergebnis": "Alle Teilnehmenden betonten respektvolle Kommunikation und Kontinuität als Kernelemente guter Pflege. Ländliche Teilnehmende beschrieben Arztnangel und Reisebelastung; urbane berichteten von Fragmentierung. Beschwerdeverfahren wurden wenig genutzt, bedingt durch hohe Hemmschwellen, Verfahrensunverständnis und in ländlichen Gebieten zusätzlich Vertrauensfragen und Angst vor Versorgungsverlust.",
-  "uebertragbarkeit": "Kanada mit hausarztgesteuertem System; ländlich-urbane Disparitäten übertragbar.",
-  "autoren": "Kain N et al.",
-  "zeitschrift": "Health Serv Insights",
+  "titel": "SARI-Überwachung mittels Abrechnungsdaten in den Niederlanden",
+  "worum_es_geht": "Entwicklung und Evaluation einer syndromischen Falldefinition für SARI-Surveillance basierend auf DTC-Codes (niederländische Abrechnungscodes) im Vergleich zu ICD-10-Kodierungen.",
+  "ergebnis": "DTC-Codes für Pneumonie und unspezifische respiratorische Infektionen dienten als SARI-Proxy bei Erwachsenen; bei Kindern Codes für Laryngitis subglottica, RSV-Bronchiolitis. DTC-basierte Trends korrelierten mit ICD-10-kodierten Trends, aber die Genauigkeit auf Patientenebene war moderat. Der Proxy reflektierte COVID-19-Hospitalisierungsgipfel und korrelierte mit Influenza- und RSV-Labormeldungen.",
+  "uebertragbarkeit": "Niederlande, Sozialversicherungssystem ähnlich Deutschland – direkt anwendbar für Surveillance-Systeme.",
+  "autoren": "Niessen FA et al.",
+  "zeitschrift": "PLoS One",
   "jahr": "2026",
-  "pmid": "43048458",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43048458/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43048458"
+  "pmid": "43056310",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43056310/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43056310"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43048458"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43056310"
  }
 }
