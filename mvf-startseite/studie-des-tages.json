@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-20",
+ "aufgenommen": "2026-11-21",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "SARI-Überwachung mittels Abrechnungsdaten in den Niederlanden",
-  "worum_es_geht": "Entwicklung und Evaluation einer syndromischen Falldefinition für SARI-Surveillance basierend auf DTC-Codes (niederländische Abrechnungscodes) im Vergleich zu ICD-10-Kodierungen.",
-  "ergebnis": "DTC-Codes für Pneumonie und unspezifische respiratorische Infektionen dienten als SARI-Proxy bei Erwachsenen; bei Kindern Codes für Laryngitis subglottica, RSV-Bronchiolitis. DTC-basierte Trends korrelierten mit ICD-10-kodierten Trends, aber die Genauigkeit auf Patientenebene war moderat. Der Proxy reflektierte COVID-19-Hospitalisierungsgipfel und korrelierte mit Influenza- und RSV-Labormeldungen.",
-  "uebertragbarkeit": "Niederlande, Sozialversicherungssystem ähnlich Deutschland – direkt anwendbar für Surveillance-Systeme.",
-  "autoren": "Niessen FA et al.",
-  "zeitschrift": "PLoS One",
+  "titel": "Elternerfahrungen bei Perinatalverlust: Dynamischer Prozess statt Einzelereignis",
+  "worum_es_geht": "Qualitative Studie mit 12 Eltern (9 Mütter, 3 Väter), die Narrativ-Interviews zu ihren Erfahrungen bei intrauterinem oder perinatelem Kindsverlust durchliefen.",
+  "ergebnis": "Zwei ineinander verwobene Dimensionen identifiziert: Fünf-Phasen-Trajektorie (suspensevolle Unsicherheit → Normkollaps → Entscheidungsbelastung → Systemverankerung/Verlassenheit → unmögliche Elternschaft) sowie vier übergreifende Themen (Kontextfaktoren, Vorbereitung/Anpassung, Verarbeitungs-/Trauerbedarf, innere Konflikte).",
+  "uebertragbarkeit": "Deutsche Studie, gesetzliche Versorgungsstrukturen",
+  "autoren": "Bauernfeind L et al.",
+  "zeitschrift": "BMC Health Serv Res",
   "jahr": "2026",
-  "pmid": "43056310",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43056310/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43056310"
+  "pmid": "43058740",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43058740/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43058740"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43056310"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43058740"
  }
 }
