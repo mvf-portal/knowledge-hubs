@@ -75,11 +75,6 @@ PORTALE = [
 # Zeile daneben auch nicht mehr auf.
 WARTEND = [
     # erzeugt aus portale.json von portale_pflegen.py - nicht von Hand aendern
-    "mvf-portal/auge-portal",
-    "mvf-portal/muskel-portal",
-    "mvf-portal/kinder-portal",
-    "mvf-portal/neuro-portal",
-    "mvf-portal/genom-portal",
 ]
 ROH = "https://raw.githubusercontent.com/{repo}/main/versand-status.json"
 ROH_ARCHIV = "https://raw.githubusercontent.com/{repo}/main/studien-archiv.json"
