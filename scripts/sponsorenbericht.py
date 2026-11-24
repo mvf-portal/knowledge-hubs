@@ -249,7 +249,13 @@ def bericht_html(p: dict, monat: str, z: dict, nl: list[dict],
     zugestellt = sum(n["zugestellt"] for n in nl)
     oeffnungen = sum(n["oeffnungen"] for n in nl)
 
-    art = "Medienpartner" if any(s.get("art") == "koop" for s in traeger) else "Sponsor"
+    # Die Arten dieses Hubs, in der Reihenfolge von sponsoren.py. Ein Hub kann
+    # seit dem 24.11.2026 zwei haben, einen zahlenden und einen ideellen.
+    KENNUNG = {"koop": "Medienpartner", "sponsor": "Sponsor",
+               "ideell": "Ideeller F\u00f6rderer"}
+    vorhanden = [KENNUNG[a] for a in ("koop", "sponsor", "ideell")
+                 if any((s.get("art") or "sponsor") == a for s in traeger)]
+    art = " und ".join(vorhanden) if vorhanden else "Sponsor"
     namen = ", ".join(s["n"] for s in traeger) or "\u2014 noch kein Eintrag \u2014"
 
     # Die Logos liegen im Portal und werden als Datei eingebettet: Ein Pfad in
