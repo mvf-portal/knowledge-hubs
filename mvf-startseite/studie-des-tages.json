@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-23",
+ "aufgenommen": "2026-11-24",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Charlson-Index aus verkürzten ICD-Codes rekonstruieren",
-  "worum_es_geht": "Evaluierung von fünf Rechenverfahren zur Rekonstruktion des Charlson Comorbidity Index aus 3-stelligen statt 4-stelligen ICD-10-GM-Codes mittels nationalen Subfrekuenzen.",
-  "ergebnis": "Drei Verfahren (S2, S3, S4) erreichtenähnliche mittlere absolute Fehler von ca. 0,139 Punkten (95%-KI 0,138–0,141). Das Dirichlet-geglättete Verfahren S4 preservierte die Referenzverteilung am besten (KS-Distanz 0,023, exakte Übereinstimmung 87,0%). Diese Genauigkeit ermöglicht Risikoklassifizierung auch bei Datenschutz-bedingten Kodeverkürzungen.",
-  "uebertragbarkeit": "Deutsche Routinedaten einer Universitätsklinik, direkt anwendbar für deutsches Datenschutzsystem",
-  "autoren": "Kamdje Wabo G et al.",
-  "zeitschrift": "JMIR Med Inform",
+  "titel": "Polypharmacy und Sturzrisiko bei älteren Erwachsenen nach Notfallabteilung",
+  "worum_es_geht": "Querschnittstudie bei 335 älteren Patienten nach Notfallbesuch wegen Sturz untersuchte Prävalenz von Polypharmaka und sturzrisikofördernden Medikamenten sowie deren Assoziation mit Sturzmerkmalen.",
+  "ergebnis": "Polypharmaka lag bei 31,3% vor, sturzrisikofördernde Medikamente gemäß STOPPFall bei 44,5%. Keine signifikanten Assoziationen zwischen Medikamenteneinsatz und Sturzcharakteristika gefunden. Hohe Prävalenz unterstreicht Bedeutung systematischer Medikamentenüberprüfungen.",
+  "uebertragbarkeit": "Deutsche Routinedaten, Versorgungskontext Notfallmedizin übertragbar.",
+  "autoren": "Wilkens S et al.",
+  "zeitschrift": "BMC Geriatr",
   "jahr": "2026",
-  "pmid": "43068360",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43068360/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43068360"
+  "pmid": "43058489",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43058489/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43058489"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43068360"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43058489"
  }
 }
