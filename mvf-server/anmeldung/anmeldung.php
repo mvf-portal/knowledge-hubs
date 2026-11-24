@@ -62,6 +62,19 @@ const HERKUNFT_ERLAUBT = [
     'https://adipositas.m-vf.de',
     'https://safety.m-vf.de',
     'https://mental.m-vf.de',
+    // Nachgetragen 24.11.2026: Diese acht fehlten seit dem Start der
+    // Hubs. Die Anmeldung war dort tot, ohne jede Meldung - der
+    // Vorabflug des Browsers scheitert, die Anfrage kommt nie an.
+    // Wer einen Hub neu aufsetzt, traegt ihn HIER nach und messt
+    // danach mit scripts/herkunft_messen.py alle Hubs durch.
+    'https://onkologie.m-vf.de',
+    'https://kardio.m-vf.de',
+    'https://diabetes.m-vf.de',
+    'https://auge.m-vf.de',
+    'https://muskel.m-vf.de',
+    'https://kinder.m-vf.de',
+    'https://neuro.m-vf.de',
+    'https://genom.m-vf.de',
 ];
 
 $herkunft = $_SERVER['HTTP_ORIGIN'] ?? '';

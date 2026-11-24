@@ -43,9 +43,44 @@ Geprüft ist damit:
 | 5 Bericht | Zielgruppe `1c8fc10ec7` und alle Gruppen mit Namen und Kennung |
 | 6 Kennungen | vollständig, gegen die API gegengelesen |
 | 7 Abrufsperre | `daten/salz.json.php` antwortet mit **null Byte** — PHP wird ausgeführt, das Verzeichnis ist zu |
-| Herkunft | von `https://wissen.m-vf.de` kommt `access-control-allow-origin` zurueck, von einer fremden Domain nicht |
+| Herkunft | **EIN Hub reicht als Prüfung nicht.** `py scripts/herkunft_messen.py` fragt jeden Hub aus `portale.json` einzeln, Soll: alle freigegeben, keiner tot |
 | Honigtopf | gefülltes `falle` gibt freundlich `{"ok":true,"zustand":"neu"}` und trägt nichts ein |
 | ungültige Adresse | `{"ok":false,"grund":"email"}` |
+
+## Die Herkunftsliste ist der stille Einzelfehler (24.11.2026)
+
+Die Liste `HERKUNFT_ERLAUBT` oben in `anmeldung.php` ist bewusst
+ausgeschrieben, damit keine Subdomain freigegeben wird, die uns eines Tages
+nicht mehr gehört. Der Preis dafür: **Jeder neue Hub muss dort nachgetragen
+werden, und niemand merkt es, wenn das vergessen wird.**
+
+Am 23.11.2026 im Browser gefunden, am 24.11.2026 gemessen: Acht der zwanzig
+Hubs fehlten in der Liste (onkologie, kardio, diabetes, auge, muskel, kinder,
+neuro, genom). Sie kamen nach der Lieferung vom 13.11.2026 dazu. Ihr
+Anmeldeformular war seitdem tot.
+
+**Warum das von innen nicht zu sehen ist.** Der Browser schickt vor der
+eigentlichen Anfrage einen Vorabflug. Fehlt die Freigabe im Kopf, schickt er
+die Anfrage nie ab. Auf dem Server kommt also nichts an: kein Fehler im
+Protokoll, kein Eintrag in Mailchimp, keine Meldung irgendwo. Die
+Anmeldezahlen sehen nur niedrig aus, nicht kaputt.
+
+**Die Prüfung, die es gefunden hätte**, stand in der Tabelle oben und hat drei
+Jahre lang das Falsche gemessen: Sie fragte EINE Herkunft, `wissen.m-vf.de`,
+und schloss von ihr auf alle. Richtig ist, jeden Hub einzeln zu fragen:
+
+    py scripts/herkunft_messen.py              # Soll: 21 freigegeben, 0 tot
+    py scripts/herkunft_messen.py --gegenprobe # eine fremde Herkunft muss durchfallen
+
+Die Probe kennt drei Zustände, nicht zwei. **Nicht gemessen ist keine
+Freigabe.** Ihre erste Fassung meldete alle 21 Hubs als tot, weil der Server
+ohne Browserkennung mit 403 antwortet, und die Gegenprobe bestätigte das
+auch noch. Antwortet der Endpunkt nicht mit 204, ist das kein Befund über die
+Herkunft, sondern eine gescheiterte Messung.
+
+**Wer einen Hub neu aufsetzt:** Eintrag in `HERKUNFT_ERLAUBT`, Datei über
+LEVAN-MAIL liefern, danach die Probe laufen lassen. Vorher ist der Hub nicht
+fertig, auch wenn Seite und Newsletter stehen.
 
 **Schritt 8 ist bestanden.** Am 01.09.2026 um 22:05 Uhr mit einer Adresse
 geprüft, die noch nie in der Liste stand: Der Endpunkt antwortete
