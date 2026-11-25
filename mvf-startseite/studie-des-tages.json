@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-24",
+ "aufgenommen": "2026-11-25",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Polypharmacy und Sturzrisiko bei älteren Erwachsenen nach Notfallabteilung",
-  "worum_es_geht": "Querschnittstudie bei 335 älteren Patienten nach Notfallbesuch wegen Sturz untersuchte Prävalenz von Polypharmaka und sturzrisikofördernden Medikamenten sowie deren Assoziation mit Sturzmerkmalen.",
-  "ergebnis": "Polypharmaka lag bei 31,3% vor, sturzrisikofördernde Medikamente gemäß STOPPFall bei 44,5%. Keine signifikanten Assoziationen zwischen Medikamenteneinsatz und Sturzcharakteristika gefunden. Hohe Prävalenz unterstreicht Bedeutung systematischer Medikamentenüberprüfungen.",
-  "uebertragbarkeit": "Deutsche Routinedaten, Versorgungskontext Notfallmedizin übertragbar.",
-  "autoren": "Wilkens S et al.",
-  "zeitschrift": "BMC Geriatr",
+  "titel": "Versorgungsqualität für chronische Erkrankungen in Deutschland: Selbstbewertung deutet Verbesserungspotenzial",
+  "worum_es_geht": "Befragung von über 10.000 erwachsenen Patienten mit chronischen Erkrankungen in Deutschland zur wahrgenommenen Qualität ihrer medizinischen Versorgung mittels PACIC-S11-Fragebogen.",
+  "ergebnis": "Durchschnittliche Versorgungsqualität wurde als fair bewertet (Mittelwert: 2,67 auf Skala 1–5). Zufriedenheit mit Organisationsaspekten war höchst (3,61), Ermutigung zur Selbstmanagement-Schulung mit 1,76 am niedrigsten. Jüngere Menschen, Frauen, Personen mit höherer Bildung und gesetzlich Versicherte bewerteten die Qualität niedriger.",
+  "uebertragbarkeit": "Deutsche Routinedaten, gesetzlich Versicherte, direkt anwendbar für Versorgungsforschung",
+  "autoren": "Buchmann M et al.",
+  "zeitschrift": "J Health Monit",
   "jahr": "2026",
-  "pmid": "43058489",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43058489/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43058489"
+  "pmid": "43075122",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43075122/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43075122"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43058489"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43075122"
  }
 }
