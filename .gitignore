@@ -16,3 +16,4 @@ scripts/aufraeumen-zuletzt.json
 mvf-server/ideen/schluessel-merken.txt
 *.vor-*
 laufwache.log
+morgenmeldung.log
