@@ -54,7 +54,7 @@ WOCHENENDE_AUS = True
 # (versand_bericht, studien_sammeln, abfrage_wache), und eine vierte waere eine
 # vierte Stelle, an der ein neuer Hub vergessen werden kann.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from versand_bericht import PORTALE, WARTEND  # noqa: E402
+from versand_bericht import PORTALE, WARTEND, hole  # noqa: E402
 
 ROH_PORTAL = "https://raw.githubusercontent.com/{repo}/main/portal.json"
 
@@ -69,6 +69,43 @@ def praefix(repo: str) -> str | None:
             return json.load(r).get("MC_PRAEFIX")
     except Exception:  # noqa: BLE001
         return None
+
+
+def angehalten(repo: str, tag: str) -> str | None:
+    """Grund, aus dem der Torwaechter die Ausgabe von `tag` anhielt, sonst None.
+
+    Der Torwaechter haelt eine Ausgabe an, wenn mit ihr etwas nicht stimmt,
+    etwa weil das Empfaengersegment leer ist. Dann wird mit Absicht nichts
+    versendet. Das ist die Mechanik bei der Arbeit und kein Ausfall.
+
+    Ohne diese Frage las die Kontrolle nur den Mailchimp-Status 'save' und
+    konnte den angehaltenen Hub nicht von einem unterscheiden, bei dem der
+    Versand wirklich scheiterte. Am 24.11.2026 meldete sie deshalb abends
+    "1 Hub(s) nicht versendet" fuer genau den Hub, den der Torwaechter
+    morgens selbst angehalten hatte, und am 25.11.2026 wieder. Wer solche
+    Meldungen ein paar Wochen liest, liest irgendwann auch den echten Alarm
+    nicht mehr. Dieselbe Lehre steht schon ueber WOCHENENDE_AUS.
+
+    Quelle ist die versand-status.json, aus der auch der Sammelbericht liest,
+    geholt mit dessen `hole`. Eine zweite Abfrage waere eine zweite Stelle,
+    an der dasselbe auseinanderlaufen kann.
+
+    Das Datum wird mitgeprueft, und zwar nicht aus Vorsicht: Die Statusdatei
+    bleibt im Repo stehen, bis der naechste Lauf sie ueberschreibt. Faellt
+    ein Lauf aus, stuende dort die Datei von gestern. Ohne Datumsvergleich
+    ginge ein Hub, dessen Lauf heute gar nicht stattfand, als "planmaessig
+    angehalten" durch, und die Kontrolle schwiege ueber einen echten Ausfall.
+    """
+    try:
+        stand = hole(repo)
+    except Exception:  # noqa: BLE001
+        # Eine Kontrolle, die bei einer Stoerung der Abfrage den Alarm
+        # unterdrueckt, ist keine. Im Zweifel gilt der Hub als nicht
+        # angehalten, und die normale Pruefung entscheidet.
+        return None
+    if not stand or stand.get("stand") != "gestoppt" or stand.get("datum") != tag:
+        return None
+    return "; ".join(stand.get("beanstandungen", [])) or "ohne Grund"
 
 
 def kampagnen(schluessel: str) -> list[dict]:
@@ -110,6 +147,7 @@ def main() -> int:
 
     zeilen = [f"Versandkontrolle {stempel}", ""]
     versendet, offen = 0, []
+    angehaltene: list[str] = []
     for name, repo in PORTALE:
         if repo.endswith("knowledge-hubs"):
             continue
@@ -118,6 +156,7 @@ def main() -> int:
         # eine Frage an etwas, das gar nicht gefragt wurde.
         if repo in WARTEND:
             continue
+        halt = angehalten(repo, a.tag)
         pre = praefix(repo)
         if not pre:
             zeilen.append(f"?  {name:<34} portal.json nicht lesbar")
@@ -136,6 +175,19 @@ def main() -> int:
         if wann:
             wann = dt.datetime.fromisoformat(wann.replace("Z", "+00:00")).astimezone(TZ)
             wann = f"{wann:%H:%M}"
+        if halt:
+            # Angehalten und trotzdem draussen: Das ist der eine Fall, in dem
+            # ein gestoppter Hub sehr wohl Alarm ist. Der Torwaechter hat
+            # entschieden, und jemand oder etwas hat sich darueber hinweg-
+            # gesetzt. Deshalb steht diese Frage VOR der Entwarnung.
+            if stand == "sent":
+                zeilen.append(f"!! {name:<34} war gestoppt, ist aber "
+                              f"versendet worden ({anzahl} Empfänger)")
+                offen.append(name)
+            else:
+                angehaltene.append(name)
+                zeilen.append(f"-- {name:<34} angehalten: {halt}")
+            continue
         if stand == "sent":
             versendet += 1
             zeilen.append(f"OK {name:<34} versendet {wann} Uhr an {anzahl} Empfänger")
@@ -148,7 +200,13 @@ def main() -> int:
 
     zahl = len([x for x in PORTALE
                 if not x[1].endswith("knowledge-hubs") and x[1] not in WARTEND])
-    zeilen.append(f"\n{versendet} von {zahl} versendet.")
+    # Angehaltene Hubs gehoeren nicht ins Soll. Stuenden sie darin, meldete
+    # die Kontrolle "19 von 20 versendet" und laese sich weiter wie eine
+    # Luecke, obwohl keine da ist.
+    soll = zahl - len(angehaltene)
+    nachsatz = (f" {len(angehaltene)} vom Torwächter angehalten, planmäßig "
+                f"ohne Versand." if angehaltene else "")
+    zeilen.append(f"\n{versendet} von {soll} versendet.{nachsatz}")
     text = "\n".join(zeilen)
     print(text)
     # Gemeldet wird nur, was auffaellt: Eine taegliche Bestaetigung, dass alles
@@ -159,6 +217,10 @@ def main() -> int:
         # `github-actions[bot]` an, und fuer Bot-Aktivitaet verschickt GitHub
         # keine Watching-Benachrichtigung. Ohne Assignee bliebe der Alarm im
         # Repo liegen - siehe versand_bericht.py.
+        #
+        # Seit dem 25.11.2026 ist das Repo-Abo abgestellt, die Zuweisung ist
+        # also der EINZIGE Weg, auf dem diese Meldung noch hinausgeht. Wer sie
+        # hier herausnimmt, stellt den Alarm stumm, ohne dass es auffaellt.
         subprocess.run(["gh", "issue", "create", "-R", "mvf-portal/knowledge-hubs",
                         "-t", f"Versand {stempel}: {len(offen)} Hub(s) nicht versendet",
                         "-b", text, "--assignee", "mvf-portal"], check=False)

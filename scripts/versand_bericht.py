@@ -3,9 +3,20 @@
 
 Jedes Portal schreibt beim naechtlichen Lauf eine `versand-status.json` in sein
 Repo - terminiert oder gestoppt, mit Grund. Dieses Skript liest sie alle ein
-und legt daraus **eine** GitHub-Issue an. GitHub verschickt sie als E-Mail an
-alle, die das Repo beobachten; ein zusaetzliches Postfach-Geheimnis braucht es
-dafuer nicht.
+und legt daraus **eine** GitHub-Issue an. Ein zusaetzliches
+Postfach-Geheimnis braucht es dafuer nicht.
+
+Verschickt wird sie, weil die Issue einem Konto ZUGEWIESEN wird, nicht weil
+jemand das Repo beobachtet. Fuer Aktivitaet von `github-actions[bot]` schickt
+GitHub naemlich keine Benachrichtigung an Beobachter, siehe BERICHT_ZUSTAENDIG
+weiter unten.
+
+Bis zum 25.11.2026 war zusaetzlich das Repo abonniert. Das trug nichts bei und
+kostete: Jede Meldung kam zweimal an, einmal ueber das Abo und einmal ueber die
+Zuweisung, bei taeglich einer Meldung also vierzehn Mails die Woche statt
+sieben. Wer das liest, liest irgendwann gar nichts mehr. Das Abo ist deshalb
+abgestellt (`gh api -X DELETE repos/mvf-portal/knowledge-hubs/subscription`,
+nachgemessen: 404). Die Zuweisung muss bleiben, sonst kommt gar nichts an.
 
 Der Sinn ist das Veto-Fenster: Die Kampagnen sind zu diesem Zeitpunkt
 terminiert, aber noch nicht versendet. Wer die Meldung liest und etwas
