@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-26",
+ "aufgenommen": "2026-11-27",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Palliativversorgung und End-of-Life-Präferenzen in der arabisch-muslimischen Bevölkerung Deutschlands",
-  "worum_es_geht": "Querschnittsstudie zu Bewusstsein, Präferenzen und erlebter Diskriminierung bei arabisch-muslimischen Personen in Deutschland.",
-  "ergebnis": "517 Teilnehmer (Mittelalter 39 Jahre, 49,7% weiblich). Nur 33% kannten Palliativversorgung, 45% Hospize. Aber 78% würden Komfortzentriertheit gegenüber Lebensverlängerung bevorzugen. 75% wünschten Familieneinbindung, 80% starben gerne zu Hause. 47% berichteten erlebte Diskriminierung. Vertrauen in deutsche Gesundheitsdienste niedrig (60% unsicher).",
-  "uebertragbarkeit": "Deutschland; direkt anwendbar für deutsche Versorgung von Migranten.",
-  "autoren": "Dawoud A et al.",
-  "zeitschrift": "BMC Palliat Care",
+  "titel": "Kosten der klinischen Hepatitis E in Deutschland",
+  "worum_es_geht": "Cost-of-Illness-Analyse zu direkten medizinischen und indirekten Produktivitätskosten der Hepatitis-E in Deutschland auf Basis von 2025er RKI-Daten und Routinedaten.",
+  "ergebnis": "2025 wurden 5.310 HEV-Fälle notifiziert; Basisfall-Direktkosten €122,06 ambulant und €4.245,96 pro stationärer Aufnahme; durchschnittliche Krankschreibung 28,10 Tage mit €4.494,35 Produktivitätsausfall; erwartete Gesamtkost €2.157,45 direkt und €4.804,98 pro Fall insgesamt (€25,06 Mio. jährlich auf 5.215 notifizierte Fälle); Hospitalisierung ist Haupttreiber direkter Kosten.",
+  "uebertragbarkeit": "Deutsche Routinedaten, gesetzlich Versicherte, vollständig übertragbar.",
+  "autoren": "Diel R et al.",
+  "zeitschrift": "Pathogens",
   "jahr": "2026",
-  "pmid": "43073878",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43073878/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43073878"
+  "pmid": "43093099",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43093099/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43093099"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43073878"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43093099"
  }
 }
