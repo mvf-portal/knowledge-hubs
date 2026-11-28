@@ -1,6 +1,6 @@
 {
  "rubrik": "Studie des Tages",
- "aufgenommen": "2026-11-27",
+ "aufgenommen": "2026-11-28",
  "portal": {
   "name": "Knowledge-Hub Versorgungsforschung",
   "url": "https://wissen.m-vf.de/",
@@ -8,19 +8,19 @@
   "logo_alt": "Logo der Knowledge-Hubs von Monitor Versorgungsforschung"
  },
  "studie": {
-  "titel": "Kosten der klinischen Hepatitis E in Deutschland",
-  "worum_es_geht": "Cost-of-Illness-Analyse zu direkten medizinischen und indirekten Produktivitätskosten der Hepatitis-E in Deutschland auf Basis von 2025er RKI-Daten und Routinedaten.",
-  "ergebnis": "2025 wurden 5.310 HEV-Fälle notifiziert; Basisfall-Direktkosten €122,06 ambulant und €4.245,96 pro stationärer Aufnahme; durchschnittliche Krankschreibung 28,10 Tage mit €4.494,35 Produktivitätsausfall; erwartete Gesamtkost €2.157,45 direkt und €4.804,98 pro Fall insgesamt (€25,06 Mio. jährlich auf 5.215 notifizierte Fälle); Hospitalisierung ist Haupttreiber direkter Kosten.",
-  "uebertragbarkeit": "Deutsche Routinedaten, gesetzlich Versicherte, vollständig übertragbar.",
-  "autoren": "Diel R et al.",
-  "zeitschrift": "Pathogens",
+  "titel": "Digitale Ungleichheit bei stationären Patienten: Alter, Geschlecht und Bildung als Determinanten",
+  "worum_es_geht": "Querschnittsstudie zur Untersuchung soziodemografischer und sozioökonomischer Faktoren, die mit selbsteingeschätzter digitaler Kompetenz von Klinikaußenpatienten assoziiert sind.",
+  "ergebnis": "Von n=596 Patienten: Höhere digitale Kompetenz bei jüngerem Alter (B=-0,25 pro 10 Jahre, p<0,001), männlichem Geschlecht (B=0,30, p<0,001), höherer Schulbildung (B=0,64–0,77, p<0,001) und Partnerschaft (B=0,27, p=0,011). Rentner und Nichterwerbstätige zeigten niedrigere Werte (B=-0,36 bis -0,31, p<0,05). Das Modell erklärte 33,1% der Varianz.",
+  "uebertragbarkeit": "Deutsche Universitätsklinik Köln, Routine-Ambulanzdaten, direkt übertragbar.",
+  "autoren": "Goldberg N et al.",
+  "zeitschrift": "BMC Public Health",
   "jahr": "2026",
-  "pmid": "43093099",
-  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43093099/",
-  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43093099"
+  "pmid": "43099528",
+  "pubmed": "https://pubmed.ncbi.nlm.nih.gov/43099528/",
+  "im_hub": "https://wissen.m-vf.de/neue-studien.html#studie-43099528"
  },
  "knopf": {
   "text": "Zur Studie",
-  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43093099"
+  "url": "https://wissen.m-vf.de/neue-studien.html#studie-43099528"
  }
 }
